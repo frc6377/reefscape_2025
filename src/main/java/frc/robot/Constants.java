@@ -22,4 +22,11 @@ public final class Constants {
     // TODO: Update to conversion between rotations and height for elevator
     public static final double elevatorConversion = 1.0;
   }
+
+  public static class ElevatorSimConstants {
+    public static final double kCarriageMass = 5;
+    public static final double kElevatorDrumRadius = .5;
+    public static final double kMinElevatorHeightMeters = 0.0;
+    public static final double kMaxElevatorHeightMeters = 1.8796;
+  }
 }

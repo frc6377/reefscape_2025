@@ -22,6 +22,11 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    m_driverController.rightBumper().and(m_driverController.leftBumper()).onTrue(elevator.L0());
+    m_driverController.rightBumper().and(m_driverController.a()).onTrue(elevator.L1());
+    m_driverController.rightBumper().and(m_driverController.b()).onTrue(elevator.L2());
+    m_driverController.rightBumper().and(m_driverController.x()).onTrue(elevator.L3());
+    m_driverController.rightBumper().and(m_driverController.y()).onTrue(elevator.L4());
     m_driverController.b().whileTrue(elevator.goUp());
     m_driverController.a().whileTrue(elevator.goDown());
   }
