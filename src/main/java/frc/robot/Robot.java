@@ -23,9 +23,9 @@ public class Robot extends LoggedRobot {
 
   private final RobotContainer m_robotContainer;
 
-  @SuppressWarnings("resource")
+  @SuppressWarnings("resource") // Ignore not closing PowerDistribution instance
   public Robot() {
-    Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+    Logger.recordMetadata("ProjectName", "Reefscape_2025"); // Set a metadata value
 
     if (isReal()) {
       Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
