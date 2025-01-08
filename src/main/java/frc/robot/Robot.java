@@ -4,12 +4,16 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Seconds;
+
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
 
+  public static final Time period = Seconds.of(Robot.kDefaultPeriod);
   public static final boolean isCompetition = false;
 
   private Command m_autonomousCommand;

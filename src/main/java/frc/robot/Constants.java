@@ -2,6 +2,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Distance;
 
 public final class Constants {
@@ -16,7 +17,7 @@ public final class Constants {
     public static final Distance L3Height = Inches.of(47.625);
     public static final Distance L4Height = Inches.of(72);
     // TODO: update with proper PID values
-    public static final double elevatorP = 0.0;
+    public static final double elevatorP = 1.0;
     public static final double elevatorI = 0.0;
     public static final double elevatorD = 0.0;
     // TODO: Update to conversion between rotations and height for elevator
@@ -24,8 +25,10 @@ public final class Constants {
   }
 
   public static class ElevatorSimConstants {
+    public static final DCMotor m_elevatorGearbox = DCMotor.getNeo550(1);
+    public static final double kElevatorGearing = 1.0;
     public static final double kCarriageMass = 5;
-    public static final double kElevatorDrumRadius = .5;
+    public static final Distance kElevatorDrumRadius = Inches.of(1);
     public static final double kMinElevatorHeightMeters = 0.0;
     public static final double kMaxElevatorHeightMeters = 1.8796;
   }
