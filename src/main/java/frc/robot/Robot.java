@@ -9,9 +9,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
-
-  public static final boolean isCompetition = false;
-
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
@@ -72,4 +69,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testExit() {}
+
+  @Override
+  public void simulationPeriodic() {}
 }
