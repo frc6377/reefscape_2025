@@ -5,7 +5,12 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Millisecond;
 import static edu.wpi.first.units.Units.Seconds;
-import static frc.robot.Constants.ElevatorSimConstants.*;
+import static frc.robot.Constants.ElevatorSimConstants.kCarriageMass;
+import static frc.robot.Constants.ElevatorSimConstants.kElevatorDrumRadius;
+import static frc.robot.Constants.ElevatorSimConstants.kElevatorGearing;
+import static frc.robot.Constants.ElevatorSimConstants.kMaxElevatorHeightMeters;
+import static frc.robot.Constants.ElevatorSimConstants.kMinElevatorHeightMeters;
+import static frc.robot.Constants.ElevatorSimConstants.m_elevatorGearbox;
 
 import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
@@ -22,7 +27,13 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -33,6 +44,9 @@ public class Elevator extends SubsystemBase {
   SparkAbsoluteEncoder elevatorEncoder;
   private SparkMaxSim simElevatorMotor;
   private final Time sparkPeriod;
+  private static Mechanism2d mech = new Mechanism2d(10, 10);
+  private static ComplexWidget widg;
+  private MechanismLigament2d elevatorMech;
 
   public static final AbsoluteEncoderConfig encoderCfg =
       new AbsoluteEncoderConfig()
@@ -57,6 +71,15 @@ public class Elevator extends SubsystemBase {
     if (Robot.isSimulation()) {
       simElevatorMotor =
           new SparkMaxSim(elevatorMotor, Constants.ElevatorSimConstants.m_elevatorGearbox);
+      elevatorMech =
+          mech.getRoot("root", 5, 5)
+              .append(
+                  new MechanismLigament2d(
+                      "Elevator Mech [0]", 1, 0, 10, new Color8Bit(Color.kPurple)));
+
+      if (widg == null) {
+        widg = Shuffleboard.getTab(getName()).add("Arm", mech);
+      }
     }
   }
 
@@ -140,5 +163,6 @@ public class Elevator extends SubsystemBase {
           RobotController.getBatteryVoltage(),
           sparkPeriod.in(Seconds));
     }
+    elevatorMech.setLength(1 + (simDist.in(Meters)));
   }
 }
