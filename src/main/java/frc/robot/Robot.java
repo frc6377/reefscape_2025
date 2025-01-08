@@ -55,6 +55,7 @@ public class Robot extends LoggedRobot {
           | StringIndexOutOfBoundsException
           | UnsupportedEncodingException ex) {
         System.out.println("No log file found, simulating as normal. \n");
+        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
       }
     }
 
