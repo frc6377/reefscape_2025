@@ -30,6 +30,6 @@ public final class Constants {
     public static final double kCarriageMass = 5;
     public static final Distance kElevatorDrumRadius = Inches.of(1);
     public static final double kMinElevatorHeightMeters = 0.0;
-    public static final double kMaxElevatorHeightMeters = 1.8796;
+    public static final double kMaxElevatorHeightMeters = 100.8796;
   }
 }
