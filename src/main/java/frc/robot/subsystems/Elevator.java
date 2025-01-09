@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Millisecond;
@@ -23,6 +24,7 @@ import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
@@ -69,7 +71,7 @@ public class Elevator extends SubsystemBase {
         new ElevatorSim(
             m_elevatorGearbox,
             kElevatorGearing,
-            kCarriageMass,
+            kCarriageMass.in(Kilograms),
             kElevatorDrumRadius.in(Meters),
             kMinElevatorHeightMeters,
             kMaxElevatorHeightMeters,
@@ -86,7 +88,7 @@ public class Elevator extends SubsystemBase {
           mech.getRoot("root", 5, 5)
               .append(
                   new MechanismLigament2d(
-                      "Elevator Mech [0]", 1, 270, 10, new Color8Bit(Color.kPurple)));
+                      "Elevator Mech [0]", 1, 90, 10, new Color8Bit(Color.kPurple)));
 
       if (widg == null) {
         widg = Shuffleboard.getTab(getName()).add("Elevator", mech);
@@ -115,13 +117,13 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command changeElevation(Distance heightLevel) {
-    return startEnd(
+    return runOnce(
         () -> {
           elevatorMotor
               .getClosedLoopController()
               .setReference(heightLevel.in(Inches), ControlType.kPosition);
-        },
-        () -> elevatorMotor.set(0));
+          SmartDashboard.putNumber("Setpoint", (heightLevel.in(Meters)/(kElevatorGearing))*(2*(Math.PI * kElevatorDrumRadius.in(Inches))));
+        });
   }
 
   public Command L0() {
@@ -147,7 +149,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     Distance simDist = Meters.zero();
-    LinearVelocity simVel = MetersPerSecond.of(1);
+    LinearVelocity simVel = MetersPerSecond.zero();
     for (Time i = Seconds.zero(); i.lt(Robot.period); i = i.plus(sparkPeriod)) {
       m_elevatorSim.setInputVoltage(
           simElevatorMotor.getBusVoltage() * simElevatorMotor.getAppliedOutput());
