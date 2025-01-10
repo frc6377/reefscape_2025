@@ -4,23 +4,73 @@
 
 package frc.robot.subsystems.drive;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.SimulationFeildConstants;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoral;
+import org.littletonrobotics.junction.Logger;
 
 public class MapleSimArenaSubsystem extends SubsystemBase {
-  private SwerveDriveSimulation driveSimulation;
+  private final SwerveDriveSimulation swerveDriveSimulation;
+
+  private Boolean[] isAtSource = new Boolean[] {false, false, false, false};
 
   /** Creates a new MapleSimArenaSubsystem. */
-  public MapleSimArenaSubsystem() {}
+  public MapleSimArenaSubsystem(SwerveDriveSimulation swerveDriveSimulation) {
+    this.swerveDriveSimulation = swerveDriveSimulation;
 
-  public SwerveDriveSimulation getDriveSimulation() {
-    return driveSimulation;
+    logFeildArea(SimulationFeildConstants.kSourceAreas);
+  }
+
+  public void logFeildArea(Pose2d[][] area) {
+    Pose2d[][] newPoses =
+        new Pose2d[][] {
+          new Pose2d[] {
+            area[0][0],
+            new Pose2d(area[0][0].getX(), area[0][1].getY(), new Rotation2d()),
+            area[0][1],
+            new Pose2d(area[0][1].getX(), area[0][0].getY(), new Rotation2d()),
+            area[0][0]
+          },
+          new Pose2d[] {
+            area[1][0],
+            new Pose2d(area[1][0].getX(), area[1][1].getY(), new Rotation2d()),
+            area[1][1],
+            new Pose2d(area[1][1].getX(), area[1][0].getY(), new Rotation2d()),
+            area[1][0]
+          },
+          new Pose2d[] {
+            area[2][0],
+            new Pose2d(area[2][0].getX(), area[2][1].getY(), new Rotation2d()),
+            area[2][1],
+            new Pose2d(area[2][1].getX(), area[2][0].getY(), new Rotation2d()),
+            area[2][0]
+          },
+          new Pose2d[] {
+            area[3][0],
+            new Pose2d(area[3][0].getX(), area[3][1].getY(), new Rotation2d()),
+            area[3][1],
+            new Pose2d(area[3][1].getX(), area[3][0].getY(), new Rotation2d()),
+            area[3][0]
+          },
+        };
+    Logger.recordOutput("FieldSimulation/Source Area 1", newPoses);
+  }
+
+  public Boolean isInArea(Pose2d[] area, Pose2d robotPose) {
+    double x = robotPose.getX();
+    double y = robotPose.getY();
+    double minX = Math.min(area[0].getX(), area[1].getX());
+    double maxX = Math.max(area[0].getX(), area[1].getX());
+    double minY = Math.min(area[0].getY(), area[1].getY());
+    double maxY = Math.max(area[0].getY(), area[1].getY());
+    return minX <= x && x <= maxX && minY <= y && y <= maxY;
   }
 
   public Command clearSimFeild() {
@@ -35,20 +85,37 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> SimulatedArena.getInstance().resetFieldForAuto());
   }
 
-  private StructArrayPublisher<Pose3d> coralPoses =
-      NetworkTableInstance.getDefault()
-          .getStructArrayTopic("CoralPieceArray", Pose3d.struct)
-          .publish();
-  private StructArrayPublisher<Pose3d> algeaPoses =
-      NetworkTableInstance.getDefault()
-          .getStructArrayTopic("AlgeaPieceArray", Pose3d.struct)
-          .publish();
-
   @Override
   public void periodic() {
-    coralPoses.accept(
-        SimulatedArena.getInstance().getGamePiecesByType("Coral").toArray(Pose3d[]::new));
-    algeaPoses.accept(
-        SimulatedArena.getInstance().getGamePiecesByType("Algae").toArray(Pose3d[]::new));
+    for (int i = 0; i < SimulationFeildConstants.kSourceAreas.length; i++) {
+      Pose2d[] currentSourse = SimulationFeildConstants.kSourceAreas[i];
+
+      // Check if the robot is at the sorce area
+      isAtSource[i] = isInArea(currentSourse, swerveDriveSimulation.getSimulatedDriveTrainPose());
+      Logger.recordOutput("FieldSimulation/Area Bools/" + i, isAtSource[i]);
+
+      // Check if there is a coral at the source area
+      if (isAtSource[i]) {
+        Pose3d[] coralPoses = SimulatedArena.getInstance().getGamePiecesArrayByType("Coral");
+        boolean isCoralAtSource = false;
+        for (int j = 0; j < coralPoses.length; j++) {
+          if (isInArea(currentSourse, coralPoses[j].toPose2d())) {
+            isCoralAtSource = true;
+            break;
+          }
+        }
+
+        // Add coral to the source area if there is none
+        if (!isCoralAtSource) {
+          SimulatedArena.getInstance()
+              .addGamePiece(
+                  new ReefscapeCoral(
+                      new Pose2d(
+                          (currentSourse[0].getX() + currentSourse[1].getX()) / 2,
+                          (currentSourse[0].getY() + currentSourse[1].getY()) / 2,
+                          new Rotation2d())));
+        }
+      }
+    }
   }
 }

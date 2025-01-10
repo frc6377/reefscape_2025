@@ -15,6 +15,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -38,11 +40,38 @@ public final class Constants {
     REPLAY
   }
 
-
   public class IntakeConstants {
     // Simulation Values
     public static final Distance kIntakeWidth = Inches.of(26);
     public static final Distance kIntakeExtension = Inches.of(12);
     public static final int kIntakeCapacity = 1;
+  }
+
+  public class SimulationFeildConstants {
+    public static final Pose2d[][] kSourceAreas =
+        new Pose2d[][] {
+          new Pose2d[] {
+            new Pose2d(Feet.of(0), Feet.of(0), new Rotation2d()),
+            new Pose2d(Feet.of(6), Feet.of(5), new Rotation2d())
+          },
+          new Pose2d[] {
+            new Pose2d(Feet.of(0), Feet.of(21.5), new Rotation2d()),
+            new Pose2d(Feet.of(6), Feet.of(26.5), new Rotation2d())
+          },
+          new Pose2d[] {
+            new Pose2d(Feet.of(51.5), Feet.of(0), new Rotation2d()),
+            new Pose2d(Feet.of(57.5), Feet.of(5), new Rotation2d())
+          },
+          new Pose2d[] {
+            new Pose2d(Feet.of(51.5), Feet.of(21.5), new Rotation2d()),
+            new Pose2d(Feet.of(57.5), Feet.of(26.5), new Rotation2d())
+          },
+        };
+  }
+
+  public class SubsystemToggles {
+    public static final boolean kUseIntake = true;
+    public static final boolean kUseDrive = true;
+    public static final boolean kUseVision = true;
   }
 }

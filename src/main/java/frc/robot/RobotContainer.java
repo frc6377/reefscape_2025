@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.SubsystemToggles;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.*;
@@ -45,8 +46,8 @@ public class RobotContainer {
   // Subsystems
   private MapleSimArenaSubsystem m_MapleSimArenaSubsystem;
   private IntakeSimSubsystem m_IntakeSimSubsystem;
-  private final Vision vision;
-  private final Drive drive;
+  private Vision vision;
+  private Drive drive;
   public SwerveDriveSimulation driveSimulation = null;
 
   // Controller
@@ -61,54 +62,82 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        drive =
-            new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
-        vision =
-            new Vision(
-                drive,
-                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+        if (SubsystemToggles.kUseDrive) {
+          drive =
+              new Drive(
+                  new GyroIOPigeon2(),
+                  new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                  new ModuleIOTalonFX(TunerConstants.FrontRight),
+                  new ModuleIOTalonFX(TunerConstants.BackLeft),
+                  new ModuleIOTalonFX(TunerConstants.BackRight));
+        }
+        if (SubsystemToggles.kUseVision) {
+          vision =
+              new Vision(
+                  drive,
+                  new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+                  new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+        }
         break;
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        driveSimulation =
-            new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
-        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
-        drive =
-            new Drive(
-                new GyroIOSim(driveSimulation.getGyroSimulation()),
-                new ModuleIOSim(driveSimulation.getModules()[0]),
-                new ModuleIOSim(driveSimulation.getModules()[1]),
-                new ModuleIOSim(driveSimulation.getModules()[2]),
-                new ModuleIOSim(driveSimulation.getModules()[3]));
+        if (SubsystemToggles.kUseDrive) {
+          driveSimulation =
+              new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+          SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+          drive =
+              new Drive(
+                  new GyroIOSim(driveSimulation.getGyroSimulation()),
+                  new ModuleIOSim(driveSimulation.getModules()[0]),
+                  new ModuleIOSim(driveSimulation.getModules()[1]),
+                  new ModuleIOSim(driveSimulation.getModules()[2]),
+                  new ModuleIOSim(driveSimulation.getModules()[3]));
+          m_MapleSimArenaSubsystem = new MapleSimArenaSubsystem(driveSimulation);
+        } else {
+          driveSimulation = null;
+          drive = null;
+          m_MapleSimArenaSubsystem = null;
+        }
 
-        vision =
-            new Vision(
-                drive,
-                new VisionIOPhotonVisionSim(
-                    camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
-                new VisionIOPhotonVisionSim(
-                    camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
-        m_MapleSimArenaSubsystem = new MapleSimArenaSubsystem();
-        m_IntakeSimSubsystem = new IntakeSimSubsystem(driveSimulation);
+        if (SubsystemToggles.kUseVision) {
+          vision =
+              new Vision(
+                  drive,
+                  new VisionIOPhotonVisionSim(
+                      camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
+                  new VisionIOPhotonVisionSim(
+                      camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
+        } else {
+          vision = null;
+        }
+
+        if (SubsystemToggles.kUseIntake) {
+          m_IntakeSimSubsystem = new IntakeSimSubsystem(driveSimulation);
+        } else {
+          m_IntakeSimSubsystem = null;
+        }
         break;
 
       default:
         // Replayed robot, disable IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
-        vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
+        if (SubsystemToggles.kUseDrive) {
+          drive =
+              new Drive(
+                  new GyroIO() {},
+                  new ModuleIO() {},
+                  new ModuleIO() {},
+                  new ModuleIO() {},
+                  new ModuleIO() {});
+        } else {
+          drive = null;
+        }
+
+        if (SubsystemToggles.kUseVision) {
+          vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
+        } else {
+          vision = null;
+        }
         break;
     }
 
@@ -149,6 +178,11 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
+    if (Robot.isSimulation()) {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), () -> 0));
+    }
 
     if (Robot.isReal()) {
       // Lock to 0° when A button is held
@@ -173,11 +207,8 @@ public class RobotContainer {
                       new Pose2d(drive.getPose().getTranslation(), new Rotation2d()));
       controller.start().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
     } else if (Robot.isSimulation()) {
-      controller.button(1).whileTrue(m_IntakeSimSubsystem.intake());
-      controller.button(2).onTrue(m_IntakeSimSubsystem.clearIntake());
-      // controller.button(1).onTrue(m_MapleSimArenaSubsystem.clearSimFeild());
-      // controller.button(2).onTrue(m_MapleSimArenaSubsystem.resetSimFeild());
-      // controller.button(3).onTrue(m_MapleSimArenaSubsystem.resetSimFeildAuto());
+      controller.button(2).whileTrue(m_IntakeSimSubsystem.intake());
+      controller.button(3).whileTrue(m_IntakeSimSubsystem.outtake());
     }
   }
 
