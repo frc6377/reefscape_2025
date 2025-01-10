@@ -103,7 +103,7 @@ public class Elevator extends SubsystemBase {
   public Command goUp() {
     return startEnd(
         () -> {
-          elevatorMotor.set(.44);
+          elevatorMotor.set(.05);
         },
         () -> elevatorMotor.set(0));
   }
@@ -120,13 +120,12 @@ public class Elevator extends SubsystemBase {
     return runOnce(
         () -> {
           double adjustedSetpoint =
-              (heightLevel.in(Meters)
-                  / (2 * (Math.PI * kElevatorDrumRadius.in(Meters)))
-                  * kElevatorGearing);
+              (heightLevel.in(Meters) / (2 * (Math.PI * kElevatorDrumRadius.in(Meters))));
           elevatorMotor
               .getClosedLoopController()
               .setReference(adjustedSetpoint, ControlType.kPosition);
           SmartDashboard.putNumber("Setpoint", heightLevel.in(Meters));
+          SmartDashboard.putNumber("Setpoint", adjustedSetpoint);
         });
   }
 
@@ -151,6 +150,11 @@ public class Elevator extends SubsystemBase {
   }
 
   @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Encoder rotations", elevatorEncoder.getPosition());
+  }
+
+  @Override
   public void simulationPeriodic() {
     Distance simDist = Meters.zero();
     LinearVelocity simVel = MetersPerSecond.zero();
@@ -161,9 +165,7 @@ public class Elevator extends SubsystemBase {
       simDist = Meters.of(m_elevatorSim.getPositionMeters());
       simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
       simElevatorMotor.iterate(
-          ((simVel.in(MetersPerSecond) / (2 * Math.PI * kElevatorDrumRadius.in(Meters)))
-                  * kElevatorGearing)
-              * 60,
+          ((simVel.in(MetersPerSecond) / (2 * Math.PI * kElevatorDrumRadius.in(Meters)))) * 60,
           RobotController.getBatteryVoltage(),
           sparkPeriod.in(Seconds));
     }

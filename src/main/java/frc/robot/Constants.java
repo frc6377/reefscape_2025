@@ -22,14 +22,14 @@ public final class Constants {
     public static final double elevatorP = 0.10;
     public static final double elevatorI = 0.0;
     public static final double elevatorD = 0.0;
-    public static final double elevatorFF = .0375;
+    public static final double elevatorFF = .0;
     // TODO: Update to conversion between rotations and height for elevator
     public static final double elevatorConversion = 1.0;
   }
 
   public static class ElevatorSimConstants {
     public static final DCMotor m_elevatorGearbox = DCMotor.getNEO(1);
-    public static final double kElevatorGearing = 1.0;
+    public static final double kElevatorGearing = 75.0;
     public static final Mass kCarriageMass = Pounds.of(10);
     public static final Distance kElevatorDrumRadius = Inches.of(1);
     public static final double kMinElevatorHeightMeters = 0.0;
