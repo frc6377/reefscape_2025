@@ -14,7 +14,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.ironmaple.simulation.SimulatedArena;
@@ -57,7 +56,6 @@ public class Robot extends LoggedRobot {
     }
 
     // Set up data receivers & replay source
-    SmartDashboard.putString("Current Mode", Constants.currentMode.toString());
     switch (Constants.currentMode) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
@@ -67,6 +65,7 @@ public class Robot extends LoggedRobot {
 
       case SIM:
         // Running a physics simulator, log to NT
+        Logger.addDataReceiver(new NT4Publisher());
         Logger.addDataReceiver(new NT4Publisher());
         break;
 

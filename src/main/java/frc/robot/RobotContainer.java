@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -40,21 +41,25 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
+
+ @SuppressWarnings("PMD.UnusedPrivateField")
 public class RobotContainer {
   // Subsystems
-  private MapleSimArenaSubsystem m_MapleSimArenaSubsystem;
+  // private MapleSimArenaSubsystem m_MapleSimArenaSubsystem;
   private final Vision vision;
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandPS5Controller ps5Controller = new CommandPS5Controller(0);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -92,7 +97,7 @@ public class RobotContainer {
                     camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
                 new VisionIOPhotonVisionSim(
                     camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
-        m_MapleSimArenaSubsystem = new MapleSimArenaSubsystem();
+        // m_MapleSimArenaSubsystem = new MapleSimArenaSubsystem();
         break;
 
       default:
@@ -138,13 +143,23 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+    Boolean isPS5 = false;
+    if (isPS5) {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -ps5Controller.getLeftY(),
+              () -> -ps5Controller.getLeftX(),
+              () -> -ps5Controller.getRawAxis(5)));
+    } else {
+      // Default command, normal field-relative drive
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -controller.getLeftY(),
+              () -> -controller.getLeftX(),
+              () -> -controller.getRightX()));
+    }
 
     if (Robot.isReal()) {
       // Lock to 0° when A button is held
@@ -169,9 +184,9 @@ public class RobotContainer {
                       new Pose2d(drive.getPose().getTranslation(), new Rotation2d()));
       controller.start().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
     } else if (Robot.isSimulation()) {
-      controller.button(1).onTrue(m_MapleSimArenaSubsystem.clearSimFeild());
-      controller.button(2).onTrue(m_MapleSimArenaSubsystem.resetSimFeild());
-      controller.button(3).onTrue(m_MapleSimArenaSubsystem.resetSimFeildAuto());
+      // controller.button(1).onTrue(m_MapleSimArenaSubsystem.clearSimFeild());
+      // controller.button(2).onTrue(m_MapleSimArenaSubsystem.resetSimFeild());
+      // controller.button(3).onTrue(m_MapleSimArenaSubsystem.resetSimFeildAuto());
     }
   }
 
