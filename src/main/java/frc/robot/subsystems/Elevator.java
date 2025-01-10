@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -55,7 +56,7 @@ public class Elevator extends SubsystemBase {
           .positionConversionFactor(Constants.ElevatorConstants.elevatorConversion);
   public static final ClosedLoopConfig loopCfg =
       new ClosedLoopConfig()
-          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+          .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
           .pidf(
               Constants.ElevatorConstants.elevatorP,
               Constants.ElevatorConstants.elevatorI,
@@ -103,7 +104,7 @@ public class Elevator extends SubsystemBase {
   public Command goUp() {
     return startEnd(
         () -> {
-          elevatorMotor.set(.05);
+          elevatorMotor.set(.2);
         },
         () -> elevatorMotor.set(0));
   }
@@ -111,21 +112,29 @@ public class Elevator extends SubsystemBase {
   public Command goDown() {
     return startEnd(
         () -> {
-          elevatorMotor.set(-.05);
+          elevatorMotor.set(-.2);
         },
         () -> elevatorMotor.set(0));
+  }
+
+  public Command zeroMotorEncoder() {
+    return Commands.runOnce(
+        () -> {
+          elevatorMotor.getEncoder().setPosition(0);
+        });
   }
 
   public Command changeElevation(Distance heightLevel) {
     return runOnce(
         () -> {
           double adjustedSetpoint =
-              (heightLevel.in(Meters) / (2 * (Math.PI * kElevatorDrumRadius.in(Meters))));
+              (heightLevel.in(Meters) / (2 * (Math.PI * kElevatorDrumRadius.in(Meters))))
+                  * kElevatorGearing;
           elevatorMotor
               .getClosedLoopController()
               .setReference(adjustedSetpoint, ControlType.kPosition);
           SmartDashboard.putNumber("Setpoint", heightLevel.in(Meters));
-          SmartDashboard.putNumber("Setpoint", adjustedSetpoint);
+          SmartDashboard.putNumber("Setpoint Rotations", adjustedSetpoint);
         });
   }
 
@@ -152,6 +161,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Encoder rotations", elevatorEncoder.getPosition());
+    SmartDashboard.putNumber("Motor Encoder Rotation", elevatorMotor.getEncoder().getPosition());
   }
 
   @Override

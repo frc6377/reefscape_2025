@@ -35,6 +35,7 @@ public class RobotContainer {
         .a()
         .and(m_driverController.rightBumper().negate())
         .whileTrue(elevator.goDown());
+    m_driverController.start().onTrue(elevator.zeroMotorEncoder());
   }
 
   public Command getAutonomousCommand() {
