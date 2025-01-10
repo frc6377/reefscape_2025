@@ -11,11 +11,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 
 public class MapleSimArenaSubsystem extends SubsystemBase {
+  private SwerveDriveSimulation driveSimulation;
 
   /** Creates a new MapleSimArenaSubsystem. */
   public MapleSimArenaSubsystem() {}
+
+  public SwerveDriveSimulation getDriveSimulation() {
+    return driveSimulation;
+  }
 
   public Command clearSimFeild() {
     return Commands.runOnce(() -> SimulatedArena.getInstance().clearGamePieces());

@@ -13,6 +13,9 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
+
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -33,5 +36,13 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
+  }
+
+
+  public class IntakeConstants {
+    // Simulation Values
+    public static final Distance kIntakeWidth = Inches.of(26);
+    public static final Distance kIntakeExtension = Inches.of(12);
+    public static final int kIntakeCapacity = 1;
   }
 }
