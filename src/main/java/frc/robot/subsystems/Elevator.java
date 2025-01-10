@@ -9,8 +9,8 @@ import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.ElevatorSimConstants.kCarriageMass;
 import static frc.robot.Constants.ElevatorSimConstants.kElevatorDrumRadius;
 import static frc.robot.Constants.ElevatorSimConstants.kElevatorGearing;
-import static frc.robot.Constants.ElevatorSimConstants.kMaxElevatorHeightMeters;
-import static frc.robot.Constants.ElevatorSimConstants.kMinElevatorHeightMeters;
+import static frc.robot.Constants.ElevatorSimConstants.kMaxElevatorHeight;
+import static frc.robot.Constants.ElevatorSimConstants.kMinElevatorHeight;
 import static frc.robot.Constants.ElevatorSimConstants.m_elevatorGearbox;
 
 import com.revrobotics.sim.SparkMaxSim;
@@ -73,8 +73,8 @@ public class Elevator extends SubsystemBase {
             kElevatorGearing,
             kCarriageMass.in(Kilograms),
             kElevatorDrumRadius.in(Meters),
-            kMinElevatorHeightMeters,
-            kMaxElevatorHeightMeters,
+            kMinElevatorHeight.in(Meters),
+            kMaxElevatorHeight.in(Meters),
             true,
             0);
     elevatorMotor.configure(

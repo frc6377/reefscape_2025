@@ -32,7 +32,7 @@ public final class Constants {
     public static final double kElevatorGearing = 75.0;
     public static final Mass kCarriageMass = Pounds.of(10);
     public static final Distance kElevatorDrumRadius = Inches.of(1);
-    public static final double kMinElevatorHeightMeters = 0.0;
-    public static final double kMaxElevatorHeightMeters = 1.8796;
+    public static final Distance kMinElevatorHeight = Inches.zero();
+    public static final Distance kMaxElevatorHeight = Inches.of(76);
   }
 }
