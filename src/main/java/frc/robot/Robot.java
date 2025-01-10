@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -54,8 +55,9 @@ public class Robot extends LoggedRobot {
       } catch (NoSuchElementException
           | StringIndexOutOfBoundsException
           | UnsupportedEncodingException ex) {
-        System.out.println("No log file found, simulating as normal. \n");
-        Logger.addDataReceiver(new NT4Publisher());
+        System.out.println(); // put new line after prompt
+        DriverStation.reportWarning("No log file found, simulating as normal. \n", false);
+        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
       }
     }
 

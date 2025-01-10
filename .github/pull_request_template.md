@@ -3,7 +3,7 @@
 <!--- If this PR fully addresses an issue, please say "Fixes #1234", -->
 <!--- as this will allow Github to automatically close the related Issue -->
 
-## Implementaion
+## Implementation
 <!--- Explain what was done to address the problem/need -->
 <!--- Also mention any known or possible side effects -->
 
