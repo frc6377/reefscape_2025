@@ -24,7 +24,6 @@ import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
@@ -57,15 +56,16 @@ public class Elevator extends SubsystemBase {
   public static final ClosedLoopConfig loopCfg =
       new ClosedLoopConfig()
           .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-          .pid(
+          .pidf(
               Constants.ElevatorConstants.elevatorP,
               Constants.ElevatorConstants.elevatorI,
-              Constants.ElevatorConstants.elevatorD);
+              Constants.ElevatorConstants.elevatorD,
+              Constants.ElevatorConstants.elevatorFF);
   private final ElevatorSim m_elevatorSim;
 
   public Elevator() {
     sparkPeriod = Millisecond.one();
-    elevatorMotor = new SparkMax(0, MotorType.kBrushless);
+    elevatorMotor = new SparkMax(1, MotorType.kBrushless);
     elevatorEncoder = elevatorMotor.getAbsoluteEncoder();
     m_elevatorSim =
         new ElevatorSim(
@@ -103,7 +103,7 @@ public class Elevator extends SubsystemBase {
   public Command goUp() {
     return startEnd(
         () -> {
-          elevatorMotor.set(.5);
+          elevatorMotor.set(.44);
         },
         () -> elevatorMotor.set(0));
   }
@@ -111,7 +111,7 @@ public class Elevator extends SubsystemBase {
   public Command goDown() {
     return startEnd(
         () -> {
-          elevatorMotor.set(-.5);
+          elevatorMotor.set(-.05);
         },
         () -> elevatorMotor.set(0));
   }
@@ -119,10 +119,14 @@ public class Elevator extends SubsystemBase {
   public Command changeElevation(Distance heightLevel) {
     return runOnce(
         () -> {
+          double adjustedSetpoint =
+              (heightLevel.in(Meters)
+                  / (2 * (Math.PI * kElevatorDrumRadius.in(Meters)))
+                  * kElevatorGearing);
           elevatorMotor
               .getClosedLoopController()
-              .setReference(heightLevel.in(Inches), ControlType.kPosition);
-          SmartDashboard.putNumber("Setpoint", (heightLevel.in(Meters)/(kElevatorGearing))*(2*(Math.PI * kElevatorDrumRadius.in(Inches))));
+              .setReference(adjustedSetpoint, ControlType.kPosition);
+          SmartDashboard.putNumber("Setpoint", heightLevel.in(Meters));
         });
   }
 

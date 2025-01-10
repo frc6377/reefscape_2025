@@ -27,8 +27,14 @@ public class RobotContainer {
     m_driverController.rightBumper().and(m_driverController.b()).onTrue(elevator.L2());
     m_driverController.rightBumper().and(m_driverController.x()).onTrue(elevator.L3());
     m_driverController.rightBumper().and(m_driverController.y()).onTrue(elevator.L4());
-    m_driverController.b().whileTrue(elevator.goUp());
-    m_driverController.a().whileTrue(elevator.goDown());
+    m_driverController
+        .b()
+        .and(m_driverController.rightBumper().negate())
+        .whileTrue(elevator.goUp());
+    m_driverController
+        .a()
+        .and(m_driverController.rightBumper().negate())
+        .whileTrue(elevator.goDown());
   }
 
   public Command getAutonomousCommand() {
