@@ -87,6 +87,9 @@ task(replayWatch, type: JavaExec) {
 }
 
 task unpackSaddlebags(type: Exec) {
+    onlyIf {
+        System.env['GITHUB_WORKFLOW'] == null
+    }
     // Possible paths to Git installation
     // List Linux paths first
     def gitPaths = [
