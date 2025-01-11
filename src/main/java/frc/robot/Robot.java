@@ -7,7 +7,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -22,7 +21,7 @@ import org.littletonrobotics.junction.wpilog.*;
 
 public class Robot extends LoggedRobot {
 
-  public static final Time period = Seconds.of(Robot.kDefaultPeriod);
+  public static final Time period = Seconds.of(Robot.defaultPeriodSecs);
   public static final boolean isCompetition = false;
 
   private Command m_autonomousCommand;
