@@ -6,12 +6,12 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Millisecond;
 import static edu.wpi.first.units.Units.Seconds;
-import static frc.robot.Constants.ElevatorSimConstants.kCarriageMass;
-import static frc.robot.Constants.ElevatorSimConstants.kElevatorDrumRadius;
-import static frc.robot.Constants.ElevatorSimConstants.kElevatorGearing;
-import static frc.robot.Constants.ElevatorSimConstants.kMaxElevatorHeight;
-import static frc.robot.Constants.ElevatorSimConstants.kMinElevatorHeight;
-import static frc.robot.Constants.ElevatorSimConstants.m_elevatorGearbox;
+import static frc.robot.Constants.ElevatorConstants.kCarriageMass;
+import static frc.robot.Constants.ElevatorConstants.kElevatorDrumRadius;
+import static frc.robot.Constants.ElevatorConstants.kElevatorGearbox;
+import static frc.robot.Constants.ElevatorConstants.kElevatorGearing;
+import static frc.robot.Constants.ElevatorConstants.kMaxElevatorHeight;
+import static frc.robot.Constants.ElevatorConstants.kMinElevatorHeight;
 
 import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
@@ -40,53 +40,55 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
 
 public class Elevator extends SubsystemBase {
-  SparkMax elevatorMotor;
-  SparkAbsoluteEncoder elevatorEncoder;
+  private SparkMax elevatorMotor;
+  private SparkAbsoluteEncoder elevatorEncoder;
   private SparkMaxSim simElevatorMotor;
   private final Time sparkPeriod;
-  private static Mechanism2d mech = new Mechanism2d(10, 10);
+  private static Mechanism2d mech = new Mechanism2d(2, 2);
   private static ComplexWidget widg;
   private MechanismLigament2d elevatorMech;
 
   public static final AbsoluteEncoderConfig encoderCfg =
       new AbsoluteEncoderConfig()
-          .positionConversionFactor(Constants.ElevatorConstants.elevatorConversion);
+          .positionConversionFactor(Constants.ElevatorConstants.kElevatorConversion);
   public static final ClosedLoopConfig loopCfg =
       new ClosedLoopConfig()
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
           .pidf(
-              Constants.ElevatorConstants.elevatorP,
-              Constants.ElevatorConstants.elevatorI,
-              Constants.ElevatorConstants.elevatorD,
-              Constants.ElevatorConstants.elevatorFF);
-  private final ElevatorSim m_elevatorSim;
+              Constants.ElevatorConstants.P,
+              Constants.ElevatorConstants.I,
+              Constants.ElevatorConstants.D,
+              Constants.ElevatorConstants.FF);
+  private ElevatorSim m_elevatorSim;
 
   public Elevator() {
     sparkPeriod = Millisecond.one();
-    elevatorMotor = new SparkMax(1, MotorType.kBrushless);
+    elevatorMotor = new SparkMax(MotorIDConstants.kElevatorMotor1, MotorType.kBrushless);
     elevatorEncoder = elevatorMotor.getAbsoluteEncoder();
-    m_elevatorSim =
-        new ElevatorSim(
-            m_elevatorGearbox,
-            kElevatorGearing,
-            kCarriageMass.in(Kilograms),
-            kElevatorDrumRadius.in(Meters),
-            kMinElevatorHeight.in(Meters),
-            kMaxElevatorHeight.in(Meters),
-            true,
-            0);
     elevatorMotor.configure(
         new SparkMaxConfig().apply(encoderCfg).apply(loopCfg),
         ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
     if (Robot.isSimulation()) {
+      m_elevatorSim =
+          new ElevatorSim(
+              kElevatorGearbox,
+              kElevatorGearing,
+              kCarriageMass.in(Kilograms),
+              kElevatorDrumRadius.in(Meters),
+              kMinElevatorHeight.in(Meters),
+              kMaxElevatorHeight.in(Meters),
+              true,
+              0);
       simElevatorMotor =
-          new SparkMaxSim(elevatorMotor, Constants.ElevatorSimConstants.m_elevatorGearbox);
+          new SparkMaxSim(elevatorMotor, Constants.ElevatorConstants.kElevatorGearbox);
       elevatorMech =
-          mech.getRoot("root", 5, 5)
+          mech.getRoot("root", 1, 0)
               .append(
                   new MechanismLigament2d(
                       "Elevator Mech [0]", 1, 90, 10, new Color8Bit(Color.kPurple)));
@@ -94,11 +96,18 @@ public class Elevator extends SubsystemBase {
       if (widg == null) {
         widg = Shuffleboard.getTab(getName()).add("Elevator", mech);
       }
+
+      SmartDashboard.putNumber("Elevator/Setpoint", 0);
+      SmartDashboard.putNumber("Elevator/Setpoint Rotations", 0);
     }
   }
 
+  public Distance rotationsToHeight(double rotations) {
+    return ElevatorConstants.kElevatorDrumCercumfrence.times(rotations).div(kElevatorGearing);
+  }
+
   public Distance getElevatorHeight() {
-    return Inches.of(elevatorEncoder.getPosition());
+    return rotationsToHeight(elevatorMotor.getEncoder().getPosition());
   }
 
   public Command goUp() {
@@ -133,8 +142,8 @@ public class Elevator extends SubsystemBase {
           elevatorMotor
               .getClosedLoopController()
               .setReference(adjustedSetpoint, ControlType.kPosition);
-          SmartDashboard.putNumber("Setpoint", heightLevel.in(Meters));
-          SmartDashboard.putNumber("Setpoint Rotations", adjustedSetpoint);
+          SmartDashboard.putNumber("Elevator/Setpoint", heightLevel.in(Meters));
+          SmartDashboard.putNumber("Elevator/Setpoint Rotations", adjustedSetpoint);
         });
   }
 
@@ -143,31 +152,35 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command L1() {
-    return changeElevation(Constants.ElevatorConstants.L1Height);
+    return changeElevation(Constants.ElevatorConstants.kL1Height);
   }
 
   public Command L2() {
-    return changeElevation(Constants.ElevatorConstants.L2Height);
+    return changeElevation(Constants.ElevatorConstants.kL2Height);
   }
 
   public Command L3() {
-    return changeElevation(Constants.ElevatorConstants.L3Height);
+    return changeElevation(Constants.ElevatorConstants.kL3Height);
   }
 
   public Command L4() {
-    return changeElevation(Constants.ElevatorConstants.L4Height);
+    return changeElevation(Constants.ElevatorConstants.kL4Height);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Encoder rotations", elevatorEncoder.getPosition());
-    SmartDashboard.putNumber("Motor Encoder Rotation", elevatorMotor.getEncoder().getPosition());
+    SmartDashboard.putNumber("Elevator/Encoder rotations", elevatorEncoder.getPosition());
+    SmartDashboard.putNumber(
+        "Elevator/Motor Encoder Rotation", elevatorMotor.getEncoder().getPosition());
+    SmartDashboard.putNumber("Elevator/Motor Percent", elevatorMotor.get());
+    SmartDashboard.putNumber("Elevator/Height", getElevatorHeight().in(Meters));
   }
 
   @Override
   public void simulationPeriodic() {
     Distance simDist = Meters.zero();
     LinearVelocity simVel = MetersPerSecond.zero();
+
     for (Time i = Seconds.zero(); i.lt(Robot.period); i = i.plus(sparkPeriod)) {
       m_elevatorSim.setInputVoltage(
           simElevatorMotor.getBusVoltage() * simElevatorMotor.getAppliedOutput());
@@ -179,12 +192,11 @@ public class Elevator extends SubsystemBase {
           RobotController.getBatteryVoltage(),
           sparkPeriod.in(Seconds));
     }
-    elevatorMech.setLength(1 + (simDist.in(Meters)));
-    SmartDashboard.putNumber("Sim Elevator Length", simDist.in(Meters));
-    SmartDashboard.putNumber("Sim Elevator velocity", simVel.in(MetersPerSecond));
-    SmartDashboard.putNumber("Motor Percent", elevatorMotor.get());
-    SmartDashboard.putNumber("Sim Elevator", m_elevatorSim.getPositionMeters());
-    SmartDashboard.putNumber(
-        "Sim power", simElevatorMotor.getBusVoltage() * simElevatorMotor.getAppliedOutput());
+
+    elevatorMech.setLength(0.1 + (simDist.in(Meters)));
+
+    SmartDashboard.putNumber("Elevator/Sim Length", simDist.in(Meters));
+    SmartDashboard.putNumber("Elevator/Sim velocity", simVel.in(MetersPerSecond));
+    SmartDashboard.putNumber("Elevator/Sim Pose", m_elevatorSim.getPositionMeters());
   }
 }
