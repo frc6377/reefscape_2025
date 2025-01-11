@@ -23,12 +23,17 @@ public final class Constants {
     public static final Distance kL1Height = Inches.of(18);
     public static final Distance kL2Height = Inches.of(31.875);
     public static final Distance kL3Height = Inches.of(47.625);
-    public static final Distance kL4Height = Inches.of(72);
+    // public static final Distance kL4Height = Inches.of(72);
+    public static final Distance kL4Height = Inches.of(64);
+
     public static final double P = 0.10;
     public static final double I = 0.0;
     public static final double D = 0.0;
     public static final double FF = 0.0;
     public static final double kElevatorConversion = 1.0;
+
+    // The carriage on the elv effectivly adds a gearing multiplier of 2
+    public static final double kCarageFactor = 2;
 
     // Simulation Constants
     public static final DCMotor kElevatorGearbox = DCMotor.getNEO(1);
