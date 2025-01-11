@@ -74,6 +74,10 @@ public class Elevator extends SubsystemBase {
         new SparkMaxConfig().apply(encoderCfg).apply(loopCfg),
         ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
+
+    elevatorMotor.getEncoder().setPosition(elevatorEncoder.getPosition()*kElevatorGearing);
+    
+    // Simulation
     if (Robot.isSimulation()) {
       m_elevatorSim =
           new ElevatorSim(
