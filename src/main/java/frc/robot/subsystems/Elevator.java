@@ -75,8 +75,8 @@ public class Elevator extends SubsystemBase {
         ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
 
-    elevatorMotor.getEncoder().setPosition(elevatorEncoder.getPosition()*kElevatorGearing);
-    
+    elevatorMotor.getEncoder().setPosition(elevatorEncoder.getPosition() * kElevatorGearing);
+
     // Simulation
     if (Robot.isSimulation()) {
       m_elevatorSim =
@@ -107,7 +107,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public Distance rotationsToHeight(double rotations) {
-    return ElevatorConstants.kElevatorDrumCercumfrence.times(rotations).div(kElevatorGearing);
+    return ElevatorConstants.kElevatorDrumCircumference.times(rotations).div(kElevatorGearing);
   }
 
   public Distance getElevatorHeight() {
