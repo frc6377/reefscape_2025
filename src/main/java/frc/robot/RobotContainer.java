@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.IntakeSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed =
@@ -40,6 +41,8 @@ public class RobotContainer {
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final Elevator elevator = new Elevator();
+
+  private final IntakeSubsystem intake = new IntakeSubsystem();
 
   public RobotContainer() {
     configureBindings();
@@ -111,6 +114,9 @@ public class RobotContainer {
     m_driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     drivetrain.registerTelemetry(logger::telemeterize);
+    // Set the intake rollers to the left and right triggers
+    m_driverController.leftTrigger().whileTrue(intake.spinClockWise());
+    m_driverController.rightTrigger().whileTrue(intake.spinCounterClockWise());
   }
 
   public Command getAutonomousCommand() {
