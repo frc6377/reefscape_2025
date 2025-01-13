@@ -115,8 +115,8 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
     // Set the intake rollers to the left and right triggers
-    m_driverController.leftTrigger().whileTrue(intake.spinClockWise());
-    m_driverController.rightTrigger().whileTrue(intake.spinCounterClockWise());
+    m_driverController.pov(180).whileTrue(intake.IntakeCommand());
+    m_driverController.pov(0).whileTrue(intake.OuttakeCommand());
   }
 
   public Command getAutonomousCommand() {
