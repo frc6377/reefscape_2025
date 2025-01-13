@@ -26,6 +26,8 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     this.swerveDriveSimulation = swerveDriveSimulation;
 
     logFeildArea(SimulationFeildConstants.kSourceAreas);
+    Logger.recordOutput(
+        "FieldSimulation/Scoring Poses", SimulationFeildConstants.kBlueCoralScorePoses);
   }
 
   public void logFeildArea(Pose2d[][] area) {
