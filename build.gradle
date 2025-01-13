@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2025.1.1"
+    id "edu.wpi.first.GradleRIO" version "2025.2.1"
     id 'com.diffplug.spotless' version '6.25.0'
     id "com.peterabeles.gversion" version "1.10"
     id "maven-publish"
@@ -59,16 +59,16 @@ wpi.java.debugJni = false
 // Set this to true to enable desktop support.
 def includeDesktopSupport = true
 
-/*repositories {
- maven {
- url = uri("https://maven.pkg.github.com/Mechanical-Advantage/AdvantageKit")
- credentials {
- username = "Mechanical-Advantage-Bot"
- password = "\u0067\u0068\u0070\u005f\u006e\u0056\u0051\u006a\u0055\u004f\u004c\u0061\u0079\u0066\u006e\u0078\u006e\u0037\u0051\u0049\u0054\u0042\u0032\u004c\u004a\u006d\u0055\u0070\u0073\u0031\u006d\u0037\u004c\u005a\u0030\u0076\u0062\u0070\u0063\u0051"
- }
- }
- mavenLocal()
- }*/
+repositories {
+    maven {
+        url = uri("https://maven.pkg.github.com/Mechanical-Advantage/AdvantageKit")
+        credentials {
+            username = "Mechanical-Advantage-Bot"
+            password = "\u0067\u0068\u0070\u005f\u006e\u0056\u0051\u006a\u0055\u004f\u004c\u0061\u0079\u0066\u006e\u0078\u006e\u0037\u0051\u0049\u0054\u0042\u0032\u004c\u004a\u006d\u0055\u0070\u0073\u0031\u006d\u0037\u004c\u005a\u0030\u0076\u0062\u0070\u0063\u0051"
+        }
+    }
+    mavenLocal()
+}
 
 project.compileJava.dependsOn(createVersionFile)
 gversion {
@@ -80,15 +80,39 @@ gversion {
     indent       = "  "
 }
 
-/*configurations.all {
- exclude group: "edu.wpi.first.wpilibj"
- }*/
 
-//task(checkAkitInstall, dependsOn: "classes", type: JavaExec) {
-//    mainClass = "org.littletonrobotics.junction.CheckInstall"
-//    classpath = sourceSets.main.runtimeClasspath
-//}
-//compileJava.finalizedBy checkAkitInstall
+task(replayWatch, type: JavaExec) {
+    mainClass = "org.littletonrobotics.junction.ReplayWatch"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task unpackSaddlebags(type: Exec) {
+    onlyIf {
+        System.env['GITHUB_WORKFLOW'] == null
+    }
+    // Possible paths to Git installation
+    // List Linux paths first
+    def gitPaths = [
+        '/usr/bin/git',
+        '/bin/git',
+        'C:/Program Files/Git/bin/git.exe',
+        'C:/Program Files(x86)/Git/bin/git.exe'
+    ]
+    // Set first existing path as the program to execute
+    for (g in gitPaths) {
+        if (file(g).exists()) {
+            executable g
+            break
+        }
+    }
+    // If saddlebags submodule is initialized already, just run update
+    // else initialize the submodule
+    if (file('src/saddlebags/README.md').exists())
+        args 'submodule', 'update'
+    else
+        args 'submodule', 'update', '--init'
+}
+
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 5.
@@ -114,8 +138,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    //def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
-    //annotationProcessor "org.littletonrobotics.akit.junction:junction-autolog:$akitJson.version"
+    def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
+    annotationProcessor "org.littletonrobotics.akit:akit-autolog:$akitJson.version"
     testImplementation 'org.mockito:mockito-core:5.8.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.1'
 }
@@ -206,6 +230,7 @@ test {
     useJUnitPlatform()
     systemProperty 'junit.jupiter.extensions.autodetection.enabled', 'true'
 }
+compileJava.dependsOn("unpackSaddlebags")
 compileJava.finalizedBy("spotlessApply")
 
 sourceSets {
