@@ -18,7 +18,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private SparkMax intakeMotor;
 
   public IntakeSubsystem() {
-    intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushless);
+    intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushed);
   }
 
   // Made a command to spin clockwise
