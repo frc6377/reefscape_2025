@@ -15,7 +15,7 @@ public final class Constants {
   public static class MotorIDConstants {
     // Rev Can Bus
     public static final int kElevatorMotor1 = 1;
-    public static final int kIntakeMotor = 2;
+    public static final int kIntakeMotor = 9;
     // CANavor Can Bus
   }
 
