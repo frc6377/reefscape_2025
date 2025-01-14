@@ -54,6 +54,7 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController operator = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -100,10 +101,6 @@ public class RobotContainer {
                   new ModuleIOSim(driveSimulation.getModules()[2]),
                   new ModuleIOSim(driveSimulation.getModules()[3]));
           m_MapleSimArenaSubsystem = new MapleSimArenaSubsystem(driveSimulation);
-        } else {
-          driveSimulation = null;
-          drive = null;
-          m_MapleSimArenaSubsystem = null;
         }
 
         if (SubsystemToggles.kUseVision) {
@@ -114,14 +111,14 @@ public class RobotContainer {
                       camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
                   new VisionIOPhotonVisionSim(
                       camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
-        } else {
-          vision = null;
         }
 
         if (SubsystemToggles.kUseIntake) {
           m_IntakeSimSubsystem = new IntakeSubsystem(driveSimulation);
-        } else {
-          m_IntakeSimSubsystem = null;
+        }
+
+        if (SubsystemToggles.kUseElevator) {
+          m_ElevatorSubsystem = new ElevatorSubsystem();
         }
         break;
 
@@ -135,14 +132,10 @@ public class RobotContainer {
                   new ModuleIO() {},
                   new ModuleIO() {},
                   new ModuleIO() {});
-        } else {
-          drive = null;
         }
 
         if (SubsystemToggles.kUseVision) {
           vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
-        } else {
-          vision = null;
         }
         break;
     }
@@ -212,6 +205,11 @@ public class RobotContainer {
     } else if (Robot.isSimulation()) {
       controller.button(2).whileTrue(m_IntakeSimSubsystem.IntakeCommand());
       controller.button(3).whileTrue(m_IntakeSimSubsystem.OuttakeCommand());
+
+      operator.button(1).whileTrue(m_ElevatorSubsystem.L1());
+      operator.button(2).whileTrue(m_ElevatorSubsystem.L2());
+      operator.button(3).whileTrue(m_ElevatorSubsystem.L3());
+      operator.button(4).whileTrue(m_ElevatorSubsystem.L4());
     }
   }
 

@@ -126,20 +126,20 @@ public final class Constants {
 
     // X, Y Cordiantes
     private static final Distance[][] kStickPoses =
-      new Distance[][] {
-        new Distance[] {Meters.of(3.71345), Meters.of(3.85297)},
-        new Distance[] {Meters.of(3.71345), Meters.of(4.18158)},
-        new Distance[] {Meters.of(3.96073), Meters.of(3.42664)},
-        new Distance[] {Meters.of(3.96073), Meters.of(4.60890)},
-        new Distance[] {Meters.of(4.24475), Meters.of(3.26134)},
-        new Distance[] {Meters.of(4.24475), Meters.of(4.77222)},
-        new Distance[] {Meters.of(4.73760), Meters.of(3.26233)},
-        new Distance[] {Meters.of(4.73760), Meters.of(4.77321)},
-        new Distance[] {Meters.of(5.02276), Meters.of(3.42565)},
-        new Distance[] {Meters.of(5.02276), Meters.of(4.60791)},
-        new Distance[] {Meters.of(5.26833), Meters.of(3.85297)},
-        new Distance[] {Meters.of(5.26833), Meters.of(4.18158)},
-      };
+        new Distance[][] {
+          new Distance[] {Meters.of(3.71345), Meters.of(3.85297)},
+          new Distance[] {Meters.of(3.71345), Meters.of(4.18158)},
+          new Distance[] {Meters.of(3.96073), Meters.of(3.42664)},
+          new Distance[] {Meters.of(3.96073), Meters.of(4.60890)},
+          new Distance[] {Meters.of(4.24475), Meters.of(3.26134)},
+          new Distance[] {Meters.of(4.24475), Meters.of(4.77222)},
+          new Distance[] {Meters.of(4.73760), Meters.of(3.26233)},
+          new Distance[] {Meters.of(4.73760), Meters.of(4.77321)},
+          new Distance[] {Meters.of(5.02276), Meters.of(3.42565)},
+          new Distance[] {Meters.of(5.02276), Meters.of(4.60791)},
+          new Distance[] {Meters.of(5.26833), Meters.of(3.85297)},
+          new Distance[] {Meters.of(5.26833), Meters.of(4.18158)},
+        };
 
     public static final Pose3d[] kBlueCoralScorePoses = {
       // Level 1 (L1 - Trough Positions)
@@ -342,5 +342,6 @@ public final class Constants {
     public static final boolean kUseIntake = true;
     public static final boolean kUseDrive = true;
     public static final boolean kUseVision = true;
+    public static final boolean kUseElevator = true;
   }
 }
