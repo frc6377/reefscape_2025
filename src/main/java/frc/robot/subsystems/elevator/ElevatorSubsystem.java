@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilograms;
@@ -44,7 +44,7 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
 
-public class Elevator extends SubsystemBase {
+public class ElevatorSubsystem extends SubsystemBase {
   private SparkMax elevatorMotor;
   private SparkAbsoluteEncoder elevatorEncoder;
   private SparkMaxSim simElevatorMotor;
@@ -66,7 +66,7 @@ public class Elevator extends SubsystemBase {
               Constants.ElevatorConstants.FF);
   private ElevatorSim m_elevatorSim;
 
-  public Elevator() {
+  public ElevatorSubsystem() {
     sparkPeriod = Millisecond.one();
     elevatorMotor = new SparkMax(MotorIDConstants.kElevatorMotor1, MotorType.kBrushless);
     elevatorEncoder = elevatorMotor.getAbsoluteEncoder();

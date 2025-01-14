@@ -19,8 +19,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -43,11 +45,46 @@ public final class Constants {
     REPLAY
   }
 
+  public static class MotorIDConstants {
+    // Rev Can Bus
+    public static final int kElevatorMotor1 = 1;
+    public static final int kIntakeMotor = 9;
+    // CANavor Can Bus
+  }
+
   public class IntakeConstants {
+    public static final double kSpeed = 0.5;
+
     // Simulation Values
     public static final Distance kIntakeWidth = Inches.of(26);
     public static final Distance kIntakeExtension = Inches.of(12);
     public static final int kIntakeCapacity = 1;
+  }
+
+  public static class ElevatorConstants {
+    public static final Distance kL1Height = Inches.of(18);
+    public static final Distance kL2Height = Inches.of(31.875);
+    public static final Distance kL3Height = Inches.of(47.625);
+    public static final Distance kL4Height = Inches.of(59);
+
+    public static final double P = 0.10;
+    public static final double I = 0.0;
+    public static final double D = 0.0;
+    public static final double FF = 0.0;
+    public static final double kElevatorConversion = 1.0;
+
+    // The carriage on the elv effectivly adds a gearing multiplier of 2
+    public static final double kCarageFactor = 2;
+
+    // Simulation Constants
+    public static final DCMotor kElevatorGearbox = DCMotor.getNEO(1);
+    public static final double kElevatorGearing = 75.0;
+    public static final Mass kCarriageMass = Pounds.of(10);
+    public static final Distance kElevatorDrumRadius = Inches.of(1.729 / 2);
+    public static final Distance kMinElevatorHeight = Inches.zero();
+    public static final Distance kMaxElevatorHeight = Inches.of(76);
+    public static final Distance kElevatorDrumCircumference =
+        kElevatorDrumRadius.times(2 * Math.PI);
   }
 
   public class SimulationFeildConstants {
@@ -88,216 +125,216 @@ public final class Constants {
     private static final Angle kYaw180 = Degrees.of(180);
 
     // X, Y Cordiantes
-    private static final Pose2d[] kStickPoses =
-        new Pose2d[] {
-          new Pose2d(3.71345, 3.85297, new Rotation2d()),
-          new Pose2d(3.71345, 4.18158, new Rotation2d()),
-          new Pose2d(3.96073, 3.42664, new Rotation2d()),
-          new Pose2d(3.96073, 4.6089, new Rotation2d()),
-          new Pose2d(4.24475, 3.26134, new Rotation2d()),
-          new Pose2d(4.24475, 4.77222, new Rotation2d()),
-          new Pose2d(4.73760, 3.26233, new Rotation2d()),
-          new Pose2d(4.73760, 4.77321, new Rotation2d()),
-          new Pose2d(5.02276, 3.42565, new Rotation2d()),
-          new Pose2d(5.02276, 4.60791, new Rotation2d()),
-          new Pose2d(5.26833, 3.85297, new Rotation2d()),
-          new Pose2d(5.26833, 4.18158, new Rotation2d()),
-        };
+    private static final Distance[][] kStickPoses =
+      new Distance[][] {
+        new Distance[] {Meters.of(3.71345), Meters.of(3.85297)},
+        new Distance[] {Meters.of(3.71345), Meters.of(4.18158)},
+        new Distance[] {Meters.of(3.96073), Meters.of(3.42664)},
+        new Distance[] {Meters.of(3.96073), Meters.of(4.60890)},
+        new Distance[] {Meters.of(4.24475), Meters.of(3.26134)},
+        new Distance[] {Meters.of(4.24475), Meters.of(4.77222)},
+        new Distance[] {Meters.of(4.73760), Meters.of(3.26233)},
+        new Distance[] {Meters.of(4.73760), Meters.of(4.77321)},
+        new Distance[] {Meters.of(5.02276), Meters.of(3.42565)},
+        new Distance[] {Meters.of(5.02276), Meters.of(4.60791)},
+        new Distance[] {Meters.of(5.26833), Meters.of(3.85297)},
+        new Distance[] {Meters.of(5.26833), Meters.of(4.18158)},
+      };
 
     public static final Pose3d[] kBlueCoralScorePoses = {
       // Level 1 (L1 - Trough Positions)
-      new Pose3d(0, 0, kL1H.in(Meters), new Rotation3d()),
-      new Pose3d(0, 0, kL1H.in(Meters), new Rotation3d()),
-      new Pose3d(0, 0, kL1H.in(Meters), new Rotation3d()),
-      new Pose3d(0, 0, kL1H.in(Meters), new Rotation3d()),
-      new Pose3d(0, 0, kL1H.in(Meters), new Rotation3d()),
-      new Pose3d(0, 0, kL1H.in(Meters), new Rotation3d()),
+      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
+      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
+      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
+      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
+      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
+      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
 
       // Level 2 (L2 - Lower Branches)
       new Pose3d(
-          kStickPoses[0].getX(),
-          kStickPoses[0].getY(),
-          kL2H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), 0)),
+          kStickPoses[0][0],
+          kStickPoses[0][1],
+          kL2H,
+          new Rotation3d(Radian.zero(), kL2L3Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[1].getX(),
-          kStickPoses[1].getY(),
-          kL2H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), 0)),
+          kStickPoses[1][0],
+          kStickPoses[1][1],
+          kL2H,
+          new Rotation3d(Radian.zero(), kL2L3Angle, Radian.zero())),
       new Pose3d(
-          kStickPoses[2].getX(),
-          kStickPoses[2].getY(),
-          kL2H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), kYaw60.in(Radians))),
+          kStickPoses[2][0],
+          kStickPoses[2][1],
+          kL2H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, kYaw60)),
       new Pose3d(
-          kStickPoses[3].getX(),
-          kStickPoses[3].getY(),
-          kL2H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), -kYaw60.in(Radians))),
+          kStickPoses[3][0],
+          kStickPoses[3][1],
+          kL2H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, Degrees.of(-60))),
       new Pose3d(
-          kStickPoses[4].getX(),
-          kStickPoses[4].getY(),
-          kL2H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), kYaw60.in(Radians))),
+          kStickPoses[4][0],
+          kStickPoses[4][1],
+          kL2H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, kYaw60)),
       new Pose3d(
-          kStickPoses[5].getX(),
-          kStickPoses[5].getY(),
-          kL2H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), -kYaw60.in(Radians))),
+          kStickPoses[5][0],
+          kStickPoses[5][1],
+          kL2H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, Degrees.of(-60))),
       new Pose3d(
-          kStickPoses[6].getX(),
-          kStickPoses[6].getY(),
-          kL2H.in(Meters),
-          new Rotation3d(0, -kL2L3Angle.in(Radians), -kYaw60.in(Radians))),
+          kStickPoses[6][0],
+          kStickPoses[6][1],
+          kL2H,
+          new Rotation3d(Radians.zero(), Degrees.of(-35), Degrees.of(-60))),
       new Pose3d(
-          kStickPoses[7].getX(),
-          kStickPoses[7].getY(),
-          kL2H.in(Meters),
-          new Rotation3d(0, -kL2L3Angle.in(Radians), kYaw60.in(Radians))),
+          kStickPoses[7][0],
+          kStickPoses[7][1],
+          kL2H,
+          new Rotation3d(Radians.zero(), Degrees.of(-35), kYaw60)),
       new Pose3d(
-          kStickPoses[8].getX(),
-          kStickPoses[8].getY(),
-          kL2H.in(Meters),
-          new Rotation3d(0, -kL2L3Angle.in(Radians), -kYaw60.in(Radians))),
+          kStickPoses[8][0],
+          kStickPoses[8][1],
+          kL2H,
+          new Rotation3d(Radians.zero(), Degrees.of(-35), Degrees.of(-60))),
       new Pose3d(
-          kStickPoses[9].getX(),
-          kStickPoses[9].getY(),
-          kL2H.in(Meters),
-          new Rotation3d(0, -kL2L3Angle.in(Radians), kYaw60.in(Radians))),
+          kStickPoses[9][0],
+          kStickPoses[9][1],
+          kL2H,
+          new Rotation3d(Radians.zero(), Degrees.of(-35), kYaw60)),
       new Pose3d(
-          kStickPoses[10].getX(),
-          kStickPoses[10].getY(),
-          kL2H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), kYaw180.in(Radians))),
+          kStickPoses[10][0],
+          kStickPoses[10][1],
+          kL2H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, kYaw180)),
       new Pose3d(
-          kStickPoses[11].getX(),
-          kStickPoses[11].getY(),
-          kL2H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), kYaw180.in(Radians))),
+          kStickPoses[11][0],
+          kStickPoses[11][1],
+          kL2H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, kYaw180)),
 
       // Level 3 (L3 - Middle Branches)
       new Pose3d(
-          kStickPoses[0].getX(),
-          kStickPoses[0].getY(),
-          kL3H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), 0)),
+          kStickPoses[0][0],
+          kStickPoses[0][1],
+          kL3H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[1].getX(),
-          kStickPoses[1].getY(),
-          kL3H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), 0)),
+          kStickPoses[1][0],
+          kStickPoses[1][1],
+          kL3H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[2].getX(),
-          kStickPoses[2].getY(),
-          kL3H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), kYaw60.in(Radians))),
+          kStickPoses[2][0],
+          kStickPoses[2][1],
+          kL3H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, kYaw60)),
       new Pose3d(
-          kStickPoses[3].getX(),
-          kStickPoses[3].getY(),
-          kL3H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), -kYaw60.in(Radians))),
+          kStickPoses[3][0],
+          kStickPoses[3][1],
+          kL3H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, Degrees.of(-60))),
       new Pose3d(
-          kStickPoses[4].getX(),
-          kStickPoses[4].getY(),
-          kL3H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), kYaw60.in(Radians))),
+          kStickPoses[4][0],
+          kStickPoses[4][1],
+          kL3H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, kYaw60)),
       new Pose3d(
-          kStickPoses[5].getX(),
-          kStickPoses[5].getY(),
-          kL3H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), -kYaw60.in(Radians))),
+          kStickPoses[5][0],
+          kStickPoses[5][1],
+          kL3H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, Degrees.of(-60))),
       new Pose3d(
-          kStickPoses[6].getX(),
-          kStickPoses[6].getY(),
-          kL3H.in(Meters),
-          new Rotation3d(0, -kL2L3Angle.in(Radians), -kYaw60.in(Radians))),
+          kStickPoses[6][0],
+          kStickPoses[6][1],
+          kL3H,
+          new Rotation3d(Radians.zero(), Degrees.of(-35), Degrees.of(-60))),
       new Pose3d(
-          kStickPoses[7].getX(),
-          kStickPoses[7].getY(),
-          kL3H.in(Meters),
-          new Rotation3d(0, -kL2L3Angle.in(Radians), kYaw60.in(Radians))),
+          kStickPoses[7][0],
+          kStickPoses[7][1],
+          kL3H,
+          new Rotation3d(Radians.zero(), Degrees.of(-35), kYaw60)),
       new Pose3d(
-          kStickPoses[8].getX(),
-          kStickPoses[8].getY(),
-          kL3H.in(Meters),
-          new Rotation3d(0, -kL2L3Angle.in(Radians), -kYaw60.in(Radians))),
+          kStickPoses[8][0],
+          kStickPoses[8][1],
+          kL3H,
+          new Rotation3d(Radians.zero(), Degrees.of(-35), Degrees.of(-60))),
       new Pose3d(
-          kStickPoses[9].getX(),
-          kStickPoses[9].getY(),
-          kL3H.in(Meters),
-          new Rotation3d(0, -kL2L3Angle.in(Radians), kYaw60.in(Radians))),
+          kStickPoses[9][0],
+          kStickPoses[9][1],
+          kL3H,
+          new Rotation3d(Radians.zero(), Degrees.of(-35), kYaw60)),
       new Pose3d(
-          kStickPoses[10].getX(),
-          kStickPoses[10].getY(),
-          kL3H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), kYaw180.in(Radians))),
+          kStickPoses[10][0],
+          kStickPoses[10][1],
+          kL3H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, kYaw180)),
       new Pose3d(
-          kStickPoses[11].getX(),
-          kStickPoses[11].getY(),
-          kL3H.in(Meters),
-          new Rotation3d(0, kL2L3Angle.in(Radians), kYaw180.in(Radians))),
+          kStickPoses[11][0],
+          kStickPoses[11][1],
+          kL3H,
+          new Rotation3d(Radians.zero(), kL2L3Angle, kYaw180)),
 
       // Level 4 (L4 - Highest Branches)
       new Pose3d(
-          kStickPoses[0].getX(),
-          kStickPoses[0].getY(),
-          kL4H.in(Meters),
-          new Rotation3d(0, kL4Angle.in(Radians), 0)),
+          kStickPoses[0][0],
+          kStickPoses[0][1],
+          kL4H,
+          new Rotation3d(Radians.zero(), kL4Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[1].getX(),
-          kStickPoses[1].getY(),
-          kL4H.in(Meters),
-          new Rotation3d(0, kL4Angle.in(Radians), 0)),
+          kStickPoses[1][0],
+          kStickPoses[1][1],
+          kL4H,
+          new Rotation3d(Radians.zero(), kL4Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[2].getX(),
-          kStickPoses[2].getY(),
-          kL4H.in(Meters),
-          new Rotation3d(0, kL4Angle.in(Radians), 0)),
+          kStickPoses[2][0],
+          kStickPoses[2][1],
+          kL4H,
+          new Rotation3d(Radians.zero(), kL4Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[3].getX(),
-          kStickPoses[3].getY(),
-          kL4H.in(Meters),
-          new Rotation3d(0, kL4Angle.in(Radians), 0)),
+          kStickPoses[3][0],
+          kStickPoses[3][1],
+          kL4H,
+          new Rotation3d(Radians.zero(), kL4Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[4].getX(),
-          kStickPoses[4].getY(),
-          kL4H.in(Meters),
-          new Rotation3d(0, kL4Angle.in(Radians), 0)),
+          kStickPoses[4][0],
+          kStickPoses[4][1],
+          kL4H,
+          new Rotation3d(Radians.zero(), kL4Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[5].getX(),
-          kStickPoses[5].getY(),
-          kL4H.in(Meters),
-          new Rotation3d(0, kL4Angle.in(Radians), 0)),
+          kStickPoses[5][0],
+          kStickPoses[5][1],
+          kL4H,
+          new Rotation3d(Radians.zero(), kL4Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[6].getX(),
-          kStickPoses[6].getY(),
-          kL4H.in(Meters),
-          new Rotation3d(0, kL4Angle.in(Radians), 0)),
+          kStickPoses[6][0],
+          kStickPoses[6][1],
+          kL4H,
+          new Rotation3d(Radians.zero(), kL4Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[7].getX(),
-          kStickPoses[7].getY(),
-          kL4H.in(Meters),
-          new Rotation3d(0, kL4Angle.in(Radians), 0)),
+          kStickPoses[7][0],
+          kStickPoses[7][1],
+          kL4H,
+          new Rotation3d(Radians.zero(), kL4Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[8].getX(),
-          kStickPoses[8].getY(),
-          kL4H.in(Meters),
-          new Rotation3d(0, kL4Angle.in(Radians), 0)),
+          kStickPoses[8][0],
+          kStickPoses[8][1],
+          kL4H,
+          new Rotation3d(Radians.zero(), kL4Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[9].getX(),
-          kStickPoses[9].getY(),
-          kL4H.in(Meters),
-          new Rotation3d(0, kL4Angle.in(Radians), 0)),
+          kStickPoses[9][0],
+          kStickPoses[9][1],
+          kL4H,
+          new Rotation3d(Radians.zero(), kL4Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[10].getX(),
-          kStickPoses[10].getY(),
-          kL4H.in(Meters),
-          new Rotation3d(0, kL4Angle.in(Radians), 0)),
+          kStickPoses[10][0],
+          kStickPoses[10][1],
+          kL4H,
+          new Rotation3d(Radians.zero(), kL4Angle, Radians.zero())),
       new Pose3d(
-          kStickPoses[11].getX(),
-          kStickPoses[11].getY(),
-          kL4H.in(Meters),
-          new Rotation3d(0, kL4Angle.in(Radians), 0)),
+          kStickPoses[11][0],
+          kStickPoses[11][1],
+          kL4H,
+          new Rotation3d(Radians.zero(), kL4Angle, Radians.zero())),
     };
   }
 

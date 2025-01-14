@@ -28,7 +28,8 @@ import frc.robot.Constants.SubsystemToggles;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.intake.IntakeSimSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -45,7 +46,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private MapleSimArenaSubsystem m_MapleSimArenaSubsystem;
-  private IntakeSimSubsystem m_IntakeSimSubsystem;
+  private ElevatorSubsystem m_ElevatorSubsystem;
+  private IntakeSubsystem m_IntakeSimSubsystem;
   private Vision vision;
   private Drive drive;
   public SwerveDriveSimulation driveSimulation = null;
@@ -77,6 +79,10 @@ public class RobotContainer {
                   drive,
                   new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                   new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+        }
+
+        if (SubsystemToggles.kUseIntake) {
+          m_IntakeSimSubsystem = new IntakeSubsystem();
         }
         break;
 
@@ -113,7 +119,7 @@ public class RobotContainer {
         }
 
         if (SubsystemToggles.kUseIntake) {
-          m_IntakeSimSubsystem = new IntakeSimSubsystem(driveSimulation);
+          m_IntakeSimSubsystem = new IntakeSubsystem(driveSimulation);
         } else {
           m_IntakeSimSubsystem = null;
         }
@@ -185,18 +191,15 @@ public class RobotContainer {
     }
 
     if (Robot.isReal()) {
-      // Lock to 0° when A button is held
-      controller
-          .a()
-          .whileTrue(
-              DriveCommands.joystickDriveAtAngle(
-                  drive,
-                  () -> -controller.getLeftY(),
-                  () -> -controller.getLeftX(),
-                  () -> new Rotation2d()));
-
-      // Switch to X pattern when X button is pressed
-      controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+      // // Lock to 0° when A button is held
+      // controller
+      //     .a()
+      //     .whileTrue(
+      //         DriveCommands.joystickDriveAtAngle(
+      //             drive,
+      //             () -> -controller.getLeftY(),
+      //             () -> -controller.getLeftX(),
+      //             () -> new Rotation2d()));
 
       // Reset gyro / odometry
       final Runnable resetOdometry =
@@ -207,8 +210,8 @@ public class RobotContainer {
                       new Pose2d(drive.getPose().getTranslation(), new Rotation2d()));
       controller.start().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
     } else if (Robot.isSimulation()) {
-      controller.button(2).whileTrue(m_IntakeSimSubsystem.intake());
-      controller.button(3).whileTrue(m_IntakeSimSubsystem.outtake());
+      controller.button(2).whileTrue(m_IntakeSimSubsystem.IntakeCommand());
+      controller.button(3).whileTrue(m_IntakeSimSubsystem.OuttakeCommand());
     }
   }
 
