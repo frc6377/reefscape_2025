@@ -21,12 +21,12 @@ public class CoralScorer extends SubsystemBase {
   }
 
   // Made a command to spin clockwise
-  public Command spinClockWise() {
+  public Command scoreClockWise() {
     return startEnd(() -> intakeMotor.set(kSpeed), () -> intakeMotor.set(0));
   }
 
   // Made a command to spin counter clockwise
-  public Command spinCounterClockWise() {
+  public Command scoreCounterClockWise() {
     return startEnd(() -> intakeMotor.set(-kSpeed), () -> intakeMotor.set(0));
   }
 

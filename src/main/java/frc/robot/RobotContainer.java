@@ -78,27 +78,27 @@ public class RobotContainer {
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
-    OI.getButton(OI.Driver.Back)
-        .and(OI.getButton(OI.Driver.Y))
+    OI.getButton(OI.Operator.Back)
+        .and(OI.getButton(OI.Operator.Y))
         .whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    OI.getButton(OI.Driver.Back)
-        .and(OI.getButton(OI.Driver.X))
+    OI.getButton(OI.Operator.Back)
+        .and(OI.getButton(OI.Operator.X))
         .whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    OI.getButton(OI.Driver.Start)
-        .and(OI.getButton(OI.Driver.Y))
+    OI.getButton(OI.Operator.Start)
+        .and(OI.getButton(OI.Operator.Y))
         .whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    OI.getButton(OI.Driver.Start)
-        .and(OI.getButton(OI.Driver.X))
+    OI.getButton(OI.Operator.Start)
+        .and(OI.getButton(OI.Operator.X))
         .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
-    OI.getButton(OI.Driver.LBumper).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    OI.getButton(OI.Driver.Start).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
     // Set the intake rollers to the left and right triggers
-    OI.getPOVButton(OI.Driver.POV180).whileTrue(intake.IntakeCommand());
-    OI.getPOVButton(OI.Driver.POV0).whileTrue(intake.OuttakeCommand());
+    OI.getButton(OI.Driver.RTrigger).whileTrue(intake.IntakeCommand());
+    OI.getButton(OI.Driver.RBumper).whileTrue(intake.OuttakeCommand());
   }
 
   public Command getAutonomousCommand() {
