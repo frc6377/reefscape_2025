@@ -10,7 +10,6 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -36,8 +35,6 @@ public class RobotContainer {
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
-  private final CommandXboxController m_driverController = new CommandXboxController(0);
-
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final Elevator elevator = new Elevator();
 
@@ -48,20 +45,15 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    m_driverController.rightBumper().and(m_driverController.leftBumper()).onTrue(elevator.L0());
-    m_driverController.rightBumper().and(m_driverController.a()).onTrue(elevator.L1());
-    m_driverController.rightBumper().and(m_driverController.b()).onTrue(elevator.L2());
-    m_driverController.rightBumper().and(m_driverController.x()).onTrue(elevator.L3());
-    m_driverController.rightBumper().and(m_driverController.y()).onTrue(elevator.L4());
-    m_driverController
-        .b()
-        .and(m_driverController.rightBumper().negate())
-        .whileTrue(elevator.goUp());
-    m_driverController
-        .a()
-        .and(m_driverController.rightBumper().negate())
-        .whileTrue(elevator.goDown());
-    m_driverController.start().onTrue(elevator.zeroMotorEncoder());
+    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.LBumper)).onTrue(elevator.L0());
+    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.A)).onTrue(elevator.L1());
+    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.B)).onTrue(elevator.L2());
+    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.X)).onTrue(elevator.L3());
+    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.Y)).onTrue(elevator.L4());
+    OI.getButton(OI.Driver.B).and(OI.getButton(OI.Driver.RBumper).negate()).whileTrue(elevator.goUp());
+    OI.getButton(OI.Driver.A).and(OI.getButton(OI.Driver.RBumper).negate()).whileTrue(elevator.goDown());
+    OI.getButton(OI.Driver.Start).onTrue(elevator.zeroMotorEncoder());
+
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
@@ -70,42 +62,31 @@ public class RobotContainer {
             () ->
                 drive
                     .withVelocityX(
-                        -m_driverController.getLeftY()
+                        -OI.getAxisSupplier(OI.Driver.LeftX).get()
                             * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(
-                        -m_driverController.getLeftX()
+                        -OI.getAxisSupplier(OI.Driver.LeftY).get()
                             * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(
-                        -m_driverController.getRightX()
+                        -OI.getAxisSupplier(OI.Driver.RightX).get()
                             * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
-    m_driverController
-        .back()
-        .and(m_driverController.y())
-        .whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    m_driverController
-        .back()
-        .and(m_driverController.x())
-        .whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    m_driverController
-        .start()
-        .and(m_driverController.y())
-        .whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    m_driverController
-        .start()
-        .and(m_driverController.x())
-        .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    OI.getButton(OI.Driver.Back).and(OI.getButton(OI.Driver.Y)).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    OI.getButton(OI.Driver.Back).and(OI.getButton(OI.Driver.X)).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    OI.getButton(OI.Driver.Start).and(OI.getButton(OI.Driver.Y)).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    OI.getButton(OI.Driver.Start).and(OI.getButton(OI.Driver.X)).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
-    m_driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    OI.getButton(OI.Driver.LBumper).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     drivetrain.registerTelemetry(logger::telemeterize);
+    
     // Set the intake rollers to the left and right triggers
-    m_driverController.pov(180).whileTrue(intake.IntakeCommand());
-    m_driverController.pov(0).whileTrue(intake.OuttakeCommand());
+    OI.getPOVButton(OI.Driver.POV180).whileTrue(intake.IntakeCommand());
+    OI.getPOVButton(OI.Driver.POV0).whileTrue(intake.OuttakeCommand());
   }
 
   public Command getAutonomousCommand() {
