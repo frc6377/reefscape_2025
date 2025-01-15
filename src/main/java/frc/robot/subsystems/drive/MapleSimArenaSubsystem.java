@@ -27,7 +27,9 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
 
     logFeildArea(SimulationFeildConstants.kSourceAreas);
     Logger.recordOutput(
-        "FieldSimulation/Scoring Poses", SimulationFeildConstants.kBlueCoralScorePoses);
+        "FieldSimulation/Scoring Poses Blue", SimulationFeildConstants.kBlueCoralScorePoses);
+    Logger.recordOutput(
+        "FieldSimulation/Scoring Poses Red", SimulationFeildConstants.kRedCoralScorePoses);
   }
 
   public void logFeildArea(Pose2d[][] area) {

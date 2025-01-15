@@ -21,6 +21,8 @@ public class IntakeSubsystem extends SubsystemBase {
   private SparkMax intakeMotor;
 
   private IntakeSimulation intakeSim;
+
+  @SuppressWarnings("unused")
   private SwerveDriveSimulation driveSimulation;
 
   public IntakeSubsystem() {
@@ -39,6 +41,10 @@ public class IntakeSubsystem extends SubsystemBase {
             IntakeConstants.kIntakeExtension,
             IntakeSimulation.IntakeSide.FRONT,
             IntakeConstants.kIntakeCapacity);
+  }
+
+  public boolean GetPieceFromIntake() {
+    return intakeSim.obtainGamePieceFromIntake();
   }
 
   // Made a command to spin clockwise

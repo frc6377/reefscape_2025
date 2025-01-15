@@ -51,9 +51,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   private static ComplexWidget widg;
   private MechanismLigament2d elevatorMech;
 
+  private boolean hasGamePiece = false;
+
   public static final AbsoluteEncoderConfig encoderCfg =
       new AbsoluteEncoderConfig()
           .positionConversionFactor(Constants.ElevatorConstants.kElevatorConversion);
+
   public static final ClosedLoopConfig loopCfg =
       new ClosedLoopConfig()
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -90,10 +93,10 @@ public class ElevatorSubsystem extends SubsystemBase {
       simElevatorMotor =
           new SparkMaxSim(elevatorMotor, Constants.ElevatorConstants.kElevatorGearbox);
       elevatorMech =
-          mech.getRoot("root", 1, 0)
+          mech.getRoot("root", 1.25, 0)
               .append(
                   new MechanismLigament2d(
-                      "Elevator Mech [0]", 1, 90, 10, new Color8Bit(Color.kPurple)));
+                      "Elevator Mech [0]", 1, 90, 15, new Color8Bit(Color.kPurple)));
 
       if (widg == null) {
         widg = Shuffleboard.getTab(getName()).add("Elevator", mech);
@@ -106,7 +109,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public Distance rotationsToHeight(double rotations) {
     return ElevatorConstants.kElevatorDrumCircumference
-        .times(rotations * ElevatorConstants.kCarageFactor)
+        .times(rotations)
+        .times(kCarageFactor)
         .div(kElevatorGearing);
   }
 
@@ -116,6 +120,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public double getElevatorSimHeight() {
     return m_elevatorSim.getPositionMeters() + kMechenismOffset;
+  }
+
+  public boolean getHasGamePiece() {
+    return hasGamePiece;
+  }
+
+  public void setHasGamePiece(boolean hasGamePiece) {
+    this.hasGamePiece = hasGamePiece;
   }
 
   public Command goUp() {
@@ -153,7 +165,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           elevatorMotor
               .getClosedLoopController()
               .setReference(rotationSetpoint, ControlType.kPosition);
-          SmartDashboard.putNumber("Elevator/Setpoint Height (Meters)", heightLevel.in(Meters));
+          SmartDashboard.putNumber("Elevator/Setpoint Height (Inches)", heightLevel.in(Inches));
           SmartDashboard.putNumber("Elevator/Setpoint Rotations", rotationSetpoint);
         });
   }
@@ -184,19 +196,17 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber(
         "Elevator/Motor Encoder Rotation", elevatorMotor.getEncoder().getPosition());
     SmartDashboard.putNumber("Elevator/Motor Percent", elevatorMotor.get());
-    SmartDashboard.putNumber("Elevator/Height", getElevatorHeight().in(Meters));
+    SmartDashboard.putNumber("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
   }
 
   @Override
   public void simulationPeriodic() {
-    Distance simDist = Meters.zero();
     LinearVelocity simVel = MetersPerSecond.zero();
 
     for (Time i = Seconds.zero(); i.lt(Robot.period); i = i.plus(sparkPeriod)) {
       m_elevatorSim.setInputVoltage(
           simElevatorMotor.getBusVoltage() * simElevatorMotor.getAppliedOutput());
       m_elevatorSim.update(sparkPeriod.in(Seconds));
-      simDist = Meters.of(m_elevatorSim.getPositionMeters());
       simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
       simElevatorMotor.iterate(
           ((simVel.in(MetersPerSecond) / (2 * Math.PI * kElevatorDrumRadius.in(Meters))))
@@ -207,10 +217,12 @@ public class ElevatorSubsystem extends SubsystemBase {
           sparkPeriod.in(Seconds));
     }
 
-    elevatorMech.setLength(kMechenismOffset + (simDist.in(Meters)));
+    elevatorMech.setLength(getElevatorHeight().in(Meters));
 
     SmartDashboard.putNumber("Elevator/Sim velocity", simVel.in(MetersPerSecond));
     SmartDashboard.putNumber("Elevator/Sim Pose", m_elevatorSim.getPositionMeters());
-    SmartDashboard.putNumber("Elevator/Sim Height", m_elevatorSim.getPositionMeters());
+    SmartDashboard.putNumber(
+        "Elevator/Sim Height (Inches)", Meters.of(m_elevatorSim.getPositionMeters()).in(Inches));
+    SmartDashboard.putNumber("Elevator/Sim Motor Percent", simElevatorMotor.getAppliedOutput());
   }
 }
