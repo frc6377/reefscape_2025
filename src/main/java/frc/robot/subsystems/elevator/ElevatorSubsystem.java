@@ -1,11 +1,6 @@
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Kilograms;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Millisecond;
-import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.ElevatorConstants.kCarriageMass;
 import static frc.robot.Constants.ElevatorConstants.kElevatorDrumRadius;
 import static frc.robot.Constants.ElevatorConstants.kElevatorGearbox;
@@ -102,7 +97,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       }
     }
 
-    SmartDashboard.putNumber("Elevator/Setpoint", 0);
+    SmartDashboard.putNumber("Elevator/Setpoint Height (Meters)", 0);
     SmartDashboard.putNumber("Elevator/Setpoint Rotations", 0);
   }
 
@@ -149,7 +144,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           elevatorMotor
               .getClosedLoopController()
               .setReference(adjustedSetpoint, ControlType.kPosition);
-          SmartDashboard.putNumber("Elevator/Setpoint", heightLevel.in(Meters));
+          SmartDashboard.putNumber("Elevator/Setpoint Height (Meters)", heightLevel.in(Meters));
           SmartDashboard.putNumber("Elevator/Setpoint Rotations", adjustedSetpoint);
         });
   }
@@ -195,15 +190,17 @@ public class ElevatorSubsystem extends SubsystemBase {
       simDist = Meters.of(m_elevatorSim.getPositionMeters());
       simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
       simElevatorMotor.iterate(
-          ((simVel.in(MetersPerSecond) / (2 * Math.PI * kElevatorDrumRadius.in(Meters)))) * 60,
+          ((simVel.in(MetersPerSecond) / (2 * Math.PI * kElevatorDrumRadius.in(Meters))))
+              * 60
+              * kElevatorGearing / ElevatorConstants.kCarageFactor,
           RobotController.getBatteryVoltage(),
           sparkPeriod.in(Seconds));
     }
 
-    elevatorMech.setLength(0.1 + (simDist.in(Meters)));
+    elevatorMech.setLength(0.25 + (simDist.in(Meters)));
 
-    SmartDashboard.putNumber("Elevator/Sim Length", simDist.in(Meters));
     SmartDashboard.putNumber("Elevator/Sim velocity", simVel.in(MetersPerSecond));
     SmartDashboard.putNumber("Elevator/Sim Pose", m_elevatorSim.getPositionMeters());
+    SmartDashboard.putNumber("Elevator/Sim Height", m_elevatorSim.getPositionMeters());
   }
 }
