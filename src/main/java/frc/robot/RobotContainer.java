@@ -50,8 +50,12 @@ public class RobotContainer {
     OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.B)).onTrue(elevator.L2());
     OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.X)).onTrue(elevator.L3());
     OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.Y)).onTrue(elevator.L4());
-    OI.getButton(OI.Driver.B).and(OI.getButton(OI.Driver.RBumper).negate()).whileTrue(elevator.goUp());
-    OI.getButton(OI.Driver.A).and(OI.getButton(OI.Driver.RBumper).negate()).whileTrue(elevator.goDown());
+    OI.getButton(OI.Driver.B)
+        .and(OI.getButton(OI.Driver.RBumper).negate())
+        .whileTrue(elevator.goUp());
+    OI.getButton(OI.Driver.A)
+        .and(OI.getButton(OI.Driver.RBumper).negate())
+        .whileTrue(elevator.goDown());
     OI.getButton(OI.Driver.Start).onTrue(elevator.zeroMotorEncoder());
 
     // Note that X is defined as forward according to WPILib convention,
@@ -74,16 +78,24 @@ public class RobotContainer {
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
-    OI.getButton(OI.Driver.Back).and(OI.getButton(OI.Driver.Y)).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    OI.getButton(OI.Driver.Back).and(OI.getButton(OI.Driver.X)).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    OI.getButton(OI.Driver.Start).and(OI.getButton(OI.Driver.Y)).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    OI.getButton(OI.Driver.Start).and(OI.getButton(OI.Driver.X)).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    OI.getButton(OI.Driver.Back)
+        .and(OI.getButton(OI.Driver.Y))
+        .whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    OI.getButton(OI.Driver.Back)
+        .and(OI.getButton(OI.Driver.X))
+        .whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    OI.getButton(OI.Driver.Start)
+        .and(OI.getButton(OI.Driver.Y))
+        .whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    OI.getButton(OI.Driver.Start)
+        .and(OI.getButton(OI.Driver.X))
+        .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
     OI.getButton(OI.Driver.LBumper).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     drivetrain.registerTelemetry(logger::telemeterize);
-    
+
     // Set the intake rollers to the left and right triggers
     OI.getPOVButton(OI.Driver.POV180).whileTrue(intake.IntakeCommand());
     OI.getPOVButton(OI.Driver.POV0).whileTrue(intake.OuttakeCommand());
