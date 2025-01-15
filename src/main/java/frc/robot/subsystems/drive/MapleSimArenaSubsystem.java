@@ -4,13 +4,17 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Meters;
+import static frc.robot.Constants.SimulationFeildConstants.*;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.SimulationFeildConstants;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoral;
@@ -21,15 +25,13 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
 
   private Boolean[] isAtSource = new Boolean[] {false, false, false, false};
 
+  private Pose3d[] scoredCoralPoses = new Pose3d[] {};
+
   /** Creates a new MapleSimArenaSubsystem. */
   public MapleSimArenaSubsystem(SwerveDriveSimulation swerveDriveSimulation) {
     this.swerveDriveSimulation = swerveDriveSimulation;
 
-    logFeildArea(SimulationFeildConstants.kSourceAreas);
-    Logger.recordOutput(
-        "FieldSimulation/Scoring Poses Blue", SimulationFeildConstants.kBlueCoralScorePoses);
-    Logger.recordOutput(
-        "FieldSimulation/Scoring Poses Red", SimulationFeildConstants.kRedCoralScorePoses);
+    logFeildArea(kSourceAreas);
   }
 
   public void logFeildArea(Pose2d[][] area) {
@@ -77,6 +79,28 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     return minX <= x && x <= maxX && minY <= y && y <= maxY;
   }
 
+  public Pose3d getClosestReef(Pose3d robotCoralPose) {
+    Pose3d[] scorePoseList;
+    if (DriverStation.getAlliance().equals(Alliance.Blue)) {
+      scorePoseList = kBlueCoralScorePoses;
+    } else {
+      scorePoseList = kRedCoralScorePoses;
+    }
+
+    Pose3d closestPose = null;
+    double closestDistance = 9999;
+    for (int i = 0; i < scorePoseList.length; i++) {
+      double currentDistance =
+          robotCoralPose.getTranslation().getDistance(scorePoseList[i].getTranslation());
+      if (currentDistance < closestDistance && currentDistance < kScoreDistance.in(Meters)) {
+        closestDistance = currentDistance;
+        closestPose = scorePoseList[i];
+      }
+    }
+
+    return closestPose;
+  }
+
   public Command clearSimFeild() {
     return Commands.runOnce(() -> SimulatedArena.getInstance().clearGamePieces());
   }
@@ -91,8 +115,10 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    for (int i = 0; i < SimulationFeildConstants.kSourceAreas.length; i++) {
-      Pose2d[] currentSourse = SimulationFeildConstants.kSourceAreas[i];
+    Logger.recordOutput("FieldSimulation/Scored Coral Poses", scoredCoralPoses);
+
+    for (int i = 0; i < kSourceAreas.length; i++) {
+      Pose2d[] currentSourse = kSourceAreas[i];
 
       // Check if the robot is at the sorce area
       isAtSource[i] = isInArea(currentSourse, swerveDriveSimulation.getSimulatedDriveTrainPose());

@@ -54,6 +54,9 @@ public class RobotContainer {
   private Vision vision;
   public SwerveDriveSimulation driveSimulation = null;
 
+  // Simulation
+  private Pose3d robotCoralPose = new Pose3d();
+
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -206,11 +209,15 @@ public class RobotContainer {
     }
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
+  public Command scoreCoralCommand() {
+    return Commands.runOnce(
+        () -> {
+          if (m_ElevatorSubsystem.getHasGamePiece()) {
+            m_MapleSimArenaSubsystem.getClosestReef(robotCoralPose);
+          }
+        });
+  }
+
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
@@ -218,7 +225,7 @@ public class RobotContainer {
   public void resetSimulation() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
-    driveSimulation.setSimulationWorldPose(new Pose2d(3, 3, new Rotation2d()));
+    driveSimulation.setSimulationWorldPose(new Pose2d(3, 4, new Rotation2d()));
     SimulatedArena.getInstance().resetFieldForAuto();
   }
 
@@ -232,19 +239,26 @@ public class RobotContainer {
     Logger.recordOutput(
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
 
+    Pose3d closestReef = m_MapleSimArenaSubsystem.getClosestReef(robotCoralPose);
+    if (closestReef != null) {
+      Logger.recordOutput(
+          "FieldSimulation/Closest Score Pose", new Pose3d[] {robotCoralPose, closestReef});
+    }
+
     if (m_IntakeSimSubsystem.GetPieceFromIntake()) {
       m_ElevatorSubsystem.setHasGamePiece(true);
     }
 
     if (m_ElevatorSubsystem.getHasGamePiece()) {
       Pose2d drivePose = driveSimulation.getSimulatedDriveTrainPose();
-      Logger.recordOutput(
-          "FieldSimulation/Robot Game Piece Pose",
+
+      robotCoralPose =
           new Pose3d(
               drivePose.getX(),
               drivePose.getY(),
               m_ElevatorSubsystem.getElevatorHeight().in(Meters),
-              new Rotation3d(0, 0, drivePose.getRotation().getRadians())));
+              new Rotation3d(0, 0, drivePose.getRotation().getRadians()));
+      Logger.recordOutput("FieldSimulation/Robot Game Piece Pose", robotCoralPose);
     } else {
       Logger.recordOutput("FieldSimulation/Robot Game Piece Pose", new Pose3d());
     }
