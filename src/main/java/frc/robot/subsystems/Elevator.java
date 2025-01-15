@@ -100,14 +100,16 @@ public class Elevator extends SubsystemBase {
       if (widg == null) {
         widg = Shuffleboard.getTab(getName()).add("Elevator", mech);
       }
-
-      SmartDashboard.putNumber("Elevator/Setpoint", 0);
-      SmartDashboard.putNumber("Elevator/Setpoint Rotations", 0);
     }
+
+    SmartDashboard.putNumber("Elevator/Setpoint", 0);
+    SmartDashboard.putNumber("Elevator/Setpoint Rotations", 0);
   }
 
   public Distance rotationsToHeight(double rotations) {
-    return ElevatorConstants.kElevatorDrumCircumference.times(rotations).div(kElevatorGearing);
+    return ElevatorConstants.kElevatorDrumCircumference
+        .times(rotations * ElevatorConstants.kCarageFactor)
+        .div(kElevatorGearing);
   }
 
   public Distance getElevatorHeight() {
@@ -142,7 +144,8 @@ public class Elevator extends SubsystemBase {
         () -> {
           double adjustedSetpoint =
               (heightLevel.in(Meters) / (2 * (Math.PI * kElevatorDrumRadius.in(Meters))))
-                  * kElevatorGearing;
+                  * kElevatorGearing
+                  / ElevatorConstants.kCarageFactor;
           elevatorMotor
               .getClosedLoopController()
               .setReference(adjustedSetpoint, ControlType.kPosition);
@@ -173,7 +176,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Elevator/Encoder rotations", elevatorEncoder.getPosition());
+    SmartDashboard.putNumber("Elevator/Absolute Encoder rotations", elevatorEncoder.getPosition());
     SmartDashboard.putNumber(
         "Elevator/Motor Encoder Rotation", elevatorMotor.getEncoder().getPosition());
     SmartDashboard.putNumber("Elevator/Motor Percent", elevatorMotor.get());

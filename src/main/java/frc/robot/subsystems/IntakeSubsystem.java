@@ -8,6 +8,7 @@ import static frc.robot.Constants.IntakeConstants.*;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorIDConstants;
@@ -17,19 +18,22 @@ public class IntakeSubsystem extends SubsystemBase {
   private SparkMax intakeMotor;
 
   public IntakeSubsystem() {
-    intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushless);
+    intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushed);
   }
+
   // Made a command to spin clockwise
-  public Command spinClockWise() {
+  public Command IntakeCommand() {
     return startEnd(() -> intakeMotor.set(kSpeed), () -> intakeMotor.set(0));
   }
+
   // Made a command to spin counter clockwise
-  public Command spinCounterClockWise() {
+  public Command OuttakeCommand() {
     return startEnd(() -> intakeMotor.set(-kSpeed), () -> intakeMotor.set(0));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Intake/Motor Ouput", intakeMotor.get());
   }
 }
