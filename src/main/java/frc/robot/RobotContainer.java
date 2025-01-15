@@ -17,7 +17,9 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -238,5 +240,14 @@ public class RobotContainer {
         "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
     Logger.recordOutput(
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+
+    Pose2d drivePose = driveSimulation.getSimulatedDriveTrainPose();
+    Logger.recordOutput(
+        "FieldSimulation/Robot Game Piece Pose",
+        new Pose3d(
+            drivePose.getX(),
+            drivePose.getY(),
+            m_ElevatorSubsystem.getElevatorSimHeight(),
+            new Rotation3d()));
   }
 }

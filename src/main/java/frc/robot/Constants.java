@@ -85,6 +85,7 @@ public final class Constants {
     public static final Distance kMaxElevatorHeight = Inches.of(76);
     public static final Distance kElevatorDrumCircumference =
         kElevatorDrumRadius.times(2 * Math.PI);
+    public static final double kMechenismOffset = 0.3;
   }
 
   public class SimulationFeildConstants {

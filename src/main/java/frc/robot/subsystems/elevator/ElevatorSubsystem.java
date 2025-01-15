@@ -1,11 +1,14 @@
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.Constants.ElevatorConstants.kCarageFactor;
 import static frc.robot.Constants.ElevatorConstants.kCarriageMass;
+import static frc.robot.Constants.ElevatorConstants.kElevatorDrumCircumference;
 import static frc.robot.Constants.ElevatorConstants.kElevatorDrumRadius;
 import static frc.robot.Constants.ElevatorConstants.kElevatorGearbox;
 import static frc.robot.Constants.ElevatorConstants.kElevatorGearing;
 import static frc.robot.Constants.ElevatorConstants.kMaxElevatorHeight;
+import static frc.robot.Constants.ElevatorConstants.kMechenismOffset;
 import static frc.robot.Constants.ElevatorConstants.kMinElevatorHeight;
 
 import com.revrobotics.sim.SparkMaxSim;
@@ -111,6 +114,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     return rotationsToHeight(elevatorMotor.getEncoder().getPosition());
   }
 
+  public double getElevatorSimHeight() {
+    return m_elevatorSim.getPositionMeters() + kMechenismOffset;
+  }
+
   public Command goUp() {
     return startEnd(
         () -> {
@@ -137,15 +144,17 @@ public class ElevatorSubsystem extends SubsystemBase {
   public Command changeElevation(Distance heightLevel) {
     return runOnce(
         () -> {
-          double adjustedSetpoint =
-              (heightLevel.in(Meters) / (2 * (Math.PI * kElevatorDrumRadius.in(Meters))))
-                  * kElevatorGearing
-                  / ElevatorConstants.kCarageFactor;
+          double rotationSetpoint =
+              heightLevel
+                  .div(kElevatorDrumCircumference)
+                  .times(kElevatorGearing)
+                  .div(kCarageFactor)
+                  .magnitude();
           elevatorMotor
               .getClosedLoopController()
-              .setReference(adjustedSetpoint, ControlType.kPosition);
+              .setReference(rotationSetpoint, ControlType.kPosition);
           SmartDashboard.putNumber("Elevator/Setpoint Height (Meters)", heightLevel.in(Meters));
-          SmartDashboard.putNumber("Elevator/Setpoint Rotations", adjustedSetpoint);
+          SmartDashboard.putNumber("Elevator/Setpoint Rotations", rotationSetpoint);
         });
   }
 
@@ -192,12 +201,13 @@ public class ElevatorSubsystem extends SubsystemBase {
       simElevatorMotor.iterate(
           ((simVel.in(MetersPerSecond) / (2 * Math.PI * kElevatorDrumRadius.in(Meters))))
               * 60
-              * kElevatorGearing / ElevatorConstants.kCarageFactor,
+              * kElevatorGearing
+              / ElevatorConstants.kCarageFactor,
           RobotController.getBatteryVoltage(),
           sparkPeriod.in(Seconds));
     }
 
-    elevatorMech.setLength(0.25 + (simDist.in(Meters)));
+    elevatorMech.setLength(kMechenismOffset + (simDist.in(Meters)));
 
     SmartDashboard.putNumber("Elevator/Sim velocity", simVel.in(MetersPerSecond));
     SmartDashboard.putNumber("Elevator/Sim Pose", m_elevatorSim.getPositionMeters());
