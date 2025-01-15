@@ -1,6 +1,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
 
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -29,7 +30,7 @@ public final class Constants {
     public static final Distance kL2Height = Inches.of(31.875);
     public static final Distance kL3Height = Inches.of(47.625);
     // public static final Distance kL4Height = Inches.of(72);
-    public static final Distance kL4Height = Inches.of(59);
+    public static final Distance kL4Height = Meters.of(1.533);
 
     public static final double P = 0.10;
     public static final double I = 0.0;

@@ -47,7 +47,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.LBumper)).onTrue(elevator.L0());
+    // OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.LBumper)).onTrue(elevator.L0());
     OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.X)).onTrue(elevator.L1());
     OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.A)).onTrue(elevator.L2());
     OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.B)).onTrue(elevator.L3());
@@ -56,7 +56,7 @@ public class RobotContainer {
     OI.getButton(OI.Driver.RBumper)
         .and(OI.getPOVButton(OI.Driver.POV180))
         .whileTrue(elevator.goDown());
-    OI.getButton(OI.Driver.Start).onTrue(elevator.zeroMotorEncoder());
+    OI.getButton(OI.Driver.Start).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
