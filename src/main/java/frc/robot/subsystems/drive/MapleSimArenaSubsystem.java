@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.ArrayList;
+import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoral;
@@ -25,7 +27,7 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
 
   private Boolean[] isAtSource = new Boolean[] {false, false, false, false};
 
-  private Pose3d[] scoredCoralPoses = new Pose3d[] {};
+  private List<Pose3d> scoredCoralPoses = new ArrayList<Pose3d>();
 
   /** Creates a new MapleSimArenaSubsystem. */
   public MapleSimArenaSubsystem(SwerveDriveSimulation swerveDriveSimulation) {
@@ -92,13 +94,19 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     for (int i = 0; i < scorePoseList.length; i++) {
       double currentDistance =
           robotCoralPose.getTranslation().getDistance(scorePoseList[i].getTranslation());
-      if (currentDistance < closestDistance && currentDistance < kScoreDistance.in(Meters)) {
+      if (currentDistance < closestDistance
+          && currentDistance < kScoreDistance.in(Meters)
+          && !scoredCoralPoses.contains(scorePoseList[i])) {
         closestDistance = currentDistance;
         closestPose = scorePoseList[i];
       }
     }
 
     return closestPose;
+  }
+
+  public void scoreCoral(Pose3d closeScorePose) {
+    scoredCoralPoses.add(closeScorePose);
   }
 
   public Command clearSimFeild() {
@@ -115,7 +123,8 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Logger.recordOutput("FieldSimulation/Scored Coral Poses", scoredCoralPoses);
+    Pose3d[] testArray = new Pose3d[] {};
+    Logger.recordOutput("FieldSimulation/Scored Coral Poses", scoredCoralPoses.toArray(testArray));
 
     for (int i = 0; i < kSourceAreas.length; i++) {
       Pose2d[] currentSourse = kSourceAreas[i];

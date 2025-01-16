@@ -88,7 +88,7 @@ public final class Constants {
   }
 
   public class SimulationFeildConstants {
-    public static final Distance kScoreDistance = Inch.of(12);
+    public static final Distance kScoreDistance = Inch.of(17.75);
 
     public static final Pose2d[][] kSourceAreas =
         new Pose2d[][] {

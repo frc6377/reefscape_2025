@@ -185,7 +185,7 @@ public class RobotContainer {
               drive,
               () -> -OI.getAxisSupplier(OI.Keyboard.AD).get(),
               () -> -OI.getAxisSupplier(OI.Keyboard.WS).get(),
-              () -> OI.getAxisSupplier(OI.Keyboard.ArrowLeftRight).get()));
+              () -> -OI.getAxisSupplier(OI.Keyboard.ArrowLeftRight).get()));
     }
 
     if (Robot.isReal()) {
@@ -201,6 +201,7 @@ public class RobotContainer {
       OI.getButton(OI.Keyboard.M)
           .and(() -> !m_ElevatorSubsystem.getHasGamePiece())
           .whileTrue(m_IntakeSimSubsystem.IntakeCommand());
+      OI.getButton(OI.Keyboard.Comma).whileTrue(scoreCoralCommand());
 
       OI.getButton(OI.Keyboard.Z).onTrue(m_ElevatorSubsystem.L1());
       OI.getButton(OI.Keyboard.X).onTrue(m_ElevatorSubsystem.L2());
@@ -213,7 +214,11 @@ public class RobotContainer {
     return Commands.runOnce(
         () -> {
           if (m_ElevatorSubsystem.getHasGamePiece()) {
-            m_MapleSimArenaSubsystem.getClosestReef(robotCoralPose);
+            Pose3d closeScorePose = m_MapleSimArenaSubsystem.getClosestReef(robotCoralPose);
+            if (closeScorePose != null) {
+              m_MapleSimArenaSubsystem.scoreCoral(closeScorePose);
+              m_ElevatorSubsystem.setHasGamePiece(false);
+            }
           }
         });
   }
@@ -243,6 +248,9 @@ public class RobotContainer {
     if (closestReef != null) {
       Logger.recordOutput(
           "FieldSimulation/Closest Score Pose", new Pose3d[] {robotCoralPose, closestReef});
+    } else {
+      Logger.recordOutput(
+          "FieldSimulation/Closest Score Pose", new Pose3d[] {new Pose3d(), new Pose3d()});
     }
 
     if (m_IntakeSimSubsystem.GetPieceFromIntake()) {
