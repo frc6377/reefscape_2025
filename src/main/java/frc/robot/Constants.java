@@ -84,11 +84,11 @@ public final class Constants {
     public static final Distance kMaxElevatorHeight = Inches.of(76);
     public static final Distance kElevatorDrumCircumference =
         kElevatorDrumRadius.times(2 * Math.PI);
-    public static final double kMechenismOffset = 0;
+    public static final double kMechenismOffset = 0.1;
   }
 
   public class SimulationFeildConstants {
-    public static final Distance kScoreDistance = Inch.of(17.75);
+    public static final Distance kScoreDistance = Inch.of(18);
 
     public static final Pose2d[][] kSourceAreas =
         new Pose2d[][] {
@@ -529,12 +529,5 @@ public final class Constants {
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
     };
-  }
-
-  public class SubsystemToggles {
-    public static final boolean kUseIntake = true;
-    public static final boolean kUseDrive = true;
-    public static final boolean kUseVision = true;
-    public static final boolean kUseElevator = true;
   }
 }

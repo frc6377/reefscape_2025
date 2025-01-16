@@ -93,10 +93,10 @@ public class ElevatorSubsystem extends SubsystemBase {
       simElevatorMotor =
           new SparkMaxSim(elevatorMotor, Constants.ElevatorConstants.kElevatorGearbox);
       elevatorMech =
-          mech.getRoot("root", 1.25, 0)
+          mech.getRoot("root", 1, 0)
               .append(
                   new MechanismLigament2d(
-                      "Elevator Mech [0]", 1, 90, 15, new Color8Bit(Color.kPurple)));
+                      "Elevator Mech [0]", 10, 90, 10, new Color8Bit(Color.kCyan)));
 
       if (widg == null) {
         widg = Shuffleboard.getTab(getName()).add("Elevator", mech);
