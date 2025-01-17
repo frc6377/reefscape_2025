@@ -16,15 +16,15 @@ public class OI extends OI_Utils {
     // A B Y X Buttons
     public static final Control A =
         new Control(
-            XboxController.Button.kA, "The elevator will move to L2 on the reef.", controller);
+            XboxController.Button.kA, "The elevator moves L2.", controller);
     public static final Control B =
         new Control(
-            XboxController.Button.kB, "The elevator will move to L3 on the reef.", controller);
+            XboxController.Button.kB, "The elevator moves to L3.", controller);
     public static final Control Y =
         new Control(
-            XboxController.Button.kY, "The elevator will move to L4 on the reef.", controller);
+            XboxController.Button.kY, "The elevator moves to L4.", controller);
     public static final Control X =
-        new Control(XboxController.Button.kX, "The elevator will move to the ground.", controller);
+        new Control(XboxController.Button.kX, "The elevator moves to the ground.", controller);
 
     // Bumpers & Triggers
     public static final Control LTrigger =
@@ -42,7 +42,7 @@ public class OI extends OI_Utils {
         new Control(XboxController.Button.kStart, "The robot gets zeroed.", controller);
     public static final Control Back =
         new Control(
-            XboxController.Button.kBack, "The elevator will move to L1 on the reef.", controller);
+            XboxController.Button.kBack, "The elevator moves to L1.", controller);
     public static final Control LSB =
         new Control(
             XboxController.Button.kLeftStick,
@@ -51,7 +51,7 @@ public class OI extends OI_Utils {
     public static final Control RSB =
         new Control(
             XboxController.Button.kRightStick,
-            "The gear get switched to slow gear as you hold it.",
+            "The gear gets switched to slow gear as you hold it.",
             controller);
 
     // POV Buttons
