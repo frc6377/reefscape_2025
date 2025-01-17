@@ -14,14 +14,22 @@ public class OI extends OI_Utils {
   public static final class Driver {
     public static final XboxController controller = new XboxController(driverJoystickPort);
     // A B Y X Buttons
-    public static final Control A = new Control(XboxController.Button.kA, "The elevator will move to L2 on the reef.", controller);
-    public static final Control B = new Control(XboxController.Button.kB, "The elevator will move to L3 on the reef.", controller);
-    public static final Control Y = new Control(XboxController.Button.kY, "The elevator will move to L4 on the reef.", controller);
-    public static final Control X = new Control(XboxController.Button.kX, "The elevator will move to the ground.", controller);
+    public static final Control A =
+        new Control(
+            XboxController.Button.kA, "The elevator will move to L2 on the reef.", controller);
+    public static final Control B =
+        new Control(
+            XboxController.Button.kB, "The elevator will move to L3 on the reef.", controller);
+    public static final Control Y =
+        new Control(
+            XboxController.Button.kY, "The elevator will move to L4 on the reef.", controller);
+    public static final Control X =
+        new Control(XboxController.Button.kX, "The elevator will move to the ground.", controller);
 
     // Bumpers & Triggers
     public static final Control LTrigger =
-        new Control(XboxController.Axis.kLeftTrigger, "The robot scores the coral.", controller, 0.5);
+        new Control(
+            XboxController.Axis.kLeftTrigger, "The robot scores the coral.", controller, 0.5);
     public static final Control RTrigger =
         new Control(XboxController.Axis.kRightTrigger, "The robot intakes.", controller, 0.5);
     public static final Control LBumper =
@@ -30,17 +38,27 @@ public class OI extends OI_Utils {
         new Control(XboxController.Button.kRightBumper, "The robot outakes.", controller);
 
     // Start, End & Left/Right stick buttons
-    public static final Control Start = new Control(XboxController.Button.kStart, "The robot gets zeroed.", controller);
-    public static final Control Back = new Control(XboxController.Button.kBack, "The elevator will move to L1 on the reef.", controller);
+    public static final Control Start =
+        new Control(XboxController.Button.kStart, "The robot gets zeroed.", controller);
+    public static final Control Back =
+        new Control(
+            XboxController.Button.kBack, "The elevator will move to L1 on the reef.", controller);
     public static final Control LSB =
-        new Control(XboxController.Button.kLeftStick, "The robot auto aligns to the reef's wall.", controller);
+        new Control(
+            XboxController.Button.kLeftStick,
+            "The robot auto aligns to the reef's wall.",
+            controller);
     public static final Control RSB =
-        new Control(XboxController.Button.kRightStick, "The gear get switched to slow gear as you hold it.", controller);
+        new Control(
+            XboxController.Button.kRightStick,
+            "The gear get switched to slow gear as you hold it.",
+            controller);
 
     // POV Buttons
     public static final Control POV0 = new Control(0, "", controller);
     public static final Control POV90 = new Control(90, "The elevator goes up.", controller);
-    public static final Control POV180 = new Control(180, "The robot switches to drive mode.", controller);
+    public static final Control POV180 =
+        new Control(180, "The robot switches to drive mode.", controller);
     public static final Control POV270 = new Control(270, "The elevator goes down.", controller);
 
     // Control Curves
@@ -81,7 +99,10 @@ public class OI extends OI_Utils {
     public static final Control LBumper =
         new Control(XboxController.Button.kLeftBumper, "", controller);
     public static final Control RBumper =
-        new Control(XboxController.Button.kRightBumper, "The robot enables the climber when you hold the button.", controller);
+        new Control(
+            XboxController.Button.kRightBumper,
+            "The robot enables the climber when you hold the button.",
+            controller);
 
     // Start, End & Left/Right stick buttons
     public static final Control Start = new Control(XboxController.Button.kStart, "", controller);

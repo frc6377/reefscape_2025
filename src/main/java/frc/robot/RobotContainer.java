@@ -52,10 +52,8 @@ public class RobotContainer {
     OI.getButton(OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(OI.Driver.Y).onTrue(elevator.L4());
-    OI.getButton(OI.Driver.POV90)
-        .whileTrue(elevator.goUp());
-    OI.getButton(OI.Driver.POV270)
-        .whileTrue(elevator.goDown());
+    OI.getButton(OI.Driver.POV90).whileTrue(elevator.goUp());
+    OI.getButton(OI.Driver.POV270).whileTrue(elevator.goDown());
     OI.getButton(OI.Driver.Start).onTrue(elevator.zeroMotorEncoder());
 
     // Note that X is defined as forward according to WPILib convention,
@@ -103,15 +101,13 @@ public class RobotContainer {
     OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.scoreCounterClockWise());
 
     /**
-     * 
-     * TODO Controls:
-     * OI.getButton(OI.Driver.LeftStick).whileTrue(autoAlign.AutoAlign());
+     * TODO Controls: OI.getButton(OI.Driver.LeftStick).whileTrue(autoAlign.AutoAlign());
      * OI.getButton(OI.Driver.RightStick).whileTrue(gearAlign.GearAlign());
      * OI.getButton(OI.Driver.POV180).whileTrue(drive.DriveMode());
-     * OI.getButton(OI.Operator.LTrigger).whileTrue(climb.Climb()); 
+     * OI.getButton(OI.Operator.LTrigger).whileTrue(climb.Climb());
      * OI.getButton(OI.Operator.RTrigger).whileTrue(climb.UnClimb());
-     * OI.getButton(OI.Operator.RBumper).whileTrue(climb.EnableClimber()); */
-
+     * OI.getButton(OI.Operator.RBumper).whileTrue(climb.EnableClimber());
+     */
   }
 
   public Command getAutonomousCommand() {
