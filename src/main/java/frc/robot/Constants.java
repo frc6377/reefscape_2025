@@ -36,6 +36,8 @@ public final class Constants {
     public static final double I = 0.0;
     public static final double D = 0.0;
     public static final double FF = 0.0;
+    public static final Distance kBottomLimit = Inches.of(9);
+    public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;
 
     // The carriage on the elv effectivly adds a gearing multiplier of 2
