@@ -167,9 +167,7 @@ public class Elevator extends SubsystemBase {
     return runOnce(
         () -> {
           double adjustedSetpoint =
-              (heightLevel.in(Meters) / (2 * (Math.PI * kElevatorDrumRadius.in(Meters))))
-                  * kElevatorGearing
-                  / ElevatorConstants.kCarageFactor;
+              heightToRotations(heightLevel).in(Rotations);
           elevatorMotor
               .getClosedLoopController()
               .setReference(adjustedSetpoint, ControlType.kPosition);
