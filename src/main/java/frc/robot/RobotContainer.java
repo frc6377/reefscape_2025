@@ -4,7 +4,9 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -52,8 +54,8 @@ public class RobotContainer {
     OI.getButton(OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(OI.Driver.Y).onTrue(elevator.L4());
-    OI.getButton(OI.Driver.POV90).whileTrue(elevator.goUp());
-    OI.getButton(OI.Driver.POV270).whileTrue(elevator.goDown());
+    OI.getPOVButton(OI.Driver.POV90).whileTrue(elevator.goUp());
+    OI.getPOVButton(OI.Driver.POV270).whileTrue(elevator.goDown());
     OI.getButton(OI.Driver.Start).onTrue(elevator.zeroMotorEncoder());
 
     // Note that X is defined as forward according to WPILib convention,
