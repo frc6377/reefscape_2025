@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -39,22 +40,21 @@ public class RobotContainer {
   private final Elevator elevator = new Elevator();
 
   private final IntakeSubsystem intake = new IntakeSubsystem();
+  private final CoralScorer coralScorer = new CoralScorer();
 
   public RobotContainer() {
     configureBindings();
   }
 
   private void configureBindings() {
-    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.LBumper)).onTrue(elevator.L0());
-    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.A)).onTrue(elevator.L1());
-    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.B)).onTrue(elevator.L2());
-    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.X)).onTrue(elevator.L3());
-    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.Y)).onTrue(elevator.L4());
-    OI.getButton(OI.Driver.B)
-        .and(OI.getButton(OI.Driver.RBumper).negate())
+    OI.getButton(OI.Driver.X).onTrue(elevator.L0());
+    OI.getButton(OI.Driver.Back).onTrue(elevator.L1());
+    OI.getButton(OI.Driver.A).onTrue(elevator.L2());
+    OI.getButton(OI.Driver.B).onTrue(elevator.L3());
+    OI.getButton(OI.Driver.Y).onTrue(elevator.L4());
+    OI.getButton(OI.Driver.POV90)
         .whileTrue(elevator.goUp());
-    OI.getButton(OI.Driver.A)
-        .and(OI.getButton(OI.Driver.RBumper).negate())
+    OI.getButton(OI.Driver.POV270)
         .whileTrue(elevator.goDown());
     OI.getButton(OI.Driver.Start).onTrue(elevator.zeroMotorEncoder());
 
@@ -99,6 +99,19 @@ public class RobotContainer {
     // Set the intake rollers to the left and right triggers
     OI.getButton(OI.Driver.RTrigger).whileTrue(intake.IntakeCommand());
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.OuttakeCommand());
+    OI.getButton(OI.Driver.LTrigger).whileTrue(coralScorer.scoreClockWise());
+    OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.scoreCounterClockWise());
+
+    /**
+     * 
+     * TODO Controls:
+     * OI.getButton(OI.Driver.LeftStick).whileTrue(autoAlign.AutoAlign());
+     * OI.getButton(OI.Driver.RightStick).whileTrue(gearAlign.GearAlign());
+     * OI.getButton(OI.Driver.POV180).whileTrue(drive.DriveMode());
+     * OI.getButton(OI.Operator.LTrigger).whileTrue(climb.Climb()); 
+     * OI.getButton(OI.Operator.RTrigger).whileTrue(climb.UnClimb());
+     * OI.getButton(OI.Operator.RBumper).whileTrue(climb.EnableClimber()); */
+
   }
 
   public Command getAutonomousCommand() {
