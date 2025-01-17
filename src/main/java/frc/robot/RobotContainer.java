@@ -154,6 +154,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    boolean isController = true;
+
     if (Robot.isReal()) {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
@@ -171,24 +173,33 @@ public class RobotContainer {
                       new Pose2d(drive.getPose().getTranslation(), new Rotation2d()));
       OI.getButton(OI.Driver.Start).onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
     } else {
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> -OI.getAxisSupplier(OI.Keyboard.AD).get(),
-              () -> -OI.getAxisSupplier(OI.Keyboard.WS).get(),
-              () -> -OI.getAxisSupplier(OI.Keyboard.ArrowLeftRight).get()));
+        if (isController) {
+            drive.setDefaultCommand(
+                DriveCommands.joystickDrive(
+                    drive,
+                    () -> -OI.getAxisSupplier(OI.Driver.LeftX).get(),
+                    () -> -OI.getAxisSupplier(OI.Driver.LeftY).get(),
+                    () -> -OI.getAxisSupplier(OI.Driver.RightX).get()));
+        } else {
+            drive.setDefaultCommand(
+                DriveCommands.joystickDrive(
+                    drive,
+                    () -> -OI.getAxisSupplier(OI.Keyboard.AD).get(),
+                    () -> -OI.getAxisSupplier(OI.Keyboard.WS).get(),
+                    () -> -OI.getAxisSupplier(OI.Keyboard.ArrowLeftRight).get()));
 
-      // Intake / Scoring
-      OI.getButton(OI.Keyboard.M)
-          .and(() -> !m_ElevatorSubsystem.getHasGamePiece())
-          .whileTrue(m_IntakeSimSubsystem.IntakeCommand());
-      OI.getButton(OI.Keyboard.Comma).whileTrue(scoreCoralCommand());
+            // Intake / Scoring
+            OI.getButton(OI.Keyboard.M)
+                .and(() -> !m_ElevatorSubsystem.getHasGamePiece())
+                .whileTrue(m_IntakeSimSubsystem.IntakeCommand());
+            OI.getButton(OI.Keyboard.Comma).whileTrue(scoreCoralCommand());
 
-      // Elevator Poses
-      OI.getButton(OI.Keyboard.Z).onTrue(m_ElevatorSubsystem.L1());
-      OI.getButton(OI.Keyboard.X).onTrue(m_ElevatorSubsystem.L2());
-      OI.getButton(OI.Keyboard.C).onTrue(m_ElevatorSubsystem.L3());
-      OI.getButton(OI.Keyboard.V).onTrue(m_ElevatorSubsystem.L4());
+            // Elevator Poses
+            OI.getButton(OI.Keyboard.Z).onTrue(m_ElevatorSubsystem.L1());
+            OI.getButton(OI.Keyboard.X).onTrue(m_ElevatorSubsystem.L2());
+            OI.getButton(OI.Keyboard.C).onTrue(m_ElevatorSubsystem.L3());
+            OI.getButton(OI.Keyboard.V).onTrue(m_ElevatorSubsystem.L4());
+        }
     }
   }
 
