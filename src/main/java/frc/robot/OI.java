@@ -39,10 +39,10 @@ public class OI extends OI_Utils {
         new Control(XboxController.Button.kRightStick, null, controller);
 
     // Control Curves
-    private static final ControlCurve xTranslationCurve = new ControlCurve(1, 0, 0, 0.0, true);
-    private static final ControlCurve yTranslationCurve = new ControlCurve(1, 0, 0, 0.0);
-    public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 1, 0.1);
-    public static final ControlCurve rotationCurve = new ControlCurve(0.8, 0, 1, 0, true);
+    private static final ControlCurve xTranslationCurve = new ControlCurve(1, 0, 1, 0.0, true);
+    private static final ControlCurve yTranslationCurve = new ControlCurve(1, 0, 1, 0.0);
+    public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 1, 0);
+    public static final ControlCurve rotationCurve = new ControlCurve(1, 0, 1, 0, true);
 
     // Joystick Axes
     public static final Control LeftX =

@@ -95,7 +95,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     // Switch thread to high priority to improve loop timing
-    Threads.setCurrentThreadPriority(true, 99);
+    Threads.setCurrentThreadPriority(true, 39);
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled commands, running already-scheduled commands, removing
@@ -111,7 +111,9 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    robotContainer.resetSimulation();
+    if (Robot.isSimulation()) {
+      robotContainer.resetSimulation();
+    }
   }
 
   /** This function is called periodically when disabled. */

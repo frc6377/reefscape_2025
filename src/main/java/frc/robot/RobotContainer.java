@@ -73,13 +73,15 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        vision =
-            new Vision(
-                drive,
-                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+        // vision =
+        //     new Vision(
+        //         drive,
+        //         new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+        //         new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation)
+        //       );
 
         m_IntakeSimSubsystem = new IntakeSubsystem();
+        m_ElevatorSubsystem = new ElevatorSubsystem();
         break;
 
       case SIM:
@@ -173,8 +175,8 @@ public class RobotContainer {
       OI.getButton(OI.Driver.Start).onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
 
       // Intake / Scoring
-      OI.getButton(OI.Driver.RTrigger).whileTrue(m_IntakeSimSubsystem.IntakeCommand());
-      OI.getButton(OI.Driver.LTrigger).onTrue(scoreCoralCommand());
+      OI.getTrigger(OI.Driver.RTrigger).whileTrue(m_IntakeSimSubsystem.IntakeCommand());
+      // OI.getTrigger(OI.Driver.LTrigger).onTrue(scoreCoralCommand());
 
       // Elevator Pose
       OI.getButton(OI.Driver.X).onTrue(m_ElevatorSubsystem.L1());

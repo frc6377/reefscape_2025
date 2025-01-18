@@ -26,11 +26,11 @@ public class IntakeSubsystem extends SubsystemBase {
   private SwerveDriveSimulation driveSimulation;
 
   public IntakeSubsystem() {
-    intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushed);
+    intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushless);
   }
 
   public IntakeSubsystem(SwerveDriveSimulation driveSimulation) {
-    intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushed);
+    intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushless);
 
     this.driveSimulation = driveSimulation;
     intakeSim =
