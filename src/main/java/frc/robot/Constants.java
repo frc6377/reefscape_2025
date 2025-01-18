@@ -88,7 +88,7 @@ public final class Constants {
   }
 
   public class SimulationFeildConstants {
-    public static final Distance kScoreDistance = Inch.of(18);
+    public static final Distance kScoreDistance = Inch.of(17.25);
 
     public static final Pose2d[][] kSourceAreas =
         new Pose2d[][] {
@@ -360,187 +360,187 @@ public final class Constants {
 
       // Level 2 (L2 - Lower Branches)
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[0][0]),
+          kRedStickPoses[0][0],
           kRedStickPoses[0][1],
           kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.zero())),
+          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[1][0]),
+          kRedStickPoses[1][0],
           kRedStickPoses[1][1],
           kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.zero())),
+          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[2][0]),
+          kRedStickPoses[2][0],
           kRedStickPoses[2][1],
           kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(-60))),
+          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(60))),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[3][0]),
+          kRedStickPoses[3][0],
           kRedStickPoses[3][1],
           kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(60))),
+          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(-60))),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[4][0]),
+          kRedStickPoses[4][0],
           kRedStickPoses[4][1],
+          kL2H,
+          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(60))),
+      new Pose3d(
+          kRedStickPoses[5][0],
+          kRedStickPoses[5][1],
+          kL2H,
+          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(-60))),
+      new Pose3d(
+          kRedStickPoses[6][0],
+          kRedStickPoses[6][1],
           kL2H,
           new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(-60))),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[5][0]),
-          kRedStickPoses[5][1],
+          kRedStickPoses[7][0],
+          kRedStickPoses[7][1],
           kL2H,
           new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(60))),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[6][0]),
-          kRedStickPoses[6][1],
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(60))),
-      new Pose3d(
-          kFeildLength.minus(kRedStickPoses[7][0]),
-          kRedStickPoses[7][1],
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(-60))),
-      new Pose3d(
-          kFeildLength.minus(kRedStickPoses[8][0]),
+          kRedStickPoses[8][0],
           kRedStickPoses[8][1],
           kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(60))),
+          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(-60))),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[9][0]),
+          kRedStickPoses[9][0],
           kRedStickPoses[9][1],
           kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(-60))),
+          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(60))),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[10][0]),
+          kRedStickPoses[10][0],
           kRedStickPoses[10][1],
           kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.zero())),
+          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[11][0]),
+          kRedStickPoses[11][0],
           kRedStickPoses[11][1],
           kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.zero())),
+          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.zero())),
 
       // Level 3 (L3 - Middle Branches)
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[0][0]),
+          kRedStickPoses[0][0],
           kRedStickPoses[0][1],
           kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.zero())),
+          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[1][0]),
+          kRedStickPoses[1][0],
           kRedStickPoses[1][1],
           kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.zero())),
+          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[2][0]),
+          kRedStickPoses[2][0],
           kRedStickPoses[2][1],
           kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(-60))),
+          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(60))),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[3][0]),
+          kRedStickPoses[3][0],
           kRedStickPoses[3][1],
           kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(60))),
+          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(-60))),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[4][0]),
+          kRedStickPoses[4][0],
           kRedStickPoses[4][1],
+          kL3H,
+          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(60))),
+      new Pose3d(
+          kRedStickPoses[5][0],
+          kRedStickPoses[5][1],
+          kL3H,
+          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(-60))),
+      new Pose3d(
+          kRedStickPoses[6][0],
+          kRedStickPoses[6][1],
           kL3H,
           new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(-60))),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[5][0]),
-          kRedStickPoses[5][1],
+          kRedStickPoses[7][0],
+          kRedStickPoses[7][1],
           kL3H,
           new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(60))),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[6][0]),
-          kRedStickPoses[6][1],
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(60))),
-      new Pose3d(
-          kFeildLength.minus(kRedStickPoses[7][0]),
-          kRedStickPoses[7][1],
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(-60))),
-      new Pose3d(
-          kFeildLength.minus(kRedStickPoses[8][0]),
+          kRedStickPoses[8][0],
           kRedStickPoses[8][1],
           kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(60))),
+          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(-60))),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[9][0]),
+          kRedStickPoses[9][0],
           kRedStickPoses[9][1],
           kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(-60))),
+          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(60))),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[10][0]),
+          kRedStickPoses[10][0],
           kRedStickPoses[10][1],
           kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.zero())),
+          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kRedStickPoses[11][0]),
+          kRedStickPoses[11][0],
           kRedStickPoses[11][1],
           kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.zero())),
+          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.zero())),
 
       // Level 4 (L4 - Highest Branches)
       new Pose3d(
-          kFeildLength.minus(kBlueStickPoses[0][0]),
-          kBlueStickPoses[0][1],
+          kRedStickPoses[0][0],
+          kRedStickPoses[0][1],
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kBlueStickPoses[1][0]),
-          kBlueStickPoses[1][1],
+          kRedStickPoses[1][0],
+          kRedStickPoses[1][1],
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kBlueStickPoses[2][0]),
-          kBlueStickPoses[2][1],
+          kRedStickPoses[2][0],
+          kRedStickPoses[2][1],
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kBlueStickPoses[3][0]),
-          kBlueStickPoses[3][1],
+          kRedStickPoses[3][0],
+          kRedStickPoses[3][1],
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kBlueStickPoses[4][0]),
-          kBlueStickPoses[4][1],
+          kRedStickPoses[4][0],
+          kRedStickPoses[4][1],
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kBlueStickPoses[5][0]),
-          kBlueStickPoses[5][1],
+          kRedStickPoses[5][0],
+          kRedStickPoses[5][1],
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kBlueStickPoses[6][0]),
-          kBlueStickPoses[6][1],
+          kRedStickPoses[6][0],
+          kRedStickPoses[6][1],
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kBlueStickPoses[7][0]),
-          kBlueStickPoses[7][1],
+          kRedStickPoses[7][0],
+          kRedStickPoses[7][1],
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kBlueStickPoses[8][0]),
-          kBlueStickPoses[8][1],
+          kRedStickPoses[8][0],
+          kRedStickPoses[8][1],
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kBlueStickPoses[9][0]),
-          kBlueStickPoses[9][1],
+          kRedStickPoses[9][0],
+          kRedStickPoses[9][1],
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kBlueStickPoses[10][0]),
-          kBlueStickPoses[10][1],
+          kRedStickPoses[10][0],
+          kRedStickPoses[10][1],
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
       new Pose3d(
-          kFeildLength.minus(kBlueStickPoses[11][0]),
-          kBlueStickPoses[11][1],
+          kRedStickPoses[11][0],
+          kRedStickPoses[11][1],
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
     };
