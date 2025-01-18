@@ -173,13 +173,13 @@ public class Elevator extends SubsystemBase {
           elevatorMotor
               .getClosedLoopController()
               .setReference(adjustedSetpoint, ControlType.kPosition);
-          SmartDashboard.putNumber("Elevator/Setpoint", heightLevel.in(Meters));
+          SmartDashboard.putNumber("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
           SmartDashboard.putNumber("Elevator/Setpoint Rotations", adjustedSetpoint);
         });
   }
 
   public Command L0() {
-    return changeElevation(Inches.zero());
+    return changeElevation(Constants.ElevatorConstants.kL0Height);
   }
 
   public Command L1() {
@@ -204,7 +204,7 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber(
         "Elevator/Motor Encoder Rotation", elevatorMotor.getEncoder().getPosition());
     SmartDashboard.putNumber("Elevator/Motor Percent", elevatorMotor.get());
-    SmartDashboard.putNumber("Elevator/Height", getElevatorHeight().in(Meters));
+    SmartDashboard.putNumber("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
   }
 
   @Override
