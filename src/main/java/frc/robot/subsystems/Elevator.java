@@ -28,6 +28,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -50,7 +51,8 @@ import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
 
 public class Elevator extends SubsystemBase {
-  private SparkMax elevatorMotor;
+  private SparkMax elevatorMotor1;
+  private SparkMax elevatorMotor2;
   private SparkAbsoluteEncoder elevatorEncoder;
   private SparkMaxSim simElevatorMotor;
   private final Time sparkPeriod;
@@ -80,9 +82,10 @@ public class Elevator extends SubsystemBase {
 
   public Elevator() {
     sparkPeriod = Millisecond.one();
-    elevatorMotor = new SparkMax(MotorIDConstants.kElevatorMotor1, MotorType.kBrushless);
-    elevatorEncoder = elevatorMotor.getAbsoluteEncoder();
-    elevatorMotor.configure(
+    elevatorMotor1 = new SparkMax(MotorIDConstants.kElevatorMotor1, MotorType.kBrushless);
+    elevatorMotor2 = new SparkMax(MotorIDConstants.kElevatorMotor2, MotorType.kBrushless);
+    elevatorEncoder = elevatorMotor1.getAbsoluteEncoder();
+    elevatorMotor1.configure(
         new SparkMaxConfig()
             .apply(encoderCfg)
             .apply(loopCfg)
@@ -90,9 +93,9 @@ public class Elevator extends SubsystemBase {
             .apply(elvMinSoftLimit),
         ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
+    elevatorMotor2.configure(new SparkMaxConfig().follow(elevatorMotor1, true), ResetMode.kNoResetSafeParameters,PersistMode.kNoPersistParameters);
 
-    elevatorMotor.getEncoder().setPosition(elevatorEncoder.getPosition() * kElevatorGearing);
-
+    elevatorMotor1.getEncoder().setPosition(elevatorEncoder.getPosition() * kElevatorGearing);
     // Simulation
     if (Robot.isSimulation()) {
       m_elevatorSim =
@@ -106,7 +109,7 @@ public class Elevator extends SubsystemBase {
               true,
               0);
       simElevatorMotor =
-          new SparkMaxSim(elevatorMotor, Constants.ElevatorConstants.kElevatorGearbox);
+          new SparkMaxSim(elevatorMotor1, Constants.ElevatorConstants.kElevatorGearbox);
       elevatorMech =
           mech.getRoot("root", 1, 0)
               .append(
@@ -137,29 +140,29 @@ public class Elevator extends SubsystemBase {
   }
 
   public Distance getElevatorHeight() {
-    return rotationsToHeight(Rotations.of(elevatorMotor.getEncoder().getPosition()));
+    return rotationsToHeight(Rotations.of(elevatorMotor1.getEncoder().getPosition()));
   }
 
   public Command goUp() {
     return startEnd(
         () -> {
-          elevatorMotor.set(.2);
+          elevatorMotor1.set(.2);
         },
-        () -> elevatorMotor.set(0));
+        () -> elevatorMotor1.set(0));
   }
 
   public Command goDown() {
     return startEnd(
         () -> {
-          elevatorMotor.set(-.2);
+          elevatorMotor1.set(-.2);
         },
-        () -> elevatorMotor.set(0));
+        () -> elevatorMotor1.set(0));
   }
 
   public Command zeroMotorEncoder() {
     return Commands.runOnce(
         () -> {
-          elevatorMotor.getEncoder().setPosition(0);
+          elevatorMotor1.getEncoder().setPosition(0);
         });
   }
 
@@ -168,7 +171,7 @@ public class Elevator extends SubsystemBase {
         () -> {
           double adjustedSetpoint =
               heightToRotations(heightLevel).in(Rotations);
-          elevatorMotor
+          elevatorMotor1
               .getClosedLoopController()
               .setReference(adjustedSetpoint, ControlType.kPosition);
           SmartDashboard.putNumber("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
@@ -200,8 +203,8 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Elevator/Absolute Encoder rotations", elevatorEncoder.getPosition());
     SmartDashboard.putNumber(
-        "Elevator/Motor Encoder Rotation", elevatorMotor.getEncoder().getPosition());
-    SmartDashboard.putNumber("Elevator/Motor Percent", elevatorMotor.get());
+        "Elevator/Motor Encoder Rotation", elevatorMotor1.getEncoder().getPosition());
+    SmartDashboard.putNumber("Elevator/Motor Percent", elevatorMotor1.get());
     SmartDashboard.putNumber("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
   }
 

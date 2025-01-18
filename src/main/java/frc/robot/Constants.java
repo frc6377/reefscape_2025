@@ -16,6 +16,7 @@ public final class Constants {
   public static class MotorIDConstants {
     // Rev Can Bus
     public static final int kElevatorMotor1 = 1;
+    public static final int kElevatorMotor2 = 2;
     public static final int kIntakeMotor = 9;
     // CANavor Can Bus
   }
@@ -45,12 +46,12 @@ public final class Constants {
     public static final double kCarageFactor = 2;
 
     // Simulation Constants
-    public static final DCMotor kElevatorGearbox = DCMotor.getNEO(1);
-    public static final double kElevatorGearing = 75.0;
-    public static final Mass kCarriageMass = Pounds.of(10);
-    public static final Distance kElevatorDrumRadius = Inches.of(1.729 / 2);
+    public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60Foc(2);
+    public static final double kElevatorGearing = 1.0;
+    public static final Mass kCarriageMass = Pounds.of(4);
+    public static final Distance kElevatorDrumRadius = Inches.of(.75 / 2);
     public static final Distance kMinElevatorHeight = Inches.zero();
-    public static final Distance kMaxElevatorHeight = Inches.of(76);
+    public static final Distance kMaxElevatorHeight = Inches.of(63);
     public static final Distance kElevatorDrumCircumference =
         kElevatorDrumRadius.times(2 * Math.PI);
   }
