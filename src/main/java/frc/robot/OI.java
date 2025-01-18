@@ -60,9 +60,12 @@ public class OI extends OI_Utils {
     // Control Curves
     private static final ControlCurve xTranslationCurve = new ControlCurve(1, 0, 1, 0.01, true);
     private static final ControlCurve yTranslationCurve = new ControlCurve(1, 0, 1, 0.01);
+    private static final ControlCurve xPrecisionCurve = new ControlCurve(0.5, 0, 1, 0.01, true);
+    private static final ControlCurve yPrecisionCurve = new ControlCurve(0.5, 0, 1, 0.01);
     public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 1, 0.01);
     public static final ControlCurve rotationCurve = new ControlCurve(1, 0, 1, 0.01, true);
-
+    public static final ControlCurve rotationPrecisionCurve =
+        new ControlCurve(0.5, 0, 1, 0.01, true);
     // Joystick Axes
     public static final Control LeftX =
         new Control(XboxController.Axis.kLeftX, "", controller, xTranslationCurve);
@@ -72,6 +75,14 @@ public class OI extends OI_Utils {
         new Control(XboxController.Axis.kRightX, "", controller, rotationCurve);
     public static final Control RightY =
         new Control(XboxController.Axis.kRightY, null, controller, null);
+
+    // Precision Joystick Axes
+    public static final Control LeftPrecisionX =
+        new Control(XboxController.Axis.kLeftX, "", controller, xPrecisionCurve);
+    public static final Control LeftPrecisionY =
+        new Control(XboxController.Axis.kLeftY, "", controller, yPrecisionCurve);
+    public static final Control RightPrecisionX =
+        new Control(XboxController.Axis.kRightX, "", controller, rotationPrecisionCurve);
 
     public static void setRumble(double rumbleIntensity) {
       controller.setRumble(RumbleType.kBothRumble, rumbleIntensity);
