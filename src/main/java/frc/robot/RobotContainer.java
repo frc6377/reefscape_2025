@@ -161,9 +161,8 @@ public class RobotContainer {
         Constants.currentMode == Constants.Mode.SIM
             ? () -> drive.resetOdometry(driveSimulation.getSimulatedDriveTrainPose())
             : () ->
-                drive.resetOdometry(
-                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d()));
-    
+                drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d()));
+
     if (isController || Robot.isReal()) {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
@@ -206,15 +205,15 @@ public class RobotContainer {
 
   public Command scoreCoralCommand() {
     return Commands.runOnce(
-      () -> {
-        if (m_ElevatorSubsystem.getHasGamePiece()) {
-          Pose3d closeScorePose = m_MapleSimArenaSubsystem.getClosestReef(robotCoralPose);
-          if (closeScorePose != null) {
-            m_MapleSimArenaSubsystem.scoreCoral(closeScorePose);
-            m_ElevatorSubsystem.setHasGamePiece(false);
+        () -> {
+          if (m_ElevatorSubsystem.getHasGamePiece()) {
+            Pose3d closeScorePose = m_MapleSimArenaSubsystem.getClosestReef(robotCoralPose);
+            if (closeScorePose != null) {
+              m_MapleSimArenaSubsystem.scoreCoral(closeScorePose);
+              m_ElevatorSubsystem.setHasGamePiece(false);
+            }
           }
-        }
-      });
+        });
   }
 
   public Command getAutonomousCommand() {
