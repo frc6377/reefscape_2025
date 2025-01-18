@@ -8,30 +8,32 @@ import static frc.robot.Constants.CoralScorerConstants.*;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorIDConstants;
 
 public class CoralScorer extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
-  private SparkMax intakeMotor;
+  private SparkMax scorerMotor;
 
   public CoralScorer() {
-    intakeMotor = new SparkMax(MotorIDConstants.kScorerMotor, MotorType.kBrushless);
+    scorerMotor = new SparkMax(MotorIDConstants.kScorerMotor, MotorType.kBrushed);
   }
 
   // Made a command to spin clockwise
   public Command scoreClockWise() {
-    return startEnd(() -> intakeMotor.set(kSpeed), () -> intakeMotor.set(0));
+    return startEnd(() -> scorerMotor.set(-kSpeed), () -> scorerMotor.set(0));
   }
 
   // Made a command to spin counter clockwise
   public Command scoreCounterClockWise() {
-    return startEnd(() -> intakeMotor.set(-kSpeed), () -> intakeMotor.set(0));
+    return startEnd(() -> scorerMotor.set(kSpeed), () -> scorerMotor.set(0));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("CoralScorer/Motor Output", scorerMotor.get());
   }
 }

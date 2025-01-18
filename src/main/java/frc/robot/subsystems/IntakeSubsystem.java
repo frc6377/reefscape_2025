@@ -18,17 +18,17 @@ public class IntakeSubsystem extends SubsystemBase {
   private SparkMax intakeMotor;
 
   public IntakeSubsystem() {
-    intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushed);
+    intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushless);
   }
 
   // Made a command to spin clockwise
   public Command IntakeCommand() {
-    return startEnd(() -> intakeMotor.set(kSpeed), () -> intakeMotor.set(0));
+    return startEnd(() -> intakeMotor.set(-kSpeed), () -> intakeMotor.set(0));
   }
 
   // Made a command to spin counter clockwise
   public Command OuttakeCommand() {
-    return startEnd(() -> intakeMotor.set(-kSpeed), () -> intakeMotor.set(0));
+    return startEnd(() -> intakeMotor.set(kSpeed), () -> intakeMotor.set(0));
   }
 
   @Override

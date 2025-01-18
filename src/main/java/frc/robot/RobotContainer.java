@@ -66,13 +66,13 @@ public class RobotContainer {
             () ->
                 drive
                     .withVelocityX(
-                        -OI.getAxisSupplier(OI.Driver.LeftX).get()
+                        -OI.getAxisSupplier(OI.Driver.LeftY).get()
                             * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(
-                        -OI.getAxisSupplier(OI.Driver.LeftY).get()
+                        OI.getAxisSupplier(OI.Driver.LeftX).get()
                             * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(
-                        -OI.getAxisSupplier(OI.Driver.RightX).get()
+                        OI.getAxisSupplier(OI.Driver.RightX).get()
                             * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
 
@@ -97,9 +97,9 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
 
     // Set the intake rollers to the left and right triggers
-    OI.getButton(OI.Driver.RTrigger).whileTrue(intake.IntakeCommand());
+    OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.IntakeCommand());
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.OuttakeCommand());
-    OI.getButton(OI.Driver.LTrigger).whileTrue(coralScorer.scoreClockWise());
+    OI.getTrigger(OI.Driver.LTrigger).whileTrue(coralScorer.scoreClockWise());
     OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.scoreCounterClockWise());
 
     /**
