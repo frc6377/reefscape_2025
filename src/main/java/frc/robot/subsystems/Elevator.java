@@ -16,24 +16,17 @@ import static frc.robot.Constants.ElevatorConstants.kElevatorGearing;
 import static frc.robot.Constants.ElevatorConstants.kMaxElevatorHeight;
 import static frc.robot.Constants.ElevatorConstants.kMinElevatorHeight;
 
-import com.revrobotics.sim.SparkMaxSim;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
-import com.revrobotics.spark.config.ClosedLoopConfig;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.SoftLimitConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
@@ -51,10 +44,8 @@ import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
 
 public class Elevator extends SubsystemBase {
-  private SparkMax elevatorMotor1;
-  private SparkMax elevatorMotor2;
-  private SparkAbsoluteEncoder elevatorEncoder;
-  private SparkMaxSim simElevatorMotor;
+  private TalonFX elevatorMotor1;
+  private TalonFX elevatorMotor2;
   private final Time sparkPeriod;
   private static Mechanism2d mech = new Mechanism2d(2, 2);
   private static ComplexWidget widg;
@@ -63,39 +54,31 @@ public class Elevator extends SubsystemBase {
   public static final AbsoluteEncoderConfig encoderCfg =
       new AbsoluteEncoderConfig()
           .positionConversionFactor(Constants.ElevatorConstants.kElevatorConversion);
-  public static final SoftLimitConfig elvMaxSoftLimit =
-      new SoftLimitConfig()
-          .forwardSoftLimit(heightToRotations(Constants.ElevatorConstants.kTopLimit).in(Rotations));
-  public static final SoftLimitConfig elvMinSoftLimit =
-      new SoftLimitConfig()
-          .reverseSoftLimit(
-              heightToRotations(Constants.ElevatorConstants.kBottomLimit).in(Rotations));
-  public static final ClosedLoopConfig loopCfg =
-      new ClosedLoopConfig()
-          .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .pidf(
-              Constants.ElevatorConstants.P,
-              Constants.ElevatorConstants.I,
-              Constants.ElevatorConstants.D,
-              Constants.ElevatorConstants.FF);
+  public static final SoftwareLimitSwitchConfigs elvSoftLimit =
+      new SoftwareLimitSwitchConfigs()
+          .withForwardSoftLimitEnable(true)
+          .withForwardSoftLimitThreshold(heightToRotations(Constants.ElevatorConstants.kTopLimit))
+          .withReverseSoftLimitEnable(true)
+          .withReverseSoftLimitThreshold(
+              heightToRotations(Constants.ElevatorConstants.kBottomLimit));
+  public static final Slot0Configs loopCfg =
+      new Slot0Configs()
+          .withKP(Constants.ElevatorConstants.P)
+          .withKI(Constants.ElevatorConstants.I)
+          .withKD(Constants.ElevatorConstants.D);
   private ElevatorSim m_elevatorSim;
 
   public Elevator() {
     sparkPeriod = Millisecond.one();
-    elevatorMotor1 = new SparkMax(MotorIDConstants.kElevatorMotor1, MotorType.kBrushless);
-    elevatorMotor2 = new SparkMax(MotorIDConstants.kElevatorMotor2, MotorType.kBrushless);
-    elevatorEncoder = elevatorMotor1.getAbsoluteEncoder();
-    elevatorMotor1.configure(
-        new SparkMaxConfig()
-            .apply(encoderCfg)
-            .apply(loopCfg)
-            .apply(elvMaxSoftLimit)
-            .apply(elvMinSoftLimit),
-        ResetMode.kNoResetSafeParameters,
-        PersistMode.kNoPersistParameters);
-    elevatorMotor2.configure(new SparkMaxConfig().follow(elevatorMotor1, true), ResetMode.kNoResetSafeParameters,PersistMode.kNoPersistParameters);
+    // TODO: set up for canivore
+    elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, "");
+    elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, "");
+    elevatorMotor1.getConfigurator().apply(loopCfg);
+    elevatorMotor1.getConfigurator().apply(elvSoftLimit);
+    elevatorMotor2.setControl(new Follower(MotorIDConstants.kElevatorMotor1, true));
 
-    elevatorMotor1.getEncoder().setPosition(elevatorEncoder.getPosition() * kElevatorGearing);
+    // elevatorEncoder = elevatorMotor1.getPosition().getValueAsDouble();
+
     // Simulation
     if (Robot.isSimulation()) {
       m_elevatorSim =
@@ -108,8 +91,6 @@ public class Elevator extends SubsystemBase {
               kMaxElevatorHeight.in(Meters),
               true,
               0);
-      simElevatorMotor =
-          new SparkMaxSim(elevatorMotor1, Constants.ElevatorConstants.kElevatorGearbox);
       elevatorMech =
           mech.getRoot("root", 1, 0)
               .append(
@@ -139,8 +120,15 @@ public class Elevator extends SubsystemBase {
         .times(Rotations.one());
   }
 
+  public static AngularVelocity heightToRotations(LinearVelocity vel) {
+    // rot/s = (G)/(C*2/vel)
+    return Rotations.one()
+        .times(kElevatorGearing)
+        .div((kElevatorDrumCircumference.times(kCarageFactor)).div(vel));
+  }
+
   public Distance getElevatorHeight() {
-    return rotationsToHeight(Rotations.of(elevatorMotor1.getEncoder().getPosition()));
+    return rotationsToHeight(elevatorMotor1.getPosition().getValue());
   }
 
   public Command goUp() {
@@ -162,20 +150,17 @@ public class Elevator extends SubsystemBase {
   public Command zeroMotorEncoder() {
     return Commands.runOnce(
         () -> {
-          elevatorMotor1.getEncoder().setPosition(0);
+          elevatorMotor1.setPosition(0);
         });
   }
 
   public Command changeElevation(Distance heightLevel) {
     return runOnce(
         () -> {
-          double adjustedSetpoint =
-              heightToRotations(heightLevel).in(Rotations);
-          elevatorMotor1
-              .getClosedLoopController()
-              .setReference(adjustedSetpoint, ControlType.kPosition);
+          Angle adjustedSetpoint = heightToRotations(heightLevel);
+          elevatorMotor1.setControl(new PositionVoltage(adjustedSetpoint));
           SmartDashboard.putNumber("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
-          SmartDashboard.putNumber("Elevator/Setpoint Rotations", adjustedSetpoint);
+          SmartDashboard.putNumber("Elevator/Setpoint Rotations", adjustedSetpoint.in(Rotations));
         });
   }
 
@@ -201,9 +186,8 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Elevator/Absolute Encoder rotations", elevatorEncoder.getPosition());
     SmartDashboard.putNumber(
-        "Elevator/Motor Encoder Rotation", elevatorMotor1.getEncoder().getPosition());
+        "Elevator/Motor Encoder Rotation", elevatorMotor1.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Elevator/Motor Percent", elevatorMotor1.get());
     SmartDashboard.putNumber("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
   }
@@ -212,20 +196,15 @@ public class Elevator extends SubsystemBase {
   public void simulationPeriodic() {
     Distance simDist = Meters.zero();
     LinearVelocity simVel = MetersPerSecond.zero();
+    var simElevatorMotor = elevatorMotor1.getSimState();
 
     for (Time i = Seconds.zero(); i.lt(Robot.period); i = i.plus(sparkPeriod)) {
-      m_elevatorSim.setInputVoltage(
-          simElevatorMotor.getBusVoltage() * simElevatorMotor.getAppliedOutput());
+      m_elevatorSim.setInputVoltage(simElevatorMotor.getMotorVoltage());
       m_elevatorSim.update(sparkPeriod.in(Seconds));
       simDist = Meters.of(m_elevatorSim.getPositionMeters());
       simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
-      simElevatorMotor.iterate(
-          ((simVel.in(MetersPerSecond) / kElevatorDrumCircumference.in(Meters)))
-              * 60
-              * kElevatorGearing
-              / kCarageFactor,
-          RobotController.getBatteryVoltage(),
-          sparkPeriod.in(Seconds));
+      simElevatorMotor.setRawRotorPosition(heightToRotations(simDist));
+      simElevatorMotor.setRotorVelocity(heightToRotations(simVel));
     }
 
     elevatorMech.setLength(0.1 + (simDist.in(Meters)));
