@@ -3,6 +3,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Degrees;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Distance;
@@ -18,14 +19,20 @@ public final class Constants {
     public static final int kElevatorMotor1 = 1;
     public static final int kElevatorMotor2 = 2;
     public static final int kIntakeMotor = 9;
+    public static final int kPivotMotor = 0; // FIXME: Change to correct ID
+    public static final int kConveyorMotor = 0; // FIXME: Change to correct ID
     // CANavor Can Bus
   }
 
   // Intake Constants
   public static class IntakeConstants {
-    public static final double kSpeed = 0.5;
-  }
+    public static final double kIntakeSpeed = 0.5;
+    public static final double kPivotSpeed = 0.5;
+    public static final double kConveyorSpeed = 0.5;
+    public static final Angle kPivotMaxPosition = Degrees.of(30);
+    }
 
+  // Elevator Constants
   public static class ElevatorConstants {
     public static final Distance kL0Height = Meters.of(0.252);
     public static final Distance kL1Height = Inches.of(18);
