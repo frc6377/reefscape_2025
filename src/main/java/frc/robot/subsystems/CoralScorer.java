@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.IntakeConstants.*;
+import static frc.robot.Constants.CoralScorerConstants.*;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -13,27 +13,27 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorIDConstants;
 
-public class IntakeSubsystem extends SubsystemBase {
+public class CoralScorer extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
-  private SparkMax intakeMotor;
+  private SparkMax scorerMotor;
 
-  public IntakeSubsystem() {
-    intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushless);
+  public CoralScorer() {
+    scorerMotor = new SparkMax(MotorIDConstants.kScorerMotor, MotorType.kBrushed);
   }
 
   // Made a command to spin clockwise
-  public Command IntakeCommand() {
-    return startEnd(() -> intakeMotor.set(-kSpeed), () -> intakeMotor.set(0));
+  public Command scoreClockWise() {
+    return startEnd(() -> scorerMotor.set(-kSpeed), () -> scorerMotor.set(0));
   }
 
   // Made a command to spin counter clockwise
-  public Command OuttakeCommand() {
-    return startEnd(() -> intakeMotor.set(kSpeed), () -> intakeMotor.set(0));
+  public Command scoreCounterClockWise() {
+    return startEnd(() -> scorerMotor.set(kSpeed), () -> scorerMotor.set(0));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Intake/Motor Ouput", intakeMotor.get());
+    SmartDashboard.putNumber("CoralScorer/Motor Output", scorerMotor.get());
   }
 }
