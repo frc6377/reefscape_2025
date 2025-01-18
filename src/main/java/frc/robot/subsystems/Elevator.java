@@ -1,12 +1,12 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Millisecond;
 import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.ElevatorConstants.kCarageFactor;
 import static frc.robot.Constants.ElevatorConstants.kCarriageMass;
 import static frc.robot.Constants.ElevatorConstants.kElevatorDrumCircumference;
@@ -198,19 +198,19 @@ public class Elevator extends SubsystemBase {
     LinearVelocity simVel = MetersPerSecond.zero();
     var simElevatorMotor = elevatorMotor1.getSimState();
 
-    for (Time i = Seconds.zero(); i.lt(Robot.period); i = i.plus(sparkPeriod)) {
-      m_elevatorSim.setInputVoltage(simElevatorMotor.getMotorVoltage());
-      m_elevatorSim.update(sparkPeriod.in(Seconds));
-      simDist = Meters.of(m_elevatorSim.getPositionMeters());
-      simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
-      simElevatorMotor.setRawRotorPosition(heightToRotations(simDist));
-      simElevatorMotor.setRotorVelocity(heightToRotations(simVel));
-    }
+    // for (Time i = Seconds.zero(); i.lt(Robot.period); i = i.plus(sparkPeriod)) {
+    m_elevatorSim.setInputVoltage(simElevatorMotor.getMotorVoltage());
+    m_elevatorSim.update(Robot.defaultPeriodSecs);
+    simDist = Meters.of(m_elevatorSim.getPositionMeters());
+    simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
+    simElevatorMotor.setRawRotorPosition(heightToRotations(simDist));
+    // simElevatorMotor.setRotorVelocity(heightToRotations(simVel));
+    // }
 
-    elevatorMech.setLength(0.1 + (simDist.in(Meters)));
+    elevatorMech.setLength(0.1 + (simDist.in(Inches)));
 
-    SmartDashboard.putNumber("Elevator/Sim Length", simDist.in(Meters));
-    SmartDashboard.putNumber("Elevator/Sim velocity", simVel.in(MetersPerSecond));
+    SmartDashboard.putNumber("Elevator/Sim Length", simDist.in(Inches));
+    SmartDashboard.putNumber("Elevator/Sim velocity", simVel.in(InchesPerSecond));
     SmartDashboard.putNumber("Elevator/Sim Pose", m_elevatorSim.getPositionMeters());
   }
 }

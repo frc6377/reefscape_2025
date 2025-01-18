@@ -34,7 +34,7 @@ public final class Constants {
     // public static final Distance kL4Height = Inches.of(72);
     public static final Distance kL4Height = Inches.of(68.6);
 
-    public static final double P = 0.10;
+    public static final double P = 1;
     public static final double I = 0.0;
     public static final double D = 0.0;
     public static final double FF = 0.0;
