@@ -7,6 +7,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Millisecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.ElevatorConstants.kCarageFactor;
 import static frc.robot.Constants.ElevatorConstants.kCarriageMass;
 import static frc.robot.Constants.ElevatorConstants.kElevatorDrumCircumference;
@@ -27,6 +28,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
@@ -197,6 +199,7 @@ public class Elevator extends SubsystemBase {
     Distance simDist = Meters.zero();
     LinearVelocity simVel = MetersPerSecond.zero();
     var simElevatorMotor = elevatorMotor1.getSimState();
+    simElevatorMotor.setSupplyVoltage(Volts.of(RobotController.getBatteryVoltage()));
 
     // for (Time i = Seconds.zero(); i.lt(Robot.period); i = i.plus(sparkPeriod)) {
     m_elevatorSim.setInputVoltage(simElevatorMotor.getMotorVoltage());
@@ -204,7 +207,7 @@ public class Elevator extends SubsystemBase {
     simDist = Meters.of(m_elevatorSim.getPositionMeters());
     simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
     simElevatorMotor.setRawRotorPosition(heightToRotations(simDist));
-    // simElevatorMotor.setRotorVelocity(heightToRotations(simVel));
+    simElevatorMotor.setRotorVelocity(heightToRotations(simVel));
     // }
 
     elevatorMech.setLength(0.1 + (simDist.in(Inches)));
