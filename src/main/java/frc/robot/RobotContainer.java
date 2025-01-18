@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -61,7 +62,15 @@ public class RobotContainer {
     OI.getPOVButton(OI.Driver.POV90).whileTrue(elevator.goUp());
     OI.getPOVButton(OI.Driver.POV270).whileTrue(elevator.goDown());
     OI.getButton(OI.Driver.Start).onTrue(elevator.zeroMotorEncoder());
-    OI.getButton(OI.Driver.RSB).onTrue(new InstantCommand(() -> precisionMode = !precisionMode));
+    OI.getButton(OI.Driver.RSB)
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  precisionMode = !precisionMode;
+                  SmartDashboard.putBoolean("Precision Mode", precisionMode);
+                },
+                drivetrain));
+
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
