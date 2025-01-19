@@ -28,6 +28,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -51,6 +52,7 @@ public class Elevator extends SubsystemBase {
   private final Time sparkPeriod;
   private static Mechanism2d mech = new Mechanism2d(2, 2);
   private static ComplexWidget widg;
+  private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
 
   public static final AbsoluteEncoderConfig encoderCfg =
@@ -78,6 +80,7 @@ public class Elevator extends SubsystemBase {
     elevatorMotor1.getConfigurator().apply(loopCfg);
     elevatorMotor1.getConfigurator().apply(elvSoftLimit);
     elevatorMotor2.setControl(new Follower(MotorIDConstants.kElevatorMotor1, true));
+    elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
 
     // elevatorEncoder = elevatorMotor1.getPosition().getValueAsDouble();
 
@@ -139,6 +142,10 @@ public class Elevator extends SubsystemBase {
           elevatorMotor1.set(.2);
         },
         () -> elevatorMotor1.set(0));
+  }
+
+  public Command limitHit() {
+    return goDown().until(elvLimitSwitch::get).andThen(zeroMotorEncoder());
   }
 
   public Command goDown() {
@@ -206,11 +213,12 @@ public class Elevator extends SubsystemBase {
     m_elevatorSim.update(Robot.defaultPeriodSecs);
     simDist = Meters.of(m_elevatorSim.getPositionMeters());
     simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
-    simElevatorMotor.setRawRotorPosition(heightToRotations(simDist));
-    simElevatorMotor.setRotorVelocity(heightToRotations(simVel));
+    elevatorMotor1.setPosition(heightToRotations(simDist));
+    // simElevatorMotor.setRawRotorPosition(heightToRotations(simDist));
+    // simElevatorMotor.setRotorVelocity(heightToRotations(simVel));
     // }
 
-    elevatorMech.setLength(0.1 + (simDist.in(Inches)));
+    elevatorMech.setLength(0.1 + (simDist.in(Meters)));
 
     SmartDashboard.putNumber("Elevator/Sim Length", simDist.in(Inches));
     SmartDashboard.putNumber("Elevator/Sim velocity", simVel.in(InchesPerSecond));
