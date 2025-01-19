@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.Angle;
 
 public final class Constants {
   public static class OperatorConstants {
