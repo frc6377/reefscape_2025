@@ -5,8 +5,11 @@ import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Millisecond;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
+import static frc.robot.Constants.ElevatorConstants.kCarageFactor;
 import static frc.robot.Constants.ElevatorConstants.kCarriageMass;
+import static frc.robot.Constants.ElevatorConstants.kElevatorDrumCircumference;
 import static frc.robot.Constants.ElevatorConstants.kElevatorDrumRadius;
 import static frc.robot.Constants.ElevatorConstants.kElevatorGearbox;
 import static frc.robot.Constants.ElevatorConstants.kElevatorGearing;
@@ -23,7 +26,9 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
@@ -56,6 +61,13 @@ public class Elevator extends SubsystemBase {
   public static final AbsoluteEncoderConfig encoderCfg =
       new AbsoluteEncoderConfig()
           .positionConversionFactor(Constants.ElevatorConstants.kElevatorConversion);
+  public static final SoftLimitConfig elvMaxSoftLimit =
+      new SoftLimitConfig()
+          .forwardSoftLimit(heightToRotations(Constants.ElevatorConstants.kTopLimit).in(Rotations));
+  public static final SoftLimitConfig elvMinSoftLimit =
+      new SoftLimitConfig()
+          .reverseSoftLimit(
+              heightToRotations(Constants.ElevatorConstants.kBottomLimit).in(Rotations));
   public static final ClosedLoopConfig loopCfg =
       new ClosedLoopConfig()
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -71,7 +83,11 @@ public class Elevator extends SubsystemBase {
     elevatorMotor = new SparkMax(MotorIDConstants.kElevatorMotor1, MotorType.kBrushless);
     elevatorEncoder = elevatorMotor.getAbsoluteEncoder();
     elevatorMotor.configure(
-        new SparkMaxConfig().apply(encoderCfg).apply(loopCfg),
+        new SparkMaxConfig()
+            .apply(encoderCfg)
+            .apply(loopCfg)
+            .apply(elvMaxSoftLimit)
+            .apply(elvMinSoftLimit),
         ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
 
@@ -106,14 +122,22 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("Elevator/Setpoint Rotations", 0);
   }
 
-  public Distance rotationsToHeight(double rotations) {
+  public static Distance rotationsToHeight(Angle rotations) {
     return ElevatorConstants.kElevatorDrumCircumference
-        .times(rotations * ElevatorConstants.kCarageFactor)
+        .times(rotations.in(Rotations) * ElevatorConstants.kCarageFactor)
         .div(kElevatorGearing);
   }
 
+  // height = C * rot * 2/75 -> rot = height * 75/2C
+  public static Angle heightToRotations(Distance height) {
+    return height
+        .times(kElevatorGearing)
+        .div(kElevatorDrumCircumference.times(kCarageFactor))
+        .times(Rotations.one());
+  }
+
   public Distance getElevatorHeight() {
-    return rotationsToHeight(elevatorMotor.getEncoder().getPosition());
+    return rotationsToHeight(Rotations.of(elevatorMotor.getEncoder().getPosition()));
   }
 
   public Command goUp() {
@@ -142,20 +166,17 @@ public class Elevator extends SubsystemBase {
   public Command changeElevation(Distance heightLevel) {
     return runOnce(
         () -> {
-          double adjustedSetpoint =
-              (heightLevel.in(Meters) / (2 * (Math.PI * kElevatorDrumRadius.in(Meters))))
-                  * kElevatorGearing
-                  / ElevatorConstants.kCarageFactor;
+          double adjustedSetpoint = heightToRotations(heightLevel).in(Rotations);
           elevatorMotor
               .getClosedLoopController()
               .setReference(adjustedSetpoint, ControlType.kPosition);
-          SmartDashboard.putNumber("Elevator/Setpoint", heightLevel.in(Meters));
+          SmartDashboard.putNumber("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
           SmartDashboard.putNumber("Elevator/Setpoint Rotations", adjustedSetpoint);
         });
   }
 
   public Command L0() {
-    return changeElevation(Inches.zero());
+    return changeElevation(Constants.ElevatorConstants.kL0Height);
   }
 
   public Command L1() {
@@ -180,7 +201,7 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber(
         "Elevator/Motor Encoder Rotation", elevatorMotor.getEncoder().getPosition());
     SmartDashboard.putNumber("Elevator/Motor Percent", elevatorMotor.get());
-    SmartDashboard.putNumber("Elevator/Height", getElevatorHeight().in(Meters));
+    SmartDashboard.putNumber("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
   }
 
   @Override
@@ -195,7 +216,10 @@ public class Elevator extends SubsystemBase {
       simDist = Meters.of(m_elevatorSim.getPositionMeters());
       simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
       simElevatorMotor.iterate(
-          ((simVel.in(MetersPerSecond) / (2 * Math.PI * kElevatorDrumRadius.in(Meters)))) * 60,
+          ((simVel.in(MetersPerSecond) / kElevatorDrumCircumference.in(Meters)))
+              * 60
+              * kElevatorGearing
+              / kCarageFactor,
           RobotController.getBatteryVoltage(),
           sparkPeriod.in(Seconds));
     }
