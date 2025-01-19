@@ -1,0 +1,75 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.795432915121823,
+        "y": 7.608628509004237
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.068392136447356,
+        "y": 6.744783594215946
+      },
+      "isLocked": false,
+      "linkedName": "Start Pose Left Wall"
+    },
+    {
+      "anchor": {
+        "x": 5.253729144597457,
+        "y": 5.019769183659958
+      },
+      "prevControl": {
+        "x": 6.2709356983262,
+        "y": 4.920813306400341
+      },
+      "nextControl": {
+        "x": 5.0049037869043875,
+        "y": 5.043975409489605
+      },
+      "isLocked": false,
+      "linkedName": "Reef I"
+    },
+    {
+      "anchor": {
+        "x": 1.217717161016949,
+        "y": 7.134797487420551
+      },
+      "prevControl": {
+        "x": 2.1037674864074116,
+        "y": 6.249555421330088
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0006522770398485,
+      "rotationDegrees": -119.99999999999999
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 11.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 125.00000000000001
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}

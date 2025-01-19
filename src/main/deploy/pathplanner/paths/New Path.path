@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.7907367253707624,
-        "y": 7.614583471265889
+        "x": 7.793883656647246,
+        "y": 0.4428723351430085
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.58985435315903,
-        "y": 7.3032338041743685
+        "x": 7.898995195908683,
+        "y": 0.8596607773766076
       },
       "isLocked": false,
-      "linkedName": "Start Pose Top"
+      "linkedName": "Start Pose Right Wall"
     },
     {
       "anchor": {
-        "x": 5.1203960871292376,
-        "y": 5.083337195444915
+        "x": 3.7228681144067797,
+        "y": 5.018365168167373
       },
       "prevControl": {
-        "x": 6.200707565345887,
-        "y": 6.091539100741003
+        "x": 4.17422424274961,
+        "y": 4.84927650169244
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Scoer Pose 2"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 11.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,12 +42,12 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": -59.99999999999999
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": 180.0
   },
   "useDefaultConstraints": true
