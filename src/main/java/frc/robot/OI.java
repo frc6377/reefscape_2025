@@ -63,7 +63,8 @@ public class OI extends OI_Utils {
     private static final ControlCurve yPrecisionCurve = new ControlCurve(0.5, 0, 1, 0.01);
     public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 1, 0.01);
     public static final ControlCurve rotationCurve = new ControlCurve(1, 0, 1, 0.01, true);
-    private static final ControlCurve rotationPrecisionCurve = new ControlCurve(0.5, 0, 1, 0.01, true);
+    private static final ControlCurve rotationPrecisionCurve =
+        new ControlCurve(0.5, 0, 1, 0.01, true);
     // Joystick Axes
     public static final Control LeftX =
         new Control(XboxController.Axis.kLeftX, "", controller, xTranslationCurve);

@@ -59,7 +59,7 @@ public class RobotContainer {
     OI.getButton(OI.Driver.Y).onTrue(elevator.L4());
     OI.getPOVButton(OI.Driver.POV90).whileTrue(elevator.goUp());
     OI.getPOVButton(OI.Driver.POV270).whileTrue(elevator.goDown());
-    
+
     OI.getButton(OI.Driver.Start).onTrue(elevator.zeroMotorEncoder());
     OI.getButton(OI.Driver.RSB)
         .onTrue(
