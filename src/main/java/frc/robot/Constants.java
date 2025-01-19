@@ -1,14 +1,14 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.Degrees;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
-import edu.wpi.first.units.measure.Angle;
 
 public final class Constants {
   public static class OperatorConstants {
@@ -34,7 +34,7 @@ public final class Constants {
     public static final double kPivotP = 1;
     public static final double kPivotI = 0.0;
     public static final double kPivotD = 0.0;
-    }
+  }
 
   // Elevator Constants
   public static class ElevatorConstants {
