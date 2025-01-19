@@ -79,7 +79,7 @@ public class RobotContainer {
                 () ->
                     drive
                         .withVelocityX(
-                            -OI.getAxisSupplier(OI.Driver.LeftPrecisionY).get()
+                            OI.getAxisSupplier(OI.Driver.LeftPrecisionY).get()
                                 * MaxSpeed) // Drive forward with negative Y (forward)
                         .withVelocityY(
                             OI.getAxisSupplier(OI.Driver.LeftPrecisionX).get()
@@ -92,7 +92,7 @@ public class RobotContainer {
                 () ->
                     drive
                         .withVelocityX(
-                            -OI.getAxisSupplier(OI.Driver.LeftY).get()
+                            OI.getAxisSupplier(OI.Driver.LeftY).get()
                                 * MaxSpeed) // Drive forward with negative Y (forward)
                         .withVelocityY(
                             OI.getAxisSupplier(OI.Driver.LeftX).get()
