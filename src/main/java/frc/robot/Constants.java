@@ -27,20 +27,24 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
-    public static final double kSpeed = 1;
+    public static final double kSpeed = 0.8;
   }
 
   public static class ElevatorConstants {
-    public static final Distance kL1Height = Inches.of(18);
-    public static final Distance kL2Height = Inches.of(31.875);
-    public static final Distance kL3Height = Inches.of(47.625);
+    public static final Distance kScorerOffset = Inches.of(9.0 + (5.0 / 16.0));
+    public static final Distance kL0Height = Inches.of(1);
+    public static final Distance kL1Height = Inches.of(18).minus(kScorerOffset);
+    public static final Distance kL2Height = Inches.of(31.875).minus(kScorerOffset);
+    public static final Distance kL3Height = Inches.of(47.625).minus(kScorerOffset);
     // public static final Distance kL4Height = Inches.of(72);
-    public static final Distance kL4Height = Meters.of(1.533);
+    public static final Distance kL4Height = Inches.of(68.6).minus(kScorerOffset);
 
     public static final double P = 0.10;
     public static final double I = 0.0;
     public static final double D = 0.0;
     public static final double FF = 0.0;
+    public static final Distance kBottomLimit = Meters.of(0.252);
+    public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;
 
     // The carriage on the elv effectivly adds a gearing multiplier of 2
