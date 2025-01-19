@@ -29,8 +29,6 @@ public class RobotContainer {
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
-          .withDeadband(MaxSpeed * 0.1)
-          .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
           .withDriveRequestType(
               DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -56,7 +54,6 @@ public class RobotContainer {
     OI.getButton(OI.Driver.Y).onTrue(elevator.L4());
     OI.getPOVButton(OI.Driver.POV90).whileTrue(elevator.goUp());
     OI.getPOVButton(OI.Driver.POV270).whileTrue(elevator.goDown());
-    OI.getButton(OI.Driver.Start).onTrue(elevator.zeroMotorEncoder());
 
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.

@@ -166,8 +166,7 @@ public class Elevator extends SubsystemBase {
   public Command changeElevation(Distance heightLevel) {
     return runOnce(
         () -> {
-          double adjustedSetpoint =
-              heightToRotations(heightLevel).in(Rotations);
+          double adjustedSetpoint = heightToRotations(heightLevel).in(Rotations);
           elevatorMotor
               .getClosedLoopController()
               .setReference(adjustedSetpoint, ControlType.kPosition);
