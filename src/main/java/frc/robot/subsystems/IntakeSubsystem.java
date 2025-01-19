@@ -66,7 +66,12 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command OuttakeCommand() {
     return startEnd(() -> setIntakeMotor(-kIntakeSpeed), () -> setIntakeMotor(0));
   }
-
+  public Command ConveyorCommand() {
+    return startEnd(() -> setConveyerMotor(kConveyorSpeed), () -> setConveyerMotor(0));
+  }
+  public Command ReverseConveyorCommand() {
+    return startEnd(() -> setConveyerMotor(-kConveyorSpeed), () -> setConveyerMotor(0));
+  }
   public double calculatePivotPID(double setpoint) {
     return pivotPID
         .getPIDController()
