@@ -4,65 +4,79 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Degrees;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorIDConstants;
+import utilities.HowdyPID;
+
 import com.ctre.phoenix6.hardware.TalonFX;
-// import 
 
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
   private SparkMax intakeMotor;
   private TalonFX pivotMotor;
   private SparkMax conveyorMotor;
-  private Encoder pivotEncoder;
+  private HowdyPID pivotPID;
+  private Angle pivotSetpoint = kPivotRetractAngle;
   public IntakeSubsystem() {
     intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushless);
     pivotMotor = new TalonFX(MotorIDConstants.kPivotMotor);
     conveyorMotor = new SparkMax(MotorIDConstants.kConveyorMotor, MotorType.kBrushless);
-    pivotEncoder = new Encoder(0, 1);
+    pivotPID = new HowdyPID(kPivotP, kPivotI, kPivotD);
   }
-  public Command setPivotMotor(double speed) {
-    return run(() -> pivotMotor.set(speed));
-  }
-  public Command setConveyerCommand(double speed) {
-    return run(() -> conveyorMotor.set(speed));
+
+  private void setPivotMotor(double speed) {
+    pivotMotor.set(speed);
   }
   
-  public Command setIntakeCommand(double speed) {
-    return run(() -> intakeMotor.set(speed));
+  private void setConveyerMotor(double speed) {
+    conveyorMotor.set(speed);
   }
-  public double getPivotPositionCommand() {
-    return pivotEncoder.get();
+  
+  private void setIntakeMotor(double speed) {
+    intakeMotor.set(speed);
   }
+
+  public Angle getPivotPositionCommand() {
+    return pivotMotor.getPosition().getValue();
+  }
+
   public Command extendPivotCommand() {
-    return startEnd(() -> setPivotMotor(kPivotSpeed), () -> setPivotMotor(0));
+    return runOnce(() -> pivotSetpoint = kPivotExtendAngle);
   }
   
   public Command retractPivotCommand() {
-    return startEnd(() -> setPivotMotor(-kPivotSpeed), () -> setPivotMotor(0));
+    return runOnce(() -> pivotSetpoint = kPivotRetractAngle);
   }
   
   // Made a command to spin clockwise
   public Command IntakeCommand() {
-    return startEnd(() -> setIntakeCommand(kIntakeSpeed), () -> setIntakeCommand(0));
+    return startEnd(() -> setIntakeMotor(kIntakeSpeed), () -> setIntakeMotor(0));
   }
 
   // Made a command to spin counter clockwise
   public Command OuttakeCommand() {
-    return startEnd(() -> setIntakeCommand(-kIntakeSpeed), () -> setIntakeCommand(0));
+    return startEnd(() -> setIntakeMotor(-kIntakeSpeed), () -> setIntakeMotor(0));
+  }
+  
+  public double calculatePivotPID(double setpoint) {
+    return pivotPID.getPIDController().calculate(pivotMotor.getPosition().getValueAsDouble(), setpoint);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    setPivotMotor(calculatePivotPID(pivotSetpoint.in(Degrees)));
     SmartDashboard.putNumber("Intake/Motor Ouput", intakeMotor.get());
+
   }
 }
