@@ -27,7 +27,7 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
-    public static final double kSpeed = 0.8;
+    public static final double kSpeed = 0.6;
   }
 
   public static class ElevatorConstants {

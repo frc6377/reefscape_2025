@@ -21,9 +21,9 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed =
-      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * .9; // kSpeedAt12Volts desired top speed
   private double MaxAngularRate =
-      RotationsPerSecond.of(0.75)
+      RotationsPerSecond.of(0.6)
           .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
@@ -48,7 +48,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     OI.getButton(OI.Driver.X).onTrue(elevator.L0());
-    OI.getButton(OI.Driver.Back).onTrue(elevator.L1());
+    OI.getButton(OI.Driver.Start).onTrue(elevator.L1());
     OI.getButton(OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(OI.Driver.Y).onTrue(elevator.L4());
@@ -89,7 +89,7 @@ public class RobotContainer {
         .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
-    OI.getButton(OI.Driver.Start).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    OI.getButton(OI.Driver.Back).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
