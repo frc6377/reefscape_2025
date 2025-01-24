@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static frc.robot.Constants.ElevatorConstants.kElevatorGearing;
+import static frc.robot.Constants.ElevatorConstants.kMaxElevatorHeight;
+import static frc.robot.Constants.ElevatorConstants.kMinElevatorHeight;
 import static frc.robot.Constants.ElevatorConstants.*;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
