@@ -22,7 +22,6 @@ import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -39,7 +38,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
@@ -55,9 +53,9 @@ public class Elevator extends SubsystemBase {
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
 
-  public static final AbsoluteEncoderConfig encoderCfg =
-      new AbsoluteEncoderConfig()
-          .positionConversionFactor(Constants.ElevatorConstants.kElevatorConversion);
+  /*public static final AbsoluteEncoderConfig encoderCfg =
+  new AbsoluteEncoderConfig()
+      .positionConversionFactor(Constants.ElevatorConstants.kElevatorConversion);*/
   public static final SoftwareLimitSwitchConfigs elvSoftLimit =
       new SoftwareLimitSwitchConfigs()
           .withForwardSoftLimitEnable(true)
@@ -144,8 +142,24 @@ public class Elevator extends SubsystemBase {
         () -> elevatorMotor1.set(0));
   }
 
+  private void disableSoftLimits() {
+    elevatorMotor1
+        .getConfigurator()
+        .apply(
+            new SoftwareLimitSwitchConfigs()
+                .withForwardSoftLimitEnable(false)
+                .withReverseSoftLimitEnable(false));
+  }
+
+  private void enableSoftLimits() {
+    elevatorMotor1.getConfigurator().apply(elvSoftLimit);
+  }
+
   public Command limitHit() {
-    return goDown().until(elvLimitSwitch::get).andThen(zeroMotorEncoder());
+    return runOnce(this::disableSoftLimits)
+        .andThen(goDown().until(elvLimitSwitch::get))
+        .andThen(zeroMotorEncoder())
+        .andThen(runOnce(this::enableSoftLimits));
   }
 
   public Command goDown() {
@@ -157,7 +171,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command zeroMotorEncoder() {
-    return Commands.runOnce(
+    return runOnce(
         () -> {
           elevatorMotor1.setPosition(0);
         });
