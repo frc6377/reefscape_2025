@@ -15,22 +15,28 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
-  public static class MotorIDConstants {
+  public static class CtreCanID {
     // Rev Can Bus
     public static final int kElevatorMotor1 = 1;
     public static final int kElevatorMotor2 = 2;
-    public static final int kIntakeMotor = 9;
     public static final int kPivotMotor = 0; // FIXME: Change to correct ID
+    // public static final int kIntakeMotor = 9;
+    // public static final int kPivotMotor = 0; // FIXME: Change to correct ID
+    // public static final int kConveyorMotor = 0; // FIXME: Change to correct ID
+    // CANivore Can Bus
+  }
+
+  public static class RevCanID {
+    public static final int kIntakeMotor = 9;
     public static final int kConveyorMotor = 0; // FIXME: Change to correct ID
-    // CANavor Can Bus
   }
 
   // Intake Constants
   public static class IntakeConstants {
     public static final double kIntakeSpeed = 0.5;
     public static final double kConveyorSpeed = 0.5;
-    public static final Angle kPivotRetractAngle = Degrees.of(30);
-    public static final Angle kPivotExtendAngle = Degrees.of(0);
+    public static final Angle kPivotRetractAngle = Degrees.of(0);
+    public static final Angle kPivotExtendAngle = Degrees.of(30);
     public static final double kPivotP = 1;
     public static final double kPivotI = 0.0;
     public static final double kPivotD = 0.0;

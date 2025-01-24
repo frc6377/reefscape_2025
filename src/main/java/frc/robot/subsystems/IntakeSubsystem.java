@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Rotations;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -14,7 +14,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.MotorIDConstants;
+import frc.robot.Constants.CtreCanID;
+import frc.robot.Constants.RevCanID;
 import utilities.HowdyPID;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -27,9 +28,9 @@ public class IntakeSubsystem extends SubsystemBase {
   private Angle pivotSetpoint = kPivotRetractAngle;
 
   public IntakeSubsystem() {
-    intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushless);
-    pivotMotor = new TalonFX(MotorIDConstants.kPivotMotor);
-    conveyorMotor = new SparkMax(MotorIDConstants.kConveyorMotor, MotorType.kBrushless);
+    intakeMotor = new SparkMax(RevCanID.kIntakeMotor, MotorType.kBrushless);
+    pivotMotor = new TalonFX(CtreCanID.kPivotMotor);
+    conveyorMotor = new SparkMax(RevCanID.kConveyorMotor, MotorType.kBrushless);
     pivotPID = new HowdyPID(kPivotP, kPivotI, kPivotD);
   }
 
@@ -67,16 +68,16 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(() -> setIntakeMotor(-kIntakeSpeed), () -> setIntakeMotor(0));
   }
 
-  public double calculatePivotPID(double setpoint) {
+  public double calculatePivotPID() {
     return pivotPID
         .getPIDController()
-        .calculate(pivotMotor.getPosition().getValueAsDouble(), setpoint);
+        .calculate(pivotMotor.getPosition().getValueAsDouble(), pivotSetpoint.in(Rotations));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    setPivotMotor(calculatePivotPID(pivotSetpoint.in(Degrees)));
+    setPivotMotor(calculatePivotPID());
     SmartDashboard.putNumber("Intake/Motor Ouput", intakeMotor.get());
   }
 }

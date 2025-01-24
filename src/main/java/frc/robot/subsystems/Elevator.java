@@ -1,7 +1,17 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.Kilograms;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Millisecond;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.ElevatorConstants.*;
+import static frc.robot.Constants.ElevatorConstants.kElevatorGearing;
+import static frc.robot.Constants.ElevatorConstants.kMaxElevatorHeight;
+import static frc.robot.Constants.ElevatorConstants.kMinElevatorHeight;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -28,8 +38,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.CtreCanID;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
 
 public class Elevator extends SubsystemBase {
@@ -61,11 +71,11 @@ public class Elevator extends SubsystemBase {
   public Elevator() {
     sparkPeriod = Millisecond.one();
     // TODO: set up for canivore
-    elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, "");
-    elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, "");
+    elevatorMotor1 = new TalonFX(CtreCanID.kElevatorMotor1, "");
+    elevatorMotor2 = new TalonFX(CtreCanID.kElevatorMotor2, "");
     elevatorMotor1.getConfigurator().apply(loopCfg);
     elevatorMotor1.getConfigurator().apply(elvSoftLimit);
-    elevatorMotor2.setControl(new Follower(MotorIDConstants.kElevatorMotor1, true));
+    elevatorMotor2.setControl(new Follower(CtreCanID.kElevatorMotor1, true));
     elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
 
     // elevatorEncoder = elevatorMotor1.getPosition().getValueAsDouble();
