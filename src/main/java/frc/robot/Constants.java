@@ -29,12 +29,14 @@ public final class Constants {
   public static class RevCanID {
     public static final int kIntakeMotor = 9;
     public static final int kConveyorMotor = 0; // FIXME: Change to correct ID
+    public static final int kConveyorSensor = 4; // FIXME: Change to correct ID
   }
 
   // Intake Constants
   public static class IntakeConstants {
     public static final double kIntakeSpeed = 0.5;
     public static final double kConveyorSpeed = 0.5;
+    public static final double kPivotSpeed = 0.5;
     public static final Angle kPivotRetractAngle = Degrees.of(0);
     public static final Angle kPivotExtendAngle = Degrees.of(30);
     public static final double kPivotP = 1;
