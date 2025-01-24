@@ -8,14 +8,11 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
@@ -47,10 +44,12 @@ public class RobotContainer {
   private final CoralScorer coralScorer = new CoralScorer();
 
   private boolean precisionMode = false;
-  public static double drivePrecisionSpeed=0.2;
-  private DoubleSupplier calcPrecision() {
-    return () -> (precisionMode ? drivePrecisionSpeed : 1.0);
+  public static double drivePrecisionSpeed = 0.2;
+
+  private double calcPrecision() {
+    return precisionMode ? drivePrecisionSpeed : 1.0;
   }
+
   public RobotContainer() {
     configureBindings();
   }
@@ -78,19 +77,22 @@ public class RobotContainer {
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(
-                () ->
-                    drive
-                        .withVelocityX(
-                            OI.getAxisSupplier(OI.Driver.LeftY).get()
-                                * MaxSpeed * calcPrecision().getAsDouble()) // Drive forward with negative Y (forward)
-                        .withVelocityY(
-                            OI.getAxisSupplier(OI.Driver.LeftX).get()
-                                * MaxSpeed * calcPrecision().getAsDouble()) // Drive left with negative X (left)
-                        .withRotationalRate(
-                            OI.getAxisSupplier(OI.Driver.RightX).get()
-                                * MaxAngularRate * calcPrecision().getAsDouble()) // Drive counterclockwise with negative X (left)
-                ));
+        drivetrain.applyRequest(
+            () ->
+                drive
+                    .withVelocityX(
+                        OI.getAxisSupplier(OI.Driver.LeftY).get()
+                            * MaxSpeed
+                            * calcPrecision()) // Drive forward with negative Y (forward)
+                    .withVelocityY(
+                        OI.getAxisSupplier(OI.Driver.LeftX).get()
+                            * MaxSpeed
+                            * calcPrecision()) // Drive left with negative X (left)
+                    .withRotationalRate(
+                        OI.getAxisSupplier(OI.Driver.RightX).get()
+                            * MaxAngularRate
+                            * calcPrecision()) // Drive counterclockwise with negative X (left)
+            ));
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
