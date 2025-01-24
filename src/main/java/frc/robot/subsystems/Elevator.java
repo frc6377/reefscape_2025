@@ -9,9 +9,6 @@ import static edu.wpi.first.units.Units.Millisecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.ElevatorConstants.*;
-import static frc.robot.Constants.ElevatorConstants.kElevatorGearing;
-import static frc.robot.Constants.ElevatorConstants.kMaxElevatorHeight;
-import static frc.robot.Constants.ElevatorConstants.kMinElevatorHeight;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;

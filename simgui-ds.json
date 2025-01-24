@@ -99,5 +99,6 @@
       "guid": "030000005e040000120b000014050000"
     }
   ],
-  "useEstopHotkey": true
+  "useEstopHotkey": true,
+  "useEnableDisableHotkeys": true
 }
