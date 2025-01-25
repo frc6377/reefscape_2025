@@ -5,9 +5,9 @@ import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Millisecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.Constants.ElevatorConstants.elevatorOutput;
 import static frc.robot.Constants.ElevatorConstants.kCarageFactor;
 import static frc.robot.Constants.ElevatorConstants.kCarriageMass;
 import static frc.robot.Constants.ElevatorConstants.kElevatorDrumCircumference;
@@ -17,16 +17,18 @@ import static frc.robot.Constants.ElevatorConstants.kElevatorGearing;
 import static frc.robot.Constants.ElevatorConstants.kMaxElevatorHeight;
 import static frc.robot.Constants.ElevatorConstants.kMinElevatorHeight;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
@@ -47,15 +49,14 @@ import frc.robot.Robot;
 public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor1;
   private TalonFX elevatorMotor2;
-  private final Time sparkPeriod;
+  private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
+  private MotorOutputConfigs invertMotor =
+      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
   private static Mechanism2d mech = new Mechanism2d(2, 2);
   private static ComplexWidget widg;
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
 
-  /*public static final AbsoluteEncoderConfig encoderCfg =
-  new AbsoluteEncoderConfig()
-      .positionConversionFactor(Constants.ElevatorConstants.kElevatorConversion);*/
   public static final SoftwareLimitSwitchConfigs elvSoftLimit =
       new SoftwareLimitSwitchConfigs()
           .withForwardSoftLimitEnable(true)
@@ -71,12 +72,15 @@ public class Elevator extends SubsystemBase {
   private ElevatorSim m_elevatorSim;
 
   public Elevator() {
-    sparkPeriod = Millisecond.one();
     // TODO: set up for canivore
-    elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, "");
-    elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, "");
+    currentLimit.StatorCurrentLimit = 50;
+    currentLimit.StatorCurrentLimitEnable = true;
+    elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, "rio");
+    elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, "rio");
     elevatorMotor1.getConfigurator().apply(loopCfg);
-    elevatorMotor1.getConfigurator().apply(elvSoftLimit);
+    // elevatorMotor1.getConfigurator().apply(elvSoftLimit);
+    elevatorMotor1.getConfigurator().apply(currentLimit);
+    elevatorMotor1.getConfigurator().apply(invertMotor);
     elevatorMotor2.setControl(new Follower(MotorIDConstants.kElevatorMotor1, true));
     elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
 
@@ -137,7 +141,7 @@ public class Elevator extends SubsystemBase {
   public Command goUp() {
     return startEnd(
         () -> {
-          elevatorMotor1.set(.2);
+          elevatorMotor1.set(elevatorOutput);
         },
         () -> elevatorMotor1.set(0));
   }
@@ -165,7 +169,7 @@ public class Elevator extends SubsystemBase {
   public Command goDown() {
     return startEnd(
         () -> {
-          elevatorMotor1.set(-.2);
+          elevatorMotor1.set(-elevatorOutput);
         },
         () -> elevatorMotor1.set(0));
   }
