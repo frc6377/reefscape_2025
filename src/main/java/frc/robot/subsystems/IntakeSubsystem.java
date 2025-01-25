@@ -9,14 +9,13 @@ import static edu.wpi.first.units.Units.Rotations;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.google.flatbuffers.Constants;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CtreCanID;
 import frc.robot.Constants.RevCanID;
 import utilities.HowdyPID;
@@ -39,6 +38,7 @@ public class IntakeSubsystem extends SubsystemBase {
     conveyorMotor = new SparkMax(RevCanID.kConveyorMotor, MotorType.kBrushless);
     pivotPID = new HowdyPID(kPivotP, kPivotI, kPivotD);
     sensor = new TOFSensorSimple(RevCanID.kConveyorSensor, Inches.of(1));
+    pivotPID.getPIDController().setTolerance(kPivotTolerance.in(Rotations));
   }
 
   private void setPivotMotor(double speed) {
@@ -53,14 +53,16 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.set(speed);
   }
 
-  public Angle getPivotPositionCommand() {
+  public Angle getPivotPosition() {
     return pivotMotor.getPosition().getValue();
   }
 
+  /** Pivot down */
   public Command extendPivotCommand() {
     return runOnce(() -> pivotSetpoint = kPivotExtendAngle);
   }
 
+  /** Pivot up */
   public Command retractPivotCommand() {
     return runOnce(() -> pivotSetpoint = kPivotRetractAngle);
   }
@@ -75,45 +77,56 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(() -> setIntakeMotor(-kIntakeSpeed), () -> setIntakeMotor(0));
   }
 
+  /** Pivots down when user presses button */
   public Command pivotDownCommand() {
     return startEnd(() -> setPivotMotor(-kPivotSpeed), () -> setPivotMotor(0));
   }
-  
+
+  /** Pivots up when user presses button */
   public Command pivotUpCommand() {
     return startEnd(() -> setPivotMotor(kPivotSpeed), () -> setPivotMotor(0));
   }
 
-  /**
-   * Pushes game piece from conveyor into birdhouse
-   */
+  /** Pushes game piece from conveyor into birdhouse */
   public Command conveyorFeed() {
-    return startEnd(() -> setConveyerMotor(-kConveyorSpeed), null);
+    return startEnd(() -> setConveyerMotor(-kConveyorSpeed), () -> setConveyerMotor(0));
   }
 
   public Command conveyorEject() {
     return startEnd(() -> setConveyerMotor(kConveyorSpeed), () -> setConveyerMotor(0));
   }
 
+  public Command intakeToBirdhousePhase1() {
+    return startEnd(
+        () -> {
+          extendPivotCommand().initialize();
+          intakeCommand().initialize();
+          conveyorFeed().initialize();
+        },
+        () -> {
+          extendPivotCommand().end(false);
+          intakeCommand().end(false);
+          conveyorFeed().end(false);
+        }).until(sensor.beamBroken());
+  }
 
-  public Command intakeToBirdhouse() {
-    return pivotDownCommand()
-            .alongWith(intakeCommand())
-            .alongWith(conveyorFeed())
-            .until(sensor.beamBroken())
-            .andThen(pivotUpCommand())
-            .andThen(conveyorFeed())
-            .until(sensor.beamBroken().negate());
+  public Command intakeToBirdhousePhase2(){
+    return retractPivotCommand().andThen(Commands.waitUntil(pivotPID.getPIDController()::atSetpoint))  //FIXME: Fix debouncing if neccesary
+                                .andThen(conveyorFeed().until(sensor.beamBroken().negate()));
   }
-  
-  public Command ejectFromBirdhouse(){
-    return conveyorEject()
-            .alongWith(outtakeCommand());
+
+  public Command intakeToBirdhouse(){
+    return intakeToBirdhousePhase1().andThen(intakeToBirdhousePhase2());
   }
-  
+
+  public Command ejectFromBirdhouse() {
+    return conveyorEject().alongWith(outtakeCommand());
+  }
+
   public double calculatePivotPID() {
     return pivotPID
         .getPIDController()
-        .calculate(pivotMotor.getPosition().getValueAsDouble(), pivotSetpoint.in(Rotations));
+        .calculate(getPivotPosition().in(Rotations), pivotSetpoint.in(Rotations));
   }
 
   @Override

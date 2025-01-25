@@ -100,10 +100,10 @@ public class RobotContainer {
     // Set the intake rollers to the left and right triggers
     OI.getPOVButton(OI.Driver.POV180)
         .and(OI.getButton(OI.Driver.RBumper).negate())
-        .whileTrue(intake.IntakeCommand());
+        .whileTrue(intake.intakeToBirdhouse());
     OI.getPOVButton(OI.Driver.POV0)
         .and(OI.getButton(OI.Driver.RBumper).negate())
-        .whileTrue(intake.OuttakeCommand());
+        .whileTrue(intake.intakeToBirdhouse());
 
     SmartDashboard.putData(elevator.limitHit());
   }
