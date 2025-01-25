@@ -98,29 +98,39 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command intakeToBirdhousePhase1() {
     return startEnd(
-        () -> {
-          extendPivotCommand().initialize();
-          intakeCommand().initialize();
-          conveyorFeed().initialize();
-        },
-        () -> {
-          extendPivotCommand().end(false);
-          intakeCommand().end(false);
-          conveyorFeed().end(false);
-        }).until(sensor.beamBroken());
+            () -> {
+              extendPivotCommand().initialize();
+              intakeCommand().initialize();
+              conveyorFeed().initialize();
+            },
+            () -> {
+              extendPivotCommand().end(false);
+              intakeCommand().end(false);
+              conveyorFeed().end(false);
+            })
+        .until(sensor.beamBroken());
   }
 
-  public Command intakeToBirdhousePhase2(){
-    return retractPivotCommand().andThen(Commands.waitUntil(pivotPID.getPIDController()::atSetpoint))  //FIXME: Fix debouncing if neccesary
-                                .andThen(conveyorFeed().until(sensor.beamBroken().negate()));
+  public Command intakeToBirdhousePhase2() {
+    return retractPivotCommand()
+        .andThen(
+            Commands.waitUntil(
+                pivotPID.getPIDController()::atSetpoint)) // FIXME: Fix debouncing if neccesary
+        .andThen(conveyorFeed().until(sensor.beamBroken().negate()));
   }
 
-  public Command intakeToBirdhouse(){
-    return intakeToBirdhousePhase1().andThen(intakeToBirdhousePhase2());
+  public Command intakeToBirdhouse() {
+    return intakeToBirdhousePhase1()
+        .andThen(intakeToBirdhousePhase2())
+        .withName("Intake Phase 1 and 2");
   }
 
   public Command ejectFromBirdhouse() {
-    return conveyorEject().alongWith(outtakeCommand());
+    return conveyorEject()
+        .until(sensor.beamBroken().negate())
+        .andThen(extendPivotCommand())
+        .andThen(Commands.waitSeconds(0.5))
+        .andThen(outtakeCommand());
   }
 
   public double calculatePivotPID() {
@@ -133,6 +143,11 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     setPivotMotor(calculatePivotPID());
-    SmartDashboard.putNumber("Intake/Motor Ouput", intakeMotor.get());
+    SmartDashboard.putNumber("Intake Motor Output", intakeMotor.get());
+    SmartDashboard.putNumber("Pivot Motor Output", pivotMotor.get());
+    SmartDashboard.putNumber("Conveyor Motor Output", conveyorMotor.get());
+    SmartDashboard.putNumber("Pivot Setpoint", pivotSetpoint.in(Rotations));
   }
+
+  public void simulationPeriodic() {}
 }

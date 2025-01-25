@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
@@ -98,14 +99,15 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
 
     // Set the intake rollers to the left and right triggers
-    OI.getPOVButton(OI.Driver.POV180)
-        .and(OI.getButton(OI.Driver.RBumper).negate())
-        .whileTrue(intake.intakeToBirdhouse());
     OI.getPOVButton(OI.Driver.POV0)
         .and(OI.getButton(OI.Driver.RBumper).negate())
         .whileTrue(intake.intakeToBirdhouse());
-
+    OI.getPOVButton(OI.Driver.POV180)
+        .and(OI.getButton(OI.Driver.RBumper).negate())
+        .whileTrue(intake.ejectFromBirdhouse());
+    intake.setDefaultCommand(intake.retractPivotCommand());
     SmartDashboard.putData(elevator.limitHit());
+    SmartDashboard.putData(CommandScheduler.getInstance());
   }
 
   public Command getAutonomousCommand() {
