@@ -9,15 +9,21 @@ import static edu.wpi.first.units.Units.Rotations;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveRequest.Idle;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.hal.SimBoolean;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CtreCanID;
 import frc.robot.Constants.RevCanID;
+import frc.robot.Robot;
 import utilities.HowdyPID;
 import utilities.TOFSensorSimple;
 
@@ -28,9 +34,21 @@ public class IntakeSubsystem extends SubsystemBase {
   private TalonFX pivotMotor;
   private SparkMax conveyorMotor;
   private HowdyPID pivotPID;
+  private PIDController pid;
   private Angle pivotSetpoint = kPivotRetractAngle;
 
   private TOFSensorSimple sensor;
+  private SimDeviceSim simSensor;
+  private SimBoolean simbeam;
+
+  enum intakeState {
+    Idle,
+    atSensor,
+    coralLoaded
+  }
+
+  intakeState state = intakeState.Idle;
+  Timer t = new Timer();
 
   public IntakeSubsystem() {
     intakeMotor = new SparkMax(RevCanID.kIntakeMotor, MotorType.kBrushless);
@@ -38,7 +56,13 @@ public class IntakeSubsystem extends SubsystemBase {
     conveyorMotor = new SparkMax(RevCanID.kConveyorMotor, MotorType.kBrushless);
     pivotPID = new HowdyPID(kPivotP, kPivotI, kPivotD);
     sensor = new TOFSensorSimple(RevCanID.kConveyorSensor, Inches.of(1));
-    pivotPID.getPIDController().setTolerance(kPivotTolerance.in(Rotations));
+    pid = pivotPID.getPIDController();
+    pid.setTolerance(kPivotTolerance.in(Rotations));
+
+    if (Robot.isSimulation()) {
+      simSensor = new SimDeviceSim("TOF", RevCanID.kConveyorSensor);
+      simbeam = simSensor.getBoolean("BeamBroken");
+    }
   }
 
   private void setPivotMotor(double speed) {
@@ -113,9 +137,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command intakeToBirdhousePhase2() {
     return retractPivotCommand()
-        .andThen(
-            Commands.waitUntil(
-                pivotPID.getPIDController()::atSetpoint)) // FIXME: Fix debouncing if neccesary
+        .andThen(Commands.waitUntil(pid::atSetpoint)) // FIXME: Fix debouncing if neccesary
         .andThen(conveyorFeed().until(sensor.beamBroken().negate()));
   }
 
@@ -134,9 +156,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public double calculatePivotPID() {
-    return pivotPID
-        .getPIDController()
-        .calculate(getPivotPosition().in(Rotations), pivotSetpoint.in(Rotations));
+    return pid.calculate(getPivotPosition().in(Rotations), pivotSetpoint.in(Rotations));
   }
 
   @Override
@@ -149,5 +169,48 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Pivot Setpoint", pivotSetpoint.in(Rotations));
   }
 
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+
+    switch (state) {
+      case Idle:
+        if (pivotSetpoint.equals(kPivotExtendAngle)
+            && Math.abs(intakeMotor.get()) > 0
+            && Math.abs(conveyorMotor.get()) > 0) {
+          if (!t.isRunning()) {
+            t.start();
+          }
+        } else {
+          if (t.isRunning()) {
+            t.stop();
+          }
+        }
+
+        if (t.hasElapsed(2)) {
+          simbeam.set(true);
+          state = intakeState.atSensor;
+          t.reset();
+        }
+        break;
+      case atSensor:
+        if (pivotSetpoint.equals(kPivotRetractAngle) && Math.abs(conveyorMotor.get()) > 0) {
+          if (!t.isRunning()) {
+            t.start();
+          }
+        } else {
+          if (t.isRunning()) {
+            t.stop();
+          }
+        }
+
+        if (t.hasElapsed(2)) {
+          simbeam.set(false);
+          state = intakeState.coralLoaded;
+          t.reset();
+        }
+        break;
+      case coralLoaded:
+        state = intakeState.Idle;
+        break;
+    }
+  }
 }
