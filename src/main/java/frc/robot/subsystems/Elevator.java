@@ -7,6 +7,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.Constants.ElevatorConstants.MMVel;
 import static frc.robot.Constants.ElevatorConstants.elevatorOutput;
 import static frc.robot.Constants.ElevatorConstants.kCarageFactor;
 import static frc.robot.Constants.ElevatorConstants.kCarriageMass;
@@ -18,11 +19,12 @@ import static frc.robot.Constants.ElevatorConstants.kMaxElevatorHeight;
 import static frc.robot.Constants.ElevatorConstants.kMinElevatorHeight;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.units.measure.Angle;
@@ -40,7 +42,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.MotorIDConstants;
@@ -56,6 +60,11 @@ public class Elevator extends SubsystemBase {
   private static ComplexWidget widg;
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
+  private MotionMagicConfigs elvMotionMagic =
+      new MotionMagicConfigs()
+          .withMotionMagicCruiseVelocity(MMVel)
+          .withMotionMagicAcceleration(MMVel * 2)
+          .withMotionMagicJerk(MMVel * 20);
 
   public static final SoftwareLimitSwitchConfigs elvSoftLimit =
       new SoftwareLimitSwitchConfigs()
@@ -78,11 +87,14 @@ public class Elevator extends SubsystemBase {
     elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, "rio");
     elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, "rio");
     elevatorMotor1.getConfigurator().apply(loopCfg);
-    // elevatorMotor1.getConfigurator().apply(elvSoftLimit);
+    elevatorMotor1.getConfigurator().apply(elvSoftLimit);
     elevatorMotor1.getConfigurator().apply(currentLimit);
     elevatorMotor1.getConfigurator().apply(invertMotor);
+    elevatorMotor1.getConfigurator().apply(elvMotionMagic);
     elevatorMotor2.setControl(new Follower(MotorIDConstants.kElevatorMotor1, true));
     elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
+    new Trigger(CommandScheduler.getInstance().getActiveButtonLoop(), elvLimitSwitch::get)
+        .onTrue(zeroMotorEncoder());
 
     // elevatorEncoder = elevatorMotor1.getPosition().getValueAsDouble();
 
@@ -185,7 +197,7 @@ public class Elevator extends SubsystemBase {
     return runOnce(
         () -> {
           Angle adjustedSetpoint = heightToRotations(heightLevel);
-          elevatorMotor1.setControl(new PositionVoltage(adjustedSetpoint));
+          elevatorMotor1.setControl(new MotionMagicVoltage(adjustedSetpoint));
           SmartDashboard.putNumber("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
           SmartDashboard.putNumber("Elevator/Setpoint Rotations", adjustedSetpoint.in(Rotations));
         });
@@ -213,6 +225,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putBoolean("Dio 0", elvLimitSwitch.get());
     SmartDashboard.putNumber(
         "Elevator/Motor Encoder Rotation", elevatorMotor1.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Elevator/Motor Percent", elevatorMotor1.get());
@@ -232,8 +245,8 @@ public class Elevator extends SubsystemBase {
     simDist = Meters.of(m_elevatorSim.getPositionMeters());
     simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
     elevatorMotor1.setPosition(heightToRotations(simDist));
-    // simElevatorMotor.setRawRotorPosition(heightToRotations(simDist));
-    // simElevatorMotor.setRotorVelocity(heightToRotations(simVel));
+    //simElevatorMotor.setRawRotorPosition(heightToRotations(simDist));
+    //simElevatorMotor.setRotorVelocity(heightToRotations(simVel));
     // }
 
     elevatorMech.setLength(0.1 + (simDist.in(Meters)));
