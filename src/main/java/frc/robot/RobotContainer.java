@@ -10,8 +10,10 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -25,7 +27,6 @@ public class RobotContainer {
   private double MaxAngularRate =
       RotationsPerSecond.of(0.6)
           .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
@@ -42,6 +43,13 @@ public class RobotContainer {
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final CoralScorer coralScorer = new CoralScorer();
 
+  private boolean precisionMode = false;
+  public static double drivePrecisionSpeed = 0.2;
+
+  private double calcPrecision() {
+    return precisionMode ? drivePrecisionSpeed : 1.0;
+  }
+
   public RobotContainer() {
     configureBindings();
   }
@@ -55,6 +63,16 @@ public class RobotContainer {
     OI.getPOVButton(OI.Driver.POV90).whileTrue(elevator.goUp());
     OI.getPOVButton(OI.Driver.POV270).whileTrue(elevator.goDown());
 
+    OI.getButton(OI.Driver.Start).onTrue(elevator.zeroMotorEncoder());
+    OI.getButton(OI.Driver.RSB)
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  precisionMode = !precisionMode;
+                  SmartDashboard.putBoolean("Precision Mode", precisionMode);
+                },
+                drivetrain));
+
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
@@ -63,14 +81,17 @@ public class RobotContainer {
             () ->
                 drive
                     .withVelocityX(
-                        -OI.getAxisSupplier(OI.Driver.LeftY).get()
-                            * MaxSpeed) // Drive forward with negative Y (forward)
+                        OI.getAxisSupplier(OI.Driver.LeftY).get()
+                            * MaxSpeed
+                            * calcPrecision()) // Drive forward with negative Y (forward)
                     .withVelocityY(
                         OI.getAxisSupplier(OI.Driver.LeftX).get()
-                            * MaxSpeed) // Drive left with negative X (left)
+                            * MaxSpeed
+                            * calcPrecision()) // Drive left with negative X (left)
                     .withRotationalRate(
                         OI.getAxisSupplier(OI.Driver.RightX).get()
-                            * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                            * MaxAngularRate
+                            * calcPrecision()) // Drive counterclockwise with negative X (left)
             ));
 
     // Run SysId routines when holding back/start and X/Y.
