@@ -17,7 +17,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.IntakeSubsystem;
+
+// import frc.robot.subsystems.IntakeSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed =
@@ -41,7 +42,7 @@ public class RobotContainer {
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final Elevator elevator = new Elevator();
 
-  private final IntakeSubsystem intake = new IntakeSubsystem();
+  // private final IntakeSubsystem intake = new IntakeSubsystem();
 
   public RobotContainer() {
     configureBindings();
@@ -98,12 +99,12 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
 
     // Set the intake rollers to the left and right triggers
-    OI.getPOVButton(OI.Driver.POV180)
+    /*OI.getPOVButton(OI.Driver.POV180)
         .and(OI.getButton(OI.Driver.RBumper).negate())
         .whileTrue(intake.IntakeCommand());
     OI.getPOVButton(OI.Driver.POV0)
         .and(OI.getButton(OI.Driver.RBumper).negate())
-        .whileTrue(intake.OuttakeCommand());
+        .whileTrue(intake.OuttakeCommand());*/
 
     SmartDashboard.putData(elevator.limitHit());
   }
