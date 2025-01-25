@@ -245,8 +245,8 @@ public class Elevator extends SubsystemBase {
     simDist = Meters.of(m_elevatorSim.getPositionMeters());
     simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
     elevatorMotor1.setPosition(heightToRotations(simDist));
-    //simElevatorMotor.setRawRotorPosition(heightToRotations(simDist));
-    //simElevatorMotor.setRotorVelocity(heightToRotations(simVel));
+    // simElevatorMotor.setRawRotorPosition(heightToRotations(simDist));
+    // simElevatorMotor.setRotorVelocity(heightToRotations(simVel));
     // }
 
     elevatorMech.setLength(0.1 + (simDist.in(Meters)));
