@@ -14,6 +14,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.*;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveRequest.Idle;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -23,9 +24,15 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -48,6 +55,9 @@ public class IntakeSubsystem extends SubsystemBase {
   private TOFSensorSimple sensor;
   private SimDeviceSim simSensor;
   private SimBoolean simbeam;
+  private Mechanism2d mech = new Mechanism2d(2, 2);
+  private ComplexWidget widget;
+  private MechanismLigament2d pivotArmMech;
 
   enum intakeState {
     Idle,
@@ -69,10 +79,27 @@ public class IntakeSubsystem extends SubsystemBase {
     pid = pivotPID.getPIDController();
     pid.setTolerance(kPivotTolerance.in(Rotations));
 
+    var slot0Configs = new Slot0Configs();
+    slot0Configs.kP = 100.0;
+    slot0Configs.kI = 100.0;
+    slot0Configs.kD = 100.0;
+    pivotMotor.getConfigurator().apply(slot0Configs);
+
+    /**
+     * Once the gains are configured, the Position closed loop control request can be sent to the
+     * TalonFX. The control request object has an optional feedforward term that can be used to add
+     * an arbitrary value to the output, which can be useful to account for the effects of gravity
+     * or friction.
+     *
+     * <p>// create a position closed-loop request, voltage output, slot 0 configs final
+     * PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+     *
+     * <p>// set position to 10 rotations m_talonFX.setControl(m_request.withPosition(10));
+     */
     if (Robot.isSimulation()) {
       pivotSim =
           new SingleJointedArmSim(
-              DCMotor.getKrakenX60(1),
+              DCMotor.getFalcon500(1),
               kGearing,
               kMOI.in(KilogramSquareMeters),
               Feet.of(1).in(Meters),
@@ -80,6 +107,13 @@ public class IntakeSubsystem extends SubsystemBase {
               kPivotExtendAngle.plus(Degrees.of(7)).in(Radians),
               true,
               0);
+      pivotArmMech =
+          mech.getRoot("Root", 1, 0)
+              .append(
+                  new MechanismLigament2d("Pivot Mech", 1, 90, 10, new Color8Bit(Color.kPurple)));
+      if (widget == null) {
+        widget = Shuffleboard.getTab(getName()).add("Pivot Arm", mech);
+      }
       simSensor = new SimDeviceSim("TOF", RevCanID.kConveyorSensor);
       simbeam = simSensor.getBoolean("BeamBroken");
     }
