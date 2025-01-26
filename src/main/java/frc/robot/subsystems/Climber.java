@@ -6,14 +6,15 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -75,15 +76,12 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  private double calcPID(Angle target) {
-    return climberPID.calculate(
-        climberMotorLeader.getPosition().getValue().in(Degrees), target.in(Degrees));
-  }
-
   public Command climb() {
     return run(
         () -> {
-          climberMotorLeader.set(calcPID(ClimberConstants.kClimberExtended));
+          climberMotorLeader.setControl(
+              new PositionDutyCycle(
+                  ClimberConstants.kClimberExtended.in(Rotations) * ClimberConstants.KGearRatio));
           SmartDashboard.putNumber("Target Angle", ClimberConstants.kClimberExtended.in(Degrees));
         });
   }
@@ -91,7 +89,9 @@ public class Climber extends SubsystemBase {
   public Command retract() {
     return run(
         () -> {
-          climberMotorLeader.set(calcPID(ClimberConstants.kClimberRetracted));
+          climberMotorLeader.setControl(
+              new PositionDutyCycle(
+                  ClimberConstants.kClimberRetracted.in(Rotations) * ClimberConstants.KGearRatio));
           SmartDashboard.putNumber("Target Angle", ClimberConstants.kClimberRetracted.in(Degrees));
         });
   }
