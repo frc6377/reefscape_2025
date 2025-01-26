@@ -7,7 +7,6 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Revolutions;
 import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.ElevatorConstants.MMVel;
 import static frc.robot.Constants.ElevatorConstants.elevatorOutput;
 import static frc.robot.Constants.ElevatorConstants.kCarageFactor;
@@ -26,6 +25,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.units.measure.Angle;
@@ -33,7 +33,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
@@ -96,8 +95,6 @@ public class Elevator extends SubsystemBase {
     elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
     new Trigger(CommandScheduler.getInstance().getActiveButtonLoop(), elvLimitSwitch::get)
         .onTrue(zeroMotorEncoder());
-
-    // elevatorEncoder = elevatorMotor1.getPosition().getValueAsDouble();
 
     // Simulation
     if (Robot.isSimulation()) {
@@ -198,7 +195,11 @@ public class Elevator extends SubsystemBase {
     return runOnce(
         () -> {
           Angle adjustedSetpoint = heightToRotations(heightLevel);
-          elevatorMotor1.setControl(new MotionMagicVoltage(adjustedSetpoint));
+          if (Robot.isSimulation()) {
+            elevatorMotor1.setControl(new PositionVoltage(adjustedSetpoint));
+          } else {
+            elevatorMotor1.setControl(new MotionMagicVoltage(adjustedSetpoint));
+          }
           SmartDashboard.putNumber("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
           SmartDashboard.putNumber("Elevator/Setpoint Rotations", adjustedSetpoint.in(Rotations));
         });
@@ -226,7 +227,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Dio 0", elvLimitSwitch.get());
+    SmartDashboard.putBoolean("Dio Port 0", elvLimitSwitch.get());
     SmartDashboard.putNumber(
         "Elevator/Motor Encoder Rotation", elevatorMotor1.getPosition().getValue().in(Revolutions));
     SmartDashboard.putNumber("Elevator/Motor Percent", elevatorMotor1.get());
@@ -237,18 +238,12 @@ public class Elevator extends SubsystemBase {
   public void simulationPeriodic() {
     Distance simDist = Meters.zero();
     LinearVelocity simVel = MetersPerSecond.zero();
-    var simElevatorMotor = elevatorMotor1.getSimState();
-    simElevatorMotor.setSupplyVoltage(Volts.of(RobotController.getBatteryVoltage()));
 
-    // for (Time i = Seconds.zero(); i.lt(Robot.period); i = i.plus(sparkPeriod)) {
-    m_elevatorSim.setInputVoltage(simElevatorMotor.getMotorVoltage());
+    m_elevatorSim.setInputVoltage(elevatorMotor1.getMotorVoltage().getValueAsDouble());
     m_elevatorSim.update(Robot.defaultPeriodSecs);
     simDist = Meters.of(m_elevatorSim.getPositionMeters());
     simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
     elevatorMotor1.setPosition(heightToRotations(simDist));
-    // simElevatorMotor.setRawRotorPosition(heightToRotations(simDist));
-    // simElevatorMotor.setRotorVelocity(heightToRotations(simVel));
-    // }
 
     elevatorMech.setLength(0.1 + (simDist.in(Meters)));
 

@@ -39,11 +39,11 @@ public final class Constants {
 
     public static final int elvLimitID = 0;
 
-    public static final double P = 1.0;
-    public static final double I = 0.01;
+    public static final double P = 2.0;
+    public static final double I = 0.05;
     public static final double D = 0.0;
     public static final double FF = 0.0;
-    public static final double MMVel = 15;
+    public static final double MMVel = 30;
     public static final Distance kBottomLimit = Inches.of(9);
     public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;
