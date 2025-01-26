@@ -54,9 +54,11 @@ public class RobotContainer {
     OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.A)).onTrue(elevator.L2());
     OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.B)).onTrue(elevator.L3());
     OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.Y)).onTrue(elevator.L4());
-    OI.getButton(OI.Driver.RBumper).and(OI.getPOVButton(OI.Driver.POV0)).whileTrue(elevator.goUp());
     OI.getButton(OI.Driver.RBumper)
-        .and(OI.getPOVButton(OI.Driver.POV180))
+        .and(OI.getPOVButton(OI.Driver.DPAD_UP))
+        .whileTrue(elevator.goUp());
+    OI.getButton(OI.Driver.RBumper)
+        .and(OI.getPOVButton(OI.Driver.DPAD_DOWN))
         .whileTrue(elevator.goDown());
     OI.getButton(OI.Driver.Start).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 

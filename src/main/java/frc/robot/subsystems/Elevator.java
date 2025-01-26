@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Revolutions;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.ElevatorConstants.MMVel;
@@ -84,8 +85,8 @@ public class Elevator extends SubsystemBase {
     // TODO: set up for canivore
     currentLimit.StatorCurrentLimit = 50;
     currentLimit.StatorCurrentLimitEnable = true;
-    elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, "rio");
-    elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, "rio");
+    elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, Constants.CANivoreName);
+    elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, Constants.CANivoreName);
     elevatorMotor1.getConfigurator().apply(loopCfg);
     elevatorMotor1.getConfigurator().apply(elvSoftLimit);
     elevatorMotor1.getConfigurator().apply(currentLimit);
@@ -227,7 +228,7 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putBoolean("Dio 0", elvLimitSwitch.get());
     SmartDashboard.putNumber(
-        "Elevator/Motor Encoder Rotation", elevatorMotor1.getPosition().getValueAsDouble());
+        "Elevator/Motor Encoder Rotation", elevatorMotor1.getPosition().in(Revolutions));
     SmartDashboard.putNumber("Elevator/Motor Percent", elevatorMotor1.get());
     SmartDashboard.putNumber("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
   }

@@ -9,6 +9,9 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 
 public final class Constants {
+
+  public static final String CANivoreName = "CANivore";
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
