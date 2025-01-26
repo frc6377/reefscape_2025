@@ -17,11 +17,9 @@ import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.motorsims.SimulatedBattery;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -84,6 +82,8 @@ public class Robot extends LoggedRobot {
 
     // Start AdvantageKit logger
     Logger.start();
+    SignalLogger.setPath("/media/sda1/SysID_Logs/");
+    SignalLogger.start();
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -104,7 +104,6 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    Logger.recordOutput("FPGA Timestamp", Timer.getFPGATimestamp());
     Logger.recordOutput(
         "Allience Color", DriverStation.getAlliance().equals(Alliance.Red) ? "RED" : "BLUE");
     Logger.recordOutput("Allience Color", DriverStation.getRawAllianceStation());
@@ -126,9 +125,6 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    SignalLogger.setPath("/media/sda1/SysID_Logs/");
-    SignalLogger.start();
-
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -176,8 +172,6 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    Logger.recordOutput("Total Current Drawn", SimulatedBattery.getTotalCurrentDrawn());
-    Logger.recordOutput("Battery Voltage", SimulatedBattery.getBatteryVoltage());
     SimulatedArena.getInstance().simulationPeriodic();
     robotContainer.displaySimFieldToAdvantageScope();
   }

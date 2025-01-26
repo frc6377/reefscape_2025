@@ -40,4 +40,11 @@ public final class Constants {
 
   public static final Distance kFeildWidth = Inches.of(317);
   public static final Distance kFeildLength = Inches.of(690 + (7 / 8));
+
+  public final class DrivetrainConstants {
+    // PathPlanner config constants
+    public static final double ROBOT_MASS_KG = 74.088;
+    public static final double ROBOT_MOI = 6.883;
+    public static final double WHEEL_COF = 1.2;
+  }
 }
