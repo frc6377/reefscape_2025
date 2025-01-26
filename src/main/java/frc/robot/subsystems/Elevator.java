@@ -228,7 +228,7 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putBoolean("Dio 0", elvLimitSwitch.get());
     SmartDashboard.putNumber(
-        "Elevator/Motor Encoder Rotation", elevatorMotor1.getPosition().in(Revolutions));
+        "Elevator/Motor Encoder Rotation", elevatorMotor1.getPosition().getValue().in(Revolutions));
     SmartDashboard.putNumber("Elevator/Motor Percent", elevatorMotor1.get());
     SmartDashboard.putNumber("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
   }
