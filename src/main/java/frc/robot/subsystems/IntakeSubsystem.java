@@ -4,8 +4,14 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -14,9 +20,11 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.hal.SimBoolean;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -50,6 +58,8 @@ public class IntakeSubsystem extends SubsystemBase {
   intakeState state = intakeState.Idle;
   Timer t = new Timer();
 
+  private SingleJointedArmSim pivotSim;
+
   public IntakeSubsystem() {
     intakeMotor = new SparkMax(RevCanID.kIntakeMotor, MotorType.kBrushless);
     pivotMotor = new TalonFX(CtreCanID.kPivotMotor);
@@ -60,6 +70,16 @@ public class IntakeSubsystem extends SubsystemBase {
     pid.setTolerance(kPivotTolerance.in(Rotations));
 
     if (Robot.isSimulation()) {
+      pivotSim =
+          new SingleJointedArmSim(
+              DCMotor.getKrakenX60(1),
+              kGearing,
+              kMOI.in(KilogramSquareMeters),
+              Feet.of(1).in(Meters),
+              kPivotRetractAngle.minus(Degrees.of(7)).in(Radians),
+              kPivotExtendAngle.plus(Degrees.of(7)).in(Radians),
+              true,
+              0);
       simSensor = new SimDeviceSim("TOF", RevCanID.kConveyorSensor);
       simbeam = simSensor.getBoolean("BeamBroken");
     }
@@ -167,9 +187,15 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Pivot Motor Output", pivotMotor.get());
     SmartDashboard.putNumber("Conveyor Motor Output", conveyorMotor.get());
     SmartDashboard.putNumber("Pivot Setpoint", pivotSetpoint.in(Rotations));
+    SmartDashboard.putNumber(
+        "Pivot Position in Degrees", pivotMotor.getPosition().getValue().in(Degrees));
   }
 
   public void simulationPeriodic() {
+
+    pivotSim.setInput(pivotMotor.getMotorVoltage().getValue().in(Volts));
+    pivotSim.update(0.020);
+    pivotMotor.setPosition(Radians.of(pivotSim.getAngleRads()));
 
     switch (state) {
       case Idle:

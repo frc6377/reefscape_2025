@@ -1,7 +1,10 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
 
@@ -9,6 +12,8 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 public final class Constants {
   public static class OperatorConstants {
@@ -41,9 +46,15 @@ public final class Constants {
     public static final Angle kPivotExtendAngle = Degrees.of(30);
     public static final Angle kPivotTolerance =
         Degrees.of(3); // FIXME: Change tolerance back after testing
-    public static final double kPivotP = 1;
+    public static final double kPivotP = 5;
     public static final double kPivotI = 0.0;
     public static final double kPivotD = 0.0;
+    public static final double kGearing = 25;
+    public static final Distance kLength = Feet.of(1);
+    public static final Mass kMass = Pounds.of(8);
+    public static final MomentOfInertia kMOI =
+        KilogramSquareMeters.of(
+            SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
   }
 
   // Elevator Constants
