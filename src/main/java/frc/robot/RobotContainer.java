@@ -49,54 +49,62 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.LBumper)).onTrue(elevator.L0());
-    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.X)).onTrue(elevator.L1());
-    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.A)).onTrue(elevator.L2());
-    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.B)).onTrue(elevator.L3());
-    OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.Y)).onTrue(elevator.L4());
-    OI.getButton(OI.Driver.RBumper)
-        .and(OI.getPOVButton(OI.Driver.DPAD_UP))
-        .whileTrue(elevator.goUp());
-    OI.getButton(OI.Driver.RBumper)
-        .and(OI.getPOVButton(OI.Driver.DPAD_DOWN))
-        .whileTrue(elevator.goDown());
-    OI.getButton(OI.Driver.Start).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    if (Robot.isSimulation()) {
+      OI.getButton(OI.Keyboard.Z).onTrue(elevator.L0());
+      OI.getButton(OI.Keyboard.X).onTrue(elevator.L1());
+      OI.getButton(OI.Keyboard.M).whileTrue(elevator.goUp());
+      OI.getButton(OI.Keyboard.Comma).whileTrue(elevator.goDown());
+    } else {
+      OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.LBumper)).onTrue(elevator.L0());
+      OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.X)).onTrue(elevator.L1());
+      OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.A)).onTrue(elevator.L2());
+      OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.B)).onTrue(elevator.L3());
+      OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.Y)).onTrue(elevator.L4());
+      OI.getButton(OI.Driver.RBumper)
+          .and(OI.getPOVButton(OI.Driver.DPAD_UP))
+          .whileTrue(elevator.goUp());
+      OI.getButton(OI.Driver.RBumper)
+          .and(OI.getPOVButton(OI.Driver.DPAD_DOWN))
+          .whileTrue(elevator.goDown());
+      OI.getButton(OI.Driver.Start).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    // Note that X is defined as forward according to WPILib convention,
-    // and Y is defined as to the left according to WPILib convention.
-    drivetrain.setDefaultCommand(
-        // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(
-            () ->
-                drive
-                    .withVelocityX(
-                        -OI.getAxisSupplier(OI.Driver.LeftY).get()
-                            * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(
-                        OI.getAxisSupplier(OI.Driver.LeftX).get()
-                            * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(
-                        OI.getAxisSupplier(OI.Driver.RightX).get()
-                            * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            ));
+      // Note that X is defined as forward according to WPILib convention,
+      // and Y is defined as to the left according to WPILib convention.
+      drivetrain.setDefaultCommand(
+          // Drivetrain will execute this command periodically
+          drivetrain.applyRequest(
+              () ->
+                  drive
+                      .withVelocityX(
+                          -OI.getAxisSupplier(OI.Driver.LeftY).get()
+                              * MaxSpeed) // Drive forward with negative Y (forward)
+                      .withVelocityY(
+                          OI.getAxisSupplier(OI.Driver.LeftX).get()
+                              * MaxSpeed) // Drive left with negative X (left)
+                      .withRotationalRate(
+                          OI.getAxisSupplier(OI.Driver.RightX).get()
+                              * MaxAngularRate) // Drive counterclockwise with negative X (left)
+              ));
 
-    // Run SysId routines when holding back/start and X/Y.
-    // Note that each routine should be run exactly once in a single log.
-    OI.getButton(OI.Driver.Back)
-        .and(OI.getButton(OI.Driver.Y))
-        .whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    OI.getButton(OI.Driver.Back)
-        .and(OI.getButton(OI.Driver.X))
-        .whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    OI.getButton(OI.Driver.Start)
-        .and(OI.getButton(OI.Driver.Y))
-        .whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    OI.getButton(OI.Driver.Start)
-        .and(OI.getButton(OI.Driver.X))
-        .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+      // Run SysId routines when holding back/start and X/Y.
+      // Note that each routine should be run exactly once in a single log.
+      OI.getButton(OI.Driver.Back)
+          .and(OI.getButton(OI.Driver.Y))
+          .whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+      OI.getButton(OI.Driver.Back)
+          .and(OI.getButton(OI.Driver.X))
+          .whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+      OI.getButton(OI.Driver.Start)
+          .and(OI.getButton(OI.Driver.Y))
+          .whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+      OI.getButton(OI.Driver.Start)
+          .and(OI.getButton(OI.Driver.X))
+          .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-    // reset the field-centric heading on left bumper press
-    OI.getButton(OI.Driver.LBumper).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+      // reset the field-centric heading on left bumper press
+      OI.getButton(OI.Driver.LBumper)
+          .onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    }
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
