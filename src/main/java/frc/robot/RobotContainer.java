@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -51,9 +50,6 @@ public class RobotContainer {
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose;
-
-  // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -152,19 +148,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
-
-    // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+            () -> OI.getAxisSupplier(OI.Driver.LeftY).get(),
+            () -> OI.getAxisSupplier(OI.Driver.LeftX).get(),
+            () -> OI.getAxisSupplier(OI.Driver.RightX).get()));
 
     // Reset gyro / odometry
     final Runnable resetGyro =
@@ -177,7 +163,7 @@ public class RobotContainer {
             : () ->
                 drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
-    controller.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+    OI.getButton(OI.Driver.Start).onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
   }
 
   /**
