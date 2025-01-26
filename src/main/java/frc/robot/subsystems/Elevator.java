@@ -82,10 +82,10 @@ public class Elevator extends SubsystemBase {
 
   public Elevator() {
     // TODO: set up for canivore
-    currentLimit.StatorCurrentLimit = 50;
+    currentLimit.StatorCurrentLimit = 60;
     currentLimit.StatorCurrentLimitEnable = true;
-    elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, Constants.CANivoreName);
-    elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, Constants.CANivoreName);
+    elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, Constants.RIOName);
+    elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, Constants.RIOName);
     elevatorMotor1.getConfigurator().apply(loopCfg);
     elevatorMotor1.getConfigurator().apply(elvSoftLimit);
     elevatorMotor1.getConfigurator().apply(currentLimit);
@@ -149,9 +149,19 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command goUp() {
-    return startEnd(
+    return runEnd(
         () -> {
           elevatorMotor1.set(elevatorOutput);
+          System.out.println("GOING UP!!!!!!!!!!!!!!!!!!");
+        },
+        () -> elevatorMotor1.set(0));
+  }
+
+  public Command goDown() {
+    return runEnd(
+        () -> {
+          elevatorMotor1.set(-elevatorOutput);
+          System.out.println("GOING DOWN!!!!!!!!!!!!!!!!!!");
         },
         () -> elevatorMotor1.set(0));
   }
@@ -174,14 +184,6 @@ public class Elevator extends SubsystemBase {
         .andThen(goDown().until(elvLimitSwitch::get))
         .andThen(zeroMotorEncoder())
         .andThen(runOnce(this::enableSoftLimits));
-  }
-
-  public Command goDown() {
-    return startEnd(
-        () -> {
-          elevatorMotor1.set(-elevatorOutput);
-        },
-        () -> elevatorMotor1.set(0));
   }
 
   public Command zeroMotorEncoder() {
@@ -230,7 +232,8 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putBoolean("Dio Port 0", elvLimitSwitch.get());
     SmartDashboard.putNumber(
         "Elevator/Motor Encoder Rotation", elevatorMotor1.getPosition().getValue().in(Revolutions));
-    SmartDashboard.putNumber("Elevator/Motor Percent", elevatorMotor1.get());
+    SmartDashboard.putNumber("Elevator/Motor1 Percent", elevatorMotor1.get());
+    SmartDashboard.putNumber("Elevator/Motor2 Percent", elevatorMotor2.get());
     SmartDashboard.putNumber("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
   }
 

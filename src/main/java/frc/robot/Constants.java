@@ -10,7 +10,8 @@ import edu.wpi.first.units.measure.Mass;
 
 public final class Constants {
 
-  public static final String CANivoreName = "CANivore";
+  public static final String CANivoreName = "Default Name";
+  public static final String RIOName = "rio";
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
