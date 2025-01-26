@@ -39,9 +39,9 @@ public final class Constants {
 
     public static final int elvLimitID = 0;
 
-    public static final double P = 2.0;
-    public static final double I = 0.05;
-    public static final double D = 0.0;
+    public static final double P = 1.5;
+    public static final double I = 0.04;
+    public static final double D = 0.02;
     public static final double FF = 0.0;
     public static final double MMVel = 30;
     public static final Distance kBottomLimit = Inches.of(9);
