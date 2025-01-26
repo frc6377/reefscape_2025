@@ -50,8 +50,10 @@ public class RobotContainer {
 
   private void configureBindings() {
     if (Robot.isSimulation()) {
-      OI.getButton(OI.Keyboard.Z).onTrue(elevator.L0());
-      OI.getButton(OI.Keyboard.X).onTrue(elevator.L1());
+      OI.getButton(OI.Keyboard.Z).onTrue(elevator.L1());
+      OI.getButton(OI.Keyboard.X).onTrue(elevator.L2());
+      OI.getButton(OI.Keyboard.C).onTrue(elevator.L3());
+      OI.getButton(OI.Keyboard.V).onTrue(elevator.L4());
       OI.getButton(OI.Keyboard.M).whileTrue(elevator.goUp());
       OI.getButton(OI.Keyboard.Comma).whileTrue(elevator.goDown());
     } else {

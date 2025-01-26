@@ -58,7 +58,7 @@ public final class Constants {
     public static final Mass kCarriageMass = Pounds.of(5.15);
     public static final Distance kElevatorDrumRadius = Inches.of(.75 / 2);
     public static final Distance kMinElevatorHeight = Inches.zero();
-    public static final Distance kMaxElevatorHeight = Inches.of(63);
+    public static final Distance kMaxElevatorHeight = Inches.of(72);
     public static final Distance kElevatorDrumCircumference =
         kElevatorDrumRadius.times(2 * Math.PI);
   }
