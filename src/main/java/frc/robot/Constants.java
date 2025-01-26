@@ -16,9 +16,18 @@ public final class Constants {
   }
 
   public static class ClimberConstants {
-    public static final double kClimberP = 1;
-    public static final double kClimberI = 0;
-    public static final double kClimberD = 0;
+    public static final double kClimberP0 = 1;
+    public static final double kClimberI0 = 0;
+    public static final double kClimberD0 = 0;
+    public static final double kClimberkG0 = 0;
+    public static final double kClimberkV0 = 2.5;
+
+    public static final double kClimberP1 = 2;
+    public static final double kClimberI1 = 0;
+    public static final double kClimberD1 = 0;
+    public static final double kClimberkG1 = 0.26;
+    public static final double kClimberkV1 = 2.5;
+
     public static final double KGearRatio = 126;
     public static final Angle kClimberExtended = Degrees.of(-180 * KGearRatio);
     public static final Angle kClimberRetracted = Degrees.of(-20 * KGearRatio);

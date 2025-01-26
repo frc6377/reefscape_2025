@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
@@ -35,17 +37,34 @@ public class Climber extends SubsystemBase {
   private Mechanism2d climbMech;
   private MechanismRoot2d climbMechRoot;
   private MechanismLigament2d climbMechLigament;
+  private Slot0Configs climberConfigsToClimber;
+  private Slot1Configs climberConfigsAtClimber;
 
   public Climber() {
     climberMotorLeader = new TalonFX(MotorIDConstants.kCLimberMotorLeader);
     climberMotorFollower = new TalonFX(MotorIDConstants.kCLimberMotorFollower);
     climberMotorFollower.setControl(new Follower(MotorIDConstants.kCLimberMotorLeader, true));
-    climberPID =
-        new PIDController(
-            ClimberConstants.kClimberP, ClimberConstants.kClimberI, ClimberConstants.kClimberD);
+    climberConfigsToClimber =
+        new Slot0Configs()
+            .withKP(ClimberConstants.kClimberP0)
+            .withKI(ClimberConstants.kClimberI0)
+            .withKD(ClimberConstants.kClimberD0)
+            .withKG(ClimberConstants.kClimberkG0)
+            .withKV(ClimberConstants.kClimberkV0);
+    climberConfigsAtClimber =
+        new Slot1Configs()
+            .withKP(ClimberConstants.kClimberP1)
+            .withKI(ClimberConstants.kClimberI1)
+            .withKD(ClimberConstants.kClimberD1)
+            .withKG(ClimberConstants.kClimberkG1)
+            .withKV(ClimberConstants.kClimberkV1);
+    climberMotorLeader.getConfigurator().apply(climberConfigsToClimber);
+    climberMotorFollower.getConfigurator().apply(climberConfigsToClimber);
+
     if (Robot.isSimulation()) {
       simClimberGearbox = DCMotor.getKrakenX60(1);
-      climberSim = new SingleJointedArmSim(simClimberGearbox, 126, 1, 0.1, 0, Math.PI, false, 1);
+      climberSim =
+          new SingleJointedArmSim(simClimberGearbox, 126, 0.077, 0.1, 0, Math.PI, false, 1);
       climbMech = new Mechanism2d(2, 2);
       climbMechRoot = climbMech.getRoot("Climb Mech root", 1, 1);
       climbMechLigament =
