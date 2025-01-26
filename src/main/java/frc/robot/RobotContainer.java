@@ -51,7 +51,7 @@ public class RobotContainer {
   private void configureBindings() {
     boolean usingKeyboard = true;
 
-    if (Robot.isSimulation() && !usingKeyboard) {
+    if (Robot.isSimulation() && usingKeyboard) {
       OI.getButton(OI.Keyboard.Z).onTrue(elevator.L1());
       OI.getButton(OI.Keyboard.X).onTrue(elevator.L2());
       OI.getButton(OI.Keyboard.C).onTrue(elevator.L3());
