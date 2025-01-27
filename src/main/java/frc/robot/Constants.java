@@ -48,7 +48,7 @@ public final class Constants {
         Degrees.of(3); // FIXME: Change tolerance back after testing
     public static final double kPivotP = 5.0;
     public static final double kPivotI = 0.0;
-    public static final double kPivotD = 0.0;
+    public static final double kPivotD = 1.0;
     public static final double kGearing = 25;
     public static final Distance kLength = Feet.of(1);
     public static final Mass kMass = Pounds.of(8);

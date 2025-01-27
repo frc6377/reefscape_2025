@@ -60,8 +60,8 @@ public class RobotContainer {
         .whileTrue(elevator.goDown());
     OI.getButton(OI.Driver.Start).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    OI.getButton(OI.Driver.LTrigger).onTrue(intake.retractPivotCommand());
-    OI.getButton(OI.Driver.RTrigger).onTrue(intake.extendPivotCommand());
+    OI.getTrigger(OI.Driver.LTrigger).onTrue(intake.pivotDownCommand());
+    OI.getTrigger(OI.Driver.RTrigger).onTrue(intake.pivotUpCommand());
 
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.

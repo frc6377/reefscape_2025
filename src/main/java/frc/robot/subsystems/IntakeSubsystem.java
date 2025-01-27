@@ -15,6 +15,7 @@ import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveRequest.Idle;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -82,12 +83,12 @@ public class IntakeSubsystem extends SubsystemBase {
     sensor = new TOFSensorSimple(RevCanID.kConveyorSensor, Inches.of(1));
     pid = pivotPID.getPIDController();
     pid.setTolerance(kPivotTolerance.in(Rotations));
-
     var slot0Configs = new Slot0Configs();
-    slot0Configs.kP = kPivotP;
     slot0Configs.kI = kPivotI;
+    slot0Configs.kP = kPivotP;
     slot0Configs.kD = kPivotD;
     pivotMotor.getConfigurator().apply(slot0Configs);
+
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
 
@@ -109,8 +110,8 @@ public class IntakeSubsystem extends SubsystemBase {
               kGearing,
               kMOI.in(KilogramSquareMeters),
               Feet.of(1).in(Meters),
-              kPivotRetractAngle.minus(Degrees.of(7)).in(Radians),
-              kPivotExtendAngle.plus(Degrees.of(7)).in(Radians),
+              kPivotRetractAngle.minus(Degrees.of(30)).in(Radians),
+              kPivotExtendAngle.plus(Degrees.of(30)).in(Radians),
               true,
               0);
       pivotArmMech =
@@ -143,12 +144,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Pivot down */
   public Command extendPivotCommand() {
-    return runOnce(() -> pivotSetpoint = kPivotExtendAngle);
+    return runOnce(() -> pivotMotor.setControl(new PositionVoltage(kPivotExtendAngle)));
   }
 
   /** Pivot up */
   public Command retractPivotCommand() {
-    return runOnce(() -> pivotSetpoint = kPivotRetractAngle);
+    return runOnce(() -> pivotMotor.setControl(new PositionVoltage(kPivotRetractAngle)));
   }
 
   // Made a command to spin clockwise
@@ -242,7 +243,7 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotSim.setInput(pivotMotor.getMotorVoltage().getValue().in(Volts));
     pivotSim.update(0.020);
     pivotMotor.setPosition(Radians.of(pivotSim.getAngleRads()));
-    pivotArmMech.setAngle(Radians.of(pivotSim.getAngleRads()).in(Degrees));
+    pivotArmMech.setAngle(Radians.of(pivotSim.getAngleRads()).plus(Degrees.of(90)).in(Degrees));
 
     switch (state) {
       case Idle:
