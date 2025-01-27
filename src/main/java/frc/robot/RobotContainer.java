@@ -64,6 +64,8 @@ public class RobotContainer {
       OI.getButton(OI.Driver.RBumper)
           .and(OI.getPOVButton(OI.Driver.DPAD_DOWN))
           .whileTrue(elevator.goDown());
+      //   elevator.setDefaultCommand(
+      //       elevator.variableUpDown(OI.getAxisSupplier(OI.Driver.RightY).get()));
 
       //   OI.getButton(OI.Driver.Start).onTrue(drivetrain.runOnce(() ->
       // drivetrain.seedFieldCentric()));

@@ -82,8 +82,12 @@ public class Elevator extends SubsystemBase {
 
   public Elevator() {
     // TODO: set up for canivore
-    currentLimit.StatorCurrentLimit = 60;
+    currentLimit.StatorCurrentLimit = 90;
+    currentLimit.SupplyCurrentLimit = 70;
+    currentLimit.SupplyCurrentLowerLimit = 40;
+    currentLimit.SupplyCurrentLowerTime = 1;
     currentLimit.StatorCurrentLimitEnable = true;
+    currentLimit.SupplyCurrentLimitEnable = true;
     elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, Constants.RIOName);
     elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, Constants.RIOName);
     elevatorMotor1.getConfigurator().apply(loopCfg);
@@ -165,6 +169,10 @@ public class Elevator extends SubsystemBase {
         },
         () -> elevatorMotor1.set(0));
   }
+
+  // public Command variableUpDown(double upDownAmount) {
+  //   return runEnd(() -> elevatorMotor1.set(upDownAmount * .3), () -> elevatorMotor1.set(0));
+  // }
 
   private void disableSoftLimits() {
     elevatorMotor1
