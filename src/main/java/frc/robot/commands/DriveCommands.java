@@ -61,6 +61,10 @@ public class DriveCommands {
         .getTranslation();
   }
 
+  public static Command autoAlignToReef() {
+    return Commands.run(() -> {});
+  }
+
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
    */

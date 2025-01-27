@@ -176,6 +176,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                 (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+
+    Logger.recordOutput("Scoring Poses", DrivetrainConstants.SCORE_POSES);
   }
 
   @Override

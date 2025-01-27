@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.5,
-        "y": 6.35
+        "x": 1.255966963421563,
+        "y": 0.9550863896519501
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4999999999999987,
-        "y": 6.35
+        "x": 1.7899853165304893,
+        "y": 1.911183202461284
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.5,
-        "y": 6.35
+        "x": 3.171967470336712,
+        "y": 3.859960556501591
       },
       "prevControl": {
-        "x": 4.5,
-        "y": 6.35
+        "x": 3.0515137203650147,
+        "y": 3.640892315723162
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Reef B"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8011592741935483,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -45,10 +50,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Testing",
+  "folder": "Source - Score",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 0.0
+    "velocity": 0.0,
+    "rotation": 54.0
   },
   "useDefaultConstraints": true
 }
