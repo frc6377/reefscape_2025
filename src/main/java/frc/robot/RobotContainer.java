@@ -145,13 +145,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> OI.getAxisSupplier(OI.Driver.LeftY).get(),
-            () -> OI.getAxisSupplier(OI.Driver.LeftX).get(),
-            () -> OI.getAxisSupplier(OI.Driver.RightX).get()));
+    boolean usingKeyboard = true;
 
     // Reset gyro / odometry
     final Runnable resetGyro =
@@ -159,12 +153,34 @@ public class RobotContainer {
             ? () ->
                 drive.setPose(
                     driveSimulation
-                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
+                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose
+            // during
             // simulation
             : () ->
                 drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
-    OI.getButton(OI.Driver.Start).onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+
+    // Default command, normal field-relative drive
+    if (usingKeyboard) {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> OI.getAxisSupplier(OI.Keyboard.AD).get(),
+              () -> OI.getAxisSupplier(OI.Keyboard.WS).get(),
+              () -> OI.getAxisSupplier(OI.Keyboard.ArrowLeftRight).get()));
+
+      OI.getButton(OI.Keyboard.ForwardSlash)
+          .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+    } else {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> OI.getAxisSupplier(OI.Driver.LeftY).get(),
+              () -> OI.getAxisSupplier(OI.Driver.LeftX).get(),
+              () -> OI.getAxisSupplier(OI.Driver.RightX).get()));
+      OI.getButton(OI.Driver.Start)
+          .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+    }
   }
 
   /**
