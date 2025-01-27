@@ -14,6 +14,8 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.Constants.DrivetrainConstants.SCORE_POSES;
+import static frc.robot.Constants.DrivetrainConstants.SOURSE_POSES;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
@@ -354,6 +356,34 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
+  }
+
+  @AutoLogOutput(key = "Odometry/Closest Score Pose")
+  public Pose2d getClosestScorePose() {
+    Pose2d closest_pose = new Pose2d();
+    double closest_pose_dist = Double.MAX_VALUE;
+
+    // Find the closest pose
+    Pose2d robotPose = getPose();
+    for (Pose2d scorePose : SCORE_POSES) {
+      double current_dist = robotPose.getTranslation().getDistance(scorePose.getTranslation());
+      if (current_dist < closest_pose_dist) {
+        closest_pose_dist = current_dist;
+        closest_pose = scorePose;
+      }
+    }
+    return closest_pose;
+  }
+
+  public Pose2d getClosestSoursePose() {
+    double dist1 = getPose().getTranslation().getDistance(SOURSE_POSES[0].getTranslation());
+    double dist2 = getPose().getTranslation().getDistance(SOURSE_POSES[1].getTranslation());
+
+    if (dist1 < dist2) {
+      return SOURSE_POSES[0];
+    } else {
+      return SOURSE_POSES[1];
+    }
   }
 
   /** Returns the current odometry rotation. */

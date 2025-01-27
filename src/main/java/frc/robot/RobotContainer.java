@@ -171,6 +171,10 @@ public class RobotContainer {
 
       OI.getButton(OI.Keyboard.ForwardSlash)
           .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+
+      OI.getButton(OI.Keyboard.M).onTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose()));
+      OI.getButton(OI.Keyboard.Comma)
+          .onTrue(DriveCommands.GoToPose(() -> drive.getClosestSoursePose()));
     } else {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(

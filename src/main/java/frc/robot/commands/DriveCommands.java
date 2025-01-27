@@ -13,6 +13,10 @@
 
 package frc.robot.commands;
 
+import static frc.robot.Constants.DrivetrainConstants.PATH_CONSTRAINTS;
+import static frc.robot.Constants.DrivetrainConstants.SCORE_POSES;
+
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,10 +31,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-
-import static frc.robot.Constants.DrivetrainConstants.PATH_CONSTRAINTS;
-import static frc.robot.Constants.DrivetrainConstants.SCORE_POSES;
-
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -38,10 +38,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.Logger;
-
-import com.pathplanner.lib.auto.AutoBuilder;
 
 public class DriveCommands {
   private static final double ANGLE_KP = 5.0;
@@ -55,6 +52,7 @@ public class DriveCommands {
 
   private DriveCommands() {
     Logger.recordOutput("Scoring Poses", SCORE_POSES);
+    Logger.recordOutput("Target Pose", new Pose2d());
   }
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
@@ -71,18 +69,14 @@ public class DriveCommands {
         .getTranslation();
   }
 
-  public static Command getAlignToReefCommand(Pose2d robotPose) {
-    Pose2d closest_pose = null;
-    double closest_pose_dist = 99999999;
-
-    for (int i = 0; i < SCORE_POSES.length; i++) {
-      double current_dist = robotPose.getTranslation().getDistance(SCORE_POSES[i].getTranslation());
-      if (current_dist < closest_pose_dist) {
-        closest_pose = SCORE_POSES[i];
-      }
-    }
-
-    return AutoBuilder.pathfindToPose(closest_pose, PATH_CONSTRAINTS);
+  public static Command GoToPose(Supplier<Pose2d> targetPose) {
+    return Commands.runOnce(
+        () -> {
+          Pose2d currentTarget = targetPose.get();
+          Logger.recordOutput("Dynamic Target Pose", currentTarget);
+          Command alignCommand = AutoBuilder.pathfindToPose(currentTarget, PATH_CONSTRAINTS);
+          alignCommand.schedule(); // Schedule the dynamically generated command
+        });
   }
 
   /**
