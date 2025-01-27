@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import utilities.OI_Utils;
+import utilities.OI_Utils.Control.ControlType;
 
 /** Add your docs here. */
 public class OI extends OI_Utils {
@@ -104,5 +105,39 @@ public class OI extends OI_Utils {
     public static void setRumble(double rumbleIntensity) {
       controller.setRumble(RumbleType.kBothRumble, rumbleIntensity);
     }
+  }
+
+  public static final class Keyboard {
+    private static final XboxController keyboard1 = new XboxController(0);
+    private static final XboxController keyboard2 = new XboxController(1);
+    private static final XboxController keyboard3 = new XboxController(2);
+
+    private static final ControlCurve defualtCurve = new ControlCurve(1, 0, 0, 0);
+
+    public static final Control Z = new Control(1, null, null, keyboard1, ControlType.BUTTON);
+    public static final Control X = new Control(2, null, null, keyboard1, ControlType.BUTTON);
+    public static final Control C = new Control(3, null, null, keyboard1, ControlType.BUTTON);
+    public static final Control V = new Control(4, null, null, keyboard1, ControlType.BUTTON);
+
+    public static final Control WS =
+        new Control(XboxController.Axis.kLeftX, null, keyboard1, defualtCurve);
+    public static final Control AD =
+        new Control(XboxController.Axis.kLeftY, null, keyboard1, defualtCurve);
+
+    public static final Control M = new Control(1, null, null, keyboard2, ControlType.BUTTON);
+    public static final Control Comma = new Control(2, null, null, keyboard2, ControlType.BUTTON);
+    public static final Control Period = new Control(3, null, null, keyboard2, ControlType.BUTTON);
+    public static final Control ForwardSlash =
+        new Control(4, null, null, keyboard2, ControlType.BUTTON);
+
+    public static final Control IK =
+        new Control(XboxController.Axis.kLeftX, null, keyboard2, defualtCurve);
+    public static final Control JL =
+        new Control(XboxController.Axis.kLeftY, null, keyboard2, defualtCurve);
+
+    public static final Control ArrowUpDown =
+        new Control(XboxController.Axis.kLeftY, null, keyboard3, defualtCurve);
+    public static final Control ArrowLeftRight =
+        new Control(XboxController.Axis.kLeftX, null, keyboard3, defualtCurve);
   }
 }
