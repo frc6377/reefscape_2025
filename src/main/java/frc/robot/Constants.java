@@ -13,8 +13,12 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
+
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -49,6 +53,12 @@ public final class Constants {
     public static final double ROBOT_MASS_KG = 74.088;
     public static final double ROBOT_MOI = 6.883;
     public static final double WHEEL_COF = 1.2;
+
+    // TODO: Get Correct Values
+    public static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(
+      3.0, 3.0, 
+      Degrees.of(540).in(Radians), 
+      Degrees.of(720).in(Radians));
 
     // Scoring Poses for PathFinder
     public static final Pose2d[] SCORE_POSES =
