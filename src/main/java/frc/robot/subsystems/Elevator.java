@@ -1,22 +1,7 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.Kilograms;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Revolutions;
-import static edu.wpi.first.units.Units.Rotations;
-import static frc.robot.Constants.ElevatorConstants.MMVel;
-import static frc.robot.Constants.ElevatorConstants.elevatorOutput;
-import static frc.robot.Constants.ElevatorConstants.kCarageFactor;
-import static frc.robot.Constants.ElevatorConstants.kCarriageMass;
-import static frc.robot.Constants.ElevatorConstants.kElevatorDrumCircumference;
-import static frc.robot.Constants.ElevatorConstants.kElevatorDrumRadius;
-import static frc.robot.Constants.ElevatorConstants.kElevatorGearbox;
-import static frc.robot.Constants.ElevatorConstants.kElevatorGearing;
-import static frc.robot.Constants.ElevatorConstants.kMaxElevatorHeight;
-import static frc.robot.Constants.ElevatorConstants.kMinElevatorHeight;
+import static edu.wpi.first.units.Units.*;
+import static frc.robot.Constants.ElevatorConstants.*;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -25,14 +10,16 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.sim.ChassisReference;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
@@ -52,6 +39,7 @@ import frc.robot.Robot;
 
 public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor1;
+  private TalonFXSimState simElvMotor1;
   private TalonFX elevatorMotor2;
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
@@ -63,8 +51,8 @@ public class Elevator extends SubsystemBase {
   private MotionMagicConfigs elvMotionMagic =
       new MotionMagicConfigs()
           .withMotionMagicCruiseVelocity(MMVel)
-          .withMotionMagicAcceleration(MMVel * 2)
-          .withMotionMagicJerk(MMVel * 20);
+          .withMotionMagicAcceleration(MMAcc)
+          .withMotionMagicJerk(MMJerk);
 
   public static final SoftwareLimitSwitchConfigs elvSoftLimit =
       new SoftwareLimitSwitchConfigs()
@@ -102,6 +90,8 @@ public class Elevator extends SubsystemBase {
 
     // Simulation
     if (Robot.isSimulation()) {
+      simElvMotor1 = elevatorMotor1.getSimState();
+      simElvMotor1.Orientation = ChassisReference.Clockwise_Positive;
       m_elevatorSim =
           new ElevatorSim(
               kElevatorGearbox,
@@ -205,11 +195,7 @@ public class Elevator extends SubsystemBase {
     return runOnce(
         () -> {
           Angle adjustedSetpoint = heightToRotations(heightLevel);
-          if (Robot.isSimulation()) {
-            elevatorMotor1.setControl(new PositionVoltage(adjustedSetpoint));
-          } else {
-            elevatorMotor1.setControl(new MotionMagicVoltage(adjustedSetpoint));
-          }
+          elevatorMotor1.setControl(new MotionMagicVoltage(adjustedSetpoint));
           SmartDashboard.putNumber("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
           SmartDashboard.putNumber("Elevator/Setpoint Rotations", adjustedSetpoint.in(Rotations));
         });
@@ -247,14 +233,13 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    Distance simDist = Meters.zero();
-    LinearVelocity simVel = MetersPerSecond.zero();
-
     m_elevatorSim.setInputVoltage(elevatorMotor1.getMotorVoltage().getValueAsDouble());
     m_elevatorSim.update(Robot.defaultPeriodSecs);
-    simDist = Meters.of(m_elevatorSim.getPositionMeters());
-    simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
-    elevatorMotor1.setPosition(heightToRotations(simDist));
+    final Distance simDist = Meters.of(m_elevatorSim.getPositionMeters());
+    final LinearVelocity simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
+    simElvMotor1.setRawRotorPosition(heightToRotations(simDist));
+    simElvMotor1.setRotorVelocity(heightToRotations(simVel));
+    simElvMotor1.setSupplyVoltage(RobotController.getBatteryVoltage());
 
     elevatorMech.setLength(0.1 + (simDist.in(Meters)));
 
