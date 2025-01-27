@@ -46,7 +46,7 @@ public final class Constants {
     public static final Angle kPivotExtendAngle = Degrees.of(30);
     public static final Angle kPivotTolerance =
         Degrees.of(3); // FIXME: Change tolerance back after testing
-    public static final double kPivotP = 5;
+    public static final double kPivotP = 5.0;
     public static final double kPivotI = 0.0;
     public static final double kPivotD = 0.0;
     public static final double kGearing = 25;
@@ -55,6 +55,7 @@ public final class Constants {
     public static final MomentOfInertia kMOI =
         KilogramSquareMeters.of(
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
+    public static final Distance ArmLength = Feet.of(1);
   }
 
   // Elevator Constants

@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CtreCanID;
 import frc.robot.Constants.RevCanID;
 import frc.robot.Robot;
+import utilities.DebugEntry;
 import utilities.HowdyPID;
 import utilities.TOFSensorSimple;
 
@@ -70,6 +71,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private SingleJointedArmSim pivotSim;
 
+  private DebugEntry<Double> pivotOutput;
+  private DebugEntry<String> currentCommand;
+
   public IntakeSubsystem() {
     intakeMotor = new SparkMax(RevCanID.kIntakeMotor, MotorType.kBrushless);
     pivotMotor = new TalonFX(CtreCanID.kPivotMotor);
@@ -80,10 +84,12 @@ public class IntakeSubsystem extends SubsystemBase {
     pid.setTolerance(kPivotTolerance.in(Rotations));
 
     var slot0Configs = new Slot0Configs();
-    slot0Configs.kP = 100.0;
-    slot0Configs.kI = 100.0;
-    slot0Configs.kD = 100.0;
+    slot0Configs.kP = kPivotP;
+    slot0Configs.kI = kPivotI;
+    slot0Configs.kD = kPivotD;
     pivotMotor.getConfigurator().apply(slot0Configs);
+    pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
+    currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
 
     /**
      * Once the gains are configured, the Position closed loop control request can be sent to the
@@ -223,6 +229,12 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Pivot Setpoint", pivotSetpoint.in(Rotations));
     SmartDashboard.putNumber(
         "Pivot Position in Degrees", pivotMotor.getPosition().getValue().in(Degrees));
+    pivotOutput.log(pivotMotor.get());
+    if (this.getCurrentCommand() != null) {
+      currentCommand.log(this.getCurrentCommand().getName());
+    } else {
+      currentCommand.log("none");
+    }
   }
 
   public void simulationPeriodic() {
@@ -230,6 +242,7 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotSim.setInput(pivotMotor.getMotorVoltage().getValue().in(Volts));
     pivotSim.update(0.020);
     pivotMotor.setPosition(Radians.of(pivotSim.getAngleRads()));
+    pivotArmMech.setAngle(Radians.of(pivotSim.getAngleRads()).in(Degrees));
 
     switch (state) {
       case Idle:
