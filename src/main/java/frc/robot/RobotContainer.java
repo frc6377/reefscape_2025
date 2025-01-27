@@ -147,13 +147,30 @@ public class RobotContainer {
   private void configureButtonBindings() {
     boolean usingKeyboard = true;
 
+    // Reset gyro / odometry
+    final Runnable resetGyro =
+        Constants.currentMode == Constants.Mode.SIM
+            ? () ->
+                drive.setPose(
+                    driveSimulation
+                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose
+            // during
+            // simulation
+            : () ->
+                drive.setPose(
+                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+
     // Default command, normal field-relative drive
     if (usingKeyboard) {
-      drive.setDefaultCommand(DriveCommands.joystickDrive(
-        drive,
-        () -> OI.getAxisSupplier(OI.Keybo).get(),
-        null,
-        null));
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> OI.getAxisSupplier(OI.Keyboard.AD).get(),
+              () -> OI.getAxisSupplier(OI.Keyboard.WS).get(),
+              () -> OI.getAxisSupplier(OI.Keyboard.ArrowLeftRight).get()));
+
+      OI.getButton(OI.Keyboard.ForwardSlash)
+          .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
     } else {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
@@ -161,19 +178,6 @@ public class RobotContainer {
               () -> OI.getAxisSupplier(OI.Driver.LeftY).get(),
               () -> OI.getAxisSupplier(OI.Driver.LeftX).get(),
               () -> OI.getAxisSupplier(OI.Driver.RightX).get()));
-
-      // Reset gyro / odometry
-      final Runnable resetGyro =
-          Constants.currentMode == Constants.Mode.SIM
-              ? () ->
-                  drive.setPose(
-                      driveSimulation
-                          .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose
-              // during
-              // simulation
-              : () ->
-                  drive.setPose(
-                      new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
       OI.getButton(OI.Driver.Start)
           .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
     }
