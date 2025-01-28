@@ -77,9 +77,9 @@ public class RobotContainer {
         driveSimDefualtPose =
             DriverStation.getAlliance().equals(Alliance.Red)
                 ? new Pose2d(
-                    Meters.of(2), Constants.kFeildWidth.minus(Meters.of(2)), new Rotation2d())
+                    Meters.of(2), Constants.kFieldWidth.minus(Meters.of(2)), new Rotation2d())
                 : new Pose2d(
-                    Constants.kFeildLength.minus(Meters.of(2)),
+                    Constants.kFieldLength.minus(Meters.of(2)),
                     Meters.of(2),
                     new Rotation2d(Degrees.of(180)));
 

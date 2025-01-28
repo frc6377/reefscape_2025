@@ -41,8 +41,8 @@ public final class Constants {
     REPLAY
   }
 
-  public static final Distance kFeildWidth = Inches.of(317);
-  public static final Distance kFeildLength = Inches.of(690 + (7 / 8));
+  public static final Distance kFieldWidth = Inches.of(317);
+  public static final Distance kFieldLength = Inches.of(690 + (7 / 8));
 
   public final class DrivetrainConstants {
     // PathPlanner config constants
