@@ -29,7 +29,8 @@ public final class Constants {
     public static final double kClimberkV1 = 2.5;
 
     public static final double KGearRatio = 126;
-    public static final Angle kClimberExtended = Degrees.of(-180 * KGearRatio);
-    public static final Angle kClimberRetracted = Degrees.of(-20 * KGearRatio);
+    public static final Angle kClimberExtended = Degrees.of(190);
+    public static final Angle kClimberCage = Degrees.of(170);
+    public static final Angle kClimberRetracted = Degrees.of(0);
   }
 }

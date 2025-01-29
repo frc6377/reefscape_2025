@@ -6,32 +6,31 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
+import java.util.function.BooleanSupplier;
 
 public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
-  private TalonFX climberMotorLeader;
+  private TalonFX climberMotorFront;
 
-  private TalonFX climberMotorFollower;
-  private PIDController climberPID;
+  private TalonFX climberMotorBack;
   private DCMotor simClimberGearbox;
   private Mechanism2d simClimberArm;
   private SingleJointedArmSim climberSim;
@@ -42,9 +41,8 @@ public class Climber extends SubsystemBase {
   private Slot1Configs climberConfigsAtClimber;
 
   public Climber() {
-    climberMotorLeader = new TalonFX(MotorIDConstants.kCLimberMotorLeader);
-    climberMotorFollower = new TalonFX(MotorIDConstants.kCLimberMotorFollower);
-    climberMotorFollower.setControl(new Follower(MotorIDConstants.kCLimberMotorLeader, true));
+    climberMotorFront = new TalonFX(MotorIDConstants.kCLimberMotorLeader);
+    climberMotorBack = new TalonFX(MotorIDConstants.kCLimberMotorFollower);
     climberConfigsToClimber =
         new Slot0Configs()
             .withKP(ClimberConstants.kClimberP0)
@@ -59,8 +57,8 @@ public class Climber extends SubsystemBase {
             .withKD(ClimberConstants.kClimberD1)
             .withKG(ClimberConstants.kClimberkG1)
             .withKV(ClimberConstants.kClimberkV1);
-    climberMotorLeader.getConfigurator().apply(climberConfigsToClimber);
-    climberMotorFollower.getConfigurator().apply(climberConfigsToClimber);
+    climberMotorFront.getConfigurator().apply(climberConfigsToClimber);
+    climberMotorBack.getConfigurator().apply(climberConfigsToClimber);
 
     if (Robot.isSimulation()) {
       simClimberGearbox = DCMotor.getKrakenX60(1);
@@ -76,30 +74,42 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public Command climb() {
-    return run(
+  private Command runClimber(Angle position) {
+    return runOnce(
         () -> {
-          climberMotorLeader.setControl(
-              new PositionDutyCycle(
-                  ClimberConstants.kClimberExtended.in(Rotations) * ClimberConstants.KGearRatio));
-          SmartDashboard.putNumber("Target Angle", ClimberConstants.kClimberExtended.in(Degrees));
+          climberMotorFront.setControl(
+              new PositionDutyCycle(position.times(ClimberConstants.KGearRatio)));
+          climberMotorBack.setControl(
+              new PositionDutyCycle(position.times(ClimberConstants.KGearRatio * -1)));
         });
   }
 
+  private BooleanSupplier isClimberAtPosition(Angle position) {
+    return () ->
+        Math.abs((climberMotorFront.getPosition().getValue().in(Degrees) - position.in(Degrees)))
+            < 5;
+  }
+
+  public Command climb() {
+    return Commands.sequence(
+        runClimber(ClimberConstants.kClimberCage),
+        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberCage)),
+        runClimber(ClimberConstants.kClimberExtended),
+        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberExtended)));
+  }
+
   public Command retract() {
-    return run(
-        () -> {
-          climberMotorLeader.setControl(
-              new PositionDutyCycle(
-                  ClimberConstants.kClimberRetracted.in(Rotations) * ClimberConstants.KGearRatio));
-          SmartDashboard.putNumber("Target Angle", ClimberConstants.kClimberRetracted.in(Degrees));
-        });
+    return Commands.sequence(
+        runClimber(ClimberConstants.kClimberCage),
+        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberCage)),
+        runClimber(ClimberConstants.kClimberRetracted),
+        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberRetracted)));
   }
 
   @Override
   public void simulationPeriodic() {
     if (Robot.isSimulation()) {
-      climberSim.setInput(climberMotorLeader.get());
+      climberSim.setInput(climberMotorFront.get());
       climberSim.update(0.02);
       climbMechLigament.setAngle(Radians.of(climberSim.getAngleRads()).in(Degrees));
       SmartDashboard.putData("Climb Mech", climbMech);
