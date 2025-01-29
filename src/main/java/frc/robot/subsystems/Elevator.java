@@ -49,6 +49,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
+import java.util.function.Supplier;
 
 public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor1;
@@ -152,27 +153,23 @@ public class Elevator extends SubsystemBase {
     return rotationsToHeight(elevatorMotor1.getPosition().getValue());
   }
 
-  public Command goUp() {
+  public Command goUp(Supplier<Double> upPower) {
     return runEnd(
         () -> {
-          elevatorMotor1.set(elevatorOutput);
+          elevatorMotor1.set(Math.abs(upPower.get()) * elevatorOutput);
           System.out.println("GOING UP!!!!!!!!!!!!!!!!!!");
         },
         () -> elevatorMotor1.set(0));
   }
 
-  public Command goDown() {
+  public Command goDown(Supplier<Double> downPower) {
     return runEnd(
         () -> {
-          elevatorMotor1.set(-elevatorOutput);
+          elevatorMotor1.set(Math.abs(downPower.get()) * -elevatorOutput);
           System.out.println("GOING DOWN!!!!!!!!!!!!!!!!!!");
         },
         () -> elevatorMotor1.set(0));
   }
-
-  // public Command variableUpDown(double upDownAmount) {
-  //   return runEnd(() -> elevatorMotor1.set(upDownAmount * .3), () -> elevatorMotor1.set(0));
-  // }
 
   private void disableSoftLimits() {
     elevatorMotor1
@@ -189,7 +186,7 @@ public class Elevator extends SubsystemBase {
 
   public Command limitHit() {
     return runOnce(this::disableSoftLimits)
-        .andThen(goDown().until(elvLimitSwitch::get))
+        .andThen(goDown(() -> 1.0).until(elvLimitSwitch::get))
         .andThen(zeroMotorEncoder())
         .andThen(runOnce(this::enableSoftLimits));
   }

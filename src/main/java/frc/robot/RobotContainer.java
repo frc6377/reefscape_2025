@@ -43,15 +43,15 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    boolean usingKeyboard = true;
+    boolean usingKeyboard = false;
 
     if (Robot.isSimulation() && usingKeyboard) {
       OI.getButton(OI.Keyboard.Z).onTrue(elevator.L1());
       OI.getButton(OI.Keyboard.X).onTrue(elevator.L2());
       OI.getButton(OI.Keyboard.C).onTrue(elevator.L3());
       OI.getButton(OI.Keyboard.V).onTrue(elevator.L4());
-      OI.getButton(OI.Keyboard.M).whileTrue(elevator.goUp());
-      OI.getButton(OI.Keyboard.Comma).whileTrue(elevator.goDown());
+      OI.getButton(OI.Keyboard.M).whileTrue(elevator.goUp(() -> 1.0));
+      OI.getButton(OI.Keyboard.Comma).whileTrue(elevator.goDown(() -> 1.0));
     } else {
       OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.LBumper)).onTrue(elevator.L0());
       OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.X)).onTrue(elevator.L1());
@@ -60,12 +60,10 @@ public class RobotContainer {
       OI.getButton(OI.Driver.RBumper).and(OI.getButton(OI.Driver.Y)).onTrue(elevator.L4());
       OI.getButton(OI.Driver.RBumper)
           .and(OI.getPOVButton(OI.Driver.DPAD_UP))
-          .whileTrue(elevator.goUp());
+          .whileTrue(elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
       OI.getButton(OI.Driver.RBumper)
           .and(OI.getPOVButton(OI.Driver.DPAD_DOWN))
-          .whileTrue(elevator.goDown());
-      //   elevator.setDefaultCommand(
-      //       elevator.variableUpDown(OI.getAxisSupplier(OI.Driver.RightY).get()));
+          .whileTrue(elevator.goDown(OI.getAxisSupplier(OI.Driver.RightY)));
 
       //   OI.getButton(OI.Driver.Start).onTrue(drivetrain.runOnce(() ->
       // drivetrain.seedFieldCentric()));
