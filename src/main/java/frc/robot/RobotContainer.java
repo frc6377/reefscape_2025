@@ -145,9 +145,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    boolean usingKeyboard = true;
+    // Change the raw boolean to true to pic keyboard durring simulation
+    boolean usingKeyboard = true && Robot.isSimulation();
 
-    // Reset gyro / odometry
+    // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
         Constants.currentMode == Constants.Mode.SIM
             ? () ->
@@ -161,26 +162,16 @@ public class RobotContainer {
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
 
     // Default command, normal field-relative drive
-    if (usingKeyboard) {
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> OI.getAxisSupplier(OI.Keyboard.AD).get(),
-              () -> OI.getAxisSupplier(OI.Keyboard.WS).get(),
-              () -> OI.getAxisSupplier(OI.Keyboard.ArrowLeftRight).get()));
-
-      OI.getButton(OI.Keyboard.ForwardSlash)
-          .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
-    } else {
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> OI.getAxisSupplier(OI.Driver.LeftY).get(),
-              () -> OI.getAxisSupplier(OI.Driver.LeftX).get(),
-              () -> OI.getAxisSupplier(OI.Driver.RightX).get()));
-      OI.getButton(OI.Driver.Start)
-          .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
-    }
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.AD : OI.Driver.LeftY).get(),
+            () -> OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.WS : OI.Driver.LeftX).get(),
+            () ->
+                OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.ArrowLeftRight : OI.Driver.RightX)
+                    .get()));
+    OI.getButton(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.Start)
+        .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
   }
 
   /**
