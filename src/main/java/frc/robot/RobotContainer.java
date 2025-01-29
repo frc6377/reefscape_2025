@@ -27,10 +27,10 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystems.Climber;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
@@ -44,7 +44,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-@SuppressWarnings("unused")
 public class RobotContainer {
   // Subsystems
   private final Climber climber = new Climber();
@@ -152,7 +151,7 @@ public class RobotContainer {
     OI.getButton(OI.Operator.RTrigger).onTrue(climber.climb());
     OI.getButton(OI.Operator.LTrigger).onTrue(climber.retract());
     boolean usingKeyboard = true && Robot.isSimulation();
-    
+
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
         Constants.currentMode == Constants.Mode.SIM

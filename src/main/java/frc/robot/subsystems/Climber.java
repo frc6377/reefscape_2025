@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -32,7 +34,6 @@ public class Climber extends SubsystemBase {
 
   private TalonFX climberMotorBack;
   private DCMotor simClimberGearbox;
-  private Mechanism2d simClimberArm;
   private SingleJointedArmSim climberSim;
   private Mechanism2d climbMech;
   private MechanismRoot2d climbMechRoot;
@@ -63,7 +64,15 @@ public class Climber extends SubsystemBase {
     if (Robot.isSimulation()) {
       simClimberGearbox = DCMotor.getKrakenX60(1);
       climberSim =
-          new SingleJointedArmSim(simClimberGearbox, 126, 0.077, 0.1, 0, Math.PI, false, 1);
+          new SingleJointedArmSim(
+              simClimberGearbox,
+              ClimberConstants.KGearRatio,
+              ClimberConstants.ClimberSimConstants.kClimberArmMOI.in(KilogramSquareMeters),
+              ClimberConstants.ClimberSimConstants.kClimberArmLength.in(Meters),
+              0,
+              Math.PI,
+              false,
+              1);
       climbMech = new Mechanism2d(2, 2);
       climbMechRoot = climbMech.getRoot("Climb Mech root", 1, 1);
       climbMechLigament =

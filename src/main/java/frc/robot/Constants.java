@@ -1,15 +1,18 @@
-
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Pounds;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.wpilibj.RobotBase;
 
 public final class Constants {
   public static class OperatorConstants {
@@ -39,8 +42,17 @@ public final class Constants {
     public static final Angle kClimberExtended = Degrees.of(190);
     public static final Angle kClimberCage = Degrees.of(170);
     public static final Angle kClimberRetracted = Degrees.of(0);
+
+    public static class ClimberSimConstants {
+      public static final double kClimberGearRatio = 126;
+      public static final Distance kClimberArmLength = Inches.of(6);
+      public static final Mass kClimberMass = Pounds.of(0.5);
+      public static final Angle kClimberArmMinAngle = Degrees.of(-20);
+      public static final Angle kClimberArmMaxAngle = Degrees.of(200);
+      public static final MomentOfInertia kClimberArmMOI = KilogramSquareMeters.of(0.077);
+    }
   }
-  
+
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
