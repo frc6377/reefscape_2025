@@ -146,7 +146,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Change the raw boolean to true to pic keyboard durring simulation
-    boolean usingKeyboard = true && Robot.isSimulation();
+    boolean usingKeyboard = false && Robot.isSimulation();
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
@@ -172,6 +172,9 @@ public class RobotContainer {
                     .get()));
     OI.getButton(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.Start)
         .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+
+    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.A)
+        .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose()));
   }
 
   /**
