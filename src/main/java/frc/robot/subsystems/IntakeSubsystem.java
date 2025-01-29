@@ -83,11 +83,16 @@ public class IntakeSubsystem extends SubsystemBase {
     sensor = new TOFSensorSimple(RevCanID.kConveyorSensor, Inches.of(1));
     pid = pivotPID.getPIDController();
     pid.setTolerance(kPivotTolerance.in(Rotations));
+
+    pivotMotor.configFactoryDefault();
     var slot0Configs = new Slot0Configs();
     slot0Configs.kI = kPivotI;
     slot0Configs.kP = kPivotP;
     slot0Configs.kD = kPivotD;
     pivotMotor.getConfigurator().apply(slot0Configs);
+
+    pivotMotor.configMotionCruiseVelocity();
+    pivotMotor.configMotionAcceleration();
 
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
