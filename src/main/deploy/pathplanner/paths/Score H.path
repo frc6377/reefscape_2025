@@ -1,0 +1,75 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.2268810618367783,
+        "y": 7.0454388591046735
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.002190038312999,
+        "y": 6.64670232661963
+      },
+      "isLocked": false,
+      "linkedName": "Left Coral Station Mid"
+    },
+    {
+      "anchor": {
+        "x": 6.767505232383695,
+        "y": 4.944458380619451
+      },
+      "prevControl": {
+        "x": 6.661748195683024,
+        "y": 6.295137881665157
+      },
+      "nextControl": {
+        "x": 6.811128175520223,
+        "y": 4.387326515847596
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.802701569103502,
+        "y": 4.19448975914848
+      },
+      "prevControl": {
+        "x": 6.04540089933754,
+        "y": 4.254465046592137
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Reef H"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.9489444971537006,
+      "rotationDegrees": 180.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": "Source - Score",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -54.0
+  },
+  "useDefaultConstraints": true
+}
