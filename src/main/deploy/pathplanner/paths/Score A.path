@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.227,
-        "y": 7.045
+        "x": 1.2268810618367783,
+        "y": 7.0454388591046735
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5596388026746377,
-        "y": 6.533270812850031
+        "x": 1.5595198645114159,
+        "y": 6.533709671954704
       },
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
