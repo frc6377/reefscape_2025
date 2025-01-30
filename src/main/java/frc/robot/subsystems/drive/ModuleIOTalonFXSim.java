@@ -25,6 +25,7 @@ import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
  * Physics sim implementation of module IO. The sim models are configured using a set of module
  * constants from Phoenix. Simulation is always based on voltage control.
  */
+@SuppressWarnings("rawtypes")
 public class ModuleIOTalonFXSim extends ModuleIOTalonFX {
   private final SwerveModuleSimulation simulation;
 

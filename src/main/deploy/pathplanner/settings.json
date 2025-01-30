@@ -12,8 +12,8 @@
   "autoFolders": [
     "Test Autos"
   ],
-  "defaultMaxVel": 4.751832,
-  "defaultMaxAccel": 3.6576,
+  "defaultMaxVel": 4.75,
+  "defaultMaxAccel": 7.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
@@ -22,7 +22,7 @@
   "robotTrackwidth": 0.546,
   "driveWheelRadius": 0.0508,
   "driveGearing": 6.12,
-  "maxDriveSpeed": 4.751832,
+  "maxDriveSpeed": 4.877,
   "driveMotorType": "krakenX60",
   "driveCurrentLimit": 60.0,
   "wheelCOF": 1.2,
