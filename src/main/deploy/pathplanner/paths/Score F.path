@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.167531141857852,
-        "y": 1.4025486214694187
+        "x": 2.185679602765225,
+        "y": 1.308747351332312
       },
       "isLocked": false,
       "linkedName": "Right Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 5.033771050624861,
-        "y": 2.717296551655212
+        "x": 4.731532210010593,
+        "y": 2.5329188460010594
       },
       "prevControl": {
-        "x": 4.723042455404916,
-        "y": 2.447168825784224
+        "x": 4.453400613327338,
+        "y": 2.3395113609702105
       },
       "nextControl": {
-        "x": 5.22244379195987,
-        "y": 2.881316662242703
+        "x": 5.003613488155143,
+        "y": 2.7221190532318986
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 2.966006153373796
       },
       "prevControl": {
-        "x": 5.054565274787485,
-        "y": 2.697801585989434
+        "x": 5.082587211213288,
+        "y": 2.820780088511373
       },
       "nextControl": null,
       "isLocked": false,
@@ -54,8 +54,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 6.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

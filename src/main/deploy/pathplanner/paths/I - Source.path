@@ -3,50 +3,50 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2268810618367783,
-        "y": 7.0454388591046735
+        "x": 5.288043404274143,
+        "y": 5.082289332895173
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3231837348127398,
-        "y": 6.617851579984679
+        "x": 4.99684447766799,
+        "y": 5.3002832805915405
       },
       "isLocked": false,
-      "linkedName": "Left Coral Station Mid"
+      "linkedName": "Reef I"
     },
     {
       "anchor": {
-        "x": 4.723204945709746,
-        "y": 5.487935728945974
+        "x": 4.7745725470074145,
+        "y": 5.469828770524364
       },
       "prevControl": {
-        "x": 4.296313257628914,
-        "y": 5.764076147873445
+        "x": 5.076141793983683,
+        "y": 5.27914203299922
       },
       "nextControl": {
-        "x": 4.933116235430546,
-        "y": 5.352151891734948
+        "x": 4.3480838193850815,
+        "y": 5.7395039608064575
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.288043404274143,
-        "y": 5.082289332895173
+        "x": 1.2268810618367783,
+        "y": 7.0454388591046735
       },
       "prevControl": {
-        "x": 5.076422886210214,
-        "y": 5.215393639115348
+        "x": 1.9056189218565556,
+        "y": 6.767649479666473
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef I"
+      "linkedName": "Left Coral Station Mid"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.9489444971537006,
+      "waypointRelativePos": 1.016339656964658,
       "rotationDegrees": -119.99999999999999
     }
   ],
@@ -63,13 +63,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": -54.0
   },
   "reversed": false,
-  "folder": "Source - Score",
+  "folder": "Score - Source",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -54.0
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }

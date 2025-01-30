@@ -18,7 +18,6 @@ import static frc.robot.Constants.DrivetrainConstants.SCORE_POSES;
 import static frc.robot.Constants.DrivetrainConstants.SOURSE_POSES;
 
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
@@ -296,17 +295,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> {
-          new SysIdRoutine.Config(
-              null, // Use default ramp rate (1 V/s)
-              Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
-              null, // Use default timeout (10 s)
-              // Log state with Phoenix SignalLogger class
-              (state) -> SignalLogger.writeString("state", state.toString()));
-          runCharacterization(6);
-        })
-        .withTimeout(5)
-        .andThen(sysId.dynamic(direction));
+    return run(() -> runCharacterization(6)).withTimeout(3).andThen(sysId.dynamic(direction));
   }
 
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */

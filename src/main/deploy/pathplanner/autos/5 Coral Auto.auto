@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StartR - E"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "E - Source"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score D"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "D - Source"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score C"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C - Source"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score D"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "D - Source"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score C"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
