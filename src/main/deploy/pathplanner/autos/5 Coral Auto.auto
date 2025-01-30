@@ -45,18 +45,6 @@
           "data": {
             "pathName": "Score D"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "D - Source"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score C"
-          }
         }
       ]
     }
