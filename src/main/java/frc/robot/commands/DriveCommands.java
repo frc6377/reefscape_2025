@@ -32,11 +32,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -70,9 +72,9 @@ public class DriveCommands {
         .getTranslation();
   }
 
-  public static Command GoToPose(Supplier<Pose2d> targetPose) {
+  public static Command GoToPose(Supplier<Pose2d> targetPose, Set<Subsystem> drive) {
     return new DeferredCommand(
-        () -> AutoBuilder.pathfindToPose(targetPose.get(), PATH_CONSTRAINTS), null);
+        () -> AutoBuilder.pathfindToPose(targetPose.get(), PATH_CONSTRAINTS), drive);
   }
 
   /**

@@ -32,6 +32,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
+import java.util.Set;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -173,7 +174,7 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.RSB)
-        .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose()));
+        .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose(), Set.of(drive)));
   }
 
   /**
