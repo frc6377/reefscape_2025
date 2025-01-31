@@ -72,9 +72,7 @@ public class DriveCommands {
 
   public static Command GoToPose(Supplier<Pose2d> targetPose) {
     return new DeferredCommand(
-        () -> AutoBuilder.pathfindToPose(targetPose.get(), PATH_CONSTRAINTS), 
-        null
-    );
+        () -> AutoBuilder.pathfindToPose(targetPose.get(), PATH_CONSTRAINTS), null);
   }
 
   /**
