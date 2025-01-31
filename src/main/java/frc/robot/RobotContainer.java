@@ -161,8 +161,6 @@ public class RobotContainer {
         .whileTrue(intake.ejectFromBirdhouse());
     intake.setDefaultCommand(intake.retractPivotCommand());
 
-
-
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
         Constants.currentMode == Constants.Mode.SIM

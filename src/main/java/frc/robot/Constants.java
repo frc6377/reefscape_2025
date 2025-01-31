@@ -65,13 +65,17 @@ public final class Constants {
     public static final double kPivotP = 5.0;
     public static final double kPivotI = 0.0;
     public static final double kPivotD = 1.0;
-    public static final double kGearing = 25;
+    public static final double kPivotF = 0.0;
+    public static final double kGearing = 1;
     public static final Distance kLength = Feet.of(1);
     public static final Mass kMass = Pounds.of(8);
     public static final MomentOfInertia kMOI =
         KilogramSquareMeters.of(
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
     public static final Distance ArmLength = Feet.of(1);
+    public static final double kMotionMagicCruiseVelocity = 1000.0;
+    public static final double kMotionMagicAcceleration = 200.0;
+    public static final double kMotionMagicJerk = 10.0;
   }
 
   // Elevator Constants

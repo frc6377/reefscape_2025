@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
@@ -14,6 +13,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.*;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -84,19 +84,6 @@ public class IntakeSubsystem extends SubsystemBase {
     pid = pivotPID.getPIDController();
     pid.setTolerance(kPivotTolerance.in(Rotations));
 
-    // pivotMotor.configFactoryDefault();
-    var slot0Configs = new Slot0Configs();
-    slot0Configs.kI = kPivotI;
-    slot0Configs.kP = kPivotP;
-    slot0Configs.kD = kPivotD;
-    pivotMotor.getConfigurator().apply(slot0Configs);
-
-    // pivotMotor.configMotionCruiseVelocity();
-    // pivotMotor.configMotionAcceleration();
-
-    pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
-    currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
-
     /**
      * Once the gains are configured, the Position closed loop control request can be sent to the
      * TalonFX. The control request object has an optional feedforward term that can be used to add
@@ -108,13 +95,28 @@ public class IntakeSubsystem extends SubsystemBase {
      *
      * <p>// set position to 10 rotations m_talonFX.setControl(m_request.withPosition(10));
      */
+    var slot0Configs = new Slot0Configs();
+    slot0Configs.kP = kPivotP;
+    slot0Configs.kI = kPivotI;
+    slot0Configs.kD = kPivotD;
+
+    var pivotMotionMagic = new MotionMagicConfigs();
+    pivotMotionMagic.MotionMagicCruiseVelocity = kMotionMagicCruiseVelocity;
+    pivotMotionMagic.MotionMagicAcceleration = kMotionMagicAcceleration;
+    pivotMotionMagic.MotionMagicJerk = kMotionMagicJerk;
+
+    pivotMotor.getConfigurator().apply(slot0Configs);
+
+    pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
+    currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
+
     if (Robot.isSimulation()) {
       pivotSim =
           new SingleJointedArmSim(
               DCMotor.getFalcon500(1),
               kGearing,
               kMOI.in(KilogramSquareMeters),
-              Feet.of(1).in(Meters),
+              kLength.in(Meters),
               kPivotRetractAngle.minus(Degrees.of(30)).in(Radians),
               kPivotExtendAngle.plus(Degrees.of(30)).in(Radians),
               true,
@@ -221,14 +223,9 @@ public class IntakeSubsystem extends SubsystemBase {
         .andThen(outtakeCommand());
   }
 
-  public double calculatePivotPID() {
-    return pid.calculate(getPivotPosition().in(Rotations), pivotSetpoint.in(Rotations));
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    setPivotMotor(calculatePivotPID());
     SmartDashboard.putNumber("Intake Motor Output", intakeMotor.get());
     SmartDashboard.putNumber("Pivot Motor Output", pivotMotor.get());
     SmartDashboard.putNumber("Conveyor Motor Output", conveyorMotor.get());
@@ -246,8 +243,8 @@ public class IntakeSubsystem extends SubsystemBase {
   public void simulationPeriodic() {
 
     pivotSim.setInput(pivotMotor.getMotorVoltage().getValue().in(Volts));
-    pivotSim.update(0.020);
-    pivotMotor.setPosition(Radians.of(pivotSim.getAngleRads()));
+    pivotSim.update(Robot.defaultPeriodSecs);
+    pivotMotor.setPosition(Radians.of(pivotSim.getAngleRads() * kGearing));
     pivotArmMech.setAngle(Radians.of(pivotSim.getAngleRads()).plus(Degrees.of(90)).in(Degrees));
 
     switch (state) {
