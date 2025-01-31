@@ -1,5 +1,5 @@
 {
-  "robotWidth": 0.8763,
+  "robotWidth": 0.876,
   "robotLength": 0.8763,
   "holonomicMode": true,
   "pathFolders": [
@@ -38,6 +38,6 @@
   "bumperOffsetY": 0.0,
   "robotFeatures": [
     "{\"name\":\"Elevator\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.0,\"y\":0.0},\"size\":{\"width\":0.2,\"length\":0.2},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":false}}",
-    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.0,\"y\":0.0},\"size\":{\"width\":0.2,\"length\":0.2},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":false}}"
+    "{\"name\":\"Intake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.538,\"y\":0.0},\"size\":{\"width\":0.4699,\"length\":0.1905},\"borderRadius\":0.0,\"strokeWidth\":0.01,\"filled\":false}}"
   ]
 }
