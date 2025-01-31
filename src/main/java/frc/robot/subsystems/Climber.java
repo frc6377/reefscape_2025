@@ -84,11 +84,11 @@ public class Climber extends SubsystemBase {
   private Command runClimber(Angle position, int slot) {
     return runOnce(
         () -> {
-
           climberMotorFront.setControl(
               new PositionDutyCycle(position.times(ClimberConstants.KGearRatio)).withSlot(slot));
           climberMotorBack.setControl(
-              new PositionDutyCycle(position.times(ClimberConstants.KGearRatio * -1)).withSlot(slot));
+              new PositionDutyCycle(position.times(ClimberConstants.KGearRatio * -1))
+                  .withSlot(slot));
         });
   }
 
@@ -100,7 +100,7 @@ public class Climber extends SubsystemBase {
 
   public Command climb() {
     return Commands.sequence(
-        runClimber(ClimberConstants.kClimberCage,0),
+        runClimber(ClimberConstants.kClimberCage, 0),
         Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberCage)),
         runClimber(ClimberConstants.kClimberExtended, 1),
         Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberExtended)));
@@ -117,7 +117,7 @@ public class Climber extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     climberSim.setInput(climberMotorFront.get());
-    climberSim.update(0.02);
+    climberSim.update(Robot.defaultPeriodSecs);
     climbMechLigament.setAngle(Radians.of(climberSim.getAngleRads()).in(Degrees));
     SmartDashboard.putData("Climb Mech", climbMech);
     SmartDashboard.putNumber("Climber Angle", climberSim.getAngleRads());
