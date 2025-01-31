@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
@@ -86,8 +85,7 @@ public class Elevator extends SubsystemBase {
     elevatorMotor1.getConfigurator().apply(elvMotionMagic);
     elevatorMotor2.setControl(new Follower(MotorIDConstants.kElevatorMotor1, true));
     elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
-    new Trigger(CommandScheduler.getInstance().getActiveButtonLoop(), elvLimitSwitch::get)
-        .onTrue(zeroMotorEncoder());
+    new Trigger(elvLimitSwitch::get).onTrue(zeroMotorEncoder());
 
     // Simulation
     if (Robot.isSimulation()) {
@@ -147,7 +145,6 @@ public class Elevator extends SubsystemBase {
     return runEnd(
         () -> {
           elevatorMotor1.set(Math.abs(upPower.get()) * elevatorOutput);
-          System.out.println("GOING UP!!!!!!!!!!!!!!!!!!");
         },
         () -> elevatorMotor1.set(0));
   }
@@ -156,7 +153,6 @@ public class Elevator extends SubsystemBase {
     return runEnd(
         () -> {
           elevatorMotor1.set(Math.abs(downPower.get()) * -elevatorOutput);
-          System.out.println("GOING DOWN!!!!!!!!!!!!!!!!!!");
         },
         () -> elevatorMotor1.set(0));
   }
@@ -220,7 +216,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Dio Port 0", elvLimitSwitch.get());
+    SmartDashboard.putBoolean("Elevator limit switch state", elvLimitSwitch.get());
     SmartDashboard.putNumber(
         "Elevator/Motor Encoder Rotation", elevatorMotor1.getPosition().getValue().in(Revolutions));
     SmartDashboard.putNumber("Elevator/Motor1 Percent", elevatorMotor1.get());
