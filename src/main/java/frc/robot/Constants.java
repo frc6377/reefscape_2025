@@ -49,8 +49,8 @@ public final class Constants {
 
   public final class DrivetrainConstants {
     // PathPlanner config constants
-    public static final double ROBOT_MASS_KG = 74.088;
-    public static final double ROBOT_MOI = 6.883;
+    public static final double ROBOT_MASS_KG = 54.431;
+    public static final double ROBOT_MOI = 4.682;
     public static final double WHEEL_COF = 1.2;
 
     // TODO: Get Correct Values

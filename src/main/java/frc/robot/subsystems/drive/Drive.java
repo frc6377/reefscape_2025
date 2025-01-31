@@ -364,6 +364,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     return closest_pose;
   }
 
+  @AutoLogOutput(key = "Odometry/Closest Source Pose")
   public Pose2d getClosestSoursePose() {
     double dist1 = getPose().getTranslation().getDistance(SOURSE_POSES[0].getTranslation());
     double dist2 = getPose().getTranslation().getDistance(SOURSE_POSES[1].getTranslation());

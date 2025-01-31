@@ -139,6 +139,7 @@ public class Robot extends LoggedRobot {
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
+      robotContainer.startAuto();
     }
   }
 
@@ -156,7 +157,6 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    SignalLogger.stop();
   }
 
   /** This function is called periodically during operator control. */

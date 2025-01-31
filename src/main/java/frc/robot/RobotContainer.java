@@ -146,7 +146,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Change the raw boolean to true to pic keyboard durring simulation
-    boolean usingKeyboard = false && Robot.isSimulation();
+    boolean usingKeyboard = true && Robot.isSimulation();
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
@@ -183,6 +183,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void startAuto() {
+    driveSimulation.setSimulationWorldPose(drive.getPose());
   }
 
   public void resetSimulationField() {

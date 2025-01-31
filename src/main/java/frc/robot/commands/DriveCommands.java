@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -70,13 +71,10 @@ public class DriveCommands {
   }
 
   public static Command GoToPose(Supplier<Pose2d> targetPose) {
-    return Commands.runOnce(
-        () -> {
-          Pose2d currentTarget = targetPose.get();
-          Logger.recordOutput("Dynamic Target Pose", currentTarget);
-          Command alignCommand = AutoBuilder.pathfindToPose(currentTarget, PATH_CONSTRAINTS);
-          alignCommand.schedule(); // Schedule the dynamically generated command
-        });
+    return new DeferredCommand(
+        () -> AutoBuilder.pathfindToPose(targetPose.get(), PATH_CONSTRAINTS), 
+        null
+    );
   }
 
   /**
