@@ -32,11 +32,12 @@ public final class Constants {
 
   public static class ElevatorConstants {
     public static final Distance kL0Height = Meters.of(0.252);
-    public static final Distance kL1Height = Inches.of(18);
-    public static final Distance kL2Height = Inches.of(31.875);
-    public static final Distance kL3Height = Inches.of(47.625);
+    //L1 needs to be adjusted once it actually is worth it
+    public static final Distance kL1Height = Inches.of(15);
+    public static final Distance kL2Height = Inches.of(16.62);
+    public static final Distance kL3Height = Inches.of(30.9);
     // public static final Distance kL4Height = Inches.of(72);
-    public static final Distance kL4Height = Inches.of(68.6);
+    public static final Distance kL4Height = Inches.of(55);
 
     public static final int elvLimitID = 0;
 
