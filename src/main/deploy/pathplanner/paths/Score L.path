@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2268810618367783,
-        "y": 7.0454388591046735
+        "x": 1.381397119345211,
+        "y": 6.933118750460409
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8352749994516242,
-        "y": 6.574190709678554
+        "x": 2.3403536806835046,
+        "y": 6.386396186246772
       },
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 3.6840874124088416,
-        "y": 5.078344762105488
+        "x": 3.6673596680524114,
+        "y": 5.062078274140935
       },
       "prevControl": {
-        "x": 2.8537780302585496,
-        "y": 5.733319751310695
+        "x": 3.1430994087387214,
+        "y": 5.5129350589581225
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": 29.999999999999996
   },
   "reversed": false,
   "folder": "Source - Score",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -54.0
+    "rotation": 126.0
   },
   "useDefaultConstraints": true
 }

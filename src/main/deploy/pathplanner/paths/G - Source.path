@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.803,
-        "y": 3.854
+        "x": 5.791037454804503,
+        "y": 3.8979533186718593
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.902857479137706,
-        "y": 3.6248090668017983
+        "x": 5.915774794550808,
+        "y": 3.681295533044352
       },
       "isLocked": false,
       "linkedName": "Reef G"
@@ -20,24 +20,24 @@
         "y": 3.2475143173993644
       },
       "prevControl": {
-        "x": 5.999264376297396,
-        "y": 3.495610463486018
+        "x": 6.031757919873213,
+        "y": 3.521796634045822
       },
       "nextControl": {
-        "x": 5.869295402191078,
-        "y": 2.4485149285270476
+        "x": 5.703028008000849,
+        "y": 2.0971234728902726
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.255966963421563,
-        "y": 0.9550863896519501
+        "x": 1.360303832517342,
+        "y": 1.116308343612883
       },
       "prevControl": {
-        "x": 1.4865609813229472,
-        "y": 1.0909152669376943
+        "x": 1.5902828036803534,
+        "y": 1.3749631286711341
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1.016339656964658,
-      "rotationDegrees": 180.0
+      "rotationDegrees": -90.0
     }
   ],
   "constraintZones": [],
@@ -63,13 +63,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 54.0
+    "rotation": -126.0
   },
   "reversed": false,
   "folder": "Score - Source",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -90.0
   },
   "useDefaultConstraints": true
 }

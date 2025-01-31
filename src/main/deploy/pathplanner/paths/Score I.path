@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2268810618367783,
-        "y": 7.0454388591046735
+        "x": 1.381397119345211,
+        "y": 6.933118750460409
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3231837348127398,
-        "y": 6.617851579984679
+        "x": 3.265887359668617,
+        "y": 6.548379854292854
       },
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
@@ -20,24 +20,24 @@
         "y": 5.487935728945974
       },
       "prevControl": {
-        "x": 4.296313257628914,
-        "y": 5.764076147873445
+        "x": 4.456776284868377,
+        "y": 5.680801026902989
       },
       "nextControl": {
-        "x": 4.933116235430546,
-        "y": 5.352151891734948
+        "x": 5.705484169637536,
+        "y": 4.776872682644753
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.288043404274143,
-        "y": 5.082289332895173
+        "x": 5.250450034539103,
+        "y": 5.092633940986167
       },
       "prevControl": {
-        "x": 5.076422886210214,
-        "y": 5.215393639115348
+        "x": 4.861457733634584,
+        "y": 5.300807922849325
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,8 +46,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.9489444971537006,
-      "rotationDegrees": -119.99999999999999
+      "waypointRelativePos": 1.1633243110236215,
+      "rotationDegrees": -29.999999999999996
     }
   ],
   "constraintZones": [],
@@ -63,13 +63,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": -29.999999999999996
   },
   "reversed": false,
   "folder": "Source - Score",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -54.0
+    "rotation": 126.0
   },
   "useDefaultConstraints": true
 }

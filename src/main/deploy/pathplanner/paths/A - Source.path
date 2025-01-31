@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.1732702847041145,
-        "y": 4.193397897634289
+        "x": 3.1827257969367553,
+        "y": 4.157144504041969
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.728996544675848,
-        "y": 4.910329082343163
+        "x": 2.866543518789984,
+        "y": 4.655417206184941
       },
       "isLocked": false,
       "linkedName": "Reef A"
     },
     {
       "anchor": {
-        "x": 1.2268810618367783,
-        "y": 7.0454388591046735
+        "x": 1.381397119345211,
+        "y": 6.933118750460409
       },
       "prevControl": {
-        "x": 1.8781400711290823,
-        "y": 5.995810456053249
+        "x": 2.287909063236037,
+        "y": 5.6970952291208405
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -54.0
+    "rotation": 126.0
   },
   "reversed": false,
   "folder": "Score - Source",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

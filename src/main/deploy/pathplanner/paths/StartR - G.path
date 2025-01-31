@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.471859586648464,
-        "y": 1.1088237489647725
+        "x": 7.405589964517721,
+        "y": 0.7070295270991873
       },
       "isLocked": false,
       "linkedName": "Start Right"
     },
     {
       "anchor": {
-        "x": 5.803,
-        "y": 3.854
+        "x": 5.791037454804503,
+        "y": 3.8979533186718593
       },
       "prevControl": {
-        "x": 6.05087834532274,
-        "y": 3.480716648865886
+        "x": 5.794194045127541,
+        "y": 3.3495439397614497
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -90.0
   },
   "reversed": false,
   "folder": "Start - Score",
