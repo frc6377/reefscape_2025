@@ -58,8 +58,6 @@ public class Climber extends SubsystemBase {
             .withKD(ClimberConstants.kClimberD1)
             .withKG(ClimberConstants.kClimberkG1)
             .withKV(ClimberConstants.kClimberkV1);
-    climberMotorFront.getConfigurator().apply(climberConfigsToClimber);
-    climberMotorBack.getConfigurator().apply(climberConfigsToClimber);
 
     if (Robot.isSimulation()) {
       simClimberGearbox = DCMotor.getKrakenX60(1);
@@ -83,13 +81,14 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  private Command runClimber(Angle position) {
+  private Command runClimber(Angle position, int slot) {
     return runOnce(
         () -> {
+
           climberMotorFront.setControl(
-              new PositionDutyCycle(position.times(ClimberConstants.KGearRatio)));
+              new PositionDutyCycle(position.times(ClimberConstants.KGearRatio)).withSlot(slot));
           climberMotorBack.setControl(
-              new PositionDutyCycle(position.times(ClimberConstants.KGearRatio * -1)));
+              new PositionDutyCycle(position.times(ClimberConstants.KGearRatio * -1)).withSlot(slot));
         });
   }
 
@@ -101,29 +100,27 @@ public class Climber extends SubsystemBase {
 
   public Command climb() {
     return Commands.sequence(
-        runClimber(ClimberConstants.kClimberCage),
+        runClimber(ClimberConstants.kClimberCage,0),
         Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberCage)),
-        runClimber(ClimberConstants.kClimberExtended),
+        runClimber(ClimberConstants.kClimberExtended, 1),
         Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberExtended)));
   }
 
   public Command retract() {
     return Commands.sequence(
-        runClimber(ClimberConstants.kClimberCage),
+        runClimber(ClimberConstants.kClimberCage, 1),
         Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberCage)),
-        runClimber(ClimberConstants.kClimberRetracted),
+        runClimber(ClimberConstants.kClimberRetracted, 0),
         Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberRetracted)));
   }
 
   @Override
   public void simulationPeriodic() {
-    if (Robot.isSimulation()) {
-      climberSim.setInput(climberMotorFront.get());
-      climberSim.update(0.02);
-      climbMechLigament.setAngle(Radians.of(climberSim.getAngleRads()).in(Degrees));
-      SmartDashboard.putData("Climb Mech", climbMech);
-      SmartDashboard.putNumber("Climber Angle", climberSim.getAngleRads());
-    }
+    climberSim.setInput(climberMotorFront.get());
+    climberSim.update(0.02);
+    climbMechLigament.setAngle(Radians.of(climberSim.getAngleRads()).in(Degrees));
+    SmartDashboard.putData("Climb Mech", climbMech);
+    SmartDashboard.putNumber("Climber Angle", climberSim.getAngleRads());
   }
 
   @Override
