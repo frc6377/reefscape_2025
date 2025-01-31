@@ -21,7 +21,6 @@ import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveRequest.Idle;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.hal.SimBoolean;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
@@ -41,7 +40,6 @@ import frc.robot.Constants.CtreCanID;
 import frc.robot.Constants.RevCanID;
 import frc.robot.Robot;
 import utilities.DebugEntry;
-import utilities.HowdyPID;
 import utilities.TOFSensorSimple;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -50,8 +48,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private TalonFX pivotMotor;
   private SparkMax conveyorMotor;
-  private HowdyPID pivotPID;
-  private PIDController pid;
   private Angle pivotSetpoint = kPivotRetractAngle;
 
   private TOFSensorSimple sensor;
@@ -79,10 +75,7 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor = new SparkMax(RevCanID.kIntakeMotor, MotorType.kBrushless);
     pivotMotor = new TalonFX(CtreCanID.kPivotMotor);
     conveyorMotor = new SparkMax(RevCanID.kConveyorMotor, MotorType.kBrushless);
-    pivotPID = new HowdyPID(kPivotP, kPivotI, kPivotD);
     sensor = new TOFSensorSimple(RevCanID.kConveyorSensor, Inches.of(1));
-    pid = pivotPID.getPIDController();
-    pid.setTolerance(kPivotTolerance.in(Rotations));
 
     /**
      * Once the gains are configured, the Position closed loop control request can be sent to the
@@ -99,6 +92,7 @@ public class IntakeSubsystem extends SubsystemBase {
     slot0Configs.kP = kPivotP;
     slot0Configs.kI = kPivotI;
     slot0Configs.kD = kPivotD;
+    slot0Configs.kS = kPivotF;
 
     var pivotMotionMagic = new MotionMagicConfigs();
     pivotMotionMagic.MotionMagicCruiseVelocity = kMotionMagicCruiseVelocity;
@@ -120,7 +114,7 @@ public class IntakeSubsystem extends SubsystemBase {
               kPivotRetractAngle.minus(Degrees.of(30)).in(Radians),
               kPivotExtendAngle.plus(Degrees.of(30)).in(Radians),
               true,
-              0);
+              Math.PI / 2);
       pivotArmMech =
           mech.getRoot("Root", 1, 0)
               .append(
@@ -131,6 +125,14 @@ public class IntakeSubsystem extends SubsystemBase {
       simSensor = new SimDeviceSim("TOF", RevCanID.kConveyorSensor);
       simbeam = simSensor.getBoolean("BeamBroken");
     }
+  }
+
+  private boolean atSetpoint() {
+    return pivotMotor
+        .getPosition()
+        .getValue()
+        .times(kGearing)
+        .isNear(pivotSetpoint, kPivotTolerance);
   }
 
   private void setPivotMotor(double speed) {
@@ -151,12 +153,21 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Pivot down */
   public Command extendPivotCommand() {
-    return runOnce(() -> pivotMotor.setControl(new PositionVoltage(kPivotExtendAngle)));
+    return runOnce(
+        () -> {
+          pivotMotor.setControl(new PositionVoltage(kPivotExtendAngle));
+          pivotSetpoint = kPivotExtendAngle;
+        });
   }
 
   /** Pivot up */
   public Command retractPivotCommand() {
-    return runOnce(() -> pivotMotor.setControl(new PositionVoltage(kPivotRetractAngle)));
+    return runOnce(
+        () -> {
+          pivotMotor.setControl(
+              new PositionVoltage(kPivotRetractAngle));
+          pivotSetpoint = kPivotRetractAngle;
+        });
   }
 
   // Made a command to spin clockwise
@@ -205,7 +216,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command intakeToBirdhousePhase2() {
     return retractPivotCommand()
-        .andThen(Commands.waitUntil(pid::atSetpoint)) // FIXME: Fix debouncing if neccesary
+        .andThen(Commands.waitUntil(this::atSetpoint)) // FIXME: Fix debouncing if neccesary
         .andThen(conveyorFeed().until(sensor.beamBroken().negate()));
   }
 
@@ -245,7 +256,7 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotSim.setInput(pivotMotor.getMotorVoltage().getValue().in(Volts));
     pivotSim.update(Robot.defaultPeriodSecs);
     pivotMotor.setPosition(Radians.of(pivotSim.getAngleRads() * kGearing));
-    pivotArmMech.setAngle(Radians.of(pivotSim.getAngleRads()).plus(Degrees.of(90)).in(Degrees));
+    pivotArmMech.setAngle(Radians.of(pivotSim.getAngleRads()).in(Degrees));
 
     switch (state) {
       case Idle:

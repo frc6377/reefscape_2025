@@ -62,10 +62,10 @@ public final class Constants {
     public static final Angle kPivotExtendAngle = Degrees.of(30);
     public static final Angle kPivotTolerance =
         Degrees.of(3); // FIXME: Change tolerance back after testing
-    public static final double kPivotP = 5.0;
+    public static final double kPivotP = 144.0;
     public static final double kPivotI = 0.0;
-    public static final double kPivotD = 1.0;
-    public static final double kPivotF = 0.0;
+    public static final double kPivotD = 0.0;
+    public static final double kPivotF = 1.0;
     public static final double kGearing = 1;
     public static final Distance kLength = Feet.of(1);
     public static final Mass kMass = Pounds.of(8);

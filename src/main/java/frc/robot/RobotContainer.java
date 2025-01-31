@@ -152,6 +152,7 @@ public class RobotContainer {
 
     OI.getTrigger(OI.Driver.LTrigger).onTrue(intake.pivotDownCommand());
     OI.getTrigger(OI.Driver.RTrigger).onTrue(intake.pivotUpCommand());
+
     // Set the intake rollers to the left and right triggers
     OI.getPOVButton(OI.Driver.POV0)
         .and(OI.getButton(OI.Driver.RBumper).negate())
