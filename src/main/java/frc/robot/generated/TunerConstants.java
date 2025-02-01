@@ -22,7 +22,7 @@ public class TunerConstants {
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
   private static final Slot0Configs steerGains =
       new Slot0Configs()
-          .withKP(35)
+          .withKP(50)
           .withKI(0)
           .withKD(0.5)
           .withKS(0.1)
@@ -95,7 +95,7 @@ public class TunerConstants {
   private static final int kPigeonId = 0;
 
   // These are only used for simulation
-  private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.1);
+  private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.01);
   private static final MomentOfInertia kDriveInertia = KilogramSquareMeters.of(0.01);
   // Simulated voltage necessary to overcome friction
   private static final Voltage kSteerFrictionVoltage = Volts.of(0.2);

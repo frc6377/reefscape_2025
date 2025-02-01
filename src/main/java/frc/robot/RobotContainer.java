@@ -51,7 +51,7 @@ public class RobotContainer {
   private final Vision vision;
 
   private SwerveDriveSimulation driveSimulation;
-  private Pose2d driveSimDefualtPose;
+  private Pose2d driveSimDefualtPose = new Pose2d(2, 2, new Rotation2d());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -76,7 +76,7 @@ public class RobotContainer {
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
         driveSimDefualtPose =
-            DriverStation.getAlliance().equals(Alliance.Red)
+            DriverStation.getAlliance().orElse(Alliance.Red).equals(Alliance.Blue)
                 ? new Pose2d(
                     Meters.of(2), Constants.kFieldWidth.minus(Meters.of(2)), new Rotation2d())
                 : new Pose2d(
@@ -84,9 +84,9 @@ public class RobotContainer {
                     Meters.of(2),
                     new Rotation2d(Degrees.of(180)));
 
-        driveSimulation =
-            new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(2, 2, new Rotation2d()));
+        driveSimulation = new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d());
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+
         drive =
             new Drive(
                 new GyroIOSim(driveSimulation.getGyroSimulation()),
@@ -187,6 +187,7 @@ public class RobotContainer {
   }
 
   public void startAuto() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
     driveSimulation.setSimulationWorldPose(drive.getPose());
   }
 

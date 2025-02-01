@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2323191357992,
-        "y": 1.4848119275084881
+        "x": 2.212411441659119,
+        "y": 1.5144483431404998
       },
       "isLocked": false,
       "linkedName": "Right Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 4.731532210010593,
-        "y": 2.5329188460010594
+        "x": 4.711073945180848,
+        "y": 2.6052442283516406
       },
       "prevControl": {
-        "x": 4.4691335371557965,
-        "y": 2.373684864935272
+        "x": 4.400256596966735,
+        "y": 2.425070153171886
       },
       "nextControl": {
-        "x": 4.9452578087850885,
-        "y": 2.6626160642768717
+        "x": 4.939173090966728,
+        "y": 2.7374683557287005
       },
       "isLocked": false,
       "linkedName": null
@@ -36,20 +36,15 @@
         "y": 2.993467003580317
       },
       "prevControl": {
-        "x": 5.090711609834503,
-        "y": 2.8387799076276536
+        "x": 4.718852904014964,
+        "y": 2.598200002198622
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Reef F"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.9209368848425199,
-      "rotationDegrees": -150.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
