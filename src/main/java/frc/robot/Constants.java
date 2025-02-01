@@ -55,7 +55,7 @@ public final class Constants {
 
     // TODO: Get Correct Values
     public static final PathConstraints PATH_CONSTRAINTS =
-        new PathConstraints(3, 3, Degrees.of(540).in(Radians), Degrees.of(720).in(Radians));
+        new PathConstraints(1, 1, Degrees.of(540).in(Radians), Degrees.of(720).in(Radians));
 
     // Scoring Poses for PathFinder
     public static final Pose2d[] SCORE_POSES =

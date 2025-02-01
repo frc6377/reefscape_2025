@@ -173,7 +173,7 @@ public class RobotContainer {
     OI.getButton(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.Start)
         .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
-    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.RSB)
+    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.A)
         .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose(), Set.of(drive)));
   }
 
