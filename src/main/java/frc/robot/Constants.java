@@ -26,31 +26,30 @@ public final class Constants {
   }
 
   public static class ClimberConstants {
-    public static final double kClimberP0 = 1;
+    public static final double kClimberP0 = 0.5;
     public static final double kClimberI0 = 0;
-    public static final double kClimberD0 = 0;
+    public static final double kClimberD0 = 2;
     public static final double kClimberkG0 = 0;
     public static final double kClimberkV0 = 2.5;
 
-    public static final double kClimberP1 = 2;
+    public static final double kClimberP1 = 0.5;
     public static final double kClimberI1 = 0;
-    public static final double kClimberD1 = 0;
-    public static final double kClimberkG1 = 0.26;
+    public static final double kClimberD1 = 2;
+    public static final double kClimberkG1 = 0;
     public static final double kClimberkV1 = 2.5;
 
     public static final double KGearRatio = 126;
-    public static final Angle kClimberExtended = Degrees.of(190);
-    public static final Angle kClimberCage = Degrees.of(170);
-    public static final Angle kClimberRetracted = Degrees.of(0);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(190);
+    public static final Angle kClimberAtCageSetpoint = Degrees.of(170);
+    public static final Angle kClimberRetractedSetpoint = Degrees.of(0);
 
-    public static class ClimberSimConstants {
-      public static final double kClimberGearRatio = 126;
-      public static final Distance kClimberArmLength = Inches.of(6);
-      public static final Mass kClimberMass = Pounds.of(0.5);
-      public static final Angle kClimberArmMinAngle = Degrees.of(-20);
-      public static final Angle kClimberArmMaxAngle = Degrees.of(200);
-      public static final MomentOfInertia kClimberArmMOI = KilogramSquareMeters.of(0.077);
-    }
+    // Sim Constants
+    public static final double kClimberGearRatio = 126;
+    public static final Distance kClimberArmLength = Inches.of(6);
+    public static final Mass kClimberMass = Pounds.of(0.5);
+    public static final Angle kClimberArmMinAngle = Degrees.of(-30);
+    public static final Angle kClimberArmMaxAngle = Degrees.of(200);
+    public static final MomentOfInertia kClimberArmMOI = KilogramSquareMeters.of(0.5);
   }
 
   public static final Mode simMode = Mode.SIM;

@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
@@ -38,8 +39,10 @@ public class Climber extends SubsystemBase {
   private Mechanism2d climbMech;
   private MechanismRoot2d climbMechRoot;
   private MechanismLigament2d climbMechLigament;
+  private MechanismLigament2d climbMechTargetLigament;
   private Slot0Configs climberConfigsToClimber;
   private Slot1Configs climberConfigsAtClimber;
+  private Angle climberTargetAngle;
 
   public Climber() {
     climberMotorFront = new TalonFX(MotorIDConstants.kCLimberMotorLeader);
@@ -59,24 +62,36 @@ public class Climber extends SubsystemBase {
             .withKG(ClimberConstants.kClimberkG1)
             .withKV(ClimberConstants.kClimberkV1);
 
+    // Set the configs
+    climberMotorFront.getConfigurator().apply(climberConfigsToClimber);
+    climberMotorBack.getConfigurator().apply(climberConfigsToClimber);
+    climberMotorFront.getConfigurator().apply(climberConfigsAtClimber);
+    climberMotorBack.getConfigurator().apply(climberConfigsAtClimber);
+
+    // For simulation
+    climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
     if (Robot.isSimulation()) {
       simClimberGearbox = DCMotor.getKrakenX60(1);
       climberSim =
           new SingleJointedArmSim(
               simClimberGearbox,
               ClimberConstants.KGearRatio,
-              ClimberConstants.ClimberSimConstants.kClimberArmMOI.in(KilogramSquareMeters),
-              ClimberConstants.ClimberSimConstants.kClimberArmLength.in(Meters),
-              0,
-              Math.PI,
-              false,
-              1);
+              ClimberConstants.kClimberArmMOI.in(KilogramSquareMeters),
+              ClimberConstants.kClimberArmLength.in(Meters),
+              ClimberConstants.kClimberArmMinAngle.in(Radians),
+              ClimberConstants.kClimberArmMaxAngle.in(Radians),
+              true,
+              ClimberConstants.kClimberRetractedSetpoint.in(Radians));
       climbMech = new Mechanism2d(2, 2);
       climbMechRoot = climbMech.getRoot("Climb Mech root", 1, 1);
       climbMechLigament =
           climbMechRoot.append(
               new MechanismLigament2d(
                   "Climb Mech Ligament", 1, Radians.of(climberSim.getAngleRads()).in(Degrees)));
+      climbMechTargetLigament =
+          climbMechRoot.append(
+              new MechanismLigament2d(
+                  "Climb Mech Target Ligament", 0.8, climberTargetAngle.in(Degrees)));
       SmartDashboard.putData("Climb Mech", climbMech);
     }
   }
@@ -84,47 +99,56 @@ public class Climber extends SubsystemBase {
   private Command runClimber(Angle position, int slot) {
     return runOnce(
         () -> {
+          climberTargetAngle = position;
           climberMotorFront.setControl(
               new PositionDutyCycle(position.times(ClimberConstants.KGearRatio)).withSlot(slot));
           climberMotorBack.setControl(
-              new PositionDutyCycle(position.times(ClimberConstants.KGearRatio * -1))
-                  .withSlot(slot));
+              new PositionDutyCycle(position.times(ClimberConstants.KGearRatio)).withSlot(slot));
+          SmartDashboard.putNumber("Climber Position Setpoint", position.in(Degrees));
         });
   }
 
   private BooleanSupplier isClimberAtPosition(Angle position) {
     return () ->
-        Math.abs((climberMotorFront.getPosition().getValue().in(Degrees) - position.in(Degrees)))
+        Math.abs(
+                (climberMotorFront.getPosition().getValue().in(Degrees)
+                        * ClimberConstants.KGearRatio
+                    - position.in(Degrees)))
             < 5;
   }
 
   public Command climb() {
     return Commands.sequence(
-        runClimber(ClimberConstants.kClimberCage, 0),
-        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberCage)),
-        runClimber(ClimberConstants.kClimberExtended, 1),
-        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberExtended)));
+        runClimber(ClimberConstants.kClimberAtCageSetpoint, 0),
+        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberAtCageSetpoint)),
+        runClimber(ClimberConstants.kClimberExtendedSetpoint, 0),
+        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberExtendedSetpoint)));
   }
 
   public Command retract() {
     return Commands.sequence(
-        runClimber(ClimberConstants.kClimberCage, 1),
-        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberCage)),
-        runClimber(ClimberConstants.kClimberRetracted, 0),
-        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberRetracted)));
+        runClimber(ClimberConstants.kClimberRetractedSetpoint, 0),
+        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberAtCageSetpoint)),
+        runClimber(ClimberConstants.kClimberRetractedSetpoint, 0),
+        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberRetractedSetpoint)));
   }
 
   @Override
   public void simulationPeriodic() {
-    climberSim.setInput(climberMotorFront.get());
+    climbMechTargetLigament.setAngle(climberTargetAngle.in(Degrees));
+    climberSim.setInput(climberMotorFront.getMotorVoltage().getValue().in(Volts));
     climberSim.update(Robot.defaultPeriodSecs);
+    climberMotorFront.setPosition(
+        Radians.of(climberSim.getAngleRads() * ClimberConstants.KGearRatio));
     climbMechLigament.setAngle(Radians.of(climberSim.getAngleRads()).in(Degrees));
-    SmartDashboard.putData("Climb Mech", climbMech);
-    SmartDashboard.putNumber("Climber Angle", climberSim.getAngleRads());
+
+    SmartDashboard.putNumber("Climber Angle", Radians.of(climberSim.getAngleRads()).in(Degrees));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber(
+        "Motor Voltage", climberMotorFront.getMotorVoltage().getValue().in(Volts));
   }
 }

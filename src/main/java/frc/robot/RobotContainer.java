@@ -148,9 +148,10 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Change the raw boolean to true to pic keyboard durring simulation
-    OI.getButton(OI.Operator.RTrigger).onTrue(climber.climb());
-    OI.getButton(OI.Operator.LTrigger).onTrue(climber.retract());
-    boolean usingKeyboard = true && Robot.isSimulation();
+    OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
+    OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
+
+    boolean usingKeyboard = false && Robot.isSimulation();
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
