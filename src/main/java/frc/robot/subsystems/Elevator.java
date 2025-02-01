@@ -20,8 +20,6 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -45,7 +43,6 @@ public class Elevator extends SubsystemBase {
   private MotorOutputConfigs invertMotor =
       new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
   private static Mechanism2d mech = new Mechanism2d(2, 2);
-  private static ComplexWidget widg;
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
   private MotionMagicConfigs elvMotionMagic =
@@ -106,7 +103,7 @@ public class Elevator extends SubsystemBase {
               .append(
                   new MechanismLigament2d(
                       "Elevator Mech [0]", 1, 90, 10, new Color8Bit(Color.kPurple)));
-        SmartDashboard.putData("Elevator/2d mechanism", mech);
+      SmartDashboard.putData("Elevator/2d mechanism", mech);
     }
 
     SmartDashboard.putNumber("Elevator/Setpoint", 0);
