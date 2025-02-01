@@ -27,6 +27,7 @@ import static frc.robot.Constants.IntakeConstants.kPivotI;
 import static frc.robot.Constants.IntakeConstants.kPivotP;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotSpeed;
+import static frc.robot.Constants.IntakeConstants.kPivotToL1Angle;
 import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -257,6 +258,28 @@ public class IntakeSubsystem extends SubsystemBase {
         .andThen(extendPivotCommand())
         .andThen(Commands.waitSeconds(0.5))
         .andThen(outtakeCommand());
+  }
+
+  public Command intakeCoralForL1() {
+    return startEnd(
+        () -> {
+          extendPivotCommand().initialize();
+          intakeCommand().initialize();
+        },
+        () -> {
+          extendPivotCommand().end(false);
+          intakeCommand().end(false);
+        });
+  }
+
+  public Command extendToL1() {
+    return runOnce(
+            () -> {
+              pivotMotor.setControl(new MotionMagicVoltage(kPivotToL1Angle.times(kGearing)));
+              pivotSetpoint = kPivotToL1Angle;
+            })
+        .until(this::atSetpoint)
+        .andThen(conveyorEject());
   }
 
   @Override

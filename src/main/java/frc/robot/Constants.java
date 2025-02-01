@@ -64,6 +64,8 @@ public final class Constants {
     public static final double kPivotSpeed = 0.5;
     public static final Angle kPivotRetractAngle = Degrees.of(0);
     public static final Angle kPivotExtendAngle = Degrees.of(30);
+    public static final Angle kPivotToL1Angle =
+        Degrees.of(10); // FIXME: Change degrees after testing
     public static final Angle kPivotTolerance =
         Degrees.of(3); // FIXME: Change tolerance back after testing
     public static final double kPivotP = 10.0;
