@@ -42,7 +42,7 @@ public final class Constants {
     public static final Angle kClimberExtendedSetpoint = Degrees.of(190);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(170);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(0);
-
+    public static final Angle kClimberSensorError = Degrees.of(5);
     // Sim Constants
     public static final double kClimberGearRatio = 126;
     public static final Distance kClimberArmLength = Inches.of(6);
