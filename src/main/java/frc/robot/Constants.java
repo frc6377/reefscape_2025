@@ -2,16 +2,20 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
@@ -40,7 +44,7 @@ public final class Constants {
     // Rev Can Bus
     public static final int kElevatorMotor1 = 1;
     public static final int kElevatorMotor2 = 2;
-    public static final int kPivotMotor = 0; // FIXME: Change to correct ID
+    public static final int kPivotMotor = 10; // FIXME: Change to correct ID
     // public static final int kIntakeMotor = 9;
     // public static final int kPivotMotor = 0; // FIXME: Change to correct ID
     // public static final int kConveyorMotor = 0; // FIXME: Change to correct ID
@@ -62,19 +66,20 @@ public final class Constants {
     public static final Angle kPivotExtendAngle = Degrees.of(30);
     public static final Angle kPivotTolerance =
         Degrees.of(3); // FIXME: Change tolerance back after testing
-    public static final double kPivotP = 144.0;
+    public static final double kPivotP = 10.0;
     public static final double kPivotI = 0.0;
     public static final double kPivotD = 0.0;
     public static final double kPivotF = 1.0;
-    public static final double kGearing = 1;
+    public static final double kGearing = 60;
     public static final Distance kLength = Feet.of(1);
     public static final Mass kMass = Pounds.of(8);
     public static final MomentOfInertia kMOI =
         KilogramSquareMeters.of(
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
     public static final Distance ArmLength = Feet.of(1);
-    public static final double kMotionMagicCruiseVelocity = 1000.0;
-    public static final double kMotionMagicAcceleration = 200.0;
+    public static final AngularVelocity kMotionMagicCruiseVelocity = RevolutionsPerSecond.of(10);
+    public static final AngularAcceleration kMotionMagicAcceleration =
+        kMotionMagicCruiseVelocity.times(Hertz.of(5));
     public static final double kMotionMagicJerk = 10.0;
   }
 

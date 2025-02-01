@@ -9,20 +9,38 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.Constants.IntakeConstants.*;
+import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
+import static frc.robot.Constants.IntakeConstants.kGearing;
+import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
+import static frc.robot.Constants.IntakeConstants.kLength;
+import static frc.robot.Constants.IntakeConstants.kMOI;
+import static frc.robot.Constants.IntakeConstants.kMotionMagicAcceleration;
+import static frc.robot.Constants.IntakeConstants.kMotionMagicCruiseVelocity;
+import static frc.robot.Constants.IntakeConstants.kMotionMagicJerk;
+import static frc.robot.Constants.IntakeConstants.kPivotD;
+import static frc.robot.Constants.IntakeConstants.kPivotExtendAngle;
+import static frc.robot.Constants.IntakeConstants.kPivotF;
+import static frc.robot.Constants.IntakeConstants.kPivotI;
+import static frc.robot.Constants.IntakeConstants.kPivotP;
+import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
+import static frc.robot.Constants.IntakeConstants.kPivotSpeed;
+import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveRequest.Idle;
+import com.ctre.phoenix6.sim.ChassisReference;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.hal.SimBoolean;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -45,6 +63,8 @@ import utilities.TOFSensorSimple;
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
   private SparkMax intakeMotor;
+
+  private TalonFXSimState simPivotMotor;
 
   private TalonFX pivotMotor;
   private SparkMax conveyorMotor;
@@ -94,17 +114,23 @@ public class IntakeSubsystem extends SubsystemBase {
     slot0Configs.kD = kPivotD;
     slot0Configs.kS = kPivotF;
 
-    var pivotMotionMagic = new MotionMagicConfigs();
-    pivotMotionMagic.MotionMagicCruiseVelocity = kMotionMagicCruiseVelocity;
-    pivotMotionMagic.MotionMagicAcceleration = kMotionMagicAcceleration;
-    pivotMotionMagic.MotionMagicJerk = kMotionMagicJerk;
+    var pivotMotionMagic =
+        new MotionMagicConfigs()
+            .withMotionMagicCruiseVelocity(kMotionMagicCruiseVelocity)
+            .withMotionMagicAcceleration(kMotionMagicAcceleration)
+            .withMotionMagicJerk(kMotionMagicJerk);
 
     pivotMotor.getConfigurator().apply(slot0Configs);
+    pivotMotor.getConfigurator().apply(pivotMotionMagic);
 
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
 
     if (Robot.isSimulation()) {
+      simPivotMotor = pivotMotor.getSimState();
+      simPivotMotor.Orientation =
+          ChassisReference
+              .CounterClockwise_Positive; // FIXME: Change orientation is it doesn't work
       pivotSim =
           new SingleJointedArmSim(
               DCMotor.getFalcon500(1),
@@ -155,7 +181,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command extendPivotCommand() {
     return runOnce(
         () -> {
-          pivotMotor.setControl(new PositionVoltage(kPivotExtendAngle));
+          pivotMotor.setControl(new MotionMagicVoltage(kPivotExtendAngle.times(kGearing)));
           pivotSetpoint = kPivotExtendAngle;
         });
   }
@@ -164,8 +190,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command retractPivotCommand() {
     return runOnce(
         () -> {
-          pivotMotor.setControl(
-              new PositionVoltage(kPivotRetractAngle));
+          pivotMotor.setControl(new MotionMagicVoltage(kPivotRetractAngle.times(kGearing)));
           pivotSetpoint = kPivotRetractAngle;
         });
   }
@@ -255,7 +280,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     pivotSim.setInput(pivotMotor.getMotorVoltage().getValue().in(Volts));
     pivotSim.update(Robot.defaultPeriodSecs);
-    pivotMotor.setPosition(Radians.of(pivotSim.getAngleRads() * kGearing));
+    simPivotMotor.setRawRotorPosition(Radians.of(pivotSim.getAngleRads()).times(kGearing));
+    simPivotMotor.setRotorVelocity(
+        RadiansPerSecond.of(pivotSim.getVelocityRadPerSec()).times(kGearing));
+    simPivotMotor.setSupplyVoltage(RobotController.getBatteryVoltage());
     pivotArmMech.setAngle(Radians.of(pivotSim.getAngleRads()).in(Degrees));
 
     switch (state) {
