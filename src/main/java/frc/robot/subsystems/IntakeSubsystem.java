@@ -13,6 +13,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
+import static frc.robot.Constants.IntakeConstants.kFeedBackSensorID;
 import static frc.robot.Constants.IntakeConstants.kGearing;
 import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
 import static frc.robot.Constants.IntakeConstants.kLength;
@@ -20,20 +21,28 @@ import static frc.robot.Constants.IntakeConstants.kMOI;
 import static frc.robot.Constants.IntakeConstants.kMotionMagicAcceleration;
 import static frc.robot.Constants.IntakeConstants.kMotionMagicCruiseVelocity;
 import static frc.robot.Constants.IntakeConstants.kMotionMagicJerk;
+import static frc.robot.Constants.IntakeConstants.kPivotA;
 import static frc.robot.Constants.IntakeConstants.kPivotD;
 import static frc.robot.Constants.IntakeConstants.kPivotExtendAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotF;
+import static frc.robot.Constants.IntakeConstants.kPivotG;
+import static frc.robot.Constants.IntakeConstants.kPivotGravityType;
 import static frc.robot.Constants.IntakeConstants.kPivotI;
 import static frc.robot.Constants.IntakeConstants.kPivotP;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotSpeed;
 import static frc.robot.Constants.IntakeConstants.kPivotToL1Angle;
 import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
+import static frc.robot.Constants.IntakeConstants.kPivotV;
+import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
 
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -66,6 +75,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private SparkMax intakeMotor;
 
   private TalonFXSimState simPivotMotor;
+  private CANcoderSimState simCANcoder;
 
   private TalonFX pivotMotor;
   private SparkMax conveyorMotor;
@@ -85,12 +95,14 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   intakeState state = intakeState.Idle;
-  Timer t = new Timer();
+  Timer timer = new Timer();
 
   private SingleJointedArmSim pivotSim;
 
   private DebugEntry<Double> pivotOutput;
   private DebugEntry<String> currentCommand;
+
+  private CANcoder CANcoder;
 
   public IntakeSubsystem() {
     intakeMotor = new SparkMax(RevCanID.kIntakeMotor, MotorType.kBrushless);
@@ -113,7 +125,16 @@ public class IntakeSubsystem extends SubsystemBase {
     slot0Configs.kP = kPivotP;
     slot0Configs.kI = kPivotI;
     slot0Configs.kD = kPivotD;
-    slot0Configs.kS = kPivotF;
+    slot0Configs.kG = kPivotG;
+    slot0Configs.kA = kPivotA;
+    slot0Configs.kV = kPivotV;
+    slot0Configs.GravityType = kPivotGravityType;
+
+    var feedbackConfigs = new FeedbackConfigs();
+    feedbackConfigs.RotorToSensorRatio = kGearing;
+    feedbackConfigs.SensorToMechanismRatio = kSensorToMechanism;
+    feedbackConfigs.FeedbackRemoteSensorID = kFeedBackSensorID;
+    feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
     var pivotMotionMagic =
         new MotionMagicConfigs()
@@ -122,26 +143,34 @@ public class IntakeSubsystem extends SubsystemBase {
             .withMotionMagicJerk(kMotionMagicJerk);
 
     pivotMotor.getConfigurator().apply(slot0Configs);
+    pivotMotor.getConfigurator().apply(feedbackConfigs);
     pivotMotor.getConfigurator().apply(pivotMotionMagic);
 
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
+
+    CANcoder = new CANcoder(kFeedBackSensorID);
+
+    // pivotMotor.setPosition(kPivotRetractAngle);
 
     if (Robot.isSimulation()) {
       simPivotMotor = pivotMotor.getSimState();
       simPivotMotor.Orientation =
           ChassisReference
               .CounterClockwise_Positive; // FIXME: Change orientation is it doesn't work
+      simCANcoder = CANcoder.getSimState();
+      simCANcoder.Orientation = ChassisReference.CounterClockwise_Positive;
+      simCANcoder.setRawPosition(kPivotRetractAngle);
       pivotSim =
           new SingleJointedArmSim(
               DCMotor.getFalcon500(1),
               kGearing,
               kMOI.in(KilogramSquareMeters),
               kLength.in(Meters),
-              kPivotRetractAngle.minus(Degrees.of(30)).in(Radians),
-              kPivotExtendAngle.plus(Degrees.of(30)).in(Radians),
+              kPivotExtendAngle.minus(Degrees.of(30)).in(Radians),
+              kPivotRetractAngle.plus(Degrees.of(30)).in(Radians),
               true,
-              Math.PI / 2);
+              kPivotRetractAngle.in(Radians));
       pivotArmMech =
           mech.getRoot("Root", 1, 0)
               .append(
@@ -155,11 +184,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   private boolean atSetpoint() {
-    return pivotMotor
-        .getPosition()
-        .getValue()
-        .times(kGearing)
-        .isNear(pivotSetpoint, kPivotTolerance);
+    return pivotMotor.getPosition().getValue().isNear(pivotSetpoint, kPivotTolerance);
   }
 
   private void setPivotMotor(double speed) {
@@ -182,7 +207,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command extendPivotCommand() {
     return runOnce(
         () -> {
-          pivotMotor.setControl(new MotionMagicVoltage(kPivotExtendAngle.times(kGearing)));
+          pivotMotor.setControl(new MotionMagicVoltage(kPivotExtendAngle));
           pivotSetpoint = kPivotExtendAngle;
         });
   }
@@ -191,7 +216,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command retractPivotCommand() {
     return runOnce(
         () -> {
-          pivotMotor.setControl(new MotionMagicVoltage(kPivotRetractAngle.times(kGearing)));
+          pivotMotor.setControl(new MotionMagicVoltage(kPivotRetractAngle));
           pivotSetpoint = kPivotRetractAngle;
         });
   }
@@ -301,11 +326,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void simulationPeriodic() {
 
-    pivotSim.setInput(pivotMotor.getMotorVoltage().getValue().in(Volts));
+    pivotSim.setInputVoltage(pivotMotor.getMotorVoltage().getValue().in(Volts));
     pivotSim.update(Robot.defaultPeriodSecs);
     simPivotMotor.setRawRotorPosition(Radians.of(pivotSim.getAngleRads()).times(kGearing));
     simPivotMotor.setRotorVelocity(
         RadiansPerSecond.of(pivotSim.getVelocityRadPerSec()).times(kGearing));
+    simCANcoder.setRawPosition(Radians.of(pivotSim.getAngleRads()));
+    simCANcoder.setVelocity(RadiansPerSecond.of(pivotSim.getVelocityRadPerSec()));
     simPivotMotor.setSupplyVoltage(RobotController.getBatteryVoltage());
     pivotArmMech.setAngle(Radians.of(pivotSim.getAngleRads()).in(Degrees));
 
@@ -314,36 +341,36 @@ public class IntakeSubsystem extends SubsystemBase {
         if (pivotSetpoint.equals(kPivotExtendAngle)
             && Math.abs(intakeMotor.get()) > 0
             && Math.abs(conveyorMotor.get()) > 0) {
-          if (!t.isRunning()) {
-            t.start();
+          if (!timer.isRunning()) {
+            timer.start();
           }
         } else {
-          if (t.isRunning()) {
-            t.stop();
+          if (timer.isRunning()) {
+            timer.stop();
           }
         }
 
-        if (t.hasElapsed(2)) {
+        if (timer.hasElapsed(2)) {
           simbeam.set(true);
           state = intakeState.atSensor;
-          t.reset();
+          timer.reset();
         }
         break;
       case atSensor:
         if (pivotSetpoint.equals(kPivotRetractAngle) && Math.abs(conveyorMotor.get()) > 0) {
-          if (!t.isRunning()) {
-            t.start();
+          if (!timer.isRunning()) {
+            timer.start();
           }
         } else {
-          if (t.isRunning()) {
-            t.stop();
+          if (timer.isRunning()) {
+            timer.stop();
           }
         }
 
-        if (t.hasElapsed(2)) {
+        if (timer.hasElapsed(2)) {
           simbeam.set(false);
           state = intakeState.coralLoaded;
-          t.reset();
+          timer.reset();
         }
         break;
       case coralLoaded:
