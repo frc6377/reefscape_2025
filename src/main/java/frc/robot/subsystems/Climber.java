@@ -54,6 +54,7 @@ public class Climber extends SubsystemBase {
   private Slot1Configs climberConfigsAtClimber;
   private Angle climberTargetAngle;
   private boolean isClimbing;
+
   public Climber() {
     climberMotorFront = new TalonFX(MotorIDConstants.kCLimberMotorLeader);
     climberMotorBack = new TalonFX(MotorIDConstants.kCLimberMotorFollower);
@@ -107,7 +108,7 @@ public class Climber extends SubsystemBase {
               ClimberConstants.KGearRatio,
               SingleJointedArmSim.estimateMOI(
                   ClimberConstants.kClimberArmLength.in(Meters),
-                  ClimberConstants.kClimberMass.in(Kilograms)),
+                  ClimberConstants.kClimberMass.in(Kilograms) / 2),
               ClimberConstants.kClimberArmLength.in(Meters),
               ClimberConstants.kClimberArmMinAngle.in(Radians),
               ClimberConstants.kClimberArmMaxAngle.in(Radians),
@@ -164,22 +165,51 @@ public class Climber extends SubsystemBase {
   }
 
   public Command retract() {
-    return Commands.sequence(
-        runClimber(ClimberConstants.kClimberRetractedSetpoint, 0),
-        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberRetractedSetpoint)));
+    return runClimber(ClimberConstants.kClimberRetractedSetpoint, 0);
+  }
+
+  private SingleJointedArmSim getSimulator() {
+    if (isClimbing) {
+      return climberSimLifting;
+    } else {
+      return climberSimNormal;
+    }
+  }
+
+  private void toggleClimbingSim() {
+    if (isClimbing) {
+      climberSimNormal.setState(
+          climberSimLifting.getAngleRads(), climberSimLifting.getVelocityRadPerSec());
+      isClimbing = false;
+    } else {
+      climberSimLifting.setState(
+          climberSimNormal.getAngleRads(), climberSimNormal.getVelocityRadPerSec());
+      isClimbing = true;
+    }
   }
 
   @Override
   public void simulationPeriodic() {
     climbMechTargetLigament.setAngle(climberTargetAngle.in(Degrees));
-    climberSimNormal.setInput(climberMotorFront.getMotorVoltage().getValue().in(Volts));
-    climberSimNormal.update(Robot.defaultPeriodSecs);
+    getSimulator().setInput(climberMotorFront.getMotorVoltage().getValue().in(Volts));
+    getSimulator().update(Robot.defaultPeriodSecs);
     climberMotorFront.setPosition(
-        Radians.of(climberSimNormal.getAngleRads() * ClimberConstants.KGearRatio));
-    climbMechLigament.setAngle(Radians.of(climberSimNormal.getAngleRads()).in(Degrees));
+        Radians.of(getSimulator().getAngleRads() * ClimberConstants.KGearRatio));
+    climbMechLigament.setAngle(Radians.of(getSimulator().getAngleRads()).in(Degrees));
 
     SmartDashboard.putNumber(
-        "Climber Angle", Radians.of(climberSimNormal.getAngleRads()).in(Degrees));
+        "Climber Angle", Radians.of(getSimulator().getAngleRads()).in(Degrees));
+    if (climbMechLigament.getAngle() > ClimberConstants.kClimberAtCageSetpoint.in(Degrees)) {
+      if (getSimulator() == climberSimNormal) {
+        toggleClimbingSim();
+        SmartDashboard.putBoolean("Climbing", true);
+      }
+    } else {
+      if (getSimulator() == climberSimLifting) {
+        toggleClimbingSim();
+        SmartDashboard.putBoolean("Climbing", false);
+      }
+    }
   }
 
   @Override
