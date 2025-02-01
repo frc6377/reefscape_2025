@@ -14,13 +14,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
-import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.subsystems.Elevator;
 
@@ -28,7 +28,7 @@ public final class Constants {
   public static class MotorIDConstants {
     public static final int kCLimberMotorLeader = 0;
     public static final int kCLimberMotorFollower = 0;
-    
+
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
     public static final int kIntakeMotor = 9;
@@ -79,7 +79,7 @@ public final class Constants {
 
   public static final String CANivoreName = "Default Name";
   public static final String RIOName = "rio";
-  
+
   // Intake Constants
   public static class IntakeConstants {
     public static final double kSpeed = 0.5;
