@@ -68,7 +68,7 @@ public final class Constants {
         Degrees.of(0); // FIXME: Might have to be negative to reach over bumper
     public static final Angle kPivotTolerance =
         Degrees.of(3); // FIXME: Change tolerance back after testing
-    public static final double kPivotP = 0.17;
+    public static final double kPivotP = 100;
     public static final double kPivotI = 0.0;
     public static final double kPivotD = 0.0;
     public static final double kPivotG = 0.21;
@@ -81,13 +81,12 @@ public final class Constants {
     public static final double kGearing = 60;
     public static final double kRotorToSensorRatio = kGearing;
     public static final double kSensorToMechanism = 1;
-    public static final Distance kLength = Feet.of(3);
+    public static final Distance kLength = Feet.of(1);
     public static final Mass kMass = Pounds.of(8);
     public static final MomentOfInertia kMOI =
         KilogramSquareMeters.of(
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
-    public static final Distance ArmLength = Feet.of(1);
-    public static final AngularVelocity kMotionMagicCruiseVelocity = RevolutionsPerSecond.of(10);
+    public static final AngularVelocity kMotionMagicCruiseVelocity = RevolutionsPerSecond.of(100);
     public static final AngularAcceleration kMotionMagicAcceleration =
         kMotionMagicCruiseVelocity.times(Hertz.of(5));
     public static final double kMotionMagicJerk = 10.0;

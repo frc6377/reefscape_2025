@@ -159,16 +159,17 @@ public class IntakeSubsystem extends SubsystemBase {
               .CounterClockwise_Positive; // FIXME: Change orientation is it doesn't work
       simCANcoder = CANcoder.getSimState();
       simCANcoder.Orientation = ChassisReference.CounterClockwise_Positive;
+      simCANcoder.setRawPosition(kPivotRetractAngle);
       pivotSim =
           new SingleJointedArmSim(
               DCMotor.getFalcon500(1),
               kGearing,
               kMOI.in(KilogramSquareMeters),
               kLength.in(Meters),
-              kPivotRetractAngle.minus(Degrees.of(30)).in(Radians),
-              kPivotExtendAngle.plus(Degrees.of(30)).in(Radians),
+              kPivotExtendAngle.minus(Degrees.of(30)).in(Radians),
+              kPivotRetractAngle.plus(Degrees.of(30)).in(Radians),
               true,
-              0);
+              kPivotRetractAngle.in(Radians));
       pivotArmMech =
           mech.getRoot("Root", 1, 0)
               .append(
