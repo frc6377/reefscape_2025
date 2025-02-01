@@ -228,9 +228,8 @@ public class Elevator extends SubsystemBase {
   public void simulationPeriodic() {
     m_elevatorSim.setInputVoltage(elevatorMotor1.getMotorVoltage().getValueAsDouble());
     m_elevatorSim.update(Robot.defaultPeriodSecs);
-    final Distance simDist = Meters.of(elevatorMotor1.getPosition().getValueAsDouble());
-    final LinearVelocity simVel =
-        MetersPerSecond.of(elevatorMotor1.getVelocity().getValueAsDouble());
+    final Distance simDist = Meters.of(m_elevatorSim.getPositionMeters());
+    final LinearVelocity simVel = MetersPerSecond.of(m_elevatorSim.getVelocityMetersPerSecond());
     simElvMotor1.setRawRotorPosition(heightToRotations(simDist));
     simElvMotor1.setRotorVelocity(heightToRotations(simVel));
     simElvMotor1.setSupplyVoltage(RobotController.getBatteryVoltage());

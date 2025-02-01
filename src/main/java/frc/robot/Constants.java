@@ -44,8 +44,8 @@ public final class Constants {
 
   public static class MotorIDConstants {
     // Rev Can Bus
-    public static final int kElevatorMotor1 = 1;
-    public static final int kElevatorMotor2 = 2;
+    public static final int kElevatorMotor1 = 10;
+    public static final int kElevatorMotor2 = 11;
     public static final int kIntakeMotor = 9;
     // CANivore Can Bus
   }
