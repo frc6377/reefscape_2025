@@ -76,9 +76,12 @@ public final class Constants {
     public static final double kPivotA = 0.03;
     public static final GravityTypeValue kPivotGravityType = GravityTypeValue.Arm_Cosine;
 
+    public static final int kFeedBackSensorID = 0;
+
     public static final double kGearing = 60;
-    public static final double kRotorToSensorRatio = 1 / kGearing;
-    public static final Distance kLength = Feet.of(1);
+    public static final double kRotorToSensorRatio = kGearing;
+    public static final double kSensorToMechanism = 1;
+    public static final Distance kLength = Feet.of(3);
     public static final Mass kMass = Pounds.of(8);
     public static final MomentOfInertia kMOI =
         KilogramSquareMeters.of(
