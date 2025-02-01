@@ -18,7 +18,6 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -40,6 +39,8 @@ public class Climber extends SubsystemBase {
 
   private TalonFX climberMotorBack;
   private MotorOutputConfigs climberOutputConfigs;
+  private TalonFXConfiguration frontConfigs;
+  private TalonFXConfiguration backConfigs;
   private DCMotor simClimberGearbox;
   private SingleJointedArmSim climberSim;
   private Mechanism2d climbMech;
@@ -69,10 +70,20 @@ public class Climber extends SubsystemBase {
             .withKV(ClimberConstants.kClimberkV1);
 
     // Set the configs
-    MotorOutputConfigs climberOutputConfigs = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
-    TalonFXConfiguration frontConfigs = new TalonFXConfiguration().withSlot0(climberConfigsToClimber).withSlot1(climberConfigsAtClimber).withMotorOutput(climberOutputConfigs.withInverted(InvertedValue.CounterClockwise_Positive));
-    TalonFXConfiguration backConfigs = new TalonFXConfiguration().withSlot0(climberConfigsToClimber).withSlot1(climberConfigsAtClimber).withMotorOutput(climberOutputConfigs.withInverted(InvertedValue.Clockwise_Positive));
-
+    climberOutputConfigs = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
+    frontConfigs =
+        new TalonFXConfiguration()
+            .withSlot0(climberConfigsToClimber)
+            .withSlot1(climberConfigsAtClimber)
+            .withMotorOutput(
+                climberOutputConfigs.withInverted(InvertedValue.CounterClockwise_Positive));
+    backConfigs =
+        new TalonFXConfiguration()
+            .withSlot0(climberConfigsToClimber)
+            .withSlot1(climberConfigsAtClimber)
+            .withMotorOutput(climberOutputConfigs.withInverted(InvertedValue.Clockwise_Positive));
+    climberMotorFront.getConfigurator().apply(frontConfigs);
+    climberMotorBack.getConfigurator().apply(backConfigs);
     // For simulation
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
     if (Robot.isSimulation()) {
