@@ -15,11 +15,6 @@ import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.wpilibj.RobotBase;
 
 public final class Constants {
-  public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
-    public static final int kOperatorControllerPort = 1;
-  }
-
   public static class MotorIDConstants {
     public static final int kCLimberMotorLeader = 0;
     public static final int kCLimberMotorFollower = 0;

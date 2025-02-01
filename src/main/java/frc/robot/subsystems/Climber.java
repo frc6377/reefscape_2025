@@ -21,8 +21,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -55,7 +53,7 @@ public class Climber extends SubsystemBase {
   private Slot0Configs climberConfigsToClimber;
   private Slot1Configs climberConfigsAtClimber;
   private Angle climberTargetAngle;
-
+  private boolean isClimbing;
   public Climber() {
     climberMotorFront = new TalonFX(MotorIDConstants.kCLimberMotorLeader);
     climberMotorBack = new TalonFX(MotorIDConstants.kCLimberMotorFollower);
@@ -73,7 +71,7 @@ public class Climber extends SubsystemBase {
             .withKD(ClimberConstants.kClimberD1)
             .withKG(ClimberConstants.kClimberkG1)
             .withKV(ClimberConstants.kClimberkV1);
-
+    isClimbing = false;
     // Set the configs
     climberOutputConfigs = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
     frontConfigs =
@@ -107,7 +105,9 @@ public class Climber extends SubsystemBase {
           new SingleJointedArmSim(
               simClimberGearbox,
               ClimberConstants.KGearRatio,
-              SingleJointedArmSim.estimateMOI(ClimberConstants.kClimberArmLength.in(Meters), ClimberConstants.kClimberMass.in(Kilograms)),
+              SingleJointedArmSim.estimateMOI(
+                  ClimberConstants.kClimberArmLength.in(Meters),
+                  ClimberConstants.kClimberMass.in(Kilograms)),
               ClimberConstants.kClimberArmLength.in(Meters),
               ClimberConstants.kClimberArmMinAngle.in(Radians),
               ClimberConstants.kClimberArmMaxAngle.in(Radians),
@@ -134,8 +134,7 @@ public class Climber extends SubsystemBase {
     }
   }
 
-
-private Command runClimber(Angle position, int slot) {
+  private Command runClimber(Angle position, int slot) {
     return runOnce(
         () -> {
           climberTargetAngle = position;
