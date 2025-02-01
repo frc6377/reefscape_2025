@@ -25,21 +25,26 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
-import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOSim;
+import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.subsystems.vision.*;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
@@ -47,7 +52,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 @SuppressWarnings("unused")
 public class RobotContainer {
   // Subsystems
-  private ElevatorSubsystem m_ElevatorSubsystem;
+  private Elevator m_ElevatorSubsystem;
   private IntakeSubsystem m_IntakeSimSubsystem;
   private Drive drive;
   private MapleSimArenaSubsystem m_MapleSimArenaSubsystem;
@@ -81,7 +86,7 @@ public class RobotContainer {
         //       );
 
         m_IntakeSimSubsystem = new IntakeSubsystem();
-        m_ElevatorSubsystem = new ElevatorSubsystem();
+        m_ElevatorSubsystem = new Elevator();
         break;
 
       case SIM:
@@ -107,7 +112,7 @@ public class RobotContainer {
 
         m_IntakeSimSubsystem = new IntakeSubsystem(driveSimulation);
 
-        m_ElevatorSubsystem = new ElevatorSubsystem();
+        m_ElevatorSubsystem = new Elevator();
 
         m_MapleSimArenaSubsystem = new MapleSimArenaSubsystem(driveSimulation);
         break;
