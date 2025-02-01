@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.ElevatorConstants.*;
+import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -14,11 +15,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -33,12 +36,13 @@ import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
-import java.util.function.Supplier;
 
 public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor1;
   private TalonFXSimState simElvMotor1;
   private TalonFX elevatorMotor2;
+  private DutyCycleEncoder gear3;
+  private DutyCycleEncoder gear11;
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
       new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
@@ -73,6 +77,8 @@ public class Elevator extends SubsystemBase {
     currentLimit.SupplyCurrentLowerTime = 1;
     currentLimit.StatorCurrentLimitEnable = true;
     currentLimit.SupplyCurrentLimitEnable = true;
+    gear3 = new DutyCycleEncoder(MotorIDConstants.gear3ID,1.0,ElevatorConstants.gear3Offset);
+    gear11 = new DutyCycleEncoder(MotorIDConstants.gear11ID,1.0,ElevatorConstants.gear11Offset);
     elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, Constants.RIOName);
     elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, Constants.RIOName);
     elevatorMotor1.getConfigurator().apply(loopCfg);
@@ -122,6 +128,12 @@ public class Elevator extends SubsystemBase {
         .times(kElevatorGearing)
         .div(kElevatorDrumCircumference.times(kCarageFactor))
         .times(Rotations.one());
+  }
+
+  public Angle ChineseRemander() {
+    double Pos3 = gear3.get()*3;
+    double Pos11 = gear11.get()*11;
+    return Rotations.of(ChineseRemanderArray.CRTA[(int) (Pos3)][(int) (Pos11)] + Pos3 - (int)Pos3);
   }
 
   public static AngularVelocity heightToRotations(LinearVelocity vel) {

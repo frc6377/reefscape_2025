@@ -63,6 +63,8 @@ public final class Constants {
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
     public static final int kIntakeMotor = 9;
+    public static final int gear11ID = 13;
+    public static final int gear3ID = 14;
     // CANivore Can Bus
   }
 
@@ -89,6 +91,11 @@ public final class Constants {
     public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;
 
+    //Gear for CRT offsets
+    //TODO: get actual offset values
+    public static final double gear3Offset = 0.0;
+    public static final double gear11Offset = 0.0;
+
     // The carriage on the elv effectivly adds a gearing multiplier of 1
     public static final double kCarageFactor = 1;
 
@@ -96,7 +103,7 @@ public final class Constants {
     public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60(2);
     public static final double elevatorOutput = .30;
     public static final double kElevatorGearing = 1.0;
-    public static final Mass kCarriageMass = Pounds.of(5.15);
+    public static final Mass kCarriageMass = Pounds.of(4.75);
     public static final Distance kElevatorDrumRadius = Inches.of(.75 / 2);
     public static final Distance kMinElevatorHeight = Inches.zero();
     public static final Distance kMaxElevatorHeight = Inches.of(72);
