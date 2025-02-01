@@ -106,10 +106,7 @@ public class Elevator extends SubsystemBase {
               .append(
                   new MechanismLigament2d(
                       "Elevator Mech [0]", 1, 90, 10, new Color8Bit(Color.kPurple)));
-
-      if (widg == null) {
-        widg = Shuffleboard.getTab(getName()).add("Elevator", mech);
-      }
+        SmartDashboard.putData("Elevator/2d mechanism", mech);
     }
 
     SmartDashboard.putNumber("Elevator/Setpoint", 0);
@@ -216,7 +213,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Elevator limit switch state", elvLimitSwitch.get());
+    SmartDashboard.putBoolean("Elevator/limit switch state", elvLimitSwitch.get());
     SmartDashboard.putNumber(
         "Elevator/Motor Encoder Rotation", elevatorMotor1.getPosition().getValue().in(Revolutions));
     SmartDashboard.putNumber("Elevator/Motor1 Percent", elevatorMotor1.get());
