@@ -91,8 +91,8 @@ public final class Constants {
     public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;
 
-    //Gear for CRT offsets
-    //TODO: get actual offset values
+    // Gear for CRT offsets
+    // TODO: get actual offset values
     public static final double gear3Offset = 0.0;
     public static final double gear11Offset = 0.0;
 
