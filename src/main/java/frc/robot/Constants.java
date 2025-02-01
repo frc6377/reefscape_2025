@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -62,15 +63,21 @@ public final class Constants {
     public static final double kIntakeSpeed = 0.5;
     public static final double kConveyorSpeed = 0.5;
     public static final double kPivotSpeed = 0.5;
-    public static final Angle kPivotRetractAngle = Degrees.of(0);
-    public static final Angle kPivotExtendAngle = Degrees.of(30);
+    public static final Angle kPivotRetractAngle = Degrees.of(90); // FIXME: Put actual value
+    public static final Angle kPivotExtendAngle =
+        Degrees.of(0); // FIXME: Might have to be negative to reach over bumper
     public static final Angle kPivotTolerance =
         Degrees.of(3); // FIXME: Change tolerance back after testing
-    public static final double kPivotP = 10.0;
+    public static final double kPivotP = 0.17;
     public static final double kPivotI = 0.0;
     public static final double kPivotD = 0.0;
-    public static final double kPivotF = 1.0;
+    public static final double kPivotG = 0.21;
+    public static final double kPivotV = 7.20;
+    public static final double kPivotA = 0.03;
+    public static final GravityTypeValue kPivotGravityType = GravityTypeValue.Arm_Cosine;
+
     public static final double kGearing = 60;
+    public static final double kRotorToSensorRatio = 1 / kGearing;
     public static final Distance kLength = Feet.of(1);
     public static final Mass kMass = Pounds.of(8);
     public static final MomentOfInertia kMOI =

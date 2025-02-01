@@ -20,15 +20,19 @@ import static frc.robot.Constants.IntakeConstants.kMOI;
 import static frc.robot.Constants.IntakeConstants.kMotionMagicAcceleration;
 import static frc.robot.Constants.IntakeConstants.kMotionMagicCruiseVelocity;
 import static frc.robot.Constants.IntakeConstants.kMotionMagicJerk;
+import static frc.robot.Constants.IntakeConstants.kPivotA;
 import static frc.robot.Constants.IntakeConstants.kPivotD;
 import static frc.robot.Constants.IntakeConstants.kPivotExtendAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotF;
+import static frc.robot.Constants.IntakeConstants.kPivotG;
+import static frc.robot.Constants.IntakeConstants.kPivotGravityType;
 import static frc.robot.Constants.IntakeConstants.kPivotI;
 import static frc.robot.Constants.IntakeConstants.kPivotP;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotSpeed;
 import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
+import static frc.robot.Constants.IntakeConstants.kPivotV;
 
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -112,7 +116,13 @@ public class IntakeSubsystem extends SubsystemBase {
     slot0Configs.kP = kPivotP;
     slot0Configs.kI = kPivotI;
     slot0Configs.kD = kPivotD;
-    slot0Configs.kS = kPivotF;
+    slot0Configs.kG = kPivotG;
+    slot0Configs.kA = kPivotA;
+    slot0Configs.kV = kPivotV;
+    slot0Configs.GravityType = kPivotGravityType;
+
+    var feedbackConfigs = new FeedbackConfigs();
+    feedbackConfigs.RotorToSensorRatio = kGearing;
 
     var pivotMotionMagic =
         new MotionMagicConfigs()
@@ -121,10 +131,13 @@ public class IntakeSubsystem extends SubsystemBase {
             .withMotionMagicJerk(kMotionMagicJerk);
 
     pivotMotor.getConfigurator().apply(slot0Configs);
+    pivotMotor.getConfigurator().apply(feedbackConfigs);
     pivotMotor.getConfigurator().apply(pivotMotionMagic);
 
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
+
+    pivotMotor.setPosition(kPivotRetractAngle);
 
     if (Robot.isSimulation()) {
       simPivotMotor = pivotMotor.getSimState();
@@ -140,7 +153,7 @@ public class IntakeSubsystem extends SubsystemBase {
               kPivotRetractAngle.minus(Degrees.of(30)).in(Radians),
               kPivotExtendAngle.plus(Degrees.of(30)).in(Radians),
               true,
-              Math.PI / 2);
+              kPivotRetractAngle.in(Radians));
       pivotArmMech =
           mech.getRoot("Root", 1, 0)
               .append(
@@ -154,11 +167,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   private boolean atSetpoint() {
-    return pivotMotor
-        .getPosition()
-        .getValue()
-        .times(kGearing)
-        .isNear(pivotSetpoint, kPivotTolerance);
+    return pivotMotor.getPosition().getValue().isNear(pivotSetpoint, kPivotTolerance);
   }
 
   private void setPivotMotor(double speed) {
@@ -181,7 +190,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command extendPivotCommand() {
     return runOnce(
         () -> {
-          pivotMotor.setControl(new MotionMagicVoltage(kPivotExtendAngle.times(kGearing)));
+          pivotMotor.setControl(new MotionMagicVoltage(kPivotExtendAngle));
           pivotSetpoint = kPivotExtendAngle;
         });
   }
@@ -190,7 +199,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command retractPivotCommand() {
     return runOnce(
         () -> {
-          pivotMotor.setControl(new MotionMagicVoltage(kPivotRetractAngle.times(kGearing)));
+          pivotMotor.setControl(new MotionMagicVoltage(kPivotRetractAngle));
           pivotSetpoint = kPivotRetractAngle;
         });
   }
@@ -280,9 +289,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     pivotSim.setInput(pivotMotor.getMotorVoltage().getValue().in(Volts));
     pivotSim.update(Robot.defaultPeriodSecs);
-    simPivotMotor.setRawRotorPosition(Radians.of(pivotSim.getAngleRads()).times(kGearing));
-    simPivotMotor.setRotorVelocity(
-        RadiansPerSecond.of(pivotSim.getVelocityRadPerSec()).times(kGearing));
+    simPivotMotor.setRawRotorPosition(Radians.of(pivotSim.getAngleRads()));
+    simPivotMotor.setRotorVelocity(RadiansPerSecond.of(pivotSim.getVelocityRadPerSec()));
     simPivotMotor.setSupplyVoltage(RobotController.getBatteryVoltage());
     pivotArmMech.setAngle(Radians.of(pivotSim.getAngleRads()).in(Degrees));
 
