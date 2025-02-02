@@ -29,8 +29,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
@@ -156,7 +156,7 @@ public class RobotContainer {
         .and(OI.getButton(OI.Driver.RBumper).negate())
         .whileTrue(intake.ejectFromBirdhouse());
     intake.setDefaultCommand(intake.retractPivotCommand());
-    
+
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Start).onTrue(elevator.L1());
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
