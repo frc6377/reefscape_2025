@@ -119,8 +119,10 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     return Commands.runOnce(
         () -> {
           Pose3d scorePose = getClosestScorePose(robotCoralPose.get());
-          if (scorePose != null) scoredCoralPoses.add(scorePose);
-          robotHasCoral = false;
+          if (scorePose != null) {
+            scoredCoralPoses.add(scorePose);
+            robotHasCoral = false;
+          }
         });
   }
 
