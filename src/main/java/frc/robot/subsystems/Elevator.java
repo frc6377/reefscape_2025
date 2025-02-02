@@ -21,6 +21,7 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -42,6 +43,8 @@ public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor2;
   private DutyCycleEncoder gear3;
   private DutyCycleEncoder gear11;
+  private DutyCycleEncoderSim simGear3;
+  private DutyCycleEncoderSim simGear11;
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
       new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
@@ -93,6 +96,9 @@ public class Elevator extends SubsystemBase {
     if (Robot.isSimulation()) {
       simElvMotor1 = elevatorMotor1.getSimState();
       simElvMotor1.Orientation = ChassisReference.Clockwise_Positive;
+      simGear3 = new DutyCycleEncoderSim(gear3);
+      simGear11 = new DutyCycleEncoderSim(gear11);
+
       m_elevatorSim =
           new ElevatorSim(
               kElevatorGearbox,
@@ -185,7 +191,7 @@ public class Elevator extends SubsystemBase {
   public Command zeroMotorEncoder() {
     return runOnce(
         () -> {
-          elevatorMotor1.setPosition(0);
+          elevatorMotor1.setPosition(ChineseRemander());
         });
   }
 
@@ -238,11 +244,16 @@ public class Elevator extends SubsystemBase {
     simElvMotor1.setRawRotorPosition(heightToRotations(simDist));
     simElvMotor1.setRotorVelocity(heightToRotations(simVel));
     simElvMotor1.setSupplyVoltage(RobotController.getBatteryVoltage());
+    simGear3.set((heightToRotations(simDist).in(Rotations) / 3) % 1);
+    simGear11.set((heightToRotations(simDist).in(Rotations) / 11) % 1);
 
     elevatorMech.setLength(0.1 + (simDist.in(Meters)));
 
     SmartDashboard.putNumber("Elevator/Sim Length", simDist.in(Inches));
     SmartDashboard.putNumber("Elevator/Sim velocity", simVel.in(InchesPerSecond));
     SmartDashboard.putNumber("Elevator/Sim Pose", m_elevatorSim.getPositionMeters());
+    SmartDashboard.putNumber("Elevator/CRT", ChineseRemander().in(Rotations));
+    SmartDashboard.putNumber("Gear3", simGear3.get());
+    SmartDashboard.putNumber("Gear11", simGear11.get());
   }
 }
