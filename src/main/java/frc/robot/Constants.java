@@ -26,8 +26,8 @@ import frc.robot.subsystems.Elevator;
 
 public final class Constants {
   public static class MotorIDConstants {
-    public static final int kCLimberMotorLeader = 0;
-    public static final int kCLimberMotorFollower = 0;
+    public static final int kCLimberMotorLeader = 1;
+    public static final int kCLimberMotorFollower = 1;
 
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
@@ -38,8 +38,8 @@ public final class Constants {
     public static final double kClimberP0 = 1;
     public static final double kClimberI0 = 0;
     public static final double kClimberD0 = 2;
-    public static final double kClimberkG0 = 0.5;
-    public static final double kClimberkV0 = 2.5;
+    public static final double kClimberkG0 = 0.2;
+    public static final double kClimberkV0 = 15;
 
     public static final double kClimberP1 = 1;
     public static final double kClimberI1 = 0;

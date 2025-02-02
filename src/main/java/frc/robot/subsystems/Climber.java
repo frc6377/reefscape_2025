@@ -16,6 +16,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -91,12 +92,14 @@ public class Climber extends SubsystemBase {
     // For simulation
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
     if (Robot.isSimulation()) {
-      simClimberGearbox = DCMotor.getKrakenX60(1);
+      simClimberGearbox = DCMotor.getKrakenX60(2);
       climberSimNormal =
           new SingleJointedArmSim(
               simClimberGearbox,
               ClimberConstants.KGearRatio,
-              ClimberConstants.kClimberArmMOI.in(KilogramSquareMeters),
+              SingleJointedArmSim.estimateMOI(
+                  ClimberConstants.kClimberArmLength.in(Meters),
+                  ClimberConstants.kClimberMass.in(Kilograms)),
               ClimberConstants.kClimberArmLength.in(Meters),
               ClimberConstants.kClimberArmMinAngle.in(Radians),
               ClimberConstants.kClimberArmMaxAngle.in(Radians),
@@ -108,7 +111,7 @@ public class Climber extends SubsystemBase {
               ClimberConstants.KGearRatio,
               SingleJointedArmSim.estimateMOI(
                   ClimberConstants.kClimberArmLength.in(Meters),
-                  ClimberConstants.kClimberMass.in(Kilograms) / 2),
+                  ClimberConstants.kRobotMass.in(Kilograms)),
               ClimberConstants.kClimberArmLength.in(Meters),
               ClimberConstants.kClimberArmMinAngle.in(Radians),
               ClimberConstants.kClimberArmMaxAngle.in(Radians),
@@ -140,7 +143,7 @@ public class Climber extends SubsystemBase {
         () -> {
           climberTargetAngle = position;
           climberMotorFront.setControl(
-              new PositionDutyCycle(position.times(ClimberConstants.KGearRatio)).withSlot(slot));
+              new PositionVoltage(position.times(ClimberConstants.KGearRatio)).withSlot(slot));
           climberMotorBack.setControl(
               new PositionDutyCycle(position.times(ClimberConstants.KGearRatio)).withSlot(slot));
           SmartDashboard.putNumber("Climber Position Setpoint", position.in(Degrees));
@@ -149,11 +152,8 @@ public class Climber extends SubsystemBase {
 
   private BooleanSupplier isClimberAtPosition(Angle position) {
     return () ->
-        Math.abs(
-                (climberMotorFront.getPosition().getValue().in(Degrees)
-                        / ClimberConstants.KGearRatio
-                    - position.in(Degrees)))
-            < ClimberConstants.kClimberSensorError.in(Degrees);
+        position.isNear(
+            climberMotorFront.getPosition().getValue(), ClimberConstants.kClimberSensorError);
   }
 
   public Command climb() {
@@ -191,7 +191,7 @@ public class Climber extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     climbMechTargetLigament.setAngle(climberTargetAngle.in(Degrees));
-    getSimulator().setInput(climberMotorFront.getMotorVoltage().getValue().in(Volts));
+    getSimulator().setInputVoltage(climberMotorFront.getMotorVoltage().getValue().in(Volts));
     getSimulator().update(Robot.defaultPeriodSecs);
     climberMotorFront.setPosition(
         Radians.of(getSimulator().getAngleRads() * ClimberConstants.KGearRatio));
