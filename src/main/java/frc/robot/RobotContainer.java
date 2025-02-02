@@ -20,7 +20,9 @@ import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,6 +33,8 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.MapleSimArenaSubsystem;
+import frc.robot.subsystems.TempIntake;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
 import java.util.Set;
@@ -52,9 +56,12 @@ public class RobotContainer {
   private final Vision vision;
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
+  private TempIntake tempIntake;
+  private MapleSimArenaSubsystem m_MapleSimArenaSubsystem;
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose = new Pose2d(2, 2, new Rotation2d());
+  private Pose3d robotCoralPose = new Pose3d();
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -75,6 +82,8 @@ public class RobotContainer {
             new Vision(
                 drive, new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation));
 
+        tempIntake = new TempIntake();
+
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -89,6 +98,9 @@ public class RobotContainer {
 
         driveSimulation = new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d());
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+        m_MapleSimArenaSubsystem = new MapleSimArenaSubsystem(driveSimulation);
+        tempIntake = new TempIntake(driveSimulation);
+
 
         drive =
             new Drive(
@@ -147,20 +159,12 @@ public class RobotContainer {
     boolean usingKeyboard = true && Robot.isSimulation();
 
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
-    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).onTrue(elevator.L1());
+    OI.getButton(OI.Driver.Back).onTrue(elevator.L1());
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
-    OI.getButton(usingKeyboard ? OI.Keyboard.Period : OI.Driver.DPAD_UP)
-        .whileTrue(
-            usingKeyboard
-                ? elevator.goUp(() -> 1.0)
-                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
-    OI.getButton(usingKeyboard ? OI.Keyboard.Comma : OI.Driver.DPAD_DOWN)
-        .whileTrue(
-            usingKeyboard
-                ? elevator.goDown(() -> 1.0)
-                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+    OI.getButton(OI.Driver.DPAD_UP).whileTrue(elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+    OI.getButton(OI.Driver.DPAD_DOWN).whileTrue(elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
 
     SmartDashboard.putData(elevator.limitHit());
 
@@ -191,10 +195,9 @@ public class RobotContainer {
             () ->
                 OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.ArrowLeftRight : OI.Driver.RightX)
                     .get()));
-    OI.getButton(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.Start)
-        .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+    OI.getButton(OI.Driver.Start).onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
-    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.A)
+    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.RSB)
         .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose(), Set.of(drive)));
   }
 
@@ -228,5 +231,32 @@ public class RobotContainer {
         "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
     Logger.recordOutput(
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+
+    Pose3d closestReef = m_MapleSimArenaSubsystem.getClosestReef(robotCoralPose);
+    if (closestReef != null) {
+      Logger.recordOutput(
+          "FieldSimulation/Closest Score Pose", new Pose3d[] {robotCoralPose, closestReef});
+    } else {
+      Logger.recordOutput(
+          "FieldSimulation/Closest Score Pose", new Pose3d[] {new Pose3d(), new Pose3d()});
+    }
+
+    if (tempIntake.GetPieceFromIntake()) {
+      m_MapleSimArenaSubsystem.setRobotHasCoral(true);
+    }
+
+    if (m_MapleSimArenaSubsystem.getRobotHasCoral()) {
+      Pose2d drivePose = driveSimulation.getSimulatedDriveTrainPose();
+      robotCoralPose =
+          new Pose3d(
+              drivePose.getX(),
+              drivePose.getY(),
+              elevator.getElevatorHeight().in(Meters),
+              new Rotation3d(0, 0, drivePose.getRotation().getRadians()));
+
+      Logger.recordOutput("FieldSimulation/Robot Game Piece Pose", robotCoralPose);
+    } else {
+      Logger.recordOutput("FieldSimulation/Robot Game Piece Pose", new Pose3d());
+    }
   }
 }

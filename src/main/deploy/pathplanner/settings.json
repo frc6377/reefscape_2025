@@ -37,7 +37,7 @@
   "bumperOffsetY": 0.0,
   "robotFeatures": [
     "{\"name\":\"Elevator\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.035,\"y\":-0.267},\"size\":{\"width\":0.5,\"length\":0.114},\"borderRadius\":0.0,\"strokeWidth\":0.0125,\"filled\":false}}",
-    "{\"name\":\"Intake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.538,\"y\":0.1},\"size\":{\"width\":0.47,\"length\":0.1905},\"borderRadius\":0.0,\"strokeWidth\":0.01,\"filled\":false}}",
+    "{\"name\":\"Intake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.538,\"y\":0.1},\"size\":{\"width\":0.47,\"length\":0.191},\"borderRadius\":0.0,\"strokeWidth\":0.01,\"filled\":false}}",
     "{\"name\":\"No Bumper\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.0,\"y\":0.0},\"size\":{\"width\":0.7109,\"length\":0.7109},\"borderRadius\":0.05,\"strokeWidth\":0.005,\"filled\":false}}"
   ]
 }
