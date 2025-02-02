@@ -1,6 +1,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Inches;
@@ -9,7 +10,6 @@ import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 
@@ -48,46 +48,47 @@ public final class Constants {
     // 1-8 Motor ID is reserved by the drivebase
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
-    public static final int kPivotMotor = 9; // FIXME: Change to correct ID
-    public static final int kFeedBackSensorID = 0;
+    public static final int kPivotMotor = 12; // FIXME: Change to correct ID
+    public static final int kIntakeMotor = 9;
+    public static final int kConveyorMotor = 0; // FIXME: Change to correct ID
   }
 
   public static class RevCanID {
     // CANivore Can Bus
-    public static final int kIntakeMotor = 9;
-    public static final int kConveyorMotor = 0; // FIXME: Change to correct ID
     public static final int kConveyorSensor = 4; // FIXME: Change to correct ID
+    public static final int kthroughBoreEncoderID = 9;
   }
 
   // Intake Constants
   public static class IntakeConstants {
     public static final double kIntakeSpeed = 0.5;
     public static final double kConveyorSpeed = 0.5;
-    public static final double kPivotSpeed = 0.5;
+    public static final double kPivotSpeed = 0.2;
     public static final Angle kPivotRetractAngle = Degrees.of(90); // FIXME: Put actual value
     public static final Angle kPivotExtendAngle =
         Degrees.of(0); // FIXME: Might have to be negative to reach over bumper
     public static final Angle kPivotTolerance = Degrees.of(3);
-    public static final double kPivotP = 100;
+    public static final double kPivotP = 100.0;
     public static final double kPivotI = 0.0;
     public static final double kPivotD = 0.0;
-    public static final double kPivotG = 0.21;
-    public static final double kPivotV = 0; // 7.20;
-    public static final double kPivotA = 0; // 0.03;
+    public static final double kPivotG = 0.0;
+
+    public static final double kPivotV = 7.29; // 7.20;
+    public static final double kPivotA = 0.03; // 0.03;
     public static final GravityTypeValue kPivotGravityType = GravityTypeValue.Arm_Cosine;
 
     public static final double kGearing = 60;
-    public static final double kSensorToMechanism = 1;
+    public static final double kSensorToMechanism = 60;
     public static final Distance kLength = Feet.of(1);
     public static final Mass kMass = Pounds.of(8);
     public static final MomentOfInertia kMOI =
         KilogramSquareMeters.of(
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
     public static final AngularVelocity kMotionMagicCruiseVelocity =
-        RevolutionsPerSecond.of(Double.MAX_VALUE);
+        DegreesPerSecond.of(30); // RevolutionsPerSecond.of(10);
     public static final AngularAcceleration kMotionMagicAcceleration =
-        kMotionMagicCruiseVelocity.times(Hertz.of(Double.MAX_VALUE));
-    public static final double kMotionMagicJerk = Double.MAX_VALUE * Double.MAX_VALUE;
+        kMotionMagicCruiseVelocity.times(Hertz.of(5));
+    public static final double kMotionMagicJerk = 10.0;
   }
 
   // Elevator Constants

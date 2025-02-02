@@ -12,7 +12,6 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.Constants.CtreCanID.kFeedBackSensorID;
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
 import static frc.robot.Constants.IntakeConstants.kGearing;
 import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
@@ -38,17 +37,14 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.hal.SimBoolean;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
@@ -71,29 +67,32 @@ import utilities.TOFSensorSimple;
 
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
-  private SparkMax intakeMotor;
+  private TalonFX intakeMotor;
 
   private TalonFXSimState simPivotMotor;
-  private CANcoderSimState simCANcoder;
 
   private TalonFX pivotMotor;
-  private SparkMax conveyorMotor;
+  private TalonFX conveyorMotor;
   private Angle pivotSetpoint = kPivotRetractAngle;
 
+  private DutyCycleEncoder throughBoreEncoder;
+
+  // Sensor closest to birdhouse
   private TOFSensorSimple sensor;
   private SimDeviceSim simSensor;
   private SimBoolean simbeam;
+
   private Mechanism2d mech = new Mechanism2d(2, 2);
   private ComplexWidget widget;
   private MechanismLigament2d pivotArmMech;
 
-  private enum intakeState {
+  private enum IntakeState {
     Idle,
     atSensor,
     coralLoaded
   }
 
-  private intakeState state = intakeState.Idle;
+  private IntakeState state = IntakeState.Idle;
   private Timer timer = new Timer();
 
   private SingleJointedArmSim pivotSim;
@@ -101,13 +100,12 @@ public class IntakeSubsystem extends SubsystemBase {
   private DebugEntry<Double> pivotOutput;
   private DebugEntry<String> currentCommand;
 
-  private CANcoder CANcoder;
-
   public IntakeSubsystem() {
-    intakeMotor = new SparkMax(RevCanID.kIntakeMotor, MotorType.kBrushless);
+    intakeMotor = new TalonFX(CtreCanID.kIntakeMotor);
     pivotMotor = new TalonFX(CtreCanID.kPivotMotor);
-    conveyorMotor = new SparkMax(RevCanID.kConveyorMotor, MotorType.kBrushless);
+    conveyorMotor = new TalonFX(CtreCanID.kConveyorMotor);
     sensor = new TOFSensorSimple(RevCanID.kConveyorSensor, Inches.of(1));
+    throughBoreEncoder = new DutyCycleEncoder(RevCanID.kthroughBoreEncoderID);
 
     /**
      * Once the gains are configured, the Position closed loop control request can be sent to the
@@ -130,10 +128,8 @@ public class IntakeSubsystem extends SubsystemBase {
     slot0Configs.GravityType = kPivotGravityType;
 
     var feedbackConfigs = new FeedbackConfigs();
-    feedbackConfigs.RotorToSensorRatio = kGearing;
+    feedbackConfigs.RotorToSensorRatio = 1;
     feedbackConfigs.SensorToMechanismRatio = kSensorToMechanism;
-    feedbackConfigs.FeedbackRemoteSensorID = kFeedBackSensorID;
-    feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
     var pivotMotionMagic =
         new MotionMagicConfigs()
@@ -148,26 +144,23 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
 
-    CANcoder = new CANcoder(kFeedBackSensorID);
-
-    // pivotMotor.setPosition(kPivotRetractAngle);
+    if (throughBoreEncoder.get() != kPivotRetractAngle.times(kGearing).in(Rotations)) {
+      // pivotMotor.setPosition(kPivotRetractAngle);
+    }
 
     if (Robot.isSimulation()) {
       simPivotMotor = pivotMotor.getSimState();
       simPivotMotor.Orientation =
           ChassisReference
               .CounterClockwise_Positive; // FIXME: Change orientation is it doesn't work
-      simCANcoder = CANcoder.getSimState();
-      simCANcoder.Orientation = ChassisReference.CounterClockwise_Positive;
-      simCANcoder.setRawPosition(kPivotRetractAngle);
       pivotSim =
           new SingleJointedArmSim(
               DCMotor.getFalcon500(1),
               kGearing,
               kMOI.in(KilogramSquareMeters),
               kLength.in(Meters),
-              kPivotExtendAngle.minus(Degrees.of(30)).in(Radians),
-              kPivotRetractAngle.plus(Degrees.of(30)).in(Radians),
+              kPivotExtendAngle.minus(Degrees.of(360)).in(Radians),
+              kPivotRetractAngle.plus(Degrees.of(360)).in(Radians),
               true,
               kPivotRetractAngle.in(Radians));
       pivotArmMech =
@@ -249,8 +242,12 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(() -> setConveyerMotor(kConveyorSpeed), () -> setConveyerMotor(0));
   }
 
-  public Command pivotDownRawVoltage() {
-    return startEnd(() -> setPivotMotor(kPivotSpeed), null);
+  public Command intakeAndConveyorCommand() {
+    return Commands.run(
+        () -> {
+          setConveyerMotor(kConveyorSpeed);
+          setIntakeMotor(kIntakeSpeed / 5.0);
+        });
   }
 
   public Command intakeToBirdhousePhase1() {
@@ -281,11 +278,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command ejectFromBirdhouse() {
-    return conveyorEject()
-        .until(sensor.beamBroken().negate())
-        .andThen(extendPivotCommand())
-        .andThen(Commands.waitSeconds(0.5))
-        .andThen(outtakeCommand());
+    return conveyorEject();
   }
 
   @Override
@@ -294,7 +287,7 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Intake Motor Output", intakeMotor.get());
     SmartDashboard.putNumber("Pivot Motor Output", pivotMotor.get());
     SmartDashboard.putNumber("Conveyor Motor Output", conveyorMotor.get());
-    SmartDashboard.putNumber("Pivot Setpoint", pivotSetpoint.in(Rotations));
+    SmartDashboard.putNumber("Pivot Setpoint", pivotSetpoint.in(Degrees));
     SmartDashboard.putNumber(
         "Pivot Position in Degrees", pivotMotor.getPosition().getValue().in(Degrees));
     pivotOutput.log(pivotMotor.get());
@@ -306,39 +299,33 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void simulationPeriodic() {
-
     pivotSim.setInputVoltage(pivotMotor.getMotorVoltage().getValue().in(Volts));
     pivotSim.update(Robot.defaultPeriodSecs);
     simPivotMotor.setRawRotorPosition(Radians.of(pivotSim.getAngleRads()).times(kGearing));
     simPivotMotor.setRotorVelocity(
         RadiansPerSecond.of(pivotSim.getVelocityRadPerSec()).times(kGearing));
-    simCANcoder.setRawPosition(Radians.of(pivotSim.getAngleRads()));
-    simCANcoder.setVelocity(RadiansPerSecond.of(pivotSim.getVelocityRadPerSec()));
     simPivotMotor.setSupplyVoltage(RobotController.getBatteryVoltage());
     pivotArmMech.setAngle(Radians.of(pivotSim.getAngleRads()).in(Degrees));
 
     switch (state) {
       case Idle:
-        if (pivotSetpoint.equals(kPivotExtendAngle)
+        if (MathUtil.isNear(
+                pivotSim.getAngleRads(), kPivotExtendAngle.in(Radians), kPivotTolerance.in(Radians))
             && Math.abs(intakeMotor.get()) > 0
             && Math.abs(conveyorMotor.get()) > 0) {
-          if (!timer.isRunning()) {
-            timer.start();
-          }
+          timer.start();
         } else {
-          if (timer.isRunning()) {
-            timer.stop();
-          }
+          timer.stop();
         }
 
         if (timer.hasElapsed(2)) {
           simbeam.set(true);
-          state = intakeState.atSensor;
+          state = IntakeState.atSensor;
           timer.reset();
         }
         break;
       case atSensor:
-        if (pivotSetpoint.equals(kPivotRetractAngle) && Math.abs(conveyorMotor.get()) > 0) {
+        if (Math.abs(conveyorMotor.get()) > 0) {
           if (!timer.isRunning()) {
             timer.start();
           }
@@ -350,12 +337,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
         if (timer.hasElapsed(2)) {
           simbeam.set(false);
-          state = intakeState.coralLoaded;
+          state = IntakeState.coralLoaded;
           timer.reset();
         }
         break;
       case coralLoaded:
-        state = intakeState.Idle;
+        state = IntakeState.Idle;
         break;
     }
   }

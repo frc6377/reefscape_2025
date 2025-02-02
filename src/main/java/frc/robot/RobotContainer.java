@@ -145,8 +145,10 @@ public class RobotContainer {
     // Change the raw boolean to true to pick keyboard durring simulation
     boolean usingKeyboard = true && Robot.isSimulation();
 
-    OI.getTrigger(OI.Driver.LTrigger).onTrue(intake.pivotDownCommand());
-    OI.getTrigger(OI.Driver.RTrigger).onTrue(intake.pivotUpCommand());
+    OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.pivotDownCommand());
+    OI.getTrigger(OI.Driver.LTrigger).whileTrue(intake.pivotUpCommand());
+    OI.getTrigger(OI.Driver.DPAD_RIGHT).whileTrue(intake.intakeCommand());
+    OI.getTrigger(OI.Driver.DPAD_LEFT).whileTrue(intake.intakeCommand());
 
     // Set the intake rollers to the left and right triggers
     OI.getPOVButton(OI.Driver.DPAD_UP)
