@@ -43,16 +43,13 @@ import frc.robot.subsystems.Elevator;
 // GNU General Public License for more details.
 
 public final class Constants {
-  public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
-  }
-
   public static class CtreCanID {
     // Rev Can Bus
     // 1-8 Motor ID is reserved by the drivebase
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
     public static final int kPivotMotor = 9; // FIXME: Change to correct ID
+    public static final int kFeedBackSensorID = 0;
     // public static final int kIntakeMotor = 9;
     // public static final int kPivotMotor = 0; // FIXME: Change to correct ID
     // public static final int kConveyorMotor = 0; // FIXME: Change to correct ID
@@ -73,30 +70,28 @@ public final class Constants {
     public static final Angle kPivotRetractAngle = Degrees.of(90); // FIXME: Put actual value
     public static final Angle kPivotExtendAngle =
         Degrees.of(0); // FIXME: Might have to be negative to reach over bumper
-    public static final Angle kPivotTolerance =
-        Degrees.of(3); // FIXME: Change tolerance back after testing
+    public static final Angle kPivotTolerance = Degrees.of(3);
     public static final double kPivotP = 100;
     public static final double kPivotI = 0.0;
     public static final double kPivotD = 0.0;
     public static final double kPivotG = 0.21;
-    public static final double kPivotV = 7.20;
-    public static final double kPivotA = 0.03;
+    public static final double kPivotV = 0; // 7.20;
+    public static final double kPivotA = 0; // 0.03;
     public static final GravityTypeValue kPivotGravityType = GravityTypeValue.Arm_Cosine;
 
-    public static final int kFeedBackSensorID = 0;
-
     public static final double kGearing = 60;
-    public static final double kRotorToSensorRatio = kGearing;
     public static final double kSensorToMechanism = 1;
     public static final Distance kLength = Feet.of(1);
     public static final Mass kMass = Pounds.of(8);
     public static final MomentOfInertia kMOI =
         KilogramSquareMeters.of(
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
-    public static final AngularVelocity kMotionMagicCruiseVelocity = RevolutionsPerSecond.of(100);
+    public static final AngularVelocity kMotionMagicCruiseVelocity =
+        RevolutionsPerSecond.of(999999999);
     public static final AngularAcceleration kMotionMagicAcceleration =
-        kMotionMagicCruiseVelocity.times(Hertz.of(5));
-    public static final double kMotionMagicJerk = 10.0;
+        kMotionMagicCruiseVelocity.times(Hertz.of(999999999));
+    public static final double kMotionMagicJerk =
+        100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.0;
   }
 
   // Elevator Constants
