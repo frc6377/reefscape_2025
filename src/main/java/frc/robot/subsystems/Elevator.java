@@ -136,9 +136,10 @@ public class Elevator extends SubsystemBase {
   }
 
   public Angle ChineseRemander() {
-    double Pos3 = gear3.get() * 3;
-    double Pos11 = gear11.get() * 11;
-    return Rotations.of(ChineseRemanderArray.CRTA[(int) (Pos3)][(int) (Pos11)] + Pos3 - (int) Pos3);
+    double Pos3 = gear3.get() * gear1Toothing;
+    double Pos11 = gear11.get() * gear2Toothing;
+    return Rotations.of(
+        Constants.ElevatorConstants.CRTA[(int) (Pos3)][(int) (Pos11)] + Pos3 - (int) Pos3);
   }
 
   public static AngularVelocity heightToRotations(LinearVelocity vel) {
@@ -233,6 +234,7 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("Elevator/Motor1 Percent", elevatorMotor1.get());
     SmartDashboard.putNumber("Elevator/Motor2 Percent", elevatorMotor2.get());
     SmartDashboard.putNumber("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
+    SmartDashboard.putNumber("Elevator/CRT", ChineseRemander().in(Rotations));
   }
 
   @Override
@@ -244,15 +246,14 @@ public class Elevator extends SubsystemBase {
     simElvMotor1.setRawRotorPosition(heightToRotations(simDist));
     simElvMotor1.setRotorVelocity(heightToRotations(simVel));
     simElvMotor1.setSupplyVoltage(RobotController.getBatteryVoltage());
-    simGear3.set((heightToRotations(simDist).in(Rotations) / 3) % 1);
-    simGear11.set((heightToRotations(simDist).in(Rotations) / 11) % 1);
+    simGear3.set((heightToRotations(simDist).in(Rotations) / gear1Toothing) % 1);
+    simGear11.set((heightToRotations(simDist).in(Rotations) / gear2Toothing) % 1);
 
     elevatorMech.setLength(0.1 + (simDist.in(Meters)));
 
     SmartDashboard.putNumber("Elevator/Sim Length", simDist.in(Inches));
     SmartDashboard.putNumber("Elevator/Sim velocity", simVel.in(InchesPerSecond));
     SmartDashboard.putNumber("Elevator/Sim Pose", m_elevatorSim.getPositionMeters());
-    SmartDashboard.putNumber("Elevator/CRT", ChineseRemander().in(Rotations));
     SmartDashboard.putNumber("Gear3", simGear3.get());
     SmartDashboard.putNumber("Gear11", simGear11.get());
   }
