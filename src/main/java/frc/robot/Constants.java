@@ -4,24 +4,30 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Second;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.AngularAccelerationUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.robot.subsystems.Elevator;
 
 // Copyright 2021-2024 FRC 6328
 // http://github.com/Mechanical-Advantage
@@ -39,9 +45,10 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 public final class Constants {
   public static class CtreCanID {
     // Rev Can Bus
-    public static final int kElevatorMotor1 = 1;
-    public static final int kElevatorMotor2 = 2;
-    public static final int kPivotMotor = 10; // FIXME: Change to correct ID
+    // 1-8 Motor ID is reserved by the drivebase
+    public static final int kElevatorMotor1 = 10;
+    public static final int kElevatorMotor2 = 11;
+    public static final int kPivotMotor = 9; // FIXME: Change to correct ID
     public static final int kFeedBackSensorID = 0;
   }
 
@@ -86,34 +93,39 @@ public final class Constants {
   // Elevator Constants
   public static class ElevatorConstants {
     public static final Distance kL0Height = Meters.of(0.252);
-    public static final Distance kL1Height = Inches.of(18);
-    public static final Distance kL2Height = Inches.of(31.875);
-    public static final Distance kL3Height = Inches.of(47.625);
-    // public static final Distance kL4Height = Inches.of(72);
-    public static final Distance kL4Height = Inches.of(68.6);
+    // L1 needs to be adjusted once it actually is worth it
+    public static final Distance kL1Height = Inches.of(15);
+    public static final Distance kL2Height = Inches.of(16.62);
+    public static final Distance kL3Height = Inches.of(30.9);
+    public static final Distance kL4Height = Inches.of(55);
 
-    public static final int elvLimitID = 1;
+    public static final int elvLimitID = 0;
 
-    public static final double P = 0.5;
-    public static final double I = 0.0;
-    public static final double D = 0.0;
+    public static final double P = 1.5;
+    public static final double I = 0.04;
+    public static final double D = 0.02;
     public static final double FF = 0.0;
     public static final Distance kBottomLimit = Inches.of(9);
     public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;
 
-    // The carriage on the elv effectivly adds a gearing multiplier of 2
-    public static final double kCarageFactor = 2;
+    // The carriage on the elv effectivly adds a gearing multiplier of 1
+    public static final double kCarageFactor = 1;
 
     // Simulation Constants
-    public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60Foc(2);
+    public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60(2);
+    public static final double elevatorOutput = .30;
     public static final double kElevatorGearing = 1.0;
-    public static final Mass kCarriageMass = Pounds.of(4);
+    public static final Mass kCarriageMass = Pounds.of(5.15);
     public static final Distance kElevatorDrumRadius = Inches.of(.75 / 2);
     public static final Distance kMinElevatorHeight = Inches.zero();
-    public static final Distance kMaxElevatorHeight = Inches.of(63);
+    public static final Distance kMaxElevatorHeight = Inches.of(72);
     public static final Distance kElevatorDrumCircumference =
         kElevatorDrumRadius.times(2 * Math.PI);
+    public static final AngularVelocity MMVel = Elevator.heightToRotations(InchesPerSecond.of(60));
+    public static final AngularAcceleration MMAcc = MMVel.times(Hertz.of(5));
+    public static final Velocity<AngularAccelerationUnit> MMJerk =
+        RotationsPerSecondPerSecond.per(Second).of(MMAcc.in(RotationsPerSecondPerSecond)).times(10);
   }
 
   /**
@@ -135,6 +147,9 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public static final String CANivoreName = "Default Name";
+  public static final String RIOName = "rio";
 
   public static final Distance kFieldWidth = Inches.of(317);
   public static final Distance kFieldLength = Inches.of(690 + (7 / 8));
