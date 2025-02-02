@@ -43,13 +43,10 @@ public final class Constants {
     public static final int kElevatorMotor2 = 2;
     public static final int kPivotMotor = 10; // FIXME: Change to correct ID
     public static final int kFeedBackSensorID = 0;
-    // public static final int kIntakeMotor = 9;
-    // public static final int kPivotMotor = 0; // FIXME: Change to correct ID
-    // public static final int kConveyorMotor = 0; // FIXME: Change to correct ID
-    // CANivore Can Bus
   }
 
   public static class RevCanID {
+    // CANivore Can Bus
     public static final int kIntakeMotor = 9;
     public static final int kConveyorMotor = 0; // FIXME: Change to correct ID
     public static final int kConveyorSensor = 4; // FIXME: Change to correct ID
@@ -80,11 +77,10 @@ public final class Constants {
         KilogramSquareMeters.of(
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
     public static final AngularVelocity kMotionMagicCruiseVelocity =
-        RevolutionsPerSecond.of(999999999);
+        RevolutionsPerSecond.of(Double.MAX_VALUE);
     public static final AngularAcceleration kMotionMagicAcceleration =
-        kMotionMagicCruiseVelocity.times(Hertz.of(999999999));
-    public static final double kMotionMagicJerk =
-        100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.0;
+        kMotionMagicCruiseVelocity.times(Hertz.of(Double.MAX_VALUE));
+    public static final double kMotionMagicJerk = Double.MAX_VALUE * Double.MAX_VALUE;
   }
 
   // Elevator Constants

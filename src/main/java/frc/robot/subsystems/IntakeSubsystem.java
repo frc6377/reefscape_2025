@@ -87,14 +87,14 @@ public class IntakeSubsystem extends SubsystemBase {
   private ComplexWidget widget;
   private MechanismLigament2d pivotArmMech;
 
-  enum intakeState {
+  private enum intakeState {
     Idle,
     atSensor,
     coralLoaded
   }
 
-  intakeState state = intakeState.Idle;
-  Timer timer = new Timer();
+  private intakeState state = intakeState.Idle;
+  private Timer timer = new Timer();
 
   private SingleJointedArmSim pivotSim;
 
