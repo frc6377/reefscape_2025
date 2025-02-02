@@ -164,8 +164,8 @@ public class RobotContainer {
     SmartDashboard.putData(elevator.limitHit());
 
     // Score Commpands
-    OI.getTrigger(OI.Driver.LTrigger).whileTrue(coralScorer.scoreClockWise());
-    OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.scoreCounterClockWise());
+    OI.getTrigger(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.LTrigger).whileTrue(coralScorer.scoreClockWise());
+    OI.getButton(usingKeyboard ? OI.Keyboard.ArrowUpDown : OI.Driver.LBumper).whileTrue(coralScorer.scoreCounterClockWise());
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
