@@ -207,6 +207,13 @@ public class RobotContainer {
 
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.RSB)
         .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose(), Set.of(drive)));
+
+    for (int i = 0; i < Constants.kPoleLetters.length; i++) {
+      for (int j = 0; j < 3; j++) {
+        OI.getButton(OI.StreamDeck.streamDeckButtons[i])
+            .onTrue(drive.setPoseScored(Constants.kPoleLetters[i], j));
+      }
+    }
   }
 
   /**

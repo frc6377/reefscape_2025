@@ -47,6 +47,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -55,6 +56,7 @@ import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.LocalADStarAK;
+import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.ironmaple.simulation.drivesims.COTS;
@@ -128,6 +130,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
+  private HashMap<String, boolean[]> scoredPoses = new HashMap<String, boolean[]>();
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -175,6 +179,20 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                 null, null, null, (state) -> SignalLogger.writeString("state", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+
+    // Logging scored Coral
+    scoredPoses.put("A", new boolean[3]);
+    scoredPoses.put("B", new boolean[3]);
+    scoredPoses.put("C", new boolean[3]);
+    scoredPoses.put("D", new boolean[3]);
+    scoredPoses.put("E", new boolean[3]);
+    scoredPoses.put("F", new boolean[3]);
+    scoredPoses.put("G", new boolean[3]);
+    scoredPoses.put("H", new boolean[3]);
+    scoredPoses.put("I", new boolean[3]);
+    scoredPoses.put("J", new boolean[3]);
+    scoredPoses.put("K", new boolean[3]);
+    scoredPoses.put("L", new boolean[3]);
   }
 
   @Override
@@ -235,6 +253,12 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    int nameIndex = 0;
+    for (boolean[] boolList : scoredPoses.values()) {
+      Logger.recordOutput("ScoredPoses/Pole " + nameIndex, boolList);
+      nameIndex++;
+    }
   }
 
   /**
@@ -294,6 +318,19 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return run(() -> runCharacterization(6)).withTimeout(3).andThen(sysId.dynamic(direction));
+  }
+
+  public Command setPoseScored(String pole, int levelIndex) {
+    return Commands.runOnce(
+        () -> {
+          boolean[] newList = scoredPoses.get(pole);
+          newList[levelIndex] = !newList[levelIndex];
+          scoredPoses.put(pole, newList);
+        });
+  }
+
+  public boolean isPoseScored(String pole, int levelIndex) {
+    return scoredPoses.get(pole)[levelIndex];
   }
 
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */

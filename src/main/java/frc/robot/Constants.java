@@ -41,6 +41,10 @@ import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.subsystems.Elevator;
 
 public final class Constants {
+  public static final int kStreamDeckButtonCount = 128;
+
+  public static final String[] kPoleLetters =
+      new String[] {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"};
 
   /**
    * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when
