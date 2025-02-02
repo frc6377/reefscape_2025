@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.drive.*;
@@ -51,6 +52,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final Elevator elevator = new Elevator();
+  private final CoralScorer coralScorer = new CoralScorer();
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose;
@@ -149,7 +151,7 @@ public class RobotContainer {
     OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
 
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
-    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Start).onTrue(elevator.L1());
+    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).onTrue(elevator.L1());
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
@@ -165,6 +167,12 @@ public class RobotContainer {
                 : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
 
     SmartDashboard.putData(elevator.limitHit());
+
+    // Score Commpands
+    OI.getTrigger(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.LTrigger)
+        .whileTrue(coralScorer.scoreClockWise());
+    OI.getButton(usingKeyboard ? OI.Keyboard.ArrowUpDown : OI.Driver.LBumper)
+        .whileTrue(coralScorer.scoreCounterClockWise());
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
