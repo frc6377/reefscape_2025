@@ -23,14 +23,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
@@ -50,6 +50,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final IntakeSubsystem intake = new IntakeSubsystem();
+  private final Elevator elevator = new Elevator();
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose;
@@ -140,27 +141,39 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
   private void configureButtonBindings() {
-    // Change the raw boolean to true to pic keyboard durring simulation
+    // Change the raw boolean to true to pick keyboard durring simulation
     boolean usingKeyboard = true && Robot.isSimulation();
 
     OI.getTrigger(OI.Driver.LTrigger).onTrue(intake.pivotDownCommand());
     OI.getTrigger(OI.Driver.RTrigger).onTrue(intake.pivotUpCommand());
 
     // Set the intake rollers to the left and right triggers
-    OI.getPOVButton(OI.Driver.POV0)
+    OI.getPOVButton(OI.Driver.DPAD_UP)
         .and(OI.getButton(OI.Driver.RBumper).negate())
         .whileTrue(intake.intakeToBirdhouse());
-    OI.getPOVButton(OI.Driver.POV180)
+    OI.getPOVButton(OI.Driver.DPAD_DOWN)
         .and(OI.getButton(OI.Driver.RBumper).negate())
         .whileTrue(intake.ejectFromBirdhouse());
     intake.setDefaultCommand(intake.retractPivotCommand());
+    
+    OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
+    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Start).onTrue(elevator.L1());
+    OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
+    OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
+    OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
+    OI.getButton(usingKeyboard ? OI.Keyboard.Period : OI.Driver.DPAD_UP)
+        .whileTrue(
+            usingKeyboard
+                ? elevator.goUp(() -> 1.0)
+                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+    OI.getButton(usingKeyboard ? OI.Keyboard.Comma : OI.Driver.DPAD_DOWN)
+        .whileTrue(
+            usingKeyboard
+                ? elevator.goDown(() -> 1.0)
+                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+
+    SmartDashboard.putData(elevator.limitHit());
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =

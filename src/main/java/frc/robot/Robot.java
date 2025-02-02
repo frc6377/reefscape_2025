@@ -38,7 +38,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  * project.
  */
 public class Robot extends LoggedRobot {
-
   public static final Time period = Seconds.of(Robot.defaultPeriodSecs);
   public static final boolean isCompetition = false;
 
