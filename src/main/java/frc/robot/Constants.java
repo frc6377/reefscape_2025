@@ -60,12 +60,18 @@ public final class Constants {
 
   public static class MotorIDConstants {
     // Rev Can Bus
+    public static final int kScorerMotor = 9;
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
-    public static final int kIntakeMotor = 9;
+    public static final int kIntakeMotor = 12;
     public static final int gear11ID = 13;
     public static final int gear3ID = 14;
     // CANivore Can Bus
+  }
+
+  // Scorer Constants
+  public static class CoralScorerConstants {
+    public static final double kSpeed = 0.5;
   }
 
   // Intake Constants
