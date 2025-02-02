@@ -144,11 +144,9 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Change the raw boolean to true to pick keyboard durring simulation
     boolean usingKeyboard = false && Robot.isSimulation();
-    
+
     OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
     OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
-
-    
 
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Start).onTrue(elevator.L1());

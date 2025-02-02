@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
@@ -19,15 +18,14 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
-import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.subsystems.Elevator;
 
 public final class Constants {
   public static class MotorIDConstants {
-    public static final int kCLimberMotorLeader = 1;
-    public static final int kCLimberMotorFollower = 1;
+    public static final int kCLimberMotorLeader = 12;
+    public static final int kCLimberMotorFollower = 13;
 
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
@@ -35,23 +33,25 @@ public final class Constants {
   }
 
   public static class ClimberConstants {
-    public static final double kClimberP0 = 1;
+    public static final double kClimberP0 = 50;
     public static final double kClimberI0 = 0;
-    public static final double kClimberD0 = 2;
-    public static final double kClimberkG0 = 0.2;
-    public static final double kClimberkV0 = 15;
+    public static final double kClimberD0 = 0;
+    public static final double kClimberkG0 = 0;
+    public static final double kClimberkV0 = 0;
 
-    public static final double kClimberP1 = 1;
+    public static final double kClimberP1 = 50;
     public static final double kClimberI1 = 0;
-    public static final double kClimberD1 = 1;
-    public static final double kClimberkG1 = 1;
-    public static final double kClimberkV1 = 15;
+    public static final double kClimberD1 = 0;
+    public static final double kClimberkG1 = 0;
+    public static final double kClimberkV1 = 0;
 
     public static final double KGearRatio = 126;
     public static final Angle kClimberExtendedSetpoint = Degrees.of(190);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(170);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90);
     public static final Angle kClimberSensorError = Degrees.of(5);
+    public static final double kClimberSensorErrorAtCage =
+        kClimberAtCageSetpoint.plus(kClimberSensorError).in(Degrees) * 100 - 100;
     // Sim Constants
     public static final Mass kRobotMass = Pounds.of(100);
     public static final double kClimberGearRatio = 126;
@@ -59,7 +59,6 @@ public final class Constants {
     public static final Mass kClimberMass = Pounds.of(0.5);
     public static final Angle kClimberArmMinAngle = Degrees.of(-30);
     public static final Angle kClimberArmMaxAngle = Degrees.of(200);
-    public static final MomentOfInertia kClimberArmMOI = KilogramSquareMeters.of(1);
   }
 
   public static final Mode simMode = Mode.SIM;

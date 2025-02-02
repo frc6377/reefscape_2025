@@ -5,10 +5,10 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -152,16 +152,18 @@ public class Climber extends SubsystemBase {
 
   private BooleanSupplier isClimberAtPosition(Angle position) {
     return () ->
-        position.isNear(
-            climberMotorFront.getPosition().getValue(), ClimberConstants.kClimberSensorError);
+        position
+            .times(ClimberConstants.KGearRatio)
+            .isNear(
+                Rotations.of(climberMotorFront.getPosition().getValueAsDouble()),
+                Degrees.of(ClimberConstants.kClimberSensorErrorAtCage).in(Rotations));
   }
 
   public Command climb() {
     return Commands.sequence(
         runClimber(ClimberConstants.kClimberAtCageSetpoint, 0),
         Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberAtCageSetpoint)),
-        runClimber(ClimberConstants.kClimberExtendedSetpoint, 1),
-        Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberExtendedSetpoint)));
+        runClimber(ClimberConstants.kClimberExtendedSetpoint, 1));
   }
 
   public Command retract() {
@@ -186,11 +188,13 @@ public class Climber extends SubsystemBase {
           climberSimNormal.getAngleRads(), climberSimNormal.getVelocityRadPerSec());
       isClimbing = true;
     }
+    SmartDashboard.putBoolean("Climbing", isClimbing);
   }
 
   @Override
   public void simulationPeriodic() {
     climbMechTargetLigament.setAngle(climberTargetAngle.in(Degrees));
+
     getSimulator().setInputVoltage(climberMotorFront.getMotorVoltage().getValue().in(Volts));
     getSimulator().update(Robot.defaultPeriodSecs);
     climberMotorFront.setPosition(
@@ -202,12 +206,10 @@ public class Climber extends SubsystemBase {
     if (climbMechLigament.getAngle() > ClimberConstants.kClimberAtCageSetpoint.in(Degrees)) {
       if (getSimulator() == climberSimNormal) {
         toggleClimbingSim();
-        SmartDashboard.putBoolean("Climbing", true);
       }
     } else {
       if (getSimulator() == climberSimLifting) {
         toggleClimbingSim();
-        SmartDashboard.putBoolean("Climbing", false);
       }
     }
   }
