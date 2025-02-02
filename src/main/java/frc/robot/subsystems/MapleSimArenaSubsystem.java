@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoral;
@@ -90,7 +91,7 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     return minX <= x && x <= maxX && minY <= y && y <= maxY;
   }
 
-  public Pose3d getClosestReef(Pose3d robotCoralPose) {
+  public Pose3d getClosestScorePose(Pose3d robotCoralPose) {
     Pose3d[] scorePoseList;
     if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Blue)) {
       scorePoseList = kBlueCoralScorePoses;
@@ -99,7 +100,7 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     }
 
     Pose3d closestPose = null;
-    double closestDistance = 9999;
+    double closestDistance = Double.MAX_VALUE;
     for (int i = 0; i < scorePoseList.length; i++) {
       double currentDistance =
           robotCoralPose.getTranslation().getDistance(scorePoseList[i].getTranslation());
@@ -114,8 +115,13 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     return closestPose;
   }
 
-  public void scoreCoral(Pose3d closeScorePose) {
-    scoredCoralPoses.add(closeScorePose);
+  public Command scoreCoral(Supplier<Pose3d> robotCoralPose) {
+    return Commands.runOnce(
+        () -> {
+          Pose3d scorePose = getClosestScorePose(robotCoralPose.get());
+          if (scorePose != null) scoredCoralPoses.add(scorePose);
+          robotHasCoral = false;
+        });
   }
 
   public Command clearSimFeild() {

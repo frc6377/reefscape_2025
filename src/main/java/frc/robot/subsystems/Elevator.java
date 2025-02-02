@@ -135,6 +135,10 @@ public class Elevator extends SubsystemBase {
     return rotationsToHeight(elevatorMotor1.getPosition().getValue());
   }
 
+  public Distance getElevatorMechHeight() {
+    return Meters.of(elevatorMech.getLength());
+  }
+
   public Command goUp(Supplier<Double> upPower) {
     return runEnd(
         () -> {
@@ -228,7 +232,7 @@ public class Elevator extends SubsystemBase {
     simElvMotor1.setRotorVelocity(heightToRotations(simVel));
     simElvMotor1.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-    elevatorMech.setLength(0.1 + (simDist.in(Meters)));
+    elevatorMech.setLength(kElevatorGroundOffset.plus(simDist).in(Meters));
 
     SmartDashboard.putNumber("Elevator/Sim Length", simDist.in(Inches));
     SmartDashboard.putNumber("Elevator/Sim velocity", simVel.in(InchesPerSecond));

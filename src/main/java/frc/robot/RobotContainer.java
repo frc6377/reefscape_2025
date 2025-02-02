@@ -101,7 +101,6 @@ public class RobotContainer {
         m_MapleSimArenaSubsystem = new MapleSimArenaSubsystem(driveSimulation);
         tempIntake = new TempIntake(driveSimulation);
 
-
         drive =
             new Drive(
                 new GyroIOSim(driveSimulation.getGyroSimulation()),
@@ -156,23 +155,32 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     // Change the raw boolean to true to pick keyboard durring simulation
-    boolean usingKeyboard = true && Robot.isSimulation();
+    boolean usingKeyboard = false && Robot.isSimulation();
 
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(OI.Driver.Back).onTrue(elevator.L1());
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
-    OI.getButton(OI.Driver.DPAD_UP).whileTrue(elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
-    OI.getButton(OI.Driver.DPAD_DOWN).whileTrue(elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+    OI.getPOVButton(OI.Driver.DPAD_UP)
+        .whileTrue(elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+    OI.getPOVButton(OI.Driver.DPAD_DOWN)
+        .whileTrue(elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
 
     SmartDashboard.putData(elevator.limitHit());
 
     // Score Commpands
     OI.getTrigger(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.LTrigger)
-        .whileTrue(coralScorer.scoreClockWise());
+        .whileTrue(
+            Robot.isSimulation()
+                ? m_MapleSimArenaSubsystem.scoreCoral(() -> robotCoralPose)
+                : coralScorer.scoreClockWise());
     OI.getButton(usingKeyboard ? OI.Keyboard.ArrowUpDown : OI.Driver.LBumper)
         .whileTrue(coralScorer.scoreCounterClockWise());
+
+    // Temp Intake
+    OI.getTrigger(OI.Driver.RTrigger).whileTrue(tempIntake.IntakeCommand());
+    OI.getButton(OI.Driver.RBumper).whileTrue(tempIntake.OuttakeCommand());
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
@@ -190,7 +198,7 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.AD : OI.Driver.LeftY).get(),
+            () -> -OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.AD : OI.Driver.LeftY).get(),
             () -> OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.WS : OI.Driver.LeftX).get(),
             () ->
                 OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.ArrowLeftRight : OI.Driver.RightX)
@@ -232,7 +240,8 @@ public class RobotContainer {
     Logger.recordOutput(
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
 
-    Pose3d closestReef = m_MapleSimArenaSubsystem.getClosestReef(robotCoralPose);
+    Pose3d closestReef = m_MapleSimArenaSubsystem.getClosestScorePose(robotCoralPose);
+
     if (closestReef != null) {
       Logger.recordOutput(
           "FieldSimulation/Closest Score Pose", new Pose3d[] {robotCoralPose, closestReef});
@@ -251,7 +260,7 @@ public class RobotContainer {
           new Pose3d(
               drivePose.getX(),
               drivePose.getY(),
-              elevator.getElevatorHeight().in(Meters),
+              elevator.getElevatorMechHeight().in(Meters),
               new Rotation3d(0, 0, drivePose.getRotation().getRadians()));
 
       Logger.recordOutput("FieldSimulation/Robot Game Piece Pose", robotCoralPose);

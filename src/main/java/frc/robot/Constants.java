@@ -123,6 +123,7 @@ public final class Constants {
     public static final AngularAcceleration MMAcc = MMVel.times(Hertz.of(5));
     public static final Velocity<AngularAccelerationUnit> MMJerk =
         RotationsPerSecondPerSecond.per(Second).of(MMAcc.in(RotationsPerSecondPerSecond)).times(10);
+    public static final Distance kElevatorGroundOffset = Inches.of(15.18);
   }
 
   public static final Distance kFieldWidth = Inches.of(317);
