@@ -12,8 +12,8 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.Constants.CtreCanID.kFeedBackSensorID;
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
-import static frc.robot.Constants.IntakeConstants.kFeedBackSensorID;
 import static frc.robot.Constants.IntakeConstants.kGearing;
 import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
 import static frc.robot.Constants.IntakeConstants.kLength;
@@ -247,6 +247,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command conveyorEject() {
     return startEnd(() -> setConveyerMotor(kConveyorSpeed), () -> setConveyerMotor(0));
+  }
+
+  public Command pivotDownRawVoltage() {
+    return startEnd(() -> setPivotMotor(kPivotSpeed), null);
   }
 
   public Command intakeToBirdhousePhase1() {
