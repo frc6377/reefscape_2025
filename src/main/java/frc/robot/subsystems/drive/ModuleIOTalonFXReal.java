@@ -24,7 +24,7 @@ import java.util.Queue;
  *
  * <p>Device configuration and other behaviors not exposed by TunerConstants can be customized here.
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ModuleIOTalonFXReal extends ModuleIOTalonFX {
   // Queue to read inputs from odometry thread
   private final Queue<Double> timestampQueue;
