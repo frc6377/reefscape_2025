@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.ElevatorConstants.*;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -10,6 +11,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.ChassisReference;
@@ -31,11 +33,14 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
+import utilities.TunableNumber;
 
 public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor1;
@@ -45,6 +50,9 @@ public class Elevator extends SubsystemBase {
   private DutyCycleEncoder gear11;
   private DutyCycleEncoderSim simGear3;
   private DutyCycleEncoderSim simGear11;
+  private final SysIdRoutine m_sysIdElevator;
+
+  private final VoltageOut m_voltReq;
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
       new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
@@ -70,15 +78,40 @@ public class Elevator extends SubsystemBase {
           .withKI(Constants.ElevatorConstants.I)
           .withKD(Constants.ElevatorConstants.D);
   private ElevatorSim m_elevatorSim;
+  private TunableNumber tunableP;
+  private TunableNumber tunableI;
+  private TunableNumber tunableD;
+  private Consumer<Double> consumerP;
+  private Consumer<Double> consumerI;
+  private Consumer<Double> consumerD;
+  private TunableNumber tunableMMVel;
+  private TunableNumber tunableMMAcc;
+  private TunableNumber tunableMMJerk;
+  private Consumer<Double> consumerMMVel;
+  private Consumer<Double> consumerMMAcc;
+  private Consumer<Double> consumerMMJerk;
 
   public Elevator() {
     // TODO: set up for canivore
     currentLimit.StatorCurrentLimit = 90;
     currentLimit.SupplyCurrentLimit = 70;
+    m_voltReq = new VoltageOut(0.0);
     currentLimit.SupplyCurrentLowerLimit = 40;
     currentLimit.SupplyCurrentLowerTime = 1;
     currentLimit.StatorCurrentLimitEnable = true;
     currentLimit.SupplyCurrentLimitEnable = true;
+    m_sysIdElevator =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null, // Use default ramp rate (1 V/s)
+                Volts.of(2), // Reduce dynamic step voltage to 4 to prevent brownout
+                Seconds.of(3), // Use default timeout (10 s)
+                // Log state with Phoenix SignalLogger class
+                (state) -> SignalLogger.writeString("Elevator/SysIdState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (volts) -> elevatorMotor1.setControl(m_voltReq.withOutput(volts.in(Volts))),
+                null,
+                this));
     gear3 = new DutyCycleEncoder(MotorIDConstants.gear3ID, 1.0, ElevatorConstants.gear3Offset);
     gear11 = new DutyCycleEncoder(MotorIDConstants.gear11ID, 1.0, ElevatorConstants.gear11Offset);
     elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, Constants.RIOName);
@@ -91,6 +124,62 @@ public class Elevator extends SubsystemBase {
     elevatorMotor2.setControl(new Follower(MotorIDConstants.kElevatorMotor1, true));
     elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
     new Trigger(elvLimitSwitch::get).onTrue(zeroMotorEncoder());
+
+    // PID Tunable Numbers
+    // P
+    consumerP = newP -> elevatorMotor1.getConfigurator().apply(loopCfg.withKP(newP));
+    tunableP =
+        new TunableNumber("Tunable Number P", Constants.ElevatorConstants.P, consumerP, this);
+    // I
+    consumerI = newI -> elevatorMotor1.getConfigurator().apply(loopCfg.withKP(newI));
+    tunableI =
+        new TunableNumber("Tunable Number I", Constants.ElevatorConstants.I, consumerI, this);
+    // D
+    consumerD = newD -> elevatorMotor1.getConfigurator().apply(loopCfg.withKP(newD));
+    tunableD =
+        new TunableNumber("Tunable Number D", Constants.ElevatorConstants.D, consumerD, this);
+    // Motion Magic Tunable Numbers
+    // MM Velocity
+    consumerMMVel =
+        newMMVel ->
+            elevatorMotor1
+                .getConfigurator()
+                .apply(
+                    elvMotionMagic.withMotionMagicCruiseVelocity(RotationsPerSecond.of(newMMVel)));
+    tunableMMVel =
+        new TunableNumber(
+            "Tunable Number MMVel",
+            (Constants.ElevatorConstants.MMVel).in(RotationsPerSecond),
+            consumerMMVel,
+            this);
+    // MM Acceleration
+    consumerMMAcc =
+        newMMAcc ->
+            elevatorMotor1
+                .getConfigurator()
+                .apply(
+                    elvMotionMagic.withMotionMagicAcceleration(
+                        RotationsPerSecondPerSecond.of(newMMAcc)));
+    tunableMMAcc =
+        new TunableNumber(
+            "Tunable Number MMAccel",
+            (Constants.ElevatorConstants.MMAcc).in(RotationsPerSecondPerSecond),
+            consumerMMAcc,
+            this);
+    // MM Jerk (Jerk = Meters per second per second per second)
+    consumerMMJerk =
+        newMMJerk ->
+            elevatorMotor1
+                .getConfigurator()
+                .apply(
+                    elvMotionMagic.withMotionMagicJerk(
+                        RotationsPerSecondPerSecond.per(Second).of(newMMJerk)));
+    tunableMMJerk =
+        new TunableNumber(
+            "Tunable Number MMJerk",
+            (Constants.ElevatorConstants.MMJerk).in(RotationsPerSecondPerSecond.per(Second)),
+            consumerMMJerk,
+            this);
 
     // Simulation
     if (Robot.isSimulation()) {
@@ -194,6 +283,14 @@ public class Elevator extends SubsystemBase {
         () -> {
           elevatorMotor1.setPosition(ChineseRemander());
         });
+  }
+
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysIdElevator.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdElevator.dynamic(direction);
   }
 
   public Command changeElevation(Distance heightLevel) {
