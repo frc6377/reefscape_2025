@@ -65,6 +65,7 @@ import frc.robot.Constants.RevCanID;
 import frc.robot.Robot;
 import utilities.DebugEntry;
 import utilities.TOFSensorSimple;
+import utilities.TOFSensorSimple.TOFType;
 
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
@@ -105,7 +106,7 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor = new TalonFX(CtreCanID.kIntakeMotor);
     pivotMotor = new TalonFX(CtreCanID.kPivotMotor);
     conveyorMotor = new TalonFX(CtreCanID.kConveyorMotor);
-    sensor = new TOFSensorSimple(RevCanID.kConveyorSensor, Inches.of(1));
+    sensor = new TOFSensorSimple(RevCanID.kConveyorSensor, Inches.of(1), TOFType.LASER_CAN);
     throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID);
 
     /**
