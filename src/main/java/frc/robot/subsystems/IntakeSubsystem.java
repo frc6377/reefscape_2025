@@ -59,9 +59,8 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CtreCanID;
+import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
-import frc.robot.Constants.RevCanID;
 import frc.robot.Robot;
 import utilities.DebugEntry;
 import utilities.TOFSensorSimple;
@@ -103,10 +102,10 @@ public class IntakeSubsystem extends SubsystemBase {
   private DebugEntry<String> currentCommand;
 
   public IntakeSubsystem() {
-    intakeMotor = new TalonFX(CtreCanID.kIntakeMotor);
-    pivotMotor = new TalonFX(CtreCanID.kPivotMotor);
-    conveyorMotor = new TalonFX(CtreCanID.kConveyorMotor);
-    sensor = new TOFSensorSimple(RevCanID.kConveyorSensor, Inches.of(1), TOFType.LASER_CAN);
+    intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
+    pivotMotor = new TalonFX(CANIDs.kPivotMotor);
+    conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);
+    sensor = new TOFSensorSimple(CANIDs.kConveyorSensor, Inches.of(1), TOFType.LASER_CAN);
     throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID);
 
     /**
@@ -172,7 +171,7 @@ public class IntakeSubsystem extends SubsystemBase {
       if (widget == null) {
         widget = Shuffleboard.getTab(getName()).add("Pivot Arm", mech);
       }
-      simSensor = new SimDeviceSim("TOF", RevCanID.kConveyorSensor);
+      simSensor = new SimDeviceSim("TOF", CANIDs.kConveyorSensor);
       simbeam = simSensor.getBoolean("BeamBroken");
     }
   }
