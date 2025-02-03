@@ -159,8 +159,8 @@ public class IntakeSubsystem extends SubsystemBase {
               kGearing,
               kMOI.in(KilogramSquareMeters),
               kLength.in(Meters),
-              kPivotExtendAngle.minus(Degrees.of(360)).in(Radians),
-              kPivotRetractAngle.plus(Degrees.of(360)).in(Radians),
+              kPivotExtendAngle.minus(Degrees.of(90)).in(Radians),
+              kPivotRetractAngle.plus(Degrees.of(90)).in(Radians),
               true,
               kPivotRetractAngle.in(Radians));
       pivotArmMech =
