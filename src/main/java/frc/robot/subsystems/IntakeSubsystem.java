@@ -4,34 +4,8 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
-import static frc.robot.Constants.IntakeConstants.kGearing;
-import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
-import static frc.robot.Constants.IntakeConstants.kLength;
-import static frc.robot.Constants.IntakeConstants.kMOI;
-import static frc.robot.Constants.IntakeConstants.kMotionMagicAcceleration;
-import static frc.robot.Constants.IntakeConstants.kMotionMagicCruiseVelocity;
-import static frc.robot.Constants.IntakeConstants.kMotionMagicJerk;
-import static frc.robot.Constants.IntakeConstants.kPivotA;
-import static frc.robot.Constants.IntakeConstants.kPivotD;
-import static frc.robot.Constants.IntakeConstants.kPivotExtendAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotG;
-import static frc.robot.Constants.IntakeConstants.kPivotGravityType;
-import static frc.robot.Constants.IntakeConstants.kPivotI;
-import static frc.robot.Constants.IntakeConstants.kPivotP;
-import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotSpeed;
-import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
-import static frc.robot.Constants.IntakeConstants.kPivotV;
-import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
+import static edu.wpi.first.units.Units.*;
+import static frc.robot.Constants.IntakeConstants.*;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
