@@ -60,6 +60,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CtreCanID;
+import frc.robot.Constants.DIOConstants;
 import frc.robot.Constants.RevCanID;
 import frc.robot.Robot;
 import utilities.DebugEntry;
@@ -105,7 +106,7 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotMotor = new TalonFX(CtreCanID.kPivotMotor);
     conveyorMotor = new TalonFX(CtreCanID.kConveyorMotor);
     sensor = new TOFSensorSimple(RevCanID.kConveyorSensor, Inches.of(1));
-    throughBoreEncoder = new DutyCycleEncoder(RevCanID.kthroughBoreEncoderID);
+    throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID);
 
     /**
      * Once the gains are configured, the Position closed loop control request can be sent to the
