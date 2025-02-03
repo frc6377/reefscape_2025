@@ -53,12 +53,12 @@ public final class Constants {
     public static final int kPivotMotor = 15; // FIXME: Change to correct ID
     public static final int kConveyorMotor = 17; // FIXME: Change to correct ID
   }
-  
+
   public static class RevCanID {
     // CANivore Can Bus
     public static final int kConveyorSensor = 4; // FIXME: Change to correct ID
   }
-  
+
   public static class DIOConstants {
     public static final int kthroughBoreEncoderID = 1;
   }

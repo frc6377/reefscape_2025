@@ -162,7 +162,7 @@ public class IntakeSubsystem extends SubsystemBase {
               kLength.in(Meters),
               kPivotExtendAngle.minus(Degrees.of(90)).in(Radians),
               kPivotRetractAngle.plus(Degrees.of(90)).in(Radians),
-              true,
+              false,
               kPivotRetractAngle.in(Radians));
       pivotArmMech =
           mech.getRoot("Root", 1, 0)
