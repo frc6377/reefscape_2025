@@ -10,6 +10,7 @@ import static frc.robot.Constants.IntakeConstants.*;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.ChassisReference;
@@ -116,6 +117,7 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotMotor.getConfigurator().apply(slot0Configs);
     pivotMotor.getConfigurator().apply(feedbackConfigs);
     pivotMotor.getConfigurator().apply(pivotMotionMagic);
+    pivotMotor.setControl(new CoastOut());   // Temporary
 
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
