@@ -94,6 +94,8 @@ public final class Constants {
     public static final AngularAcceleration kMotionMagicAcceleration =
         kMotionMagicCruiseVelocity.times(Hertz.of(5));
     public static final double kMotionMagicJerk = 10.0;
+
+    public static final double armZero = 0.0;
   }
 
   // Elevator Constants

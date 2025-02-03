@@ -14,7 +14,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
@@ -28,7 +27,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.RevCanID;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CoralScorer;
@@ -66,7 +64,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    sensor = new TOFSensorSimple(RevCanID.kConveyorSensor, Inches.of(1));
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -162,7 +159,7 @@ public class RobotContainer {
         .and(OI.getButton(OI.Driver.RBumper).negate())
         .whileTrue(intake.intakeToBirdhouse());
     OI.getPOVButton(OI.Driver.DPAD_UP)
-        .and(sensor.beamBroken().negate())
+        .and(intake.getBeamBroken().negate())
         .whileTrue(coralScorer.scoreClockWise());
     OI.getPOVButton(OI.Driver.DPAD_DOWN)
         .and(OI.getButton(OI.Driver.RBumper).negate())

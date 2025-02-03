@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
 import frc.robot.Robot;
@@ -80,7 +81,7 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
     conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);
     sensor = new TOFSensorSimple(CANIDs.kConveyorSensor, Inches.of(1), TOFType.LASER_CAN);
-    throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID);
+    throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero);
 
     /**
      * Once the gains are configured, the Position closed loop control request can be sent to the
@@ -148,6 +149,10 @@ public class IntakeSubsystem extends SubsystemBase {
       simSensor = new SimDeviceSim("TOF", CANIDs.kConveyorSensor);
       simbeam = simSensor.getBoolean("BeamBroken");
     }
+  }
+
+  public Trigger getBeamBroken() {
+    return sensor.beamBroken();
   }
 
   private boolean atSetpoint() {
@@ -259,12 +264,13 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Intake Motor Output", intakeMotor.get());
-    SmartDashboard.putNumber("Pivot Motor Output", pivotMotor.get());
-    SmartDashboard.putNumber("Conveyor Motor Output", conveyorMotor.get());
-    SmartDashboard.putNumber("Pivot Setpoint", pivotSetpoint.in(Degrees));
+    SmartDashboard.putNumber("Intake/Intake Motor Output", intakeMotor.get());
+    SmartDashboard.putNumber("Intake/Pivot Motor Output", pivotMotor.get());
+    SmartDashboard.putNumber("Intake/Conveyor Motor Output", conveyorMotor.get());
+    SmartDashboard.putNumber("Intake/Pivot Setpoint", pivotSetpoint.in(Degrees));
     SmartDashboard.putNumber(
-        "Pivot Position in Degrees", pivotMotor.getPosition().getValue().in(Degrees));
+        "Intake/Pivot Position in Degrees", pivotMotor.getPosition().getValue().in(Degrees));
+    SmartDashboard.putNumber("Intake/Absolute Encoder Position", throughBoreEncoder.get());
     pivotOutput.log(pivotMotor.get());
     if (this.getCurrentCommand() != null) {
       currentCommand.log(this.getCurrentCommand().getName());
