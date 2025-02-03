@@ -46,17 +46,26 @@ public final class Constants {
   public static class CtreCanID {
     // Rev Can Bus
     // 1-8 Motor ID is reserved by the drivebase
+    public static final int kElevatorMotor1 = 13;
+    public static final int kElevatorMotor2 = 14;
+    public static final int kPivotMotor = 15; // FIXME: Change to correct ID
+    public static final int kIntakeMotor = 16;
+    public static final int kConveyorMotor = 17; // FIXME: Change to correct ID
+  }
+  
+  public static class RevCanID {
+    public static final int kScorerMotor = 9;
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
-    public static final int kPivotMotor = 12; // FIXME: Change to correct ID
-    public static final int kIntakeMotor = 9;
-    public static final int kConveyorMotor = 0; // FIXME: Change to correct ID
-  }
-
-  public static class RevCanID {
+    public static final int kIntakeMotor = 12;
     // CANivore Can Bus
     public static final int kConveyorSensor = 4; // FIXME: Change to correct ID
     public static final int kthroughBoreEncoderID = 9;
+  }
+
+  // Scorer Constants
+  public static class CoralScorerConstants {
+    public static final double kSpeed = 0.5;
   }
 
   // Intake Constants
