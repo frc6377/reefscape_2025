@@ -41,6 +41,7 @@ import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import utilities.TOFSensorSimple;
+import utilities.TOFSensorSimple.TOFType;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -66,7 +67,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    sensor = new TOFSensorSimple(RevCanID.kConveyorSensor, Inches.of(1));
+    sensor = new TOFSensorSimple(RevCanID.kConveyorSensor, Inches.of(1), TOFType.LASER_CAN);
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
