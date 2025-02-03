@@ -46,18 +46,15 @@ public final class Constants {
   public static class CtreCanID {
     // Rev Can Bus
     // 1-8 Motor ID is reserved by the drivebase
-    public static final int kElevatorMotor1 = 13;
-    public static final int kElevatorMotor2 = 14;
-    public static final int kPivotMotor = 15; // FIXME: Change to correct ID
-    public static final int kIntakeMotor = 16;
-    public static final int kConveyorMotor = 17; // FIXME: Change to correct ID
-  }
-  
-  public static class RevCanID {
     public static final int kScorerMotor = 9;
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
     public static final int kIntakeMotor = 12;
+    public static final int kPivotMotor = 15; // FIXME: Change to correct ID
+    public static final int kConveyorMotor = 17; // FIXME: Change to correct ID
+  }
+
+  public static class RevCanID {
     // CANivore Can Bus
     public static final int kConveyorSensor = 4; // FIXME: Change to correct ID
     public static final int kthroughBoreEncoderID = 9;
@@ -102,7 +99,7 @@ public final class Constants {
 
   // Elevator Constants
   public static class ElevatorConstants {
-    public static final Distance kL0Height = Meters.of(0.252);
+    public static final Distance kL0Height = Meters.of(0);
     // L1 needs to be adjusted once it actually is worth it
     public static final Distance kL1Height = Inches.of(15);
     public static final Distance kL2Height = Inches.of(16.62);
