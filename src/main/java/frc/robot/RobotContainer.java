@@ -143,23 +143,16 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     // Change the raw boolean to true to pick keyboard durring simulation
-    boolean usingKeyboard = true && Robot.isSimulation();
+    boolean usingKeyboard = false && Robot.isSimulation();
 
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).onTrue(elevator.L1());
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
-    OI.getButton(usingKeyboard ? OI.Keyboard.Period : OI.Driver.DPAD_UP)
-        .whileTrue(
-            usingKeyboard
-                ? elevator.goUp(() -> 1.0)
-                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
-    OI.getButton(usingKeyboard ? OI.Keyboard.Comma : OI.Driver.DPAD_DOWN)
-        .whileTrue(
-            usingKeyboard
-                ? elevator.goDown(() -> 1.0)
-                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+    OI.getPOVButton(OI.Driver.DPAD_UP)
+        .whileTrue(elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+    OI.getPOVButton(OI.Driver.DPAD_DOWN).onTrue(elevator.limitHit());
 
     SmartDashboard.putData(elevator.limitHit());
 
@@ -186,7 +179,7 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.AD : OI.Driver.LeftY).get(),
+            () -> -OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.AD : OI.Driver.LeftY).get(),
             () -> OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.WS : OI.Driver.LeftX).get(),
             () ->
                 OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.ArrowLeftRight : OI.Driver.RightX)

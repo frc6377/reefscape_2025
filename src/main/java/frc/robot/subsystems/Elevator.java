@@ -41,7 +41,7 @@ public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor2;
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
-      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
+      new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
   private static Mechanism2d mech = new Mechanism2d(2, 2);
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
@@ -138,7 +138,7 @@ public class Elevator extends SubsystemBase {
   public Command goUp(Supplier<Double> upPower) {
     return runEnd(
         () -> {
-          elevatorMotor1.set(Math.abs(upPower.get()) * elevatorOutput);
+          elevatorMotor1.set(upPower.get() * elevatorOutput);
         },
         () -> elevatorMotor1.set(0));
   }
@@ -166,7 +166,7 @@ public class Elevator extends SubsystemBase {
 
   public Command limitHit() {
     return runOnce(this::disableSoftLimits)
-        .andThen(goDown(() -> 1.0).until(elvLimitSwitch::get))
+        .andThen(goDown(() -> 0.3).until(elvLimitSwitch::get))
         .andThen(zeroMotorEncoder())
         .andThen(runOnce(this::enableSoftLimits));
   }
