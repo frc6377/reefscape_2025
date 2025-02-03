@@ -210,8 +210,9 @@ public class RobotContainer {
 
     for (int i = 0; i < Constants.kPoleLetters.length; i++) {
       for (int j = 0; j < 3; j++) {
-        OI.getButton(OI.StreamDeck.streamDeckButtons[i])
-            .onTrue(drive.setPoseScored(Constants.kPoleLetters[i], j));
+        OI.getButton(OI.StreamDeck.streamDeckButtons[i * 3 + j])
+            .onTrue(drive.setPoseScored(Constants.kPoleLetters[i], j))
+            .onFalse(drive.setPoseScored(Constants.kPoleLetters[i], j));
       }
     }
   }

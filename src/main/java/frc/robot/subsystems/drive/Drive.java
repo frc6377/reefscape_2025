@@ -256,7 +256,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
     int nameIndex = 0;
     for (boolean[] boolList : scoredPoses.values()) {
-      Logger.recordOutput("ScoredPoses/Pole " + nameIndex, boolList);
+      Logger.recordOutput("ScoredPoses/Pole " + Constants.kPoleLetters[nameIndex], boolList);
       nameIndex++;
     }
   }
@@ -325,7 +325,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         () -> {
           boolean[] newList = scoredPoses.get(pole);
           newList[levelIndex] = !newList[levelIndex];
-          scoredPoses.put(pole, newList);
+          scoredPoses.replace(pole, newList);
         });
   }
 
