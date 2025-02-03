@@ -57,7 +57,10 @@ public final class Constants {
   public static class RevCanID {
     // CANivore Can Bus
     public static final int kConveyorSensor = 4; // FIXME: Change to correct ID
-    public static final int kthroughBoreEncoderID = 9;
+  }
+
+  public static class DIOConstants {
+    public static final int kthroughBoreEncoderID = 1;
   }
 
   // Scorer Constants
