@@ -11,14 +11,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.CtreCanID;
+import frc.robot.Constants.CANIDs;
 
 public class CoralScorer extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
   private TalonFX scorerMotor;
 
   public CoralScorer() {
-    scorerMotor = new TalonFX(CtreCanID.kScorerMotor, Constants.RIOName);
+    scorerMotor = new TalonFX(CANIDs.kScorerMotor, Constants.RIOName);
   }
 
   // Made a command to spin clockwise

@@ -43,7 +43,7 @@ import frc.robot.subsystems.Elevator;
 // GNU General Public License for more details.
 
 public final class Constants {
-  public static class CtreCanID {
+  public static class CANIDs {
     // Rev Can Bus
     // 1-8 Motor ID is reserved by the drivebase
     public static final int kScorerMotor = 9;
@@ -52,11 +52,7 @@ public final class Constants {
     public static final int kIntakeMotor = 12;
     public static final int kPivotMotor = 15; // FIXME: Change to correct ID
     public static final int kConveyorMotor = 17; // FIXME: Change to correct ID
-  }
-
-  public static class RevCanID {
-    // CANivore Can Bus
-    public static final int kConveyorSensor = 4; // FIXME: Change to correct ID
+    public static final int kConveyorSensor = 18; // FIXME: Change to correct ID -> 1
   }
 
   public static class DIOConstants {
