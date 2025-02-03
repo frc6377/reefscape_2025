@@ -172,24 +172,27 @@ public class OI extends OI_Utils {
   }
 
   public static final class StreamDeck {
-    public static final XboxController streamDeck = new XboxController(3);
+    public static final XboxController streamDeck1 = new XboxController(2);
+    public static final XboxController streamDeck2 = new XboxController(3);
 
     public static final ControlCurve nobCurve = new ControlCurve(1, 0, 0, 0);
 
     public static final Control Nob1 =
-        new Control(XboxController.Axis.kLeftX, null, streamDeck, nobCurve);
+        new Control(XboxController.Axis.kLeftX, null, streamDeck2, nobCurve);
     public static final Control Nob2 =
-        new Control(XboxController.Axis.kLeftY, null, streamDeck, nobCurve);
+        new Control(XboxController.Axis.kLeftY, null, streamDeck2, nobCurve);
     public static final Control Nob3 =
-        new Control(XboxController.Axis.kLeftTrigger, null, streamDeck, nobCurve);
+        new Control(XboxController.Axis.kLeftTrigger, null, streamDeck2, nobCurve);
     public static final Control Nob4 =
-        new Control(XboxController.Axis.kRightTrigger, null, streamDeck, nobCurve);
+        new Control(XboxController.Axis.kRightTrigger, null, streamDeck2, nobCurve);
 
-    public static Control[] streamDeckButtons = new Control[128];
+    public static Control[] streamDeckButtons1 = new Control[Constants.kStreamDeckMaxButtonCount];
+    public static Control[] streamDeckButtons2 = new Control[Constants.kStreamDeckMaxButtonCount];
 
     static {
-      for (int i = 0; i < Constants.kStreamDeckButtonCount; i++) {
-        streamDeckButtons[i] = new Control(i + 1, null, null, streamDeck, ControlType.BUTTON);
+      for (int i = 0; i < Constants.kStreamDeckMaxButtonCount; i++) {
+        streamDeckButtons1[i] = new Control(i + 1, null, null, streamDeck1, ControlType.BUTTON);
+        streamDeckButtons2[i] = new Control(i + 1, null, null, streamDeck1, ControlType.BUTTON);
       }
     }
   }

@@ -208,11 +208,18 @@ public class RobotContainer {
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.RSB)
         .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose(), Set.of(drive)));
 
-    for (int i = 0; i < Constants.kPoleLetters.length; i++) {
+    /* This is for creating the button mappings for logging what coral have been scored
+     * The Driverstation has a hard limit of 32 buttons so we use 2 different vjoy controllers
+     * to get the effective 64 buttons that we need for logging. this first 16 buttons of every controller are
+     * used for the front and back coral scored poses. */
+    for (int i = 0; i < Constants.kPoleLetters.length / 2; i++) {
       for (int j = 0; j < 3; j++) {
-        OI.getButton(OI.StreamDeck.streamDeckButtons[i * 3 + j])
+        OI.getButton(OI.StreamDeck.streamDeckButtons1[i * 3 + j])
             .onTrue(drive.setPoseScored(Constants.kPoleLetters[i], j))
             .onFalse(drive.setPoseScored(Constants.kPoleLetters[i], j));
+        OI.getButton(OI.StreamDeck.streamDeckButtons2[i * 3 + j])
+            .onTrue(drive.setPoseScored(Constants.kPoleLetters[i + 6], j))
+            .onFalse(drive.setPoseScored(Constants.kPoleLetters[i + 6], j));
       }
     }
   }
