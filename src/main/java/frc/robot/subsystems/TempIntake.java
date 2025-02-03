@@ -13,8 +13,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.MotorIDConstants;
+import frc.robot.Constants.SimulatedMechs;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.littletonrobotics.junction.Logger;
 
 public class TempIntake extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
@@ -42,6 +44,11 @@ public class TempIntake extends SubsystemBase {
             IntakeConstants.kIntakeExtension,
             IntakeSimulation.IntakeSide.FRONT,
             IntakeConstants.kIntakeCapacity);
+
+    Logger.recordOutput("Odometry/Mech Poses/Intake Pose", SimulatedMechs.kIntakeStartPose);
+    // Temp until we have real climb code
+    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", SimulatedMechs.kClimber1Pose);
+    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", SimulatedMechs.kClimber2Pose);
   }
 
   public boolean GetPieceFromIntake() {

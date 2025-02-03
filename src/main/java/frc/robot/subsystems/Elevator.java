@@ -32,8 +32,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.MotorIDConstants;
+import frc.robot.Constants.SimulatedMechs;
 import frc.robot.Robot;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor1;
@@ -108,6 +110,9 @@ public class Elevator extends SubsystemBase {
 
     SmartDashboard.putNumber("Elevator/Setpoint", 0);
     SmartDashboard.putNumber("Elevator/Setpoint Rotations", 0);
+
+    Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", SimulatedMechs.kElvStage1Pose);
+    Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", SimulatedMechs.kElvStage2Pose);
   }
 
   public static Distance rotationsToHeight(Angle rotations) {

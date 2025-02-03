@@ -166,7 +166,42 @@ public final class Constants {
         };
   }
 
-  public class SimulationFeildConstants {
+  public final class SimulatedMechs {
+    public static final Pose3d kIntakeStartPose =
+        new Pose3d(
+            Meters.of(0.191591),
+            Meters.of(0.091696),
+            Meters.of(0.242354),
+            new Rotation3d(Degrees.of(0), Degrees.of(130), Degrees.of(0)));
+
+    public static final Pose3d kElvStage1Pose =
+        new Pose3d(
+            Meters.of(-0.0635),
+            Meters.of(-0.236449),
+            Meters.of(0.1016),
+            new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
+    public static final Pose3d kElvStage2Pose =
+        new Pose3d(
+            Meters.of(-0.061125),
+            Meters.of(-0.237994),
+            Meters.of(0.1221),
+            new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
+
+    public static final Pose3d kClimber1Pose =
+        new Pose3d(
+            Meters.of(0.16021),
+            Meters.of(0.004064),
+            Meters.of(0.133263),
+            new Rotation3d(Degrees.of(79), Degrees.of(0), Degrees.of(-90)));
+    public static final Pose3d kClimber2Pose =
+        new Pose3d(
+            Meters.of(-0.160211),
+            Meters.of(0.004064),
+            Meters.of(0.133263),
+            new Rotation3d(Degrees.of(-100), Degrees.of(0), Degrees.of(-90d)));
+  }
+
+  public final class SimulationFeildConstants {
     public static final Distance kScoreDistance = Inch.of(17.25);
 
     public static final Pose2d[][] kSourceAreas =
