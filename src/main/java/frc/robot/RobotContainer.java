@@ -155,7 +155,7 @@ public class RobotContainer {
   }
 
   private Trigger testTrig(Trigger t) {
-    return new Trigger(testEventLoop, () -> t.getAsBoolean());
+    return new Trigger(testEventLoop, t);
   }
 
   private void configureTestButtonBindsing() {
