@@ -110,7 +110,8 @@ public class Elevator extends SubsystemBase {
                 (state) -> SignalLogger.writeString("Elevator/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (volts) -> elevatorMotor1.setControl(m_voltReq.withOutput(volts.in(Volts))),
-                //state callback is optional and defaults to null (which will log the data to a normal WPILog file).
+                // state callback is optional and defaults to null (which will log the data to a
+                // normal WPILog file).
                 null,
                 this));
     gear3 = new DutyCycleEncoder(MotorIDConstants.gear3ID, 1.0, ElevatorConstants.gear3Offset);
