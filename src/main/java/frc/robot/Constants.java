@@ -92,8 +92,8 @@ public final class Constants {
   }
 
   public static class ElevatorConstants {
-    public static final Distance kL0Height = Meters.of(0.252);
-    // L1 needs to be adjusted once it actually is worth it
+    public static final Distance kL0Height = Meters.of(0);
+    // TODO: L1 needs to be adjusted once it actually is worth it
     public static final Distance kL1Height = Inches.of(15);
     public static final Distance kL2Height = Inches.of(16.62);
     public static final Distance kL3Height = Inches.of(30.9);
@@ -182,9 +182,9 @@ public final class Constants {
             new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
     public static final Pose3d kElvStage2Pose =
         new Pose3d(
-            Meters.of(-0.061125),
-            Meters.of(-0.237994),
-            Meters.of(0.1221),
+            Meters.of(-0.063479),
+            Meters.of(-0.236448),
+            Meters.of(0.22065),
             new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
 
     public static final Pose3d kClimber1Pose =
@@ -198,11 +198,18 @@ public final class Constants {
             Meters.of(-0.160211),
             Meters.of(0.004064),
             Meters.of(0.133263),
-            new Rotation3d(Degrees.of(-100), Degrees.of(0), Degrees.of(-90d)));
+            new Rotation3d(Degrees.of(-100), Degrees.of(0), Degrees.of(-90)));
+
+    public static final Pose3d kCoralScorerPose =
+        new Pose3d(
+            Meters.of(0.037449),
+            Meters.of(-0.251632),
+            Meters.of(0.547541),
+            new Rotation3d(Degrees.of(45), Degrees.of(0), Degrees.of(90)));
   }
 
   public final class SimulationFeildConstants {
-    public static final Distance kScoreDistance = Inch.of(17.25);
+    public static final Distance kScoreDistance = Inch.of(9);
 
     public static final Pose2d[][] kSourceAreas =
         new Pose2d[][] {

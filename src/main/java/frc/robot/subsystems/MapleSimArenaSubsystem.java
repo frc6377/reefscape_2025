@@ -100,7 +100,7 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     }
 
     Pose3d closestPose = null;
-    double closestDistance = Double.MAX_VALUE;
+    double closestDistance = kScoreDistance.in(Meters);
     for (int i = 0; i < scorePoseList.length; i++) {
       double currentDistance =
           robotCoralPose.getTranslation().getDistance(scorePoseList[i].getTranslation());
@@ -131,7 +131,11 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
   }
 
   public Command resetSimFeild() {
-    return Commands.runOnce(() -> SimulatedArena.getInstance().placeGamePiecesOnField());
+    return Commands.runOnce(
+        () -> {
+          SimulatedArena.getInstance().placeGamePiecesOnField();
+          scoredCoralPoses = new ArrayList<Pose3d>();
+        });
   }
 
   public Command resetSimFeildAuto() {

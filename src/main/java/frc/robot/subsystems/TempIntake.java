@@ -4,10 +4,14 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,14 +22,16 @@ import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 
+@SuppressWarnings("unused")
 public class TempIntake extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
   private SparkMax intakeMotor;
 
   private IntakeSimulation intakeSim;
 
-  @SuppressWarnings("unused")
   private SwerveDriveSimulation driveSimulation;
+
+  private Pose3d intakeSimPose;
 
   public TempIntake() {
     intakeMotor = new SparkMax(MotorIDConstants.kIntakeMotor, MotorType.kBrushless);
@@ -45,6 +51,8 @@ public class TempIntake extends SubsystemBase {
             IntakeSimulation.IntakeSide.FRONT,
             IntakeConstants.kIntakeCapacity);
 
+    intakeSimPose = SimulatedMechs.kIntakeStartPose;
+
     Logger.recordOutput("Odometry/Mech Poses/Intake Pose", SimulatedMechs.kIntakeStartPose);
     // Temp until we have real climb code
     Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", SimulatedMechs.kClimber1Pose);
@@ -60,11 +68,20 @@ public class TempIntake extends SubsystemBase {
     return startEnd(
         () -> {
           intakeMotor.set(kSpeed);
-          if (intakeSim != null) intakeSim.startIntake();
+          if (RobotBase.isSimulation()) {
+            intakeSim.startIntake();
+            intakeSimPose =
+                new Pose3d(
+                    intakeSimPose.getTranslation(),
+                    new Rotation3d(Degrees.of(0), Degrees.of(270), Degrees.of(0)));
+          }
         },
         () -> {
           intakeMotor.set(0);
-          if (intakeSim != null) intakeSim.stopIntake();
+          if (RobotBase.isSimulation()) {
+            intakeSim.startIntake();
+            intakeSimPose = SimulatedMechs.kIntakeStartPose;
+          }
         });
   }
 
@@ -77,5 +94,10 @@ public class TempIntake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Intake/Motor Ouput", intakeMotor.get());
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    Logger.recordOutput("Odometry/Mech Poses/Intake Pose", intakeSimPose);
   }
 }

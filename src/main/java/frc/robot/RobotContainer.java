@@ -15,6 +15,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
@@ -23,12 +24,15 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.SimulatedMechs;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CoralScorer;
@@ -61,7 +65,8 @@ public class RobotContainer {
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose = new Pose2d(2, 2, new Rotation2d());
-  private Pose3d robotCoralPose = new Pose3d();
+  private Pose3d robotCoralPose = SimulatedMechs.kCoralScorerPose;
+  private Pose3d closestScorePose = null;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -222,6 +227,9 @@ public class RobotContainer {
             .onFalse(drive.setPoseScored(Constants.kPoleLetters[i + 6], j));
       }
     }
+
+    canScore()
+        .whileTrue(Commands.runEnd(() -> OI.Driver.setRumble(1), () -> OI.Driver.setRumble(0)));
   }
 
   /**
@@ -233,6 +241,10 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
+  public Trigger canScore() {
+    return new Trigger(() -> closestScorePose != null);
+  }
+
   public void startAuto() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
     driveSimulation.setSimulationWorldPose(drive.getPose());
@@ -242,7 +254,7 @@ public class RobotContainer {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
     driveSimulation.setSimulationWorldPose(driveSimDefualtPose);
-    SimulatedArena.getInstance().resetFieldForAuto();
+    m_MapleSimArenaSubsystem.resetSimFeild();
   }
 
   public void displaySimFieldToAdvantageScope() {
@@ -255,32 +267,49 @@ public class RobotContainer {
     Logger.recordOutput(
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
 
-    Pose3d closestReef = m_MapleSimArenaSubsystem.getClosestScorePose(robotCoralPose);
-
-    if (closestReef != null) {
-      Logger.recordOutput(
-          "FieldSimulation/Closest Score Pose", new Pose3d[] {robotCoralPose, closestReef});
-    } else {
-      Logger.recordOutput(
-          "FieldSimulation/Closest Score Pose", new Pose3d[] {new Pose3d(), new Pose3d()});
-    }
-
     if (tempIntake.GetPieceFromIntake()) {
       m_MapleSimArenaSubsystem.setRobotHasCoral(true);
     }
 
     if (m_MapleSimArenaSubsystem.getRobotHasCoral()) {
       Pose2d drivePose = driveSimulation.getSimulatedDriveTrainPose();
+
+      Translation3d newCoralTranslation =
+          new Translation3d(
+                  SimulatedMechs.kCoralScorerPose.getX() + drivePose.getX(),
+                  SimulatedMechs.kCoralScorerPose.getY() + drivePose.getY(),
+                  SimulatedMechs.kCoralScorerPose.getZ()
+                      + elevator.getElevatorMechHeight().in(Meters))
+              .rotateAround(
+                  new Translation3d(drivePose.getX(), drivePose.getY(), 0.0),
+                  new Rotation3d(
+                      Degrees.zero(), Degrees.zero(), drivePose.getRotation().getMeasure()));
+
+      Rotation3d coralRotation3d = SimulatedMechs.kCoralScorerPose.getRotation();
       robotCoralPose =
           new Pose3d(
-              drivePose.getX(),
-              drivePose.getY(),
-              elevator.getElevatorMechHeight().in(Meters),
-              new Rotation3d(0, 0, drivePose.getRotation().getRadians()));
+              newCoralTranslation,
+              new Rotation3d(
+                  coralRotation3d.getX(),
+                  coralRotation3d.getY(),
+                  coralRotation3d.getZ() + drivePose.getRotation().getMeasure().in(Radians)));
 
       Logger.recordOutput("FieldSimulation/Robot Game Piece Pose", robotCoralPose);
+
+      closestScorePose = m_MapleSimArenaSubsystem.getClosestScorePose(robotCoralPose);
+      if (closestScorePose != null) {
+        Logger.recordOutput(
+            "FieldSimulation/Closest Score Pose", new Pose3d[] {robotCoralPose, closestScorePose});
+        OI.Driver.setRumble(0.5);
+      } else {
+        Logger.recordOutput("FieldSimulation/Closest Score Pose", new Pose3d[] {new Pose3d()});
+        OI.Driver.setRumble(0);
+      }
     } else {
       Logger.recordOutput("FieldSimulation/Robot Game Piece Pose", new Pose3d());
+      Logger.recordOutput("FieldSimulation/Closest Score Pose", new Pose3d[] {new Pose3d()});
+      OI.Driver.setRumble(0);
+      closestScorePose = null;
     }
   }
 }
