@@ -80,7 +80,7 @@ public final class Constants {
   }
 
   public static class ElevatorConstants {
-    public static final Distance kL0Height = Meters.of(0.252);
+    public static final Distance kL0Height = Inches.of(0);
     // L1 needs to be adjusted once it actually is worth it
     public static final Distance kL1Height = Inches.of(15);
     public static final Distance kL2Height = Inches.of(16.62);
