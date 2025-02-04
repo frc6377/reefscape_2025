@@ -39,7 +39,6 @@ import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -82,17 +81,17 @@ public class DriveCommands {
    */
   public static Command joystickDrive(
       Drive drive,
-      DoubleSupplier xSupplier,
-      DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier) {
+      Supplier<Double> xSupplier,
+      Supplier<Double> ySupplier,
+      Supplier<Double> omegaSupplier) {
     return Commands.run(
         () -> {
           // Get linear velocity
           Translation2d linearVelocity =
-              getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+              getLinearVelocityFromJoysticks(xSupplier.get(), ySupplier.get());
 
           // Apply rotation deadband
-          double omega = omegaSupplier.getAsDouble();
+          double omega = omegaSupplier.get();
 
           // Square rotation value for more precise control
           omega = Math.copySign(omega * omega, omega);
@@ -123,8 +122,8 @@ public class DriveCommands {
    */
   public static Command joystickDriveAtAngle(
       Drive drive,
-      DoubleSupplier xSupplier,
-      DoubleSupplier ySupplier,
+      Supplier<Double> xSupplier,
+      Supplier<Double> ySupplier,
       Supplier<Rotation2d> rotationSupplier) {
 
     // Create PID controller
@@ -141,7 +140,7 @@ public class DriveCommands {
             () -> {
               // Get linear velocity
               Translation2d linearVelocity =
-                  getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+                  getLinearVelocityFromJoysticks(xSupplier.get(), ySupplier.get());
 
               // Calculate angular speed
               double omega =

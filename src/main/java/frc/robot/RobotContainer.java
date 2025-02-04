@@ -16,6 +16,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
+import static frc.robot.Constants.SimulatedMechs.kCoralScorerPose;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
@@ -160,7 +161,7 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     // Change the raw boolean to true to pick keyboard durring simulation
-    boolean usingKeyboard = false && Robot.isSimulation();
+    boolean usingKeyboard = true && Robot.isSimulation();
 
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(OI.Driver.Back).onTrue(elevator.L1());
@@ -175,7 +176,7 @@ public class RobotContainer {
     SmartDashboard.putData(elevator.limitHit());
 
     // Score Commpands
-    OI.getTrigger(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.LTrigger)
+    OI.getTrigger(usingKeyboard ? OI.Keyboard.Period : OI.Driver.LTrigger)
         .whileTrue(
             Robot.isSimulation()
                 ? m_MapleSimArenaSubsystem.scoreCoral(() -> robotCoralPose)
@@ -184,7 +185,8 @@ public class RobotContainer {
         .whileTrue(coralScorer.scoreCounterClockWise());
 
     // Temp Intake
-    OI.getTrigger(OI.Driver.RTrigger).whileTrue(tempIntake.IntakeCommand());
+    OI.getTrigger(usingKeyboard ? OI.Keyboard.M : OI.Driver.RTrigger)
+        .whileTrue(tempIntake.IntakeCommand());
     OI.getButton(OI.Driver.RBumper).whileTrue(tempIntake.OuttakeCommand());
 
     // Reset gyro / odometry, Runnable
@@ -203,14 +205,12 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.AD : OI.Driver.LeftY).get(),
-            () -> OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.WS : OI.Driver.LeftX).get(),
-            () ->
-                OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.ArrowLeftRight : OI.Driver.RightX)
-                    .get()));
+            OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.AD : OI.Driver.LeftY),
+            OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.WS : OI.Driver.LeftX),
+            OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.ArrowLR : OI.Driver.RightX)));
     OI.getButton(OI.Driver.Start).onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
-    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.RSB)
+    OI.getButton(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.RSB)
         .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose(), Set.of(drive)));
 
     /* This is for creating the button mappings for logging what coral have been scored
@@ -276,23 +276,21 @@ public class RobotContainer {
 
       Translation3d newCoralTranslation =
           new Translation3d(
-                  SimulatedMechs.kCoralScorerPose.getX() + drivePose.getX(),
-                  SimulatedMechs.kCoralScorerPose.getY() + drivePose.getY(),
-                  SimulatedMechs.kCoralScorerPose.getZ()
-                      + elevator.getElevatorMechHeight().in(Meters))
+                  kCoralScorerPose.getX() + drivePose.getX(),
+                  kCoralScorerPose.getY() + drivePose.getY(),
+                  kCoralScorerPose.getZ() + elevator.getElevatorMechHeight().in(Meters))
               .rotateAround(
                   new Translation3d(drivePose.getX(), drivePose.getY(), 0.0),
                   new Rotation3d(
                       Degrees.zero(), Degrees.zero(), drivePose.getRotation().getMeasure()));
-
-      Rotation3d coralRotation3d = SimulatedMechs.kCoralScorerPose.getRotation();
       robotCoralPose =
           new Pose3d(
               newCoralTranslation,
               new Rotation3d(
-                  coralRotation3d.getX(),
-                  coralRotation3d.getY(),
-                  coralRotation3d.getZ() + drivePose.getRotation().getMeasure().in(Radians)));
+                  kCoralScorerPose.getRotation().getX() + 45,
+                  kCoralScorerPose.getRotation().getY(),
+                  kCoralScorerPose.getRotation().getZ()
+                      + drivePose.getRotation().getMeasure().in(Radians)));
 
       Logger.recordOutput("FieldSimulation/Robot Game Piece Pose", robotCoralPose);
 
