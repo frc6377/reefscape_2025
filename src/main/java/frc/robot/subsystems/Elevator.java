@@ -14,6 +14,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -67,6 +70,9 @@ public class Elevator extends SubsystemBase {
           .withKD(Constants.ElevatorConstants.D);
   private ElevatorSim m_elevatorSim;
 
+  private Pose3d elvSimPose1;
+  private Pose3d elvSimPose2;
+
   public Elevator() {
     // TODO: set up for canivore
     currentLimit.StatorCurrentLimit = 90;
@@ -106,13 +112,15 @@ public class Elevator extends SubsystemBase {
                   new MechanismLigament2d(
                       "Elevator Mech [0]", 1, 90, 10, new Color8Bit(Color.kPurple)));
       SmartDashboard.putData("Elevator/2d mechanism", mech);
+
+      elvSimPose1 = SimulatedMechs.kElvStage1Pose;
+      elvSimPose2 = SimulatedMechs.kElvStage2Pose;
+      Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", elvSimPose1);
+      Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", elvSimPose2);
     }
 
     SmartDashboard.putNumber("Elevator/Setpoint", 0);
     SmartDashboard.putNumber("Elevator/Setpoint Rotations", 0);
-
-    Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", SimulatedMechs.kElvStage1Pose);
-    Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", SimulatedMechs.kElvStage2Pose);
   }
 
   public static Distance rotationsToHeight(Angle rotations) {
@@ -237,10 +245,27 @@ public class Elevator extends SubsystemBase {
     simElvMotor1.setRotorVelocity(heightToRotations(simVel));
     simElvMotor1.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-    elevatorMech.setLength(kElevatorGroundOffset.plus(simDist).in(Meters));
+    elevatorMech.setLength(simDist.in(Meters));
+
+    elvSimPose1 =
+        new Pose3d(
+            new Translation3d(
+                elvSimPose1.getX(),
+                elvSimPose1.getY(),
+                SimulatedMechs.kElvStage1Pose.getZ() + simDist.in(Meters) / 2.0),
+            new Rotation3d());
+    elvSimPose2 =
+        new Pose3d(
+            new Translation3d(
+                elvSimPose2.getX(),
+                elvSimPose2.getY(),
+                SimulatedMechs.kElvStage2Pose.getZ() + (simDist.in(Meters))),
+            new Rotation3d());
 
     SmartDashboard.putNumber("Elevator/Sim Length", simDist.in(Inches));
     SmartDashboard.putNumber("Elevator/Sim velocity", simVel.in(InchesPerSecond));
     SmartDashboard.putNumber("Elevator/Sim Pose", m_elevatorSim.getPositionMeters());
+    Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", elvSimPose1);
+    Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", elvSimPose2);
   }
 }
