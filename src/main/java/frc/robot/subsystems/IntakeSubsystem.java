@@ -84,17 +84,6 @@ public class IntakeSubsystem extends SubsystemBase {
     sensor = new TOFSensorSimple(CANIDs.kConveyorSensor, Inches.of(1), TOFType.LASER_CAN);
     throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero);
 
-    /**
-     * Once the gains are configured, the Position closed loop control request can be sent to the
-     * TalonFX. The control request object has an optional feedforward term that can be used to add
-     * an arbitrary value to the output, which can be useful to account for the effects of gravity
-     * or friction.
-     *
-     * <p>// create a position closed-loop request, voltage output, slot 0 configs final
-     * PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
-     *
-     * <p>// set position to 10 rotations m_talonFX.setControl(m_request.withPosition(10));
-     */
     var slot0Configs = new Slot0Configs();
     slot0Configs.kP = kPivotP;
     slot0Configs.kI = kPivotI;
@@ -117,7 +106,7 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotMotor.getConfigurator().apply(slot0Configs);
     pivotMotor.getConfigurator().apply(feedbackConfigs);
     pivotMotor.getConfigurator().apply(pivotMotionMagic);
-    pivotMotor.setControl(new CoastOut());   // Temporary
+    pivotMotor.setControl(new CoastOut()); // Temporary
 
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);

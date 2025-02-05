@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.CANIDs;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CoralScorer;
@@ -42,7 +41,6 @@ import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import utilities.TOFSensorSimple;
-import utilities.TOFSensorSimple.TOFType;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -167,14 +165,15 @@ public class RobotContainer {
   private void configureTestButtonBindsing() {
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getPOVButton(OI.Driver.DPAD_UP))
         .whileTrue(elevator.goUp(() -> 1.0));
+    testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(intake.pivotDownCommand());
+    testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(intake.pivotUpCommand());
+    testTrig(OI.getPOVButton(OI.Driver.DPAD_RIGHT)).whileTrue(intake.intakeCommand());
+    testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
+    testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
+    testTrig(OI.getPOVButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
   }
 
   private void configureButtonBindings() {
-
-    OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.pivotDownCommand());
-    OI.getTrigger(OI.Driver.LTrigger).whileTrue(intake.pivotUpCommand());
-    OI.getTrigger(OI.Driver.DPAD_RIGHT).whileTrue(intake.intakeCommand());
-    OI.getTrigger(OI.Driver.DPAD_LEFT).whileTrue(intake.outtakeCommand());
 
     // Set the intake rollers to the left and right triggers
     OI.getPOVButton(OI.Driver.DPAD_UP)
