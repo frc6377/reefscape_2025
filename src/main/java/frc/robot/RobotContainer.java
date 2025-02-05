@@ -15,7 +15,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static frc.robot.Constants.SimulatedMechs.kCoralScorerPose;
+import static frc.robot.Constants.SimulatedMechPoses.kCoralScorerPose;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.SimulatedMechs;
+import frc.robot.Constants.SimulatedMechPoses;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CoralScorer;
@@ -65,7 +65,7 @@ public class RobotContainer {
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose = new Pose2d(2, 2, new Rotation2d());
-  private Pose3d robotCoralPose = SimulatedMechs.kCoralScorerPose;
+  private Pose3d robotCoralPose = SimulatedMechPoses.kCoralScorerPose;
   private Pose3d closestScorePose = null;
 
   // Dashboard inputs
@@ -304,11 +304,12 @@ public class RobotContainer {
 
       Translation3d newCoralTranslation =
           new Translation3d(
-                  kCoralScorerPose.getX() + drivePose.getX(),
-                  kCoralScorerPose.getY() + drivePose.getY(),
-                  kCoralScorerPose.getZ() + elevator.getElevatorMechHeight().in(Meters))
+                  kCoralScorerPose.getMeasureX().plus(drivePose.getMeasureX()),
+                  kCoralScorerPose.getMeasureY().plus(drivePose.getMeasureY()),
+                  kCoralScorerPose.getMeasureZ().plus(elevator.getElevatorMechHeight()))
               .rotateAround(
-                  new Translation3d(drivePose.getX(), drivePose.getY(), 0.0),
+                  new Translation3d(
+                      drivePose.getMeasureX(), drivePose.getMeasureY(), Meters.zero()),
                   new Rotation3d(
                       Degrees.zero(), Degrees.zero(), drivePose.getRotation().getMeasure()));
       robotCoralPose =

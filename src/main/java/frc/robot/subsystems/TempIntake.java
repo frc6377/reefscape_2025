@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.MotorIDConstants;
-import frc.robot.Constants.SimulatedMechs;
+import frc.robot.Constants.SimulatedMechPoses;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -51,12 +51,12 @@ public class TempIntake extends SubsystemBase {
             IntakeSimulation.IntakeSide.FRONT,
             IntakeConstants.kIntakeCapacity);
 
-    intakeSimPose = SimulatedMechs.kIntakeStartPose;
+    intakeSimPose = SimulatedMechPoses.kIntakeStartPose;
 
-    Logger.recordOutput("Odometry/Mech Poses/Intake Pose", SimulatedMechs.kIntakeStartPose);
+    Logger.recordOutput("Odometry/Mech Poses/Intake Pose", SimulatedMechPoses.kIntakeStartPose);
     // Temp until we have real climb code
-    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", SimulatedMechs.kClimber1Pose);
-    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", SimulatedMechs.kClimber2Pose);
+    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", SimulatedMechPoses.kClimber1Pose);
+    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", SimulatedMechPoses.kClimber2Pose);
   }
 
   public boolean GetPieceFromIntake() {
@@ -79,8 +79,8 @@ public class TempIntake extends SubsystemBase {
         () -> {
           intakeMotor.set(0);
           if (RobotBase.isSimulation()) {
-            intakeSim.startIntake();
-            intakeSimPose = SimulatedMechs.kIntakeStartPose;
+            intakeSim.stopIntake();
+            intakeSimPose = SimulatedMechPoses.kIntakeStartPose;
           }
         });
   }

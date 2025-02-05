@@ -166,7 +166,7 @@ public final class Constants {
         };
   }
 
-  public final class SimulatedMechs {
+  public final class SimulatedMechPoses {
     public static final Pose3d kIntakeStartPose =
         new Pose3d(
             Meters.of(0.191591),
@@ -209,7 +209,7 @@ public final class Constants {
   }
 
   public final class SimulationFeildConstants {
-    public static final Distance kScoreDistance = Inch.of(9);
+    public static final Distance kScoreDistance = Inch.of(8.5);
 
     public static final Pose2d[][] kSourceAreas =
         new Pose2d[][] {
@@ -275,14 +275,6 @@ public final class Constants {
         };
 
     public static final Pose3d[] kBlueCoralScorePoses = {
-      // Level 1 (L1 - Trough Positions)
-      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
-      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
-      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
-      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
-      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
-      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
-
       // Level 2 (L2 - Lower Branches)
       new Pose3d(
           kBlueStickPoses[0][0],
