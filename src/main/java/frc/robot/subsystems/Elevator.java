@@ -129,28 +129,36 @@ public class Elevator extends SubsystemBase {
 
     // PID Tunable Numbers
     // P
-    consumerP = newP -> { loopCfg.kP = newP;
-      elevatorMotor1.getConfigurator().apply(loopCfg);};
+    consumerP =
+        newP -> {
+          loopCfg.kP = newP;
+          elevatorMotor1.getConfigurator().apply(loopCfg);
+        };
     tunableP =
         new TunableNumber("Tunable Number P", Constants.ElevatorConstants.P, consumerP, this);
     // I
-    consumerI = newI -> {loopCfg.kI = newI;
-      elevatorMotor1.getConfigurator().apply(loopCfg);};
+    consumerI =
+        newI -> {
+          loopCfg.kI = newI;
+          elevatorMotor1.getConfigurator().apply(loopCfg);
+        };
     tunableI =
         new TunableNumber("Tunable Number I", Constants.ElevatorConstants.I, consumerI, this);
     // D
-    consumerD = newD -> {loopCfg.kD = newD;
-      elevatorMotor1.getConfigurator().apply(loopCfg);};
+    consumerD =
+        newD -> {
+          loopCfg.kD = newD;
+          elevatorMotor1.getConfigurator().apply(loopCfg);
+        };
     tunableD =
         new TunableNumber("Tunable Number D", Constants.ElevatorConstants.D, consumerD, this);
     // Motion Magic Tunable Numbers
     // MM Velocity
     consumerMMVel =
-        newMMVel -> { elvMotionMagic.MotionMagicCruiseVelocity = newMMVel;
-            elevatorMotor1
-                .getConfigurator()
-                .apply(
-                    elvMotionMagic);};
+        newMMVel -> {
+          elvMotionMagic.MotionMagicCruiseVelocity = newMMVel;
+          elevatorMotor1.getConfigurator().apply(elvMotionMagic);
+        };
     tunableMMVel =
         new TunableNumber(
             "Tunable Number MMVel",
@@ -159,11 +167,10 @@ public class Elevator extends SubsystemBase {
             this);
     // MM Acceleration
     consumerMMAcc =
-        newMMAcc -> { elvMotionMagic.MotionMagicAcceleration = newMMAcc;
-          elevatorMotor1
-              .getConfigurator()
-              .apply(
-                  elvMotionMagic);};
+        newMMAcc -> {
+          elvMotionMagic.MotionMagicAcceleration = newMMAcc;
+          elevatorMotor1.getConfigurator().apply(elvMotionMagic);
+        };
     tunableMMAcc =
         new TunableNumber(
             "Tunable Number MMAccel",
@@ -172,11 +179,11 @@ public class Elevator extends SubsystemBase {
             this);
     // MM Jerk (Jerk = Meters per second per second per second)
     consumerMMJerk =
-        newMMJerk -> { elvMotionMagic.MotionMagicJerk = newMMJerk;
-          elevatorMotor1
-              .getConfigurator()
-              .apply(
-                  elvMotionMagic);};;
+        newMMJerk -> {
+          elvMotionMagic.MotionMagicJerk = newMMJerk;
+          elevatorMotor1.getConfigurator().apply(elvMotionMagic);
+        };
+    ;
     tunableMMJerk =
         new TunableNumber(
             "Tunable Number MMJerk",
