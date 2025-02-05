@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CoralScorer;
@@ -148,6 +149,14 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Elevator SysID (Quasistatic Forward)", elevator.sysIdQuasistatic(Direction.kForward));
+    autoChooser.addOption(
+        "Elevator SysID (Quasistatic Reverse)", elevator.sysIdQuasistatic(Direction.kReverse));
+    autoChooser.addOption(
+        "Elevator SysID (Dynamic Forward)", elevator.sysIdDynamic(Direction.kForward));
+    autoChooser.addOption(
+        "Elevator SysID (Dynamic Reverse)", elevator.sysIdDynamic(Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -163,17 +172,22 @@ public class RobotContainer {
   }
 
   private void configureTestButtonBindsing() {
-    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) :
-    // OI.getPOVButton(OI.Driver.DPAD_UP))
-    //     .whileTrue(elevator.goUp(() -> 1.0));
-    // testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(intake.pivotDownCommand());
-    // testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(intake.pivotUpCommand());
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getPOVButton(OI.Driver.DPAD_UP))
+        .whileTrue(
+            usingKeyboard
+                ? elevator.goUp(() -> 1.0)
+                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getPOVButton(OI.Driver.DPAD_DOWN))
+        .whileTrue(
+            usingKeyboard
+                ? elevator.goDown(() -> 1.0)
+                : elevator.goDown(OI.getAxisSupplier(OI.Driver.RightY)));
     testTrig(OI.getPOVButton(OI.Driver.DPAD_RIGHT)).whileTrue(intake.intakeCommand());
     testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
     testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
     testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
-    testTrig(OI.getPOVButton(OI.Driver.DPAD_UP)).whileTrue(intake.intakeAndConveyorCommandSafe());
-    testTrig(OI.getPOVButton(OI.Driver.DPAD_DOWN))
+    testTrig(OI.getPOVButton(OI.Operator.DPAD_UP)).whileTrue(intake.intakeAndConveyorCommandSafe());
+    testTrig(OI.getPOVButton(OI.Operator.DPAD_DOWN))
         .whileTrue(intake.intakeAndConveyorCommandScoreL1());
     testTrig(OI.getButton(OI.Driver.A)).onTrue(intake.seedEncoder());
     testTrig(OI.getButton(OI.Driver.X)).whileTrue(intake.extendPivotCommand());
@@ -199,11 +213,6 @@ public class RobotContainer {
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
-    OI.getPOVButton(usingKeyboard ? OI.Keyboard.Comma : OI.Driver.DPAD_DOWN)
-        .whileTrue(
-            usingKeyboard
-                ? elevator.goDown(() -> 1.0)
-                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
 
     SmartDashboard.putData(elevator.limitHit());
 

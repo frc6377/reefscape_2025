@@ -50,13 +50,15 @@ public final class Constants {
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
     public static final int kIntakeMotor = 13;
-    public static final int kPivotMotor = 12; // FIXME: Change to correct ID
+    public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
     public static final int kConveyorSensor = 18; // FIXME: Change to correct ID -> 1
   }
 
   public static class DIOConstants {
     public static final int kthroughBoreEncoderID = 1;
+    public static final int gear11ID = 13;
+    public static final int gear3ID = 14;
   }
 
   // Scorer Constants
@@ -102,7 +104,7 @@ public final class Constants {
 
   // Elevator Constants
   public static class ElevatorConstants {
-    public static final Distance kL0Height = Meters.of(0);
+    public static final Distance kL0Height = Inches.of(0);
     // L1 needs to be adjusted once it actually is worth it
     public static final Distance kL1Height = Inches.of(15);
     public static final Distance kL2Height = Inches.of(16.62);
@@ -119,6 +121,21 @@ public final class Constants {
     public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;
 
+    public static final int gear1Toothing = 3;
+    public static final int gear2Toothing = 11;
+
+    // Gear for CRT offsets
+    // TODO: get actual offset values
+    public static final double gear3Offset = 0.0;
+    public static final double gear11Offset = 0.0;
+
+    // CRTA - Chinese Remainder Theorem Array
+    public static int[][] CRTA = {
+      {0, 12, 24, 3, 15, 27, 6, 18, 30, 9, 21},
+      {22, 1, 13, 25, 4, 16, 28, 7, 19, 31, 10},
+      {11, 23, 2, 14, 26, 5, 17, 29, 8, 20, 32}
+    };
+
     // The carriage on the elv effectivly adds a gearing multiplier of 1
     public static final double kCarageFactor = 1;
 
@@ -126,7 +143,7 @@ public final class Constants {
     public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60(2);
     public static final double elevatorOutput = .30;
     public static final double kElevatorGearing = 1.0;
-    public static final Mass kCarriageMass = Pounds.of(5.15);
+    public static final Mass kCarriageMass = Pounds.of(4.75);
     public static final Distance kElevatorDrumRadius = Inches.of(.75 / 2);
     public static final Distance kMinElevatorHeight = Inches.zero();
     public static final Distance kMaxElevatorHeight = Inches.of(72);
