@@ -23,9 +23,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveCommands;
@@ -47,6 +49,12 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 @SuppressWarnings("unused")
 public class RobotContainer {
+
+  private EventLoop testEventLoop = new EventLoop();
+
+  // Change the raw boolean to true to pick keyboard during simulation
+  private final boolean usingKeyboard = true && Robot.isSimulation();
+
   // Subsystems
   private final Drive drive;
   private final Vision vision;
@@ -148,22 +156,29 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+    configureTestButtonBindsing();
+  }
+
+  public EventLoop getTestEventLoop() {
+    return testEventLoop;
+  }
+
+  private Trigger testTrig(Trigger t) {
+    return new Trigger(testEventLoop, t);
+  }
+
+  private void configureTestButtonBindsing() {
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getPOVButton(OI.Driver.DPAD_UP))
+        .whileTrue(elevator.goUp(() -> 1.0));
   }
 
   private void configureButtonBindings() {
-    // Change the raw boolean to true to pick keyboard durring simulation
-    boolean usingKeyboard = true && Robot.isSimulation();
 
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).onTrue(elevator.L1());
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
-    OI.getButton(usingKeyboard ? OI.Keyboard.Period : OI.Driver.DPAD_UP)
-        .whileTrue(
-            usingKeyboard
-                ? elevator.goUp(() -> 1.0)
-                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
     OI.getButton(usingKeyboard ? OI.Keyboard.Comma : OI.Driver.DPAD_DOWN)
         .whileTrue(
             usingKeyboard
