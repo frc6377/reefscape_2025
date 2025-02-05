@@ -160,34 +160,8 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     // Change the raw boolean to true to pick keyboard durring simulation
-    boolean usingKeyboard = true && Robot.isSimulation();
+    boolean usingKeyboard = true;
     Logger.recordOutput("USING KEYBOARD", usingKeyboard);
-
-    OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
-    OI.getButton(OI.Driver.Back).onTrue(elevator.L1());
-    OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
-    OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
-    OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
-    OI.getPOVButton(OI.Driver.DPAD_UP)
-        .whileTrue(elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
-    OI.getPOVButton(OI.Driver.DPAD_DOWN)
-        .whileTrue(elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
-
-    SmartDashboard.putData(elevator.limitHit());
-
-    // Score Commpands
-    OI.getTrigger(usingKeyboard ? OI.Keyboard.Period : OI.Driver.LTrigger)
-        .whileTrue(
-            Robot.isSimulation()
-                ? m_MapleSimArenaSubsystem.scoreCoral(() -> robotCoralPose)
-                : coralScorer.scoreClockWise());
-    OI.getButton(usingKeyboard ? OI.Keyboard.ArrowUpDown : OI.Driver.LBumper)
-        .whileTrue(coralScorer.scoreCounterClockWise());
-
-    // Temp Intake
-    OI.getTrigger(usingKeyboard ? OI.Keyboard.M : OI.Driver.RTrigger)
-        .whileTrue(tempIntake.IntakeCommand());
-    OI.getButton(OI.Driver.RBumper).whileTrue(tempIntake.OuttakeCommand());
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
@@ -201,17 +175,71 @@ public class RobotContainer {
                 drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
 
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.AD : OI.Driver.LeftY),
-            OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.WS : OI.Driver.LeftX),
-            OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.ArrowLR : OI.Driver.RightX)));
-    OI.getButton(OI.Driver.Start).onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+    if (usingKeyboard && Robot.isSimulation()) {
+      OI.getButton(OI.Keyboard.Z).onTrue(elevator.L0());
+      OI.getButton(OI.Keyboard.X).onTrue(elevator.L2());
+      OI.getButton(OI.Keyboard.C).onTrue(elevator.L3());
+      OI.getButton(OI.Keyboard.V).onTrue(elevator.L4());
+      SmartDashboard.putData(elevator.limitHit());
 
-    OI.getButton(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.RSB)
-        .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose(), Set.of(drive)));
+      // Score Commpands
+      OI.getButton(OI.Keyboard.Period)
+          .whileTrue(
+              Robot.isSimulation()
+                  ? m_MapleSimArenaSubsystem.scoreCoral(() -> robotCoralPose)
+                  : coralScorer.scoreClockWise());
+
+      // Temp Intake
+      OI.getButton(OI.Keyboard.M).whileTrue(tempIntake.IntakeCommand());
+
+      // Default command, normal field-relative drive
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              OI.getAxisSupplier(OI.Keyboard.AD),
+              OI.getAxisSupplier(OI.Keyboard.WS),
+              OI.getAxisSupplier(OI.Keyboard.ArrowLR)));
+
+      OI.getButton(OI.Keyboard.ForwardSlash)
+          .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose(), Set.of(drive)));
+    } else {
+      OI.getButton(OI.Driver.X).onTrue(elevator.L0());
+      OI.getButton(OI.Driver.Back).onTrue(elevator.L1());
+      OI.getButton(OI.Driver.A).onTrue(elevator.L2());
+      OI.getButton(OI.Driver.B).onTrue(elevator.L3());
+      OI.getButton(OI.Driver.Y).onTrue(elevator.L4());
+      OI.getPOVButton(OI.Driver.DPAD_UP)
+          .whileTrue(elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+      OI.getPOVButton(OI.Driver.DPAD_DOWN)
+          .whileTrue(elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+
+      SmartDashboard.putData(elevator.limitHit());
+
+      // Score Commpands
+      OI.getTrigger(OI.Driver.LTrigger)
+          .whileTrue(
+              Robot.isSimulation()
+                  ? m_MapleSimArenaSubsystem.scoreCoral(() -> robotCoralPose)
+                  : coralScorer.scoreClockWise());
+      OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.scoreCounterClockWise());
+
+      // Temp Intake
+      OI.getTrigger(OI.Driver.RTrigger).whileTrue(tempIntake.IntakeCommand());
+      OI.getButton(OI.Driver.RBumper).whileTrue(tempIntake.OuttakeCommand());
+
+      // Default command, normal field-relative drive
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              OI.getAxisSupplier(OI.Driver.LeftY),
+              OI.getAxisSupplier(OI.Driver.LeftX),
+              OI.getAxisSupplier(OI.Driver.RightX)));
+      OI.getButton(OI.Driver.Start)
+          .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+
+      OI.getButton(OI.Driver.RSB)
+          .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose(), Set.of(drive)));
+    }
 
     /* This is for creating the button mappings for logging what coral have been scored
      * The Driverstation has a hard limit of 32 buttons so we use 2 different vjoy controllers
@@ -300,15 +328,12 @@ public class RobotContainer {
       if (closestScorePose != null) {
         Logger.recordOutput(
             "FieldSimulation/Closest Score Pose", new Pose3d[] {robotCoralPose, closestScorePose});
-        OI.Driver.setRumble(0.5);
       } else {
         Logger.recordOutput("FieldSimulation/Closest Score Pose", new Pose3d[] {new Pose3d()});
-        OI.Driver.setRumble(0);
       }
     } else {
       Logger.recordOutput("FieldSimulation/Robot Game Piece Pose", new Pose3d());
       Logger.recordOutput("FieldSimulation/Closest Score Pose", new Pose3d[] {new Pose3d()});
-      OI.Driver.setRumble(0);
       closestScorePose = null;
     }
   }
