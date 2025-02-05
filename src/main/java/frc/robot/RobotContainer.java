@@ -163,14 +163,21 @@ public class RobotContainer {
   }
 
   private void configureTestButtonBindsing() {
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getPOVButton(OI.Driver.DPAD_UP))
-        .whileTrue(elevator.goUp(() -> 1.0));
-    testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(intake.pivotDownCommand());
-    testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(intake.pivotUpCommand());
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) :
+    // OI.getPOVButton(OI.Driver.DPAD_UP))
+    //     .whileTrue(elevator.goUp(() -> 1.0));
+    // testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(intake.pivotDownCommand());
+    // testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(intake.pivotUpCommand());
     testTrig(OI.getPOVButton(OI.Driver.DPAD_RIGHT)).whileTrue(intake.intakeCommand());
     testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
     testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
-    testTrig(OI.getPOVButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
+    testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
+    testTrig(OI.getPOVButton(OI.Driver.DPAD_UP)).whileTrue(intake.intakeAndConveyorCommandSafe());
+    testTrig(OI.getPOVButton(OI.Driver.DPAD_DOWN))
+        .whileTrue(intake.intakeAndConveyorCommandScoreL1());
+    testTrig(OI.getButton(OI.Driver.A)).onTrue(intake.seedEncoder());
+    testTrig(OI.getButton(OI.Driver.X)).whileTrue(intake.extendPivotCommand());
+    testTrig(OI.getButton(OI.Driver.Y)).whileTrue(intake.retractPivotCommand());
   }
 
   private void configureButtonBindings() {
@@ -185,14 +192,14 @@ public class RobotContainer {
     OI.getPOVButton(OI.Driver.DPAD_DOWN)
         .and(OI.getButton(OI.Driver.RBumper).negate())
         .whileTrue(intake.ejectFromBirdhouse());
-    intake.setDefaultCommand(intake.retractPivotCommand());
+    // intake.setDefaultCommand(intake.retractPivotCommand());
 
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).onTrue(elevator.L1());
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
-    OI.getButton(usingKeyboard ? OI.Keyboard.Comma : OI.Driver.DPAD_DOWN)
+    OI.getPOVButton(usingKeyboard ? OI.Keyboard.Comma : OI.Driver.DPAD_DOWN)
         .whileTrue(
             usingKeyboard
                 ? elevator.goDown(() -> 1.0)

@@ -46,12 +46,12 @@ public final class Constants {
   public static class CANIDs {
     // Rev Can Bus
     // 1-8 Motor ID is reserved by the drivebase
-    public static final int kScorerMotor = 9;
+    public static final int kScorerMotor = 15;
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
-    public static final int kIntakeMotor = 12;
-    public static final int kPivotMotor = 15; // FIXME: Change to correct ID
-    public static final int kConveyorMotor = 17; // FIXME: Change to correct ID
+    public static final int kIntakeMotor = 13;
+    public static final int kPivotMotor = 12; // FIXME: Change to correct ID
+    public static final int kConveyorMotor = 14;
     public static final int kConveyorSensor = 18; // FIXME: Change to correct ID -> 1
   }
 
@@ -66,12 +66,14 @@ public final class Constants {
 
   // Intake Constants
   public static class IntakeConstants {
-    public static final double kIntakeSpeed = 0.5;
-    public static final double kConveyorSpeed = 0.5;
+    public static final double kIntakeSpeed = -1;
+    public static final double kConveyorSpeed = 0.8;
     public static final double kPivotSpeed = 0.2;
-    public static final Angle kPivotRetractAngle = Degrees.of(90); // FIXME: Put actual value
-    public static final Angle kPivotExtendAngle =
-        Degrees.of(0); // FIXME: Might have to be negative to reach over bumper
+    public static final Angle kPivotRetractAngle = Degrees.of(129.28); // FIXME: Put actual value
+    public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
+    public static final Angle kcoralStation = Degrees.of(101);
+    public static final Angle kl1 = Degrees.of(75.5);
+    public static final Angle kalgae = Degrees.of(44.5);
     public static final Angle kPivotTolerance = Degrees.of(3);
     public static final double kPivotP = 100.0;
     public static final double kPivotI = 0.0;
@@ -95,7 +97,7 @@ public final class Constants {
         kMotionMagicCruiseVelocity.times(Hertz.of(5));
     public static final double kMotionMagicJerk = 10.0;
 
-    public static final double armZero = 0.0;
+    public static final double armZero = 0.35;
   }
 
   // Elevator Constants

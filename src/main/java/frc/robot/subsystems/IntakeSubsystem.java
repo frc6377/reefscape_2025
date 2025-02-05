@@ -111,9 +111,7 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
 
-    if (throughBoreEncoder.get() != kPivotRetractAngle.times(kGearing).in(Rotations)) {
-      // pivotMotor.setPosition(kPivotRetractAngle);
-    }
+    pivotMotor.setPosition(throughBoreEncoder.get());
 
     if (Robot.isSimulation()) {
       simPivotMotor = pivotMotor.getSimState();
@@ -213,11 +211,27 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(() -> setConveyerMotor(kConveyorSpeed), () -> setConveyerMotor(0));
   }
 
-  public Command intakeAndConveyorCommand() {
-    return Commands.run(
+  public Command intakeAndConveyorCommandSafe() {
+    return runEnd(
+        () -> {
+          setConveyerMotor(-kConveyorSpeed);
+          setIntakeMotor(kIntakeSpeed);
+        },
+        () -> {
+          setConveyerMotor(0);
+          setIntakeMotor(0);
+        });
+  }
+
+  public Command intakeAndConveyorCommandScoreL1() {
+    return runEnd(
         () -> {
           setConveyerMotor(kConveyorSpeed);
-          setIntakeMotor(kIntakeSpeed / 5.0);
+          setIntakeMotor(kIntakeSpeed);
+        },
+        () -> {
+          setConveyerMotor(0);
+          setIntakeMotor(0);
         });
   }
 
@@ -252,6 +266,13 @@ public class IntakeSubsystem extends SubsystemBase {
     return conveyorEject();
   }
 
+  public Command seedEncoder() {
+    return runOnce(
+        () -> {
+          pivotMotor.setPosition(throughBoreEncoder.get());
+        });
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -260,7 +281,7 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Intake/Conveyor Motor Output", conveyorMotor.get());
     SmartDashboard.putNumber("Intake/Pivot Setpoint", pivotSetpoint.in(Degrees));
     SmartDashboard.putNumber(
-        "Intake/Pivot Position in Degrees", pivotMotor.getPosition().getValue().in(Degrees));
+        "Intake/Pivot Position in Rotations", pivotMotor.getPosition().getValue().in(Rotations));
     SmartDashboard.putNumber("Intake/Absolute Encoder Position", throughBoreEncoder.get());
     pivotOutput.log(pivotMotor.get());
     if (this.getCurrentCommand() != null) {
