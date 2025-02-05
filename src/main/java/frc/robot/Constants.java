@@ -49,12 +49,8 @@ public final class Constants {
     public static final Angle kClimberExtendedSetpoint = Degrees.of(190);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(170);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90);
-    public static final Angle kClimberSensorError = Degrees.of(5);
-    public static final double kClimberSensorErrorAtCage =
-        kClimberAtCageSetpoint.plus(kClimberSensorError).in(Degrees) * 100 - 100;
+    public static final Angle kClimberSensorError = Degrees.of(1.5);
     // Sim Constants
-    public static final Mass kRobotMass = Pounds.of(100);
-    public static final double kClimberGearRatio = 126;
     public static final Distance kClimberArmLength = Inches.of(6);
     public static final Mass kClimberMass = Pounds.of(0.5);
     public static final Angle kClimberArmMinAngle = Degrees.of(-30);

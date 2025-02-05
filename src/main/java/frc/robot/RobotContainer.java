@@ -149,7 +149,7 @@ public class RobotContainer {
 
     OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
     OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
-
+    OI.getButton(OI.Operator.Start).onTrue(climber.zero());
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).onTrue(elevator.L1());
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
