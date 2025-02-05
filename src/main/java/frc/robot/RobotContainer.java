@@ -15,7 +15,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
 import static frc.robot.Constants.SimulatedMechs.kCoralScorerPose;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
@@ -162,6 +161,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Change the raw boolean to true to pick keyboard durring simulation
     boolean usingKeyboard = true && Robot.isSimulation();
+    Logger.recordOutput("USING KEYBOARD", usingKeyboard);
 
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(OI.Driver.Back).onTrue(elevator.L1());
@@ -263,9 +263,9 @@ public class RobotContainer {
     Logger.recordOutput(
         "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
     Logger.recordOutput(
-        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
-    Logger.recordOutput(
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+    Logger.recordOutput(
+        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
 
     if (tempIntake.GetPieceFromIntake()) {
       m_MapleSimArenaSubsystem.setRobotHasCoral(true);
@@ -287,10 +287,12 @@ public class RobotContainer {
           new Pose3d(
               newCoralTranslation,
               new Rotation3d(
-                  kCoralScorerPose.getRotation().getX() + 45,
-                  kCoralScorerPose.getRotation().getY(),
-                  kCoralScorerPose.getRotation().getZ()
-                      + drivePose.getRotation().getMeasure().in(Radians)));
+                  kCoralScorerPose.getRotation().getMeasureX(),
+                  kCoralScorerPose.getRotation().getMeasureY(),
+                  kCoralScorerPose
+                      .getRotation()
+                      .getMeasureZ()
+                      .plus(drivePose.getRotation().getMeasure())));
 
       Logger.recordOutput("FieldSimulation/Robot Game Piece Pose", robotCoralPose);
 

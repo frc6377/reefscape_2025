@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoral;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnField;
 import org.littletonrobotics.junction.Logger;
 
 public class MapleSimArenaSubsystem extends SubsystemBase {
@@ -133,7 +133,7 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
   public Command resetSimFeild() {
     return Commands.runOnce(
         () -> {
-          SimulatedArena.getInstance().placeGamePiecesOnField();
+          SimulatedArena.getInstance().resetFieldForAuto();
           scoredCoralPoses = new ArrayList<Pose3d>();
         });
   }
@@ -169,7 +169,7 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
         if (!isCoralAtSource) {
           SimulatedArena.getInstance()
               .addGamePiece(
-                  new ReefscapeCoral(
+                  new ReefscapeCoralOnField(
                       new Pose2d(
                           (currentSourse[0].getX() + currentSourse[1].getX()) / 2,
                           (currentSourse[0].getY() + currentSourse[1].getY()) / 2,
