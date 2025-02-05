@@ -169,7 +169,15 @@ public class RobotContainer {
 
   private void configureTestButtonBindsing() {
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getPOVButton(OI.Driver.DPAD_UP))
-        .whileTrue(elevator.goUp(() -> 1.0));
+        .whileTrue(
+            usingKeyboard
+                ? elevator.goUp(() -> 1.0)
+                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getPOVButton(OI.Driver.DPAD_DOWN))
+        .whileTrue(
+            usingKeyboard
+                ? elevator.goDown(() -> 1.0)
+                : elevator.goDown(OI.getAxisSupplier(OI.Driver.RightY)));
   }
 
   private void configureButtonBindings() {
@@ -179,12 +187,6 @@ public class RobotContainer {
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
-    OI.getButton(usingKeyboard ? OI.Keyboard.Comma : OI.Driver.DPAD_DOWN)
-        .whileTrue(
-            usingKeyboard
-                ? elevator.goDown(() -> 1.0)
-                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
-
     SmartDashboard.putData(elevator.limitHit());
 
     // Score Commpands
