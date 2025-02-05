@@ -164,6 +164,8 @@ public class RobotContainer {
   private void configureTestButtonBindsing() {
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getPOVButton(OI.Driver.DPAD_UP))
         .whileTrue(elevator.goUp(() -> 1.0));
+    testTrig(OI.getButton(OI.Keyboard.Z)).onTrue(climber.climb());
+    testTrig(OI.getButton(OI.Keyboard.X)).onTrue(climber.retract());
   }
 
   private void configureButtonBindings() {

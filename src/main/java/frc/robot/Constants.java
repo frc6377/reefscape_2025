@@ -33,11 +33,11 @@ public final class Constants {
   }
 
   public static class ClimberConstants {
-    public static final double kClimberP0 = 2;
+    public static final double kClimberP0 = 4;
     public static final double kClimberI0 = 0;
     public static final double kClimberD0 = 1;
     public static final double kClimberkG0 = 0;
-    public static final double kClimberkV0 = 2;
+    public static final double kClimberkV0 = 0;
 
     public static final double kClimberP1 = 2;
     public static final double kClimberI1 = 0;
@@ -46,15 +46,15 @@ public final class Constants {
     public static final double kClimberkV1 = 2;
 
     public static final double KGearRatio = 126;
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(190);
-    public static final Angle kClimberAtCageSetpoint = Degrees.of(170);
-    public static final Angle kClimberRetractedSetpoint = Degrees.of(90);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(190).plus(Degrees.of(180));
+    public static final Angle kClimberAtCageSetpoint = Degrees.of(170).plus(Degrees.of(180));
+    public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(Degrees.of(180));
     public static final Angle kClimberSensorError = Degrees.of(1.5);
     // Sim Constants
     public static final Distance kClimberArmLength = Inches.of(6);
     public static final Mass kClimberMass = Pounds.of(0.5);
-    public static final Angle kClimberArmMinAngle = Degrees.of(-30);
-    public static final Angle kClimberArmMaxAngle = Degrees.of(200);
+    public static final Angle kClimberArmMinAngle = Degrees.of(-30).plus(Degrees.of(180));
+    public static final Angle kClimberArmMaxAngle = Degrees.of(200).plus(Degrees.of(180));
   }
 
   public static final Mode simMode = Mode.SIM;
