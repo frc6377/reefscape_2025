@@ -4,7 +4,9 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.Constants.SimulationFeildConstants.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,6 +23,7 @@ import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnField;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnFly;
 import org.littletonrobotics.junction.Logger;
 
 public class MapleSimArenaSubsystem extends SubsystemBase {
@@ -115,14 +118,24 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     return closestPose;
   }
 
-  public Command scoreCoral(Supplier<Pose3d> robotCoralPose) {
+  public Command scoreCoral(Supplier<Pose3d> robotCoralPose, SwerveDriveSimulation driveSim) {
     return Commands.runOnce(
         () -> {
-          Pose3d scorePose = getClosestScorePose(robotCoralPose.get());
-          if (scorePose != null) {
-            scoredCoralPoses.add(scorePose);
-            robotHasCoral = false;
-          }
+          SimulatedArena.getInstance()
+              .addGamePieceProjectile(
+                  new ReefscapeCoralOnFly(
+                      driveSim.getSimulatedDriveTrainPose().getTranslation(),
+                      robotCoralPose
+                          .get()
+                          .toPose2d()
+                          .relativeTo(driveSim.getSimulatedDriveTrainPose())
+                          .getTranslation(),
+                      driveSim.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+                      driveSim.getSimulatedDriveTrainPose().getRotation(),
+                      robotCoralPose.get().getMeasureZ(),
+                      MetersPerSecond.of(2),
+                      Degrees.of(-45)));
+          robotHasCoral = false;
         });
   }
 
