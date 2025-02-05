@@ -111,8 +111,6 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
 
-    pivotMotor.setPosition(throughBoreEncoder.get());
-
     if (Robot.isSimulation()) {
       simPivotMotor = pivotMotor.getSimState();
       simPivotMotor.Orientation =
