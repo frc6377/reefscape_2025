@@ -50,7 +50,7 @@ public final class Constants {
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
     public static final int kIntakeMotor = 13;
-    public static final int kPivotMotor = 12; 
+    public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
     public static final int kConveyorSensor = 18; // FIXME: Change to correct ID -> 1
   }
@@ -59,7 +59,6 @@ public final class Constants {
     public static final int kthroughBoreEncoderID = 1;
     public static final int gear11ID = 13;
     public static final int gear3ID = 14;
-
   }
 
   // Scorer Constants

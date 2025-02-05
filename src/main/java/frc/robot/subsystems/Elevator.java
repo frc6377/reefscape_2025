@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
+import frc.robot.Constants.DIOConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Robot;
 import java.util.function.Consumer;
@@ -114,10 +115,10 @@ public class Elevator extends SubsystemBase {
                 // normal WPILog file).
                 null,
                 this));
-    gear3 = new DutyCycleEncoder(MotorIDConstants.gear3ID, 1.0, ElevatorConstants.gear3Offset);
-    gear11 = new DutyCycleEncoder(MotorIDConstants.gear11ID, 1.0, ElevatorConstants.gear11Offset);
-    elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, Constants.RIOName);
-    elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, Constants.RIOName);
+    gear3 = new DutyCycleEncoder(DIOConstants.gear3ID, 1.0, ElevatorConstants.gear3Offset);
+    gear11 = new DutyCycleEncoder(DIOConstants.gear11ID, 1.0, ElevatorConstants.gear11Offset);
+    elevatorMotor1 = new TalonFX(CANIDs.kElevatorMotor1, Constants.RIOName);
+    elevatorMotor2 = new TalonFX(CANIDs.kElevatorMotor2, Constants.RIOName);
     elevatorMotor1.getConfigurator().apply(loopCfg);
     elevatorMotor1.getConfigurator().apply(elvSoftLimit);
     elevatorMotor1.getConfigurator().apply(currentLimit);
