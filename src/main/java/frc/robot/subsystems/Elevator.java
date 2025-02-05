@@ -35,8 +35,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -123,7 +123,7 @@ public class Elevator extends SubsystemBase {
     elevatorMotor1.getConfigurator().apply(currentLimit);
     elevatorMotor1.getConfigurator().apply(invertMotor);
     elevatorMotor1.getConfigurator().apply(elvMotionMagic);
-    elevatorMotor2.setControl(new Follower(MotorIDConstants.kElevatorMotor1, true));
+    elevatorMotor2.setControl(new Follower(CANIDs.kElevatorMotor1, true));
     elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
     new Trigger(elvLimitSwitch::get).onTrue(zeroMotorEncoder());
 
