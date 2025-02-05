@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
@@ -123,8 +122,7 @@ public class Climber extends SubsystemBase {
               simClimberGearbox,
               ClimberConstants.KGearRatio,
               SingleJointedArmSim.estimateMOI(
-                  ClimberConstants.kClimberArmLength.in(Meters),
-                  DrivetrainConstants.ROBOT_MASS_KG),
+                  ClimberConstants.kClimberArmLength.in(Meters), DrivetrainConstants.ROBOT_MASS_KG),
               ClimberConstants.kClimberArmLength.in(Meters),
               ClimberConstants.kClimberArmMinAngle.in(Radians),
               ClimberConstants.kClimberArmMaxAngle.in(Radians),
@@ -162,13 +160,15 @@ public class Climber extends SubsystemBase {
                   .in(Rotations));
         });
   }
-  public Command runRaw(Voltage voltage){
+
+  public Command runRaw(Voltage voltage) {
     return runOnce(
         () -> {
           climberMotorFront.setControl(new VoltageOut(voltage));
           climberMotorBack.setControl(new VoltageOut(voltage.times(-1)));
         });
   }
+
   private Command runClimber(Angle position, int slot) {
     return runOnce(
         () -> {
