@@ -30,8 +30,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
 import java.util.function.Supplier;
 
@@ -73,14 +73,14 @@ public class Elevator extends SubsystemBase {
     currentLimit.SupplyCurrentLowerTime = 1;
     currentLimit.StatorCurrentLimitEnable = true;
     currentLimit.SupplyCurrentLimitEnable = true;
-    elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, Constants.RIOName);
-    elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, Constants.RIOName);
+    elevatorMotor1 = new TalonFX(CANIDs.kElevatorMotor1, Constants.RIOName);
+    elevatorMotor2 = new TalonFX(CANIDs.kElevatorMotor2, Constants.RIOName);
     elevatorMotor1.getConfigurator().apply(loopCfg);
     elevatorMotor1.getConfigurator().apply(elvSoftLimit);
     elevatorMotor1.getConfigurator().apply(currentLimit);
     elevatorMotor1.getConfigurator().apply(invertMotor);
     elevatorMotor1.getConfigurator().apply(elvMotionMagic);
-    elevatorMotor2.setControl(new Follower(MotorIDConstants.kElevatorMotor1, true));
+    elevatorMotor2.setControl(new Follower(CANIDs.kElevatorMotor1, true));
     elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
     new Trigger(elvLimitSwitch::get).onTrue(zeroMotorEncoder());
 

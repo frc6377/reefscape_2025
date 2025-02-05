@@ -1,3 +1,34 @@
+package frc.robot;
+
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Hertz;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Kilograms;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Second;
+
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.units.measure.Velocity;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.robot.subsystems.Elevator;
+
 // Copyright 2021-2024 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
@@ -11,60 +42,21 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot;
-
-import static edu.wpi.first.units.Units.Hertz;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Second;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.AngularAccelerationUnit;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Mass;
-import edu.wpi.first.units.measure.Velocity;
-import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.subsystems.Elevator;
-
 public final class Constants {
-
-  /**
-   * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when
-   * running on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and
-   * "replay" (log replay from a file).
-   */
-  public static final Mode simMode = Mode.SIM;
-
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
-
-  public static enum Mode {
-    /** Running on a real robot. */
-    REAL,
-
-    /** Running a physics simulator. */
-    SIM,
-
-    /** Replaying from a log file. */
-    REPLAY
-  }
-
-  public static final String CANivoreName = "Default Name";
-  public static final String RIOName = "rio";
-
-  public static class MotorIDConstants {
+  public static class CANIDs {
     // Rev Can Bus
-    public static final int kScorerMotor = 9;
+    // 1-8 Motor ID is reserved by the drivebase
+    public static final int kScorerMotor = 15;
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
-    public static final int kIntakeMotor = 12;
-    // CANivore Can Bus
+    public static final int kIntakeMotor = 13;
+    public static final int kPivotMotor = 12; // FIXME: Change to correct ID
+    public static final int kConveyorMotor = 14;
+    public static final int kConveyorSensor = 18; // FIXME: Change to correct ID -> 1
+  }
+
+  public static class DIOConstants {
+    public static final int kthroughBoreEncoderID = 1;
   }
 
   // Scorer Constants
@@ -74,11 +66,43 @@ public final class Constants {
 
   // Intake Constants
   public static class IntakeConstants {
-    public static final double kSpeed = 0.5;
+    public static final double kIntakeSpeed = -1;
+    public static final double kConveyorSpeed = 0.8;
+    public static final double kPivotSpeed = 0.2;
+    public static final Angle kPivotRetractAngle = Degrees.of(129.28); // FIXME: Put actual value
+    public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
+    public static final Angle kcoralStation = Degrees.of(101);
+    public static final Angle kl1 = Degrees.of(75.5);
+    public static final Angle kalgae = Degrees.of(44.5);
+    public static final Angle kPivotTolerance = Degrees.of(3);
+    public static final double kPivotP = 100.0;
+    public static final double kPivotI = 0.0;
+    public static final double kPivotD = 0.0;
+    public static final double kPivotG = 0.0;
+
+    public static final double kPivotV = 7.29; // 7.20;
+    public static final double kPivotA = 0.03; // 0.03;
+    public static final GravityTypeValue kPivotGravityType = GravityTypeValue.Arm_Cosine;
+
+    public static final double kGearing = 60;
+    public static final double kSensorToMechanism = 60;
+    public static final Distance kLength = Feet.of(1);
+    public static final Mass kMass = Pounds.of(8);
+    public static final MomentOfInertia kMOI =
+        KilogramSquareMeters.of(
+            SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
+    public static final AngularVelocity kMotionMagicCruiseVelocity =
+        DegreesPerSecond.of(30); // RevolutionsPerSecond.of(10);
+    public static final AngularAcceleration kMotionMagicAcceleration =
+        kMotionMagicCruiseVelocity.times(Hertz.of(5));
+    public static final double kMotionMagicJerk = 10.0;
+
+    public static final double armZero = 0.35;
   }
 
+  // Elevator Constants
   public static class ElevatorConstants {
-    public static final Distance kL0Height = Meters.of(0.252);
+    public static final Distance kL0Height = Meters.of(0);
     // L1 needs to be adjusted once it actually is worth it
     public static final Distance kL1Height = Inches.of(15);
     public static final Distance kL2Height = Inches.of(16.62);
@@ -113,6 +137,29 @@ public final class Constants {
     public static final Velocity<AngularAccelerationUnit> MMJerk =
         RotationsPerSecondPerSecond.per(Second).of(MMAcc.in(RotationsPerSecondPerSecond)).times(10);
   }
+
+  /**
+   * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when
+   * running on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and
+   * "replay" (log replay from a file).
+   */
+  public static final Mode simMode = Mode.SIM;
+
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+
+  public static enum Mode {
+    /** Running on a real robot. */
+    REAL,
+
+    /** Running a physics simulator. */
+    SIM,
+
+    /** Replaying from a log file. */
+    REPLAY
+  }
+
+  public static final String CANivoreName = "Default Name";
+  public static final String RIOName = "rio";
 
   public static final Distance kFieldWidth = Inches.of(317);
   public static final Distance kFieldLength = Inches.of(690 + (7 / 8));

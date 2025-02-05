@@ -33,12 +33,14 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import utilities.TOFSensorSimple;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -57,6 +59,8 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
+  private TOFSensorSimple sensor;
+  private final IntakeSubsystem intake = new IntakeSubsystem();
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
 
@@ -159,18 +163,43 @@ public class RobotContainer {
   }
 
   private void configureTestButtonBindsing() {
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getPOVButton(OI.Driver.DPAD_UP))
-        .whileTrue(elevator.goUp(() -> 1.0));
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) :
+    // OI.getPOVButton(OI.Driver.DPAD_UP))
+    //     .whileTrue(elevator.goUp(() -> 1.0));
+    // testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(intake.pivotDownCommand());
+    // testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(intake.pivotUpCommand());
+    testTrig(OI.getPOVButton(OI.Driver.DPAD_RIGHT)).whileTrue(intake.intakeCommand());
+    testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
+    testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
+    testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
+    testTrig(OI.getPOVButton(OI.Driver.DPAD_UP)).whileTrue(intake.intakeAndConveyorCommandSafe());
+    testTrig(OI.getPOVButton(OI.Driver.DPAD_DOWN))
+        .whileTrue(intake.intakeAndConveyorCommandScoreL1());
+    testTrig(OI.getButton(OI.Driver.A)).onTrue(intake.seedEncoder());
+    testTrig(OI.getButton(OI.Driver.X)).whileTrue(intake.extendPivotCommand());
+    testTrig(OI.getButton(OI.Driver.Y)).whileTrue(intake.retractPivotCommand());
   }
 
   private void configureButtonBindings() {
+
+    // Set the intake rollers to the left and right triggers
+    OI.getPOVButton(OI.Driver.DPAD_UP)
+        .and(OI.getButton(OI.Driver.RBumper).negate())
+        .whileTrue(intake.intakeToBirdhouse());
+    OI.getPOVButton(OI.Driver.DPAD_UP)
+        .and(intake.getBeamBroken().negate())
+        .whileTrue(coralScorer.scoreClockWise());
+    OI.getPOVButton(OI.Driver.DPAD_DOWN)
+        .and(OI.getButton(OI.Driver.RBumper).negate())
+        .whileTrue(intake.ejectFromBirdhouse());
+    // intake.setDefaultCommand(intake.retractPivotCommand());
 
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).onTrue(elevator.L1());
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
-    OI.getButton(usingKeyboard ? OI.Keyboard.Comma : OI.Driver.DPAD_DOWN)
+    OI.getPOVButton(usingKeyboard ? OI.Keyboard.Comma : OI.Driver.DPAD_DOWN)
         .whileTrue(
             usingKeyboard
                 ? elevator.goDown(() -> 1.0)
