@@ -43,6 +43,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import utilities.TunableNumber;
 
+@SuppressWarnings("unused")
 public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor1;
   private TalonFXSimState simElvMotor1;
