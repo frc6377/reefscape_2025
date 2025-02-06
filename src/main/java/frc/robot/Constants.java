@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
@@ -18,6 +19,7 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.subsystems.Elevator;
@@ -33,17 +35,18 @@ public final class Constants {
   }
 
   public static class ClimberConstants {
-    public static final double kClimberP0 = 4;
-    public static final double kClimberI0 = 0;
+    public static final double kClimberP0 = 8;
+    public static final double kClimberI0 = 1;
     public static final double kClimberD0 = 1;
     public static final double kClimberkG0 = 0;
     public static final double kClimberkV0 = 0;
 
-    public static final double kClimberP1 = 2;
-    public static final double kClimberI1 = 0;
+    public static final double kClimberP1 = 64;
+    public static final double kClimberI1 = 1;
     public static final double kClimberD1 = 1;
-    public static final double kClimberkG1 = 0.5;
-    public static final double kClimberkV1 = 2;
+    public static final double kClimberkG1 = 0.66;
+    public static final double kClimberkV1 = 15.64;
+    public static final double kClimberkA1 = 0.08;
 
     public static final double KGearRatio = 126;
     public static final Angle kClimberExtendedSetpoint = Degrees.of(190).plus(Degrees.of(180));
@@ -55,6 +58,9 @@ public final class Constants {
     public static final Mass kClimberMass = Pounds.of(0.5);
     public static final Angle kClimberArmMinAngle = Degrees.of(-30).plus(Degrees.of(180));
     public static final Angle kClimberArmMaxAngle = Degrees.of(200).plus(Degrees.of(180));
+
+    public static final MomentOfInertia moi =
+        KilogramSquareMeters.of(kClimberArmLength.in(Meters) * kClimberArmLength.in(Meters) * 75);
   }
 
   public static final Mode simMode = Mode.SIM;

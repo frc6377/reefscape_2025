@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
@@ -37,7 +38,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
-import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
 import java.util.function.BooleanSupplier;
@@ -135,8 +135,7 @@ public class Climber extends SubsystemBase {
           new SingleJointedArmSim(
               simClimberGearbox,
               ClimberConstants.KGearRatio,
-              SingleJointedArmSim.estimateMOI(
-                  ClimberConstants.kClimberArmLength.in(Meters), DrivetrainConstants.ROBOT_MASS_KG),
+              ClimberConstants.moi.in(KilogramSquareMeters),
               ClimberConstants.kClimberArmLength.in(Meters),
               ClimberConstants.kClimberArmMinAngle.in(Radians),
               ClimberConstants.kClimberArmMaxAngle.in(Radians),
