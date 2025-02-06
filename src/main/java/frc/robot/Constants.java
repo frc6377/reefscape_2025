@@ -173,6 +173,12 @@ public final class Constants {
             Meters.of(0.091696),
             Meters.of(0.242354),
             new Rotation3d(Degrees.of(0), Degrees.of(130), Degrees.of(0)));
+    public static final Pose3d kIntakeEndPose =
+        new Pose3d(
+            Meters.of(0.191591),
+            Meters.of(0.091696),
+            Meters.of(0.242354),
+            new Rotation3d(Degrees.of(0), Degrees.of(270), Degrees.of(0)));
 
     public static final Pose3d kElvStage1Pose =
         new Pose3d(

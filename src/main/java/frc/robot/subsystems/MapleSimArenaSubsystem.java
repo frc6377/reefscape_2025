@@ -5,19 +5,25 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Meters;
+import static frc.robot.Constants.SimulatedMechPoses.kCoralScorerPose;
 import static frc.robot.Constants.SimulationFeildConstants.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.SimulatedMechPoses;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnField;
@@ -26,8 +32,10 @@ import org.littletonrobotics.junction.Logger;
 public class MapleSimArenaSubsystem extends SubsystemBase {
   private final SwerveDriveSimulation swerveDriveSimulation;
 
-  private Boolean[] isAtSource = new Boolean[] {false, false, false, false};
   private List<Pose3d> scoredCoralPoses = new ArrayList<Pose3d>();
+
+  private Pose3d robotCoralPose = SimulatedMechPoses.kCoralScorerPose;
+  private Pose3d closestScorePose = null;
 
   private boolean robotHasCoral = false;
 
@@ -77,7 +85,30 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     robotHasCoral = newRobotHasCoral;
   }
 
-  public boolean getRobotHasCoral() {
+  public void updateRobotCoralPose(Distance elevatorHeight) {
+    if (robotHasCoral) {
+      Pose2d drivePose = swerveDriveSimulation.getSimulatedDriveTrainPose();
+
+      Translation2d newCoralTranslation =
+          new Translation2d(
+                  kCoralScorerPose.getMeasureX().plus(drivePose.getMeasureX()),
+                  kCoralScorerPose.getMeasureY().plus(drivePose.getMeasureY()))
+              .rotateAround(
+                  new Translation2d(drivePose.getMeasureX(), drivePose.getMeasureY()),
+                  new Rotation2d(drivePose.getRotation().getMeasure()));
+      robotCoralPose =
+          new Pose3d(
+              new Translation3d(
+                  newCoralTranslation.getMeasureX(),
+                  newCoralTranslation.getMeasureY(),
+                  kCoralScorerPose.getMeasureZ().plus(elevatorHeight)),
+              kCoralScorerPose.getRotation().plus(new Rotation3d(drivePose.getRotation())));
+    } else {
+      robotCoralPose = new Pose3d();
+    }
+  }
+
+  public Boolean getRobotHasCoral() {
     return robotHasCoral;
   }
 
@@ -91,75 +122,65 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     return minX <= x && x <= maxX && minY <= y && y <= maxY;
   }
 
-  public Pose3d getClosestScorePose(Pose3d robotCoralPose) {
-    Pose3d[] scorePoseList;
-    if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Blue)) {
-      scorePoseList = kBlueCoralScorePoses;
-    } else {
-      scorePoseList = kRedCoralScorePoses;
-    }
+  public Pose3d getClosestScorePose() {
+    Pose3d[] scorePoseList =
+        DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Blue)
+            ? kBlueCoralScorePoses
+            : kRedCoralScorePoses;
 
-    Pose3d closestPose = null;
+    Pose3d closestScorePose = null;
     double closestDistance = kScoreDistance.in(Meters);
-    for (int i = 0; i < scorePoseList.length; i++) {
+    for (Pose3d scorePose : scorePoseList) {
       double currentDistance =
-          robotCoralPose.getTranslation().getDistance(scorePoseList[i].getTranslation());
-      if (currentDistance < closestDistance
-          && currentDistance < kScoreDistance.in(Meters)
-          && !scoredCoralPoses.contains(scorePoseList[i])) {
+          robotCoralPose.getTranslation().getDistance(scorePose.getTranslation());
+      if (currentDistance < kScoreDistance.in(Meters)
+          && currentDistance < closestDistance
+          && !scoredCoralPoses.contains(scorePose)) {
         closestDistance = currentDistance;
-        closestPose = scorePoseList[i];
+        closestScorePose = scorePose;
       }
     }
 
-    return closestPose;
+    return closestScorePose;
   }
 
-  public Command scoreCoral(Supplier<Pose3d> robotCoralPose) {
+  public Trigger canScore() {
+    return new Trigger(() -> closestScorePose != null);
+  }
+
+  public Command scoreCoral() {
     return Commands.runOnce(
         () -> {
-          Pose3d scorePose = getClosestScorePose(robotCoralPose.get());
-          if (scorePose != null) {
-            scoredCoralPoses.add(scorePose);
-            robotHasCoral = false;
+          if (robotHasCoral) {
+            if (closestScorePose != null) {
+              scoredCoralPoses.add(closestScorePose);
+              robotHasCoral = false;
+            }
           }
         });
-  }
-
-  public Command clearSimFeild() {
-    return Commands.runOnce(() -> SimulatedArena.getInstance().clearGamePieces());
   }
 
   public Command resetSimFeild() {
     return Commands.runOnce(
         () -> {
           SimulatedArena.getInstance().resetFieldForAuto();
-          scoredCoralPoses = new ArrayList<Pose3d>();
+          scoredCoralPoses = new ArrayList<Pose3d>() {};
         });
-  }
-
-  public Command resetSimFeildAuto() {
-    return Commands.runOnce(() -> SimulatedArena.getInstance().resetFieldForAuto());
   }
 
   @Override
   public void periodic() {
-    Pose3d[] tempArray = new Pose3d[] {};
-    Logger.recordOutput("FieldSimulation/Scored Coral Poses", scoredCoralPoses.toArray(tempArray));
+    closestScorePose = getClosestScorePose();
 
+    // Add game pieces at sources for robot to score
     for (int i = 0; i < kSourceAreas.length; i++) {
       Pose2d[] currentSourse = kSourceAreas[i];
 
-      // Check if the robot is at the sorce area
-      isAtSource[i] = isInArea(currentSourse, swerveDriveSimulation.getSimulatedDriveTrainPose());
-      Logger.recordOutput("FieldSimulation/Area Bools/" + i, isAtSource[i]);
-
       // Check if there is a coral at the source area
-      if (isAtSource[i]) {
-        Pose3d[] coralPoses = SimulatedArena.getInstance().getGamePiecesArrayByType("Coral");
+      if (isInArea(currentSourse, swerveDriveSimulation.getSimulatedDriveTrainPose())) {
         boolean isCoralAtSource = false;
-        for (int j = 0; j < coralPoses.length; j++) {
-          if (isInArea(currentSourse, coralPoses[j].toPose2d())) {
+        for (Pose3d coralPose : SimulatedArena.getInstance().getGamePiecesArrayByType("Coral")) {
+          if (isInArea(currentSourse, coralPose.toPose2d())) {
             isCoralAtSource = true;
             break;
           }
@@ -171,11 +192,28 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
               .addGamePiece(
                   new ReefscapeCoralOnField(
                       new Pose2d(
-                          (currentSourse[0].getX() + currentSourse[1].getX()) / 2,
-                          (currentSourse[0].getY() + currentSourse[1].getY()) / 2,
+                          currentSourse[0]
+                              .getTranslation()
+                              .interpolate(currentSourse[1].getTranslation(), 0.5),
                           new Rotation2d())));
         }
       }
+    }
+
+    Pose3d[] tempArray = new Pose3d[] {};
+    Logger.recordOutput("FieldSimulation/Scored Coral Poses", scoredCoralPoses.toArray(tempArray));
+    Logger.recordOutput(
+        "FieldSimulation/RobotPosition", swerveDriveSimulation.getSimulatedDriveTrainPose());
+    Logger.recordOutput(
+        "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+    Logger.recordOutput(
+        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+    Logger.recordOutput("FieldSimulation/Robot Game Piece Pose", robotCoralPose);
+    if (closestScorePose != null) {
+      Logger.recordOutput(
+          "FieldSimulation/Closest Score Pose", new Pose3d[] {robotCoralPose, closestScorePose});
+    } else {
+      Logger.recordOutput("FieldSimulation/Closest Score Pose", new Pose3d[] {new Pose3d()});
     }
   }
 }

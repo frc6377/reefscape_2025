@@ -4,13 +4,11 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -70,10 +68,7 @@ public class TempIntake extends SubsystemBase {
           intakeMotor.set(kSpeed);
           if (RobotBase.isSimulation()) {
             intakeSim.startIntake();
-            intakeSimPose =
-                new Pose3d(
-                    intakeSimPose.getTranslation(),
-                    new Rotation3d(Degrees.of(0), Degrees.of(270), Degrees.of(0)));
+            intakeSimPose = SimulatedMechPoses.kIntakeEndPose;
           }
         },
         () -> {
