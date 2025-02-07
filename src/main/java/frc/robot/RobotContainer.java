@@ -195,9 +195,6 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    // Change the raw boolean to true to pick keyboard durring simulation
-    boolean usingKeyboard = false && Robot.isSimulation();
-
     // Set the intake rollers to the left and right triggers
     OI.getPOVButton(OI.Driver.DPAD_UP)
         .and(OI.getButton(OI.Driver.RBumper).negate())

@@ -254,10 +254,18 @@ public class Elevator extends SubsystemBase {
     return rotationsToHeight(elevatorMotor1.getPosition().getValue());
   }
 
-  public Command goUp(Supplier<Double> upPower) {
+  public Command elevatorUpOrDown(Supplier<Double> upPower) {
     return runEnd(
         () -> {
           elevatorMotor1.set(upPower.get() * elevatorOutput);
+        },
+        () -> elevatorMotor1.set(0));
+  }
+
+  public Command goUp(Supplier<Double> downPower) {
+    return runEnd(
+        () -> {
+          elevatorMotor1.set(Math.abs(downPower.get()) * elevatorOutput);
         },
         () -> elevatorMotor1.set(0));
   }
