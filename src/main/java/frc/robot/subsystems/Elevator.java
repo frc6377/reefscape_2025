@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.ElevatorConstants.*;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -10,6 +11,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.ChassisReference;
@@ -22,7 +24,9 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -32,18 +36,30 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.CANIDs;
+import frc.robot.Constants.DIOConstants;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Constants.SimulatedMechPoses;
 import frc.robot.Robot;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
+import utilities.TunableNumber;
 
+@SuppressWarnings("unused")
 public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor1;
   private TalonFXSimState simElvMotor1;
   private TalonFX elevatorMotor2;
+  private DutyCycleEncoder gear3;
+  private DutyCycleEncoder gear11;
+  private DutyCycleEncoderSim simGear3;
+  private DutyCycleEncoderSim simGear11;
+  private final SysIdRoutine m_sysIdElevator;
+
+  private final VoltageOut m_voltReq;
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
       new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
@@ -59,16 +75,27 @@ public class Elevator extends SubsystemBase {
   public static final SoftwareLimitSwitchConfigs elvSoftLimit =
       new SoftwareLimitSwitchConfigs()
           .withForwardSoftLimitEnable(true)
-          .withForwardSoftLimitThreshold(heightToRotations(Constants.ElevatorConstants.kTopLimit))
+          .withForwardSoftLimitThreshold(heightToRotations(ElevatorConstants.kTopLimit))
           .withReverseSoftLimitEnable(true)
-          .withReverseSoftLimitThreshold(
-              heightToRotations(Constants.ElevatorConstants.kBottomLimit));
+          .withReverseSoftLimitThreshold(heightToRotations(ElevatorConstants.kBottomLimit));
   public static final Slot0Configs loopCfg =
       new Slot0Configs()
-          .withKP(Constants.ElevatorConstants.P)
-          .withKI(Constants.ElevatorConstants.I)
-          .withKD(Constants.ElevatorConstants.D);
+          .withKP(ElevatorConstants.P)
+          .withKI(ElevatorConstants.I)
+          .withKD(ElevatorConstants.D);
   private ElevatorSim m_elevatorSim;
+  private TunableNumber tunableP;
+  private TunableNumber tunableI;
+  private TunableNumber tunableD;
+  private Consumer<Double> consumerP;
+  private Consumer<Double> consumerI;
+  private Consumer<Double> consumerD;
+  private TunableNumber tunableMMVel;
+  private TunableNumber tunableMMAcc;
+  private TunableNumber tunableMMJerk;
+  private Consumer<Double> consumerMMVel;
+  private Consumer<Double> consumerMMAcc;
+  private Consumer<Double> consumerMMJerk;
 
   private Pose3d elvSimPose1;
   private Pose3d elvSimPose2;
@@ -77,25 +104,81 @@ public class Elevator extends SubsystemBase {
     // TODO: set up for canivore
     currentLimit.StatorCurrentLimit = 90;
     currentLimit.SupplyCurrentLimit = 70;
+    m_voltReq = new VoltageOut(0.0);
     currentLimit.SupplyCurrentLowerLimit = 40;
     currentLimit.SupplyCurrentLowerTime = 1;
     currentLimit.StatorCurrentLimitEnable = true;
     currentLimit.SupplyCurrentLimitEnable = true;
-    elevatorMotor1 = new TalonFX(MotorIDConstants.kElevatorMotor1, Constants.RIOName);
-    elevatorMotor2 = new TalonFX(MotorIDConstants.kElevatorMotor2, Constants.RIOName);
+    m_sysIdElevator =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null, // Use default ramp rate (1 V/s)
+                Volts.of(2), // Reduce dynamic step voltage to 4 to prevent brownout
+                Seconds.of(3), // Use default timeout (10 s)
+                // Log state with Phoenix SignalLogger class
+                (state) -> SignalLogger.writeString("Elevator/SysIdState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (volts) -> elevatorMotor1.setControl(m_voltReq.withOutput(volts.in(Volts))),
+                // state callback is optional and defaults to null (which will log the data to a
+                // normal WPILog file).
+                null,
+                this));
+    gear3 = new DutyCycleEncoder(DIOConstants.gear3ID, 1.0, ElevatorConstants.gear3Offset);
+    gear11 = new DutyCycleEncoder(DIOConstants.gear11ID, 1.0, ElevatorConstants.gear11Offset);
+    elevatorMotor1 = new TalonFX(CANIDs.kElevatorMotor1, Constants.RIOName);
+    elevatorMotor2 = new TalonFX(CANIDs.kElevatorMotor2, Constants.RIOName);
     elevatorMotor1.getConfigurator().apply(loopCfg);
     elevatorMotor1.getConfigurator().apply(elvSoftLimit);
     elevatorMotor1.getConfigurator().apply(currentLimit);
     elevatorMotor1.getConfigurator().apply(invertMotor);
     elevatorMotor1.getConfigurator().apply(elvMotionMagic);
-    elevatorMotor2.setControl(new Follower(MotorIDConstants.kElevatorMotor1, true));
-    elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
+    elevatorMotor2.setControl(new Follower(CANIDs.kElevatorMotor1, true));
+    elvLimitSwitch = new DigitalInput(ElevatorConstants.elvLimitID);
     new Trigger(elvLimitSwitch::get).onTrue(zeroMotorEncoder());
+
+    // PID Tunable Numbers
+    // P
+    consumerP = newP -> loopCfg.kP = newP;
+    tunableP = new TunableNumber("Tunable Number P", ElevatorConstants.P, consumerP, this);
+    // I
+    consumerI = newI -> loopCfg.kI = newI;
+    tunableI = new TunableNumber("Tunable Number I", ElevatorConstants.I, consumerI, this);
+    // D
+    consumerD = newD -> loopCfg.kD = newD;
+    tunableD = new TunableNumber("Tunable Number D", ElevatorConstants.D, consumerD, this);
+    // Motion Magic Tunable Numbers
+    // MM Velocity
+    consumerMMVel = newMMVel -> elvMotionMagic.MotionMagicCruiseVelocity = newMMVel;
+    tunableMMVel =
+        new TunableNumber(
+            "Tunable Number MMVel",
+            (ElevatorConstants.MMVel).in(RotationsPerSecond),
+            consumerMMVel,
+            this);
+    // MM Acceleration
+    consumerMMAcc = newMMAcc -> elvMotionMagic.MotionMagicAcceleration = newMMAcc;
+    tunableMMAcc =
+        new TunableNumber(
+            "Tunable Number MMAccel",
+            (ElevatorConstants.MMAcc).in(RotationsPerSecondPerSecond),
+            consumerMMAcc,
+            this);
+    // MM Jerk (Jerk = Meters per second per second per second)
+    consumerMMJerk = newMMJerk -> elvMotionMagic.MotionMagicJerk = newMMJerk;
+    tunableMMJerk =
+        new TunableNumber(
+            "Tunable Number MMJerk",
+            (ElevatorConstants.MMJerk).in(RotationsPerSecondPerSecond.per(Second)),
+            consumerMMJerk,
+            this);
 
     // Simulation
     if (Robot.isSimulation()) {
       simElvMotor1 = elevatorMotor1.getSimState();
       simElvMotor1.Orientation = ChassisReference.Clockwise_Positive;
+      simGear3 = new DutyCycleEncoderSim(gear3);
+      simGear11 = new DutyCycleEncoderSim(gear11);
+
       m_elevatorSim =
           new ElevatorSim(
               kElevatorGearbox,
@@ -123,6 +206,11 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("Elevator/Setpoint Rotations", 0);
   }
 
+  public void updateTunableNumbers() {
+    elevatorMotor1.getConfigurator().apply(loopCfg);
+    elevatorMotor1.getConfigurator().apply(elvMotionMagic);
+  }
+
   public static Distance rotationsToHeight(Angle rotations) {
     return ElevatorConstants.kElevatorDrumCircumference
         .times(rotations.in(Rotations) * ElevatorConstants.kCarageFactor)
@@ -135,6 +223,12 @@ public class Elevator extends SubsystemBase {
         .times(kElevatorGearing)
         .div(kElevatorDrumCircumference.times(kCarageFactor))
         .times(Rotations.one());
+  }
+
+  public Angle ChineseRemander() {
+    double Pos3 = gear3.get() * gear1Toothing;
+    double Pos11 = gear11.get() * gear2Toothing;
+    return Rotations.of(ElevatorConstants.CRTA[(int) (Pos3)][(int) (Pos11)] + Pos3 - (int) Pos3);
   }
 
   public static AngularVelocity heightToRotations(LinearVelocity vel) {
@@ -191,8 +285,17 @@ public class Elevator extends SubsystemBase {
   public Command zeroMotorEncoder() {
     return runOnce(
         () -> {
+          // elevatorMotor1.setPosition(ChineseRemander());
           elevatorMotor1.setPosition(0);
         });
+  }
+
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysIdElevator.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdElevator.dynamic(direction);
   }
 
   public Command changeElevation(Distance heightLevel) {
@@ -206,23 +309,23 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command L0() {
-    return changeElevation(Constants.ElevatorConstants.kL0Height);
+    return changeElevation(ElevatorConstants.kL0Height);
   }
 
   public Command L1() {
-    return changeElevation(Constants.ElevatorConstants.kL1Height);
+    return changeElevation(ElevatorConstants.kL1Height);
   }
 
   public Command L2() {
-    return changeElevation(Constants.ElevatorConstants.kL2Height);
+    return changeElevation(ElevatorConstants.kL2Height);
   }
 
   public Command L3() {
-    return changeElevation(Constants.ElevatorConstants.kL3Height);
+    return changeElevation(ElevatorConstants.kL3Height);
   }
 
   public Command L4() {
-    return changeElevation(Constants.ElevatorConstants.kL4Height);
+    return changeElevation(ElevatorConstants.kL4Height);
   }
 
   @Override
@@ -233,6 +336,7 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("Elevator/Motor1 Percent", elevatorMotor1.get());
     SmartDashboard.putNumber("Elevator/Motor2 Percent", elevatorMotor2.get());
     SmartDashboard.putNumber("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
+    SmartDashboard.putNumber("Elevator/CRT", ChineseRemander().in(Rotations));
   }
 
   @Override
@@ -244,6 +348,8 @@ public class Elevator extends SubsystemBase {
     simElvMotor1.setRawRotorPosition(heightToRotations(simDist));
     simElvMotor1.setRotorVelocity(heightToRotations(simVel));
     simElvMotor1.setSupplyVoltage(RobotController.getBatteryVoltage());
+    simGear3.set((heightToRotations(simDist).in(Rotations) / gear1Toothing) % 1);
+    simGear11.set((heightToRotations(simDist).in(Rotations) / gear2Toothing) % 1);
 
     elevatorMech.setLength(simDist.in(Meters));
 
@@ -267,5 +373,7 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("Elevator/Sim Pose", m_elevatorSim.getPositionMeters());
     Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", elvSimPose1);
     Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", elvSimPose2);
+    SmartDashboard.putNumber("Elevator/Gear3", simGear3.get());
+    SmartDashboard.putNumber("Elevator/Gear11", simGear11.get());
   }
 }

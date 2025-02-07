@@ -171,6 +171,14 @@ public class Robot extends LoggedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    CommandScheduler.getInstance().setActiveButtonLoop(robotContainer.getTestEventLoop());
+  }
+
+  @Override
+  public void testExit() {
+    CommandScheduler.getInstance().cancelAll();
+    CommandScheduler.getInstance()
+        .setActiveButtonLoop(CommandScheduler.getInstance().getDefaultButtonLoop());
   }
 
   /** This function is called periodically during test mode. */

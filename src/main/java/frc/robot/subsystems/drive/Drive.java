@@ -181,18 +181,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
 
     // Logging scored Coral
-    scoredPoses.put("A", new boolean[3]);
-    scoredPoses.put("B", new boolean[3]);
-    scoredPoses.put("C", new boolean[3]);
-    scoredPoses.put("D", new boolean[3]);
-    scoredPoses.put("E", new boolean[3]);
-    scoredPoses.put("F", new boolean[3]);
-    scoredPoses.put("G", new boolean[3]);
-    scoredPoses.put("H", new boolean[3]);
-    scoredPoses.put("I", new boolean[3]);
-    scoredPoses.put("J", new boolean[3]);
-    scoredPoses.put("K", new boolean[3]);
-    scoredPoses.put("L", new boolean[3]);
+    for (String pole : Constants.kPoleLetters) scoredPoses.put(pole, new boolean[3]);
   }
 
   @Override

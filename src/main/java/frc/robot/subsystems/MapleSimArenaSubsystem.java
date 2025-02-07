@@ -79,6 +79,10 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
           },
         };
     Logger.recordOutput("FieldSimulation/Source Area", newPoses);
+
+    // Temp until we have real climb code
+    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", SimulatedMechPoses.kClimber1Pose);
+    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", SimulatedMechPoses.kClimber2Pose);
   }
 
   public void setRobotHasCoral(boolean newRobotHasCoral) {

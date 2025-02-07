@@ -116,6 +116,12 @@ public class OI extends OI_Utils {
         new Control(XboxController.Button.kRightStick, null, controller);
     public static final Control Back = new Control(XboxController.Button.kBack, null, controller);
 
+    // POV Buttons
+    public static final Control DPAD_UP = new Control(0, "", controller);
+    public static final Control DPAD_RIGHT = new Control(90, "", controller);
+    public static final Control DPAD_DOWN = new Control(180, "", controller);
+    public static final Control DPAD_LEFT = new Control(270, "", controller);
+
     // Control Curves
     private static final ControlCurve xTranslationCurve = new ControlCurve(1, 0, 1, 0.0);
     private static final ControlCurve yTranslationCurve = new ControlCurve(1, 0, 1, 0.0);

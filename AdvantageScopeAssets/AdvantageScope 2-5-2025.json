@@ -3,7 +3,7 @@
     {
       "x": 0,
       "y": 32,
-      "width": 1332,
+      "width": 1244,
       "height": 950,
       "state": {
         "sidebar": {
@@ -25,11 +25,15 @@
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/2/translation",
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/3/translation",
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/4/translation",
-            "/AdvantageKit/RealOutputs/FieldSimulation/Coral/5/translation"
+            "/AdvantageKit/RealOutputs/FieldSimulation/Coral/5/translation",
+            "/AdvantageKit/RealOutputs/SwerveChassisSpeeds",
+            "/AdvantageKit/RealOutputs/SwerveStates",
+            "/SmartDashboard",
+            "/SmartDashboard/Intake"
           ]
         },
         "tabs": {
-          "selected": 3,
+          "selected": 1,
           "tabs": [
             {
               "type": 0,
@@ -43,7 +47,28 @@
               "type": 1,
               "title": "Line Graph",
               "controller": {
-                "leftSources": [],
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/SmartDashboard/Intake/Pivot Position (Degrees)",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/SmartDashboard/Intake/Pivot Setpoint (Degrees)",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
                 "rightSources": [],
                 "discreteSources": [],
                 "leftLockedRange": null,
@@ -67,7 +92,33 @@
               "type": 2,
               "title": "Odometry",
               "controller": {
-                "sources": [],
+                "sources": [
+                  {
+                    "type": "robot",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/RobotPosition",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {}
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Robot",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "heatmap",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/RobotPosition",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "timeRange": "full"
+                    }
+                  }
+                ],
                 "game": "2025 Field",
                 "bumpers": "auto",
                 "origin": "blue",
@@ -179,12 +230,12 @@
               },
               "controllerUUID": "puw4i9b7e0fznf83gxyhzfh50dkcsiih",
               "renderer": {
-                "cameraIndex": -7,
+                "cameraIndex": -2,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -10.24986258343236,
-                  1.5747999999999986,
-                  -2.127265881179292
+                  -0.06905356266718526,
+                  0.6709489105095383,
+                  1.9356823520897461
                 ],
                 "cameraTarget": [
                   0,
@@ -192,6 +243,59 @@
                   0
                 ]
               },
+              "controlsHeight": 200
+            },
+            {
+              "type": 9,
+              "title": "Swerve",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "states",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveStates/Measured",
+                    "logType": "SwerveModuleState[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff0000",
+                      "arrangement": "0,1,2,3"
+                    }
+                  },
+                  {
+                    "type": "states",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveStates/SetpointsOptimized",
+                    "logType": "SwerveModuleState[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00",
+                      "arrangement": "0,1,2,3"
+                    }
+                  },
+                  {
+                    "type": "chassisSpeeds",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveChassisSpeeds/Measured",
+                    "logType": "ChassisSpeeds",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ffff"
+                    }
+                  },
+                  {
+                    "type": "chassisSpeeds",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveChassisSpeeds/Setpoints",
+                    "logType": "ChassisSpeeds",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff"
+                    }
+                  }
+                ],
+                "maxSpeed": 5,
+                "sizeX": 0.65,
+                "sizeY": 0.65,
+                "orientation": 1
+              },
+              "controllerUUID": "32qsjv5klfollfjxtnm8og6apt8mtf7m",
+              "renderer": null,
               "controlsHeight": 200
             }
           ]

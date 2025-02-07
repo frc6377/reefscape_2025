@@ -23,16 +23,20 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.SimulationFeildConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
-import frc.robot.subsystems.TempIntake;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
 import java.util.Set;
@@ -40,6 +44,7 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import utilities.TOFSensorSimple;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -49,12 +54,19 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 @SuppressWarnings("unused")
 public class RobotContainer {
+
+  private EventLoop testEventLoop = new EventLoop();
+
+  // Change the raw boolean to true to pick keyboard during simulation
+  private final boolean usingKeyboard = true && Robot.isSimulation();
+
   // Subsystems
   private final Drive drive;
   private final Vision vision;
+  private TOFSensorSimple sensor;
+  private final IntakeSubsystem intake;
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
-  private TempIntake tempIntake;
   private MapleSimArenaSubsystem mapleSimArenaSubsystem;
 
   private SwerveDriveSimulation driveSimulation;
@@ -78,8 +90,7 @@ public class RobotContainer {
         this.vision =
             new Vision(
                 drive, new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation));
-
-        tempIntake = new TempIntake();
+        intake = IntakeSubsystem.create();
 
         break;
       case SIM:
@@ -87,16 +98,17 @@ public class RobotContainer {
         driveSimDefualtPose =
             DriverStation.getAlliance().orElse(Alliance.Red).equals(Alliance.Blue)
                 ? new Pose2d(
-                    Meters.of(2), Constants.kFieldWidth.minus(Meters.of(2)), new Rotation2d())
+                    Meters.of(2),
+                    SimulationFeildConstants.kFieldWidth.minus(Meters.of(2)),
+                    new Rotation2d())
                 : new Pose2d(
-                    Constants.kFieldLength.minus(Meters.of(2)),
+                    SimulationFeildConstants.kFieldLength.minus(Meters.of(2)),
                     Meters.of(2),
                     new Rotation2d(Degrees.of(180)));
 
         driveSimulation = new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d());
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         mapleSimArenaSubsystem = new MapleSimArenaSubsystem(driveSimulation);
-        tempIntake = new TempIntake(driveSimulation);
 
         drive =
             new Drive(
@@ -110,6 +122,7 @@ public class RobotContainer {
                 drive,
                 new VisionIOPhotonVisionSim(
                     camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose));
+        intake = IntakeSubsystem.create(driveSimulation);
 
         break;
 
@@ -123,6 +136,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
+        intake = IntakeSubsystem.create();
 
         break;
     }
@@ -145,9 +159,49 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Elevator SysID (Quasistatic Forward)", elevator.sysIdQuasistatic(Direction.kForward));
+    autoChooser.addOption(
+        "Elevator SysID (Quasistatic Reverse)", elevator.sysIdQuasistatic(Direction.kReverse));
+    autoChooser.addOption(
+        "Elevator SysID (Dynamic Forward)", elevator.sysIdDynamic(Direction.kForward));
+    autoChooser.addOption(
+        "Elevator SysID (Dynamic Reverse)", elevator.sysIdDynamic(Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
+    configureTestButtonBindsing();
+  }
+
+  public EventLoop getTestEventLoop() {
+    return testEventLoop;
+  }
+
+  private Trigger testTrig(Trigger t) {
+    return new Trigger(testEventLoop, t);
+  }
+
+  private void configureTestButtonBindsing() {
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getPOVButton(OI.Driver.DPAD_UP))
+        .whileTrue(
+            usingKeyboard
+                ? elevator.goUp(() -> 1.0)
+                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getPOVButton(OI.Driver.DPAD_DOWN))
+        .whileTrue(
+            usingKeyboard
+                ? elevator.goDown(() -> 1.0)
+                : elevator.goDown(OI.getAxisSupplier(OI.Driver.RightY)));
+    testTrig(OI.getPOVButton(OI.Driver.DPAD_RIGHT)).whileTrue(intake.intakeCommand());
+    testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
+    testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
+    testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
+    testTrig(OI.getPOVButton(OI.Operator.DPAD_UP)).whileTrue(intake.intakeAndConveyorCommandSafe());
+    testTrig(OI.getPOVButton(OI.Operator.DPAD_DOWN))
+        .whileTrue(intake.intakeAndConveyorCommandScoreL1());
+    testTrig(OI.getButton(OI.Driver.A)).onTrue(intake.seedEncoder());
+    testTrig(OI.getButton(OI.Driver.X)).whileTrue(intake.extendPivotCommand());
+    testTrig(OI.getButton(OI.Driver.Y)).whileTrue(intake.retractPivotCommand());
   }
 
   private void configureButtonBindings() {
@@ -175,14 +229,15 @@ public class RobotContainer {
       SmartDashboard.putData(elevator.limitHit());
 
       // Score Commpands
-      OI.getButton(OI.Keyboard.Period)
+      OI.getButton(OI.Keyboard.ForwardSlash)
           .whileTrue(
               Robot.isSimulation()
                   ? mapleSimArenaSubsystem.scoreCoral()
                   : coralScorer.scoreClockWise());
 
       // Temp Intake
-      OI.getButton(OI.Keyboard.M).whileTrue(tempIntake.IntakeCommand());
+      OI.getButton(OI.Keyboard.Period).whileTrue(intake.intakePivotCommand());
+      OI.getButton(OI.Keyboard.Comma).whileTrue(intake.pivotDownCommand());
 
       // Default command, normal field-relative drive
       drive.setDefaultCommand(
@@ -192,7 +247,7 @@ public class RobotContainer {
               OI.getAxisSupplier(OI.Keyboard.WS),
               OI.getAxisSupplier(OI.Keyboard.ArrowLR)));
 
-      OI.getButton(OI.Keyboard.ForwardSlash)
+      OI.getButton(OI.Keyboard.M)
           .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose(), Set.of(drive)));
     } else {
       OI.getButton(OI.Driver.X).onTrue(elevator.L0());
@@ -216,8 +271,8 @@ public class RobotContainer {
       OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.scoreCounterClockWise());
 
       // Temp Intake
-      OI.getTrigger(OI.Driver.RTrigger).whileTrue(tempIntake.IntakeCommand());
-      OI.getButton(OI.Driver.RBumper).whileTrue(tempIntake.OuttakeCommand());
+      OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.intakeCommand());
+      OI.getTrigger(OI.Driver.RBumper).whileTrue(intake.outtakeCommand());
 
       // Default command, normal field-relative drive
       drive.setDefaultCommand(
@@ -278,7 +333,7 @@ public class RobotContainer {
   public void displaySimFieldToAdvantageScope() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
-    if (!mapleSimArenaSubsystem.getRobotHasCoral() && tempIntake.GetPieceFromIntake())
+    if (!mapleSimArenaSubsystem.getRobotHasCoral() && intake.GetPieceFromIntake())
       mapleSimArenaSubsystem.setRobotHasCoral(true);
     mapleSimArenaSubsystem.updateRobotCoralPose(elevator.getElevatorHeight());
   }

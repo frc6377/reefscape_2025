@@ -13,18 +13,9 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Feet;
-import static edu.wpi.first.units.Units.Hertz;
-import static edu.wpi.first.units.Units.Inch;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -32,19 +23,17 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Velocity;
-import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.subsystems.Elevator;
 
 public final class Constants {
-  public static final int kStreamDeckMaxButtonCount = 32;
-  public static final String[] kPoleLetters =
-      new String[] {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"};
-
   /**
    * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when
    * running on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and
@@ -52,15 +41,11 @@ public final class Constants {
    */
   public static final Mode simMode = Mode.SIM;
 
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+  public static final Mode currentMode = Robot.isReal() ? Mode.REAL : simMode;
 
   public static enum Mode {
-    /** Running on a real robot. */
     REAL,
-
-    /** Running a physics simulator. */
     SIM,
-
     /** Replaying from a log file. */
     REPLAY
   }
@@ -68,13 +53,26 @@ public final class Constants {
   public static final String CANivoreName = "Default Name";
   public static final String RIOName = "rio";
 
-  public static class MotorIDConstants {
+  public static final int kStreamDeckMaxButtonCount = 32;
+  public static final String[] kPoleLetters =
+      new String[] {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"};
+
+  public static class CANIDs {
     // Rev Can Bus
-    public static final int kScorerMotor = 9;
+    // 1-8 Motor ID is reserved by the drivebase
+    public static final int kScorerMotor = 15;
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
-    public static final int kIntakeMotor = 12;
-    // CANivore Can Bus
+    public static final int kIntakeMotor = 13;
+    public static final int kPivotMotor = 12;
+    public static final int kConveyorMotor = 14;
+    public static final int kConveyorSensor = 18; // FIXME: Change to correct ID -> 1
+  }
+
+  public static class DIOConstants {
+    public static final int kthroughBoreEncoderID = 1;
+    public static final int gear11ID = 13;
+    public static final int gear3ID = 14;
   }
 
   // Scorer Constants
@@ -84,16 +82,53 @@ public final class Constants {
 
   // Intake Constants
   public static class IntakeConstants {
-    public static final double kSpeed = 0.5;
+    public static final double kIntakeSpeed = -1;
+    public static final double kConveyorSpeed = 0.8;
+    public static final double kPivotSpeed = 1;
+    public static final Angle kPivotRetractAngle = Degrees.of(129.28); // FIXME: Put actual value
+    public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
+    public static final Angle kcoralStation = Degrees.of(101);
+    public static final Angle kl1 = Degrees.of(75.5);
+    public static final Angle kalgae = Degrees.of(44.5);
+    public static final Angle kPivotTolerance = Degrees.of(3);
+    public static final double kPivotP = 200.0;
+    public static final double kPivotI = 0.0;
+    public static final double kPivotD = 0.0;
+    public static final double kPivotG = 0.0;
 
+    public static final double kPivotV = 7.29; // 7.20;
+    public static final double kPivotA = 0.03; // 0.03;
+    public static final GravityTypeValue kPivotGravityType = GravityTypeValue.Arm_Cosine;
+
+    public static final double kGearing = 60;
+    public static final double kSensorToMechanism = 60;
+
+    // Simulation
+    public static final Distance kLength = Feet.of(1);
+    public static final Mass kMass = Pounds.of(8);
+    public static final MomentOfInertia kMOI =
+        KilogramSquareMeters.of(
+            SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
+
+    // Motion Magic
+    public static final AngularVelocity kMotionMagicCruiseVelocity =
+        DegreesPerSecond.of(4000); // RevolutionsPerSecond.of(10);
+    public static final AngularAcceleration kMotionMagicAcceleration =
+        kMotionMagicCruiseVelocity.times(Hertz.of(4000));
+    public static final double kMotionMagicJerk = 10;
+
+    public static final double armZero = 0.35; // TODO: Get units for this!
+
+    // For maplesim Intake
     public static final Distance kIntakeWidth = Meters.of(0.470);
     public static final Distance kIntakeExtension = Meters.of(0.191);
     public static final int kIntakeCapacity = 1;
   }
 
+  // Elevator Constants
   public static class ElevatorConstants {
-    public static final Distance kL0Height = Meters.of(0);
-    // TODO: L1 needs to be adjusted once it actually is worth it
+    public static final Distance kL0Height = Inches.of(0);
+    // L1 needs to be adjusted once it actually is worth it
     public static final Distance kL1Height = Inches.of(15);
     public static final Distance kL2Height = Inches.of(16.62);
     public static final Distance kL3Height = Inches.of(30.9);
@@ -109,6 +144,21 @@ public final class Constants {
     public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;
 
+    public static final int gear1Toothing = 3;
+    public static final int gear2Toothing = 11;
+
+    // Gear for CRT offsets
+    // TODO: get actual offset values
+    public static final double gear3Offset = 0.0;
+    public static final double gear11Offset = 0.0;
+
+    // CRTA - Chinese Remainder Theorem Array
+    public static int[][] CRTA = {
+      {0, 12, 24, 3, 15, 27, 6, 18, 30, 9, 21},
+      {22, 1, 13, 25, 4, 16, 28, 7, 19, 31, 10},
+      {11, 23, 2, 14, 26, 5, 17, 29, 8, 20, 32}
+    };
+
     // The carriage on the elv effectivly adds a gearing multiplier of 1
     public static final double kCarageFactor = 1;
 
@@ -116,7 +166,7 @@ public final class Constants {
     public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60(2);
     public static final double elevatorOutput = .30;
     public static final double kElevatorGearing = 1.0;
-    public static final Mass kCarriageMass = Pounds.of(5.15);
+    public static final Mass kCarriageMass = Pounds.of(4.75);
     public static final Distance kElevatorDrumRadius = Inches.of(.75 / 2);
     public static final Distance kMinElevatorHeight = Inches.zero();
     public static final Distance kMaxElevatorHeight = Inches.of(72);
@@ -126,11 +176,7 @@ public final class Constants {
     public static final AngularAcceleration MMAcc = MMVel.times(Hertz.of(5));
     public static final Velocity<AngularAccelerationUnit> MMJerk =
         RotationsPerSecondPerSecond.per(Second).of(MMAcc.in(RotationsPerSecondPerSecond)).times(10);
-    public static final Distance kElevatorGroundOffset = Inches.of(15.18);
   }
-
-  public static final Distance kFieldWidth = Inches.of(317);
-  public static final Distance kFieldLength = Inches.of(690 + (7 / 8));
 
   public final class DrivetrainConstants {
     // PathPlanner config constants
@@ -172,26 +218,13 @@ public final class Constants {
             Meters.of(0.191591),
             Meters.of(0.091696),
             Meters.of(0.242354),
-            new Rotation3d(Degrees.of(0), Degrees.of(130), Degrees.of(0)));
-    public static final Pose3d kIntakeEndPose =
-        new Pose3d(
-            Meters.of(0.191591),
-            Meters.of(0.091696),
-            Meters.of(0.242354),
-            new Rotation3d(Degrees.of(0), Degrees.of(270), Degrees.of(0)));
+            new Rotation3d(Degrees.of(-90), Degrees.of(190), Degrees.of(180)));
 
     public static final Pose3d kElvStage1Pose =
-        new Pose3d(
-            Meters.of(-0.0635),
-            Meters.of(-0.236449),
-            Meters.of(0.1016),
-            new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
+        new Pose3d(Meters.of(-0.0635), Meters.of(-0.236449), Meters.of(0.1016), new Rotation3d());
     public static final Pose3d kElvStage2Pose =
         new Pose3d(
-            Meters.of(-0.063479),
-            Meters.of(-0.236448),
-            Meters.of(0.22065),
-            new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
+            Meters.of(-0.063479), Meters.of(-0.236448), Meters.of(0.22065), new Rotation3d());
 
     public static final Pose3d kClimber1Pose =
         new Pose3d(
@@ -216,6 +249,9 @@ public final class Constants {
 
   public final class SimulationFeildConstants {
     public static final Distance kScoreDistance = Inch.of(8.5);
+
+    public static final Distance kFieldWidth = Inches.of(317);
+    public static final Distance kFieldLength = Inches.of(690 + (7 / 8));
 
     public static final Pose2d[][] kSourceAreas =
         new Pose2d[][] {
