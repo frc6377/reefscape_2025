@@ -32,7 +32,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CANIDs;
@@ -158,6 +157,11 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.set(speed);
   }
 
+  private void goToPivotPosition(Angle setpoint) {
+    pivotMotor.setControl(new MotionMagicVoltage(setpoint));
+    pivotSetpoint = setpoint;
+  }
+
   public Angle getPivotPosition() {
     return pivotMotor.getPosition().getValue();
   }
@@ -233,35 +237,89 @@ public class IntakeSubsystem extends SubsystemBase {
         });
   }
 
-  public Command intakeToBirdhousePhase1() {
-    return startEnd(
-            () -> {
-              extendPivotCommand().initialize();
-              intakeCommand().initialize();
-              conveyorFeed().initialize();
-            },
-            () -> {
-              extendPivotCommand().end(false);
-              intakeCommand().end(false);
-              conveyorFeed().end(false);
-            })
-        .until(sensor.beamBroken());
+  public Command floorIntake() {
+    return runEnd(
+        () -> {
+          goToPivotPosition(kPivotExtendAngle);
+          intakeMotor.set(kIntakeSpeed);
+        },
+        () -> {}); // FIXME: runENd might need to be a start end
   }
 
-  public Command intakeToBirdhousePhase2() {
-    return retractPivotCommand()
-        .andThen(Commands.waitUntil(this::atSetpoint)) // FIXME: Fix debouncing if neccesary
-        .andThen(conveyorFeed().until(sensor.beamBroken().negate()));
+  public Command floorOuttake() {
+    return runEnd(
+        () -> {
+          goToPivotPosition(kPivotExtendAngle);
+          intakeMotor.set(-kIntakeSpeed);
+        },
+        () -> {});
   }
 
-  public Command intakeToBirdhouse() {
-    return intakeToBirdhousePhase1()
-        .andThen(intakeToBirdhousePhase2())
-        .withName("Intake Phase 1 and 2");
+  public Command humanPlayerIntake() {
+    return runEnd(
+        () -> {
+          goToPivotPosition(kcoralStation);
+          intakeMotor.set(kIntakeSpeed);
+        },
+        () -> {});
   }
 
-  public Command ejectFromBirdhouse() {
-    return conveyorEject();
+  public Command algaeIntake() {
+    return runEnd(
+        () -> {
+          goToPivotPosition(kalgae);
+          intakeMotor.set(-kIntakeSpeed);
+        },
+        () -> {});
+  }
+
+  public Command algaeHold() {
+    return runEnd(
+        () -> {
+          goToPivotPosition(kalgae);
+          intakeMotor.set(-kIntakeSpeed);
+        },
+        () -> {});
+  }
+
+  public Command algaeOuttake() {
+    return runEnd(
+        () -> {
+          goToPivotPosition(kalgae);
+          intakeMotor.set(-kIntakeSpeed);
+        },
+        () -> {});
+  }
+
+  public Command l1ScoreModeA() {
+    return runEnd(
+        () -> {
+          goToPivotPosition(kl1);
+          intakeMotor.set(kIntakeSpeed);
+        },
+        () -> {});
+  }
+
+  public Command liScoreModeB() {
+    return runEnd(
+        () -> {
+          goToPivotPosition(kPivotRetractAngle);
+          intakeMotor.set(kIntakeSpeed / 5);
+          conveyorMotor.set(kConveyorSpeed);
+        },
+        () -> {});
+  }
+
+  public Command Idle() {
+    return runEnd(
+        () -> {
+          goToPivotPosition(kPivotRetractAngle);
+        },
+        () -> {});
+  }
+
+  public Command locateCoral() {
+    return null;
   }
 
   public Command seedEncoder() {
