@@ -15,6 +15,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
@@ -53,7 +54,7 @@ public class RobotContainer {
   private EventLoop testEventLoop = new EventLoop();
 
   // Change the raw boolean to true to pick keyboard during simulation
-  private final boolean usingKeyboard = true && Robot.isSimulation();
+  private final boolean usingKeyboard = false && Robot.isSimulation();
 
   // Subsystems
   private final Climber climber = new Climber();
@@ -164,6 +165,10 @@ public class RobotContainer {
   private void configureTestButtonBindsing() {
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getPOVButton(OI.Driver.DPAD_UP))
         .whileTrue(elevator.goUp(() -> 1.0));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
+        .whileTrue(climber.runRaw(Volts.of(3)));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
+        .whileTrue(climber.runRaw(Volts.of(-3)));
   }
 
   private void configureButtonBindings() {

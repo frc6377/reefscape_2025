@@ -126,7 +126,6 @@ public class OI extends OI_Utils {
     public static final Control X = new Control(2, null, null, keyboard1, ControlType.BUTTON);
     public static final Control C = new Control(3, null, null, keyboard1, ControlType.BUTTON);
     public static final Control V = new Control(4, null, null, keyboard1, ControlType.BUTTON);
-
     public static final Control WS =
         new Control(XboxController.Axis.kLeftX, null, keyboard1, defualtCurve);
     public static final Control AD =
@@ -137,7 +136,6 @@ public class OI extends OI_Utils {
     public static final Control Period = new Control(3, null, null, keyboard2, ControlType.BUTTON);
     public static final Control ForwardSlash =
         new Control(4, null, null, keyboard2, ControlType.BUTTON);
-
     public static final Control IK =
         new Control(XboxController.Axis.kLeftX, null, keyboard2, defualtCurve);
     public static final Control JL =

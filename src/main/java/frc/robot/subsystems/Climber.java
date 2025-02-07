@@ -11,12 +11,15 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -37,6 +40,8 @@ import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.function.BooleanSupplier;
 
 public class Climber extends SubsystemBase {
@@ -45,8 +50,9 @@ public class Climber extends SubsystemBase {
 
   private final DutyCycleEncoder climberBackEncoder;
   private TalonFX climberMotorFront;
-
+  private Orchestra climberOrchestra;
   private TalonFX climberMotorBack;
+  private FeedbackConfigs feedbackConfigs;
   private MotorOutputConfigs climberOutputConfigs;
   private TalonFXConfiguration frontConfigs;
   private TalonFXConfiguration backConfigs;
@@ -68,6 +74,7 @@ public class Climber extends SubsystemBase {
     climberBackEncoder = new DutyCycleEncoder(11);
     climberMotorFront = new TalonFX(MotorIDConstants.kCLimberMotorLeader);
     climberMotorBack = new TalonFX(MotorIDConstants.kCLimberMotorFollower);
+    feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.KGearRatio);
     climberConfigsToClimber =
         new Slot0Configs()
             .withKP(ClimberConstants.kClimberP0)
@@ -91,16 +98,20 @@ public class Climber extends SubsystemBase {
             .withSlot0(climberConfigsToClimber)
             .withSlot1(climberConfigsAtClimber)
             .withMotorOutput(
-                climberOutputConfigs.withInverted(InvertedValue.CounterClockwise_Positive));
+                climberOutputConfigs.withInverted(InvertedValue.CounterClockwise_Positive))
+            .withFeedback(feedbackConfigs);
     backConfigs =
         new TalonFXConfiguration()
             .withSlot0(climberConfigsToClimber)
             .withSlot1(climberConfigsAtClimber)
-            .withMotorOutput(climberOutputConfigs.withInverted(InvertedValue.Clockwise_Positive));
+            .withMotorOutput(climberOutputConfigs.withInverted(InvertedValue.Clockwise_Positive))
+            .withFeedback(feedbackConfigs);
     climberMotorFront.getConfigurator().apply(frontConfigs);
     climberMotorBack.getConfigurator().apply(backConfigs);
     climberMotorFront.setPosition(climberTargetAngle.in(Rotations));
-
+    climberOrchestra =
+        new Orchestra(new ArrayList<ParentDevice>(Collections.singletonList(climberMotorFront)));
+    climberOrchestra.loadMusic("music/jeopardymusic.chrp");
     // For simulation
 
     if (Robot.isSimulation()) {
@@ -149,6 +160,20 @@ public class Climber extends SubsystemBase {
     }
   }
 
+  public Command playJeopardy() {
+    return runOnce(
+        () -> {
+          climberOrchestra.play();
+        });
+  }
+
+  public Command stopJeopardy() {
+    return runOnce(
+        () -> {
+          climberOrchestra.stop();
+        });
+  }
+
   public Command zero() {
     return runOnce(
         () -> {
@@ -165,7 +190,7 @@ public class Climber extends SubsystemBase {
     return runOnce(
         () -> {
           climberMotorFront.setControl(new VoltageOut(voltage));
-          climberMotorBack.setControl(new VoltageOut(voltage.times(-1)));
+          climberMotorBack.setControl(new VoltageOut(voltage));
         });
   }
 
@@ -182,10 +207,20 @@ public class Climber extends SubsystemBase {
   }
 
   private BooleanSupplier isClimberAtPosition(Angle position) {
-    return () ->
-        position.isNear(
-            climberMotorFront.getPosition().getValue().div(ClimberConstants.KGearRatio),
-            ClimberConstants.kClimberSensorError.div(ClimberConstants.KGearRatio));
+    if (Robot.isReal()) {
+      return () ->
+          position.isNear(
+                  climberMotorFront.getPosition().getValue().div(ClimberConstants.KGearRatio),
+                  ClimberConstants.kClimberSensorError.div(ClimberConstants.KGearRatio))
+              && position.isNear(
+                  climberMotorFront.getPosition().getValue().div(ClimberConstants.KGearRatio),
+                  ClimberConstants.kClimberSensorError.div(ClimberConstants.KGearRatio));
+    } else {
+      return () ->
+          position.isNear(
+              climberMotorFront.getPosition().getValue().div(ClimberConstants.KGearRatio),
+              ClimberConstants.kClimberSensorError.div(ClimberConstants.KGearRatio));
+    }
   }
 
   public Command climb() {
@@ -222,13 +257,17 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    climbMechTargetLigament.setAngle(climberTargetAngle.in(Degrees));
+    climbMechTargetLigament.setAngle(
+        climberTargetAngle.minus(ClimberConstants.kClimberOffsetAngle).in(Degrees));
 
     getSimulator().setInputVoltage(climberMotorFront.getMotorVoltage().getValue().in(Volts));
     getSimulator().update(Robot.defaultPeriodSecs);
     climberMotorFront.setPosition(
-        Radians.of(getSimulator().getAngleRads() * ClimberConstants.KGearRatio));
-    climbMechLigament.setAngle(Radians.of(getSimulator().getAngleRads()).in(Degrees));
+        Radians.of(getSimulator().getAngleRads()));
+    climbMechLigament.setAngle(
+        Radians.of(getSimulator().getAngleRads())
+            .minus(ClimberConstants.kClimberOffsetAngle)
+            .in(Degrees));
 
     SmartDashboard.putNumber(
         "Climber Angle", Radians.of(getSimulator().getAngleRads()).in(Degrees));

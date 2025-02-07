@@ -24,12 +24,12 @@ import frc.robot.subsystems.Elevator;
 
 public final class Constants {
   public static class MotorIDConstants {
-    public static final int kCLimberMotorLeader = 12;
-    public static final int kCLimberMotorFollower = 13;
-    public static final int kScorerMotor = 9;
-    public static final int kElevatorMotor1 = 10;
-    public static final int kElevatorMotor2 = 11;
-    public static final int kIntakeMotor = 9;
+    public static final int kCLimberMotorLeader = 16;
+    public static final int kCLimberMotorFollower = 17;
+    public static final int kScorerMotor = 12;
+    public static final int kElevatorMotor1 = 13;
+    public static final int kElevatorMotor2 = 14;
+    public static final int kIntakeMotor = 15;
   }
 
   public static class ClimberConstants {
@@ -42,19 +42,20 @@ public final class Constants {
     public static final double kClimberP1 = 2;
     public static final double kClimberI1 = 0;
     public static final double kClimberD1 = 1;
-    public static final double kClimberkG1 = 0.5;
-    public static final double kClimberkV1 = 2;
+    public static final double kClimberkG1 = 2;
+    public static final double kClimberkV1 = 10;
 
     public static final double KGearRatio = 126;
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(190);
-    public static final Angle kClimberAtCageSetpoint = Degrees.of(170);
-    public static final Angle kClimberRetractedSetpoint = Degrees.of(90);
-    public static final Angle kClimberSensorError = Degrees.of(1.5);
+    public static final Angle kClimberOffsetAngle = Degrees.of(180);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(190).plus(kClimberOffsetAngle);
+    public static final Angle kClimberAtCageSetpoint = Degrees.of(170).plus(kClimberOffsetAngle);
+    public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
+    public static final Angle kClimberSensorError = Degrees.of(2.5);
     // Sim Constants
     public static final Distance kClimberArmLength = Inches.of(6);
     public static final Mass kClimberMass = Pounds.of(0.5);
-    public static final Angle kClimberArmMinAngle = Degrees.of(-30);
-    public static final Angle kClimberArmMaxAngle = Degrees.of(200);
+    public static final Angle kClimberArmMinAngle = Degrees.of(-30).plus(kClimberOffsetAngle);
+    public static final Angle kClimberArmMaxAngle = Degrees.of(200).plus(kClimberOffsetAngle);
   }
 
   public static final Mode simMode = Mode.SIM;
