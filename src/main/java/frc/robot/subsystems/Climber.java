@@ -132,8 +132,8 @@ public class Climber extends SubsystemBase {
           new SingleJointedArmSim(
               simClimberGearbox,
               ClimberConstants.KGearRatio,
-              SingleJointedArmSim.estimateMOI(
-                  ClimberConstants.kClimberArmLength.in(Meters), DrivetrainConstants.ROBOT_MASS_KG),
+              Math.pow(ClimberConstants.kClimberArmLength.in(Meters), 2)
+                  * DrivetrainConstants.ROBOT_MASS_KG,
               ClimberConstants.kClimberArmLength.in(Meters),
               ClimberConstants.kClimberArmMinAngle.in(Radians),
               ClimberConstants.kClimberArmMaxAngle.in(Radians),
@@ -198,10 +198,8 @@ public class Climber extends SubsystemBase {
     return runOnce(
         () -> {
           climberTargetAngle = position;
-          climberMotorFront.setControl(
-              new PositionVoltage(position.times(ClimberConstants.KGearRatio)).withSlot(slot));
-          climberMotorBack.setControl(
-              new PositionVoltage(position.times(ClimberConstants.KGearRatio)).withSlot(slot));
+          climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
+          climberMotorBack.setControl(new PositionVoltage(position).withSlot(slot));
           SmartDashboard.putNumber("Climber Position Setpoint", position.in(Degrees));
         });
   }
@@ -210,16 +208,13 @@ public class Climber extends SubsystemBase {
     if (Robot.isReal()) {
       return () ->
           position.isNear(
-                  climberMotorFront.getPosition().getValue().div(ClimberConstants.KGearRatio),
-                  ClimberConstants.kClimberSensorError.div(ClimberConstants.KGearRatio))
+                  climberMotorFront.getPosition().getValue(), ClimberConstants.kClimberSensorError)
               && position.isNear(
-                  climberMotorFront.getPosition().getValue().div(ClimberConstants.KGearRatio),
-                  ClimberConstants.kClimberSensorError.div(ClimberConstants.KGearRatio));
+                  climberMotorFront.getPosition().getValue(), ClimberConstants.kClimberSensorError);
     } else {
       return () ->
           position.isNear(
-              climberMotorFront.getPosition().getValue().div(ClimberConstants.KGearRatio),
-              ClimberConstants.kClimberSensorError.div(ClimberConstants.KGearRatio));
+              climberMotorFront.getPosition().getValue(), ClimberConstants.kClimberSensorError);
     }
   }
 
@@ -256,14 +251,28 @@ public class Climber extends SubsystemBase {
   }
 
   @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    SmartDashboard.putNumber(
+        "Motor Voltage Front", climberMotorFront.getMotorVoltage().getValue().in(Volts));
+    SmartDashboard.putNumber(
+        "Motor Voltage Back", climberMotorBack.getMotorVoltage().getValue().in(Volts));
+    SmartDashboard.putNumber(
+        "Climber Position Front",
+        climberMotorFront.getPosition().getValue().div(ClimberConstants.KGearRatio).in(Degrees));
+    SmartDashboard.putNumber(
+        "Climber Position Back",
+        climberMotorBack.getPosition().getValue().div(ClimberConstants.KGearRatio).in(Degrees));
+  }
+
+  @Override
   public void simulationPeriodic() {
     climbMechTargetLigament.setAngle(
         climberTargetAngle.minus(ClimberConstants.kClimberOffsetAngle).in(Degrees));
 
     getSimulator().setInputVoltage(climberMotorFront.getMotorVoltage().getValue().in(Volts));
     getSimulator().update(Robot.defaultPeriodSecs);
-    climberMotorFront.setPosition(
-        Radians.of(getSimulator().getAngleRads()));
+    climberMotorFront.setPosition(Radians.of(getSimulator().getAngleRads()));
     climbMechLigament.setAngle(
         Radians.of(getSimulator().getAngleRads())
             .minus(ClimberConstants.kClimberOffsetAngle)
@@ -280,20 +289,5 @@ public class Climber extends SubsystemBase {
         toggleClimbingSim();
       }
     }
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber(
-        "Motor Voltage Front", climberMotorFront.getMotorVoltage().getValue().in(Volts));
-    SmartDashboard.putNumber(
-        "Motor Voltage Back", climberMotorBack.getMotorVoltage().getValue().in(Volts));
-    SmartDashboard.putNumber(
-        "Climber Position Front",
-        climberMotorFront.getPosition().getValue().div(ClimberConstants.KGearRatio).in(Degrees));
-    SmartDashboard.putNumber(
-        "Climber Position Back",
-        climberMotorBack.getPosition().getValue().div(ClimberConstants.KGearRatio).in(Degrees));
   }
 }

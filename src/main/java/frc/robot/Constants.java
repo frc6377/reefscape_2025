@@ -33,16 +33,16 @@ public final class Constants {
   }
 
   public static class ClimberConstants {
-    public static final double kClimberP0 = 2;
+    public static final double kClimberP0 = 100;
     public static final double kClimberI0 = 0;
-    public static final double kClimberD0 = 1;
+    public static final double kClimberD0 = 5;
     public static final double kClimberkG0 = 0;
-    public static final double kClimberkV0 = 2;
+    public static final double kClimberkV0 = 10;
 
-    public static final double kClimberP1 = 2;
+    public static final double kClimberP1 = 100;
     public static final double kClimberI1 = 0;
-    public static final double kClimberD1 = 1;
-    public static final double kClimberkG1 = 2;
+    public static final double kClimberD1 = 5;
+    public static final double kClimberkG1 = 1;
     public static final double kClimberkV1 = 10;
 
     public static final double KGearRatio = 126;
