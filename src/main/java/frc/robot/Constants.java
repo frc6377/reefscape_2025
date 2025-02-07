@@ -112,10 +112,10 @@ public final class Constants {
 
     // Motion Magic
     public static final AngularVelocity kMotionMagicCruiseVelocity =
-        DegreesPerSecond.of(1000); // RevolutionsPerSecond.of(10);
+        DegreesPerSecond.of(300); // RevolutionsPerSecond.of(10);
     public static final AngularAcceleration kMotionMagicAcceleration =
-        kMotionMagicCruiseVelocity.times(Hertz.of(500));
-    public static final double kMotionMagicJerk = 100;
+        kMotionMagicCruiseVelocity.times(Hertz.of(5));
+    public static final double kMotionMagicJerk = 10;
 
     public static final double armZero = 0.35; // TODO: Get units for this!
 

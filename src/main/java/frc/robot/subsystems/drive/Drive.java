@@ -115,6 +115,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
+  private final SysIdRoutine sysIdTurning;
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
@@ -179,6 +180,12 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                 null, null, null, (state) -> SignalLogger.writeString("state", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+    sysIdTurning =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null, null, null, (state) -> SignalLogger.writeString("state", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> runCharacterizationTurning(voltage.in(Volts)), null, this));
 
     // Logging scored Coral
     for (String pole : Constants.kPoleLetters) scoredPoses.put(pole, new boolean[3]);
@@ -281,6 +288,12 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     }
   }
 
+  public void runCharacterizationTurning(double output) {
+    for (int i = 0; i < 4; i++) {
+      modules[i].runCharacterizationTurning(output);
+    }
+  }
+
   /** Stops the drive. */
   public void stop() {
     runVelocity(new ChassisSpeeds());
@@ -301,12 +314,17 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(6)).withTimeout(3).andThen(sysId.quasistatic(direction));
+    return run(() -> sysId.quasistatic(direction));
+  }
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return run(() -> sysId.dynamic(direction));
   }
 
-  /** Returns a command to run a dynamic test in the specified direction. */
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(6)).withTimeout(3).andThen(sysId.dynamic(direction));
+  public Command sysIdQuasistaticTurning(SysIdRoutine.Direction direction) {
+    return run(() -> sysIdTurning.quasistatic(direction));
+  }
+  public Command sysIdDynamicTurning(SysIdRoutine.Direction direction) {
+    return run(() -> sysIdTurning.dynamic(direction));
   }
 
   public Command setPoseScored(String pole, int levelIndex) {
