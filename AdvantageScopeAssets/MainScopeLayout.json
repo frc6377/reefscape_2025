@@ -33,7 +33,7 @@
           ]
         },
         "tabs": {
-          "selected": 1,
+          "selected": 2,
           "tabs": [
             {
               "type": 0,
@@ -69,7 +69,18 @@
                     }
                   }
                 ],
-                "rightSources": [],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/SmartDashboard/Intake/Pivot Motor Output",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  }
+                ],
                 "discreteSources": [],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
@@ -116,6 +127,15 @@
                     "visible": true,
                     "options": {
                       "timeRange": "full"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/TrajectorySetpoint",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#0000ff"
                     }
                   }
                 ],
@@ -233,9 +253,9 @@
                 "cameraIndex": -2,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -0.06905356266718526,
-                  0.6709489105095383,
-                  1.9356823520897461
+                  1.1164746933102532,
+                  5.646841828021415,
+                  5.276147668987857
                 ],
                 "cameraTarget": [
                   0,
