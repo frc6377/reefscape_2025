@@ -141,7 +141,7 @@ public final class Constants {
 
     // Simulation Constants
     public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60(2);
-    public static final double elevatorOutput = .30;
+    public static final double elevatorOutput = .10;
     public static final double kElevatorGearing = 1.0;
     public static final Mass kCarriageMass = Pounds.of(4.75);
     public static final Distance kElevatorDrumRadius = Inches.of(.75 / 2);

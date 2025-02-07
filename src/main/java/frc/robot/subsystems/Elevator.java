@@ -56,7 +56,7 @@ public class Elevator extends SubsystemBase {
   private final VoltageOut m_voltReq;
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
-      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
+      new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
   private static Mechanism2d mech = new Mechanism2d(2, 2);
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
@@ -195,7 +195,7 @@ public class Elevator extends SubsystemBase {
     // Simulation
     if (Robot.isSimulation()) {
       simElvMotor1 = elevatorMotor1.getSimState();
-      simElvMotor1.Orientation = ChassisReference.Clockwise_Positive;
+      simElvMotor1.Orientation = ChassisReference.CounterClockwise_Positive;
       simGear3 = new DutyCycleEncoderSim(gear3);
       simGear11 = new DutyCycleEncoderSim(gear11);
 
@@ -239,7 +239,7 @@ public class Elevator extends SubsystemBase {
     double Pos3 = gear3.get() * gear1Toothing;
     double Pos11 = gear11.get() * gear2Toothing;
     return Rotations.of(
-        Constants.ElevatorConstants.CRTA[(int) (Pos3)][(int) (Pos11)] + Pos3 - (int) Pos3);
+        Constants.ElevatorConstants.CRTA[(int) (Pos3 - 1)][(int) (Pos11 - 1)] + Pos3 - (int) Pos3);
   }
 
   public static AngularVelocity heightToRotations(LinearVelocity vel) {
