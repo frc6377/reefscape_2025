@@ -117,7 +117,7 @@ public final class Constants {
     public static final double I = 0.04;
     public static final double D = 0.02;
     public static final double FF = 0.0;
-    public static final Distance kBottomLimit = Inches.of(9);
+    public static final Distance kBottomLimit = Inches.of(0);
     public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;
 
