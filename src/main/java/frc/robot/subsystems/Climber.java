@@ -36,9 +36,9 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.Constants.MotorIDConstants;
 import frc.robot.Robot;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,8 +72,8 @@ public class Climber extends SubsystemBase {
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
     climberFrontEncoder = new DutyCycleEncoder(10);
     climberBackEncoder = new DutyCycleEncoder(11);
-    climberMotorFront = new TalonFX(MotorIDConstants.kCLimberMotorLeader);
-    climberMotorBack = new TalonFX(MotorIDConstants.kCLimberMotorFollower);
+    climberMotorFront = new TalonFX(CANIDs.kClimberMotorFront);
+    climberMotorBack = new TalonFX(CANIDs.kClimberMotorBack);
     feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.KGearRatio);
     climberConfigsToClimber =
         new Slot0Configs()

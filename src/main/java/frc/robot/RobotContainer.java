@@ -30,17 +30,20 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import utilities.TOFSensorSimple;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -61,6 +64,8 @@ public class RobotContainer {
 
   private final Drive drive;
   private final Vision vision;
+  private TOFSensorSimple sensor;
+  private final IntakeSubsystem intake = new IntakeSubsystem();
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
 
@@ -148,6 +153,14 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Elevator SysID (Quasistatic Forward)", elevator.sysIdQuasistatic(Direction.kForward));
+    autoChooser.addOption(
+        "Elevator SysID (Quasistatic Reverse)", elevator.sysIdQuasistatic(Direction.kReverse));
+    autoChooser.addOption(
+        "Elevator SysID (Dynamic Forward)", elevator.sysIdDynamic(Direction.kForward));
+    autoChooser.addOption(
+        "Elevator SysID (Dynamic Reverse)", elevator.sysIdDynamic(Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -164,7 +177,25 @@ public class RobotContainer {
 
   private void configureTestButtonBindsing() {
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getPOVButton(OI.Driver.DPAD_UP))
-        .whileTrue(elevator.goUp(() -> 1.0));
+        .whileTrue(
+            usingKeyboard
+                ? elevator.goUp(() -> 1.0)
+                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getPOVButton(OI.Driver.DPAD_DOWN))
+        .whileTrue(
+            usingKeyboard
+                ? elevator.goDown(() -> 1.0)
+                : elevator.goDown(OI.getAxisSupplier(OI.Driver.RightY)));
+    testTrig(OI.getPOVButton(OI.Driver.DPAD_RIGHT)).whileTrue(intake.intakeCommand());
+    testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
+    testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
+    testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
+    testTrig(OI.getPOVButton(OI.Operator.DPAD_UP)).whileTrue(intake.intakeAndConveyorCommandSafe());
+    testTrig(OI.getPOVButton(OI.Operator.DPAD_DOWN))
+        .whileTrue(intake.intakeAndConveyorCommandScoreL1());
+    testTrig(OI.getButton(OI.Driver.A)).onTrue(intake.seedEncoder());
+    testTrig(OI.getButton(OI.Driver.X)).whileTrue(intake.extendPivotCommand());
+    testTrig(OI.getButton(OI.Driver.Y)).whileTrue(intake.retractPivotCommand());
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
         .whileTrue(climber.runRaw(Volts.of(3)));
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
@@ -172,6 +203,30 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+
+    // Set the intake rollers to the left and right triggers
+    OI.getPOVButton(OI.Driver.DPAD_UP)
+        .and(OI.getButton(OI.Driver.RBumper).negate())
+        .whileTrue(intake.intakeToBirdhouse());
+    OI.getPOVButton(OI.Driver.DPAD_UP)
+        .and(intake.getBeamBroken().negate())
+        .whileTrue(coralScorer.scoreClockWise());
+    OI.getPOVButton(OI.Driver.DPAD_DOWN)
+        .and(OI.getButton(OI.Driver.RBumper).negate())
+        .whileTrue(intake.ejectFromBirdhouse());
+    // intake.setDefaultCommand(intake.retractPivotCommand());
+
+    // Set the intake rollers to the left and right triggers
+    OI.getPOVButton(OI.Driver.DPAD_UP)
+        .and(OI.getButton(OI.Driver.RBumper).negate())
+        .whileTrue(intake.intakeToBirdhouse());
+    OI.getPOVButton(OI.Driver.DPAD_UP)
+        .and(intake.getBeamBroken().negate())
+        .whileTrue(coralScorer.scoreClockWise());
+    OI.getPOVButton(OI.Driver.DPAD_DOWN)
+        .and(OI.getButton(OI.Driver.RBumper).negate())
+        .whileTrue(intake.ejectFromBirdhouse());
+    // intake.setDefaultCommand(intake.retractPivotCommand());
 
     OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
     OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
@@ -181,11 +236,6 @@ public class RobotContainer {
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
-    OI.getButton(usingKeyboard ? OI.Keyboard.Comma : OI.Driver.DPAD_DOWN)
-        .whileTrue(
-            usingKeyboard
-                ? elevator.goDown(() -> 1.0)
-                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
 
     SmartDashboard.putData(elevator.limitHit());
 
