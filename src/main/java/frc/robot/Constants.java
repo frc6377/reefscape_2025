@@ -91,7 +91,7 @@ public final class Constants {
     public static final Angle kl1 = Degrees.of(75.5);
     public static final Angle kalgae = Degrees.of(44.5);
     public static final Angle kPivotTolerance = Degrees.of(3);
-    public static final double kPivotP = 200.0;
+    public static final double kPivotP = 100.0;
     public static final double kPivotI = 0.0;
     public static final double kPivotD = 0.0;
     public static final double kPivotG = 0.0;
@@ -111,8 +111,7 @@ public final class Constants {
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
 
     // Motion Magic
-    public static final AngularVelocity kMotionMagicCruiseVelocity =
-        DegreesPerSecond.of(300); // RevolutionsPerSecond.of(10);
+    public static final AngularVelocity kMotionMagicCruiseVelocity = DegreesPerSecond.of(325);
     public static final AngularAcceleration kMotionMagicAcceleration =
         kMotionMagicCruiseVelocity.times(Hertz.of(5));
     public static final double kMotionMagicJerk = 10;
@@ -180,7 +179,7 @@ public final class Constants {
 
   public final class DrivetrainConstants {
     // PathPlanner config constants
-    public static final double ROBOT_MASS_KG = 54.431;
+    public static final double ROBOT_MASS_KG = 34.2462254;
     public static final double ROBOT_MOI = 4.682;
     public static final double WHEEL_COF = 1.2;
 
@@ -218,7 +217,7 @@ public final class Constants {
             Meters.of(0.191591),
             Meters.of(0.091696),
             Meters.of(0.242354),
-            new Rotation3d(Degrees.of(-90), Degrees.of(190), Degrees.of(180)));
+            new Rotation3d(Degrees.of(0), Degrees.of(260), Degrees.of(0)));
 
     public static final Pose3d kElvStage1Pose =
         new Pose3d(Meters.of(-0.0635), Meters.of(-0.236449), Meters.of(0.1016), new Rotation3d());
