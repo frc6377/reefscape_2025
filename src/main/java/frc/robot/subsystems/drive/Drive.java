@@ -316,6 +316,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return run(() -> sysId.quasistatic(direction));
   }
+
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return run(() -> sysId.dynamic(direction));
   }
@@ -323,6 +324,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   public Command sysIdQuasistaticTurning(SysIdRoutine.Direction direction) {
     return run(() -> sysIdTurning.quasistatic(direction));
   }
+
   public Command sysIdDynamicTurning(SysIdRoutine.Direction direction) {
     return run(() -> sysIdTurning.dynamic(direction));
   }
