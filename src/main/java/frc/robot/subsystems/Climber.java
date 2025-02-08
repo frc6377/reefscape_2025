@@ -48,6 +48,7 @@ import java.util.function.BooleanSupplier;
 public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
   private final DutyCycleEncoder climberFrontEncoder;
+
   private final DutyCycleEncoder climberBackEncoder;
   private TalonFX climberMotorFront;
   private Orchestra climberOrchestra;
@@ -59,7 +60,7 @@ public class Climber extends SubsystemBase {
   private Angle climberTargetAngle;
   private Slot0Configs climberConfigsToClimber;
   private Slot1Configs climberConfigsAtClimber;
-  
+
   // for simulation
   private DCMotor simClimberGearbox;
   private SingleJointedArmSim climberSimNormal;
@@ -216,9 +217,11 @@ public class Climber extends SubsystemBase {
     if (Robot.isReal()) {
       return () ->
           position.isNear(
-                  climberMotorFront.getPosition().getValue(), ClimberConstants.kClimberSensorTolerance)
+                  climberMotorFront.getPosition().getValue(),
+                  ClimberConstants.kClimberSensorTolerance)
               && position.isNear(
-                  climberMotorFront.getPosition().getValue(), ClimberConstants.kClimberSensorTolerance);
+                  climberMotorFront.getPosition().getValue(),
+                  ClimberConstants.kClimberSensorTolerance);
     } else {
       return () ->
           position.isNear(
@@ -232,6 +235,7 @@ public class Climber extends SubsystemBase {
         Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberAtCageSetpoint)),
         runClimber(ClimberConstants.kClimberExtendedSetpoint, 1));
   }
+
   public Command extendToCage() {
     return runClimber(ClimberConstants.kClimberAtCageSetpoint, 0)
         .andThen(Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberAtCageSetpoint)));
@@ -280,6 +284,7 @@ public class Climber extends SubsystemBase {
         "Climber Position Back",
         climberMotorBack.getPosition().getValue().div(ClimberConstants.kGearRatio).in(Degrees));
   }
+
   @Override
   public void simulationPeriodic() {
     climbMechTargetLigament.setAngle(
@@ -294,8 +299,7 @@ public class Climber extends SubsystemBase {
             .minus(ClimberConstants.kClimberOffsetAngle)
             .in(Degrees));
 
-    SmartDashboard.putNumber(
-        "Climber Angle", Radians.of(simulator.getAngleRads()).in(Degrees));
+    SmartDashboard.putNumber("Climber Angle", Radians.of(simulator.getAngleRads()).in(Degrees));
     if (climbMechLigament1.getAngle() > ClimberConstants.kClimberAtCageSetpoint.in(Degrees)) {
       if (simulator == climberSimNormal) {
         toggleClimbingSim();
