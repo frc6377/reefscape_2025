@@ -52,7 +52,11 @@ public final class Constants {
     public static final int kIntakeMotor = 13;
     public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
-    public static final int kConveyorSensor = 18; // FIXME: Change to correct ID -> 1
+
+    public static final int kScorerTOFID1 = 1;
+    public static final int kIntakeTOFID2 = 2;
+    public static final int kIntakeTOFID3 = 3;
+    public static final int kIntakeTOFID4 = 4;
   }
 
   public static class DIOConstants {
@@ -69,6 +73,7 @@ public final class Constants {
   // Intake Constants
   public static class IntakeConstants {
     public static final double kIntakeSpeed = -1;
+    public static final double kIntakeHandoffSpeed = 0.8;
     public static final double kConveyorSpeed = 0.8;
     public static final double kPivotSpeed = 0.2;
     public static final Angle kPivotRetractAngle = Degrees.of(129.28); // FIXME: Put actual value

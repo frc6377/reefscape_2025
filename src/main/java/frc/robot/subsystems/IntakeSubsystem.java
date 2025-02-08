@@ -81,7 +81,7 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
     conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);
-    sensor = new TOFSensorSimple(CANIDs.kConveyorSensor, Inches.of(1), TOFType.LASER_CAN);
+    sensor = new TOFSensorSimple(CANIDs.kIntakeTOFID2, Inches.of(1), TOFType.LASER_CAN);
     throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero);
 
     var slot0Configs = new Slot0Configs();
@@ -133,7 +133,7 @@ public class IntakeSubsystem extends SubsystemBase {
       if (widget == null) {
         widget = Shuffleboard.getTab(getName()).add("Pivot Arm", mech);
       }
-      simSensor = new SimDeviceSim("TOF", CANIDs.kConveyorSensor);
+      simSensor = new SimDeviceSim("TOF", CANIDs.kIntakeTOFID2);
       simbeam = simSensor.getBoolean("BeamBroken");
     }
   }
@@ -158,8 +158,63 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.set(speed);
   }
 
+  private void setPivotAngle(Angle setPoint) {
+    pivotMotor.setControl(new MotionMagicVoltage(kPivotExtendAngle));
+    pivotSetpoint = kPivotExtendAngle;
+  }
+
   public Angle getPivotPosition() {
     return pivotMotor.getPosition().getValue();
+  }
+
+  // Pivot and Intake
+  public Command intakePivotIntakeCommand() {
+    return runEnd(
+        () -> {
+          setPivotAngle(kPivotExtendAngle);
+          setIntakeMotor(kIntakeSpeed);
+        },
+        () -> {
+          setPivotAngle(kPivotRetractAngle);
+          setIntakeMotor(0);
+        });
+  }
+
+  public Command intakePivotOutakeCommand() {
+    return runEnd(
+        () -> {
+          setPivotAngle(kPivotExtendAngle);
+          setIntakeMotor(-kIntakeSpeed);
+        },
+        () -> {
+          setPivotAngle(kPivotRetractAngle);
+          setIntakeMotor(0);
+        });
+  }
+
+  // Belt Commands
+  public Command conveyerInCommand() {
+    return runEnd(
+        () -> {
+          setConveyerMotor(-kConveyorSpeed);
+          setIntakeMotor(kIntakeHandoffSpeed);
+        },
+        () -> {
+          setConveyerMotor(0);
+          setIntakeMotor(0);
+        });
+  }
+
+  public Command conveyerOutCommand() {
+    return runEnd(
+        () -> {
+          setConveyerMotor(kConveyorSpeed);
+          setIntakeMotor(kIntakeHandoffSpeed);
+        },
+        () -> {
+          setConveyerMotor(0);
+          setIntakeMotor(0);
+        });
   }
 
   /** Pivot down */
@@ -207,30 +262,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command conveyorEject() {
     return startEnd(() -> setConveyerMotor(kConveyorSpeed), () -> setConveyerMotor(0));
-  }
-
-  public Command intakeAndConveyorCommandSafe() {
-    return runEnd(
-        () -> {
-          setConveyerMotor(-kConveyorSpeed);
-          setIntakeMotor(kIntakeSpeed);
-        },
-        () -> {
-          setConveyerMotor(0);
-          setIntakeMotor(0);
-        });
-  }
-
-  public Command intakeAndConveyorCommandScoreL1() {
-    return runEnd(
-        () -> {
-          setConveyerMotor(kConveyorSpeed);
-          setIntakeMotor(kIntakeSpeed);
-        },
-        () -> {
-          setConveyerMotor(0);
-          setIntakeMotor(0);
-        });
   }
 
   public Command intakeToBirdhousePhase1() {

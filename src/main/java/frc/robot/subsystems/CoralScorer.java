@@ -4,30 +4,42 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
 import static frc.robot.Constants.CoralScorerConstants.*;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
+import utilities.TOFSensorSimple;
+import utilities.TOFSensorSimple.TOFType;
 
 public class CoralScorer extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
   private TalonFX scorerMotor;
 
+  private TOFSensorSimple TOFSensor;
+
   public CoralScorer() {
     scorerMotor = new TalonFX(CANIDs.kScorerMotor, Constants.RIOName);
+
+    TOFSensor = new TOFSensorSimple(1, Inches.of(1), TOFType.LASER_CAN);
+  }
+
+  public Trigger hasCoral() {
+    return TOFSensor.beamBroken();
   }
 
   // Made a command to spin clockwise
-  public Command scoreClockWise() {
+  public Command scoreCommand() {
     return startEnd(() -> scorerMotor.set(-kSpeed), () -> scorerMotor.set(0));
   }
 
   // Made a command to spin counter clockwise
-  public Command scoreCounterClockWise() {
+  public Command reverseCommand() {
     return startEnd(() -> scorerMotor.set(kSpeed), () -> scorerMotor.set(0));
   }
 
