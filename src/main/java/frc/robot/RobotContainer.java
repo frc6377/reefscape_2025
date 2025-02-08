@@ -200,6 +200,8 @@ public class RobotContainer {
         .whileTrue(climber.runRaw(Volts.of(3)));
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
         .whileTrue(climber.runRaw(Volts.of(-3)));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
+        .onTrue(climber.toggleJeopardy());
   }
 
   private void configureButtonBindings() {

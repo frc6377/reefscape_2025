@@ -147,8 +147,8 @@ public class Climber extends SubsystemBase {
               ClimberConstants.kClimberRetractedSetpoint.in(Radians));
 
       climbMech = new Mechanism2d(4, 2);
-      climbMechRoot1 = climbMech.getRoot("Climb Mech root", 1, 1);
-      climbMechRoot2 = climbMech.getRoot("Climb Mech root 2", 3, 1);
+      climbMechRoot1 = climbMech.getRoot("Climb Mech root", 3, 1);
+      climbMechRoot2 = climbMech.getRoot("Climb Mech root 2", 1, 1);
       climbMechLigament1 =
           climbMechRoot1.append(
               new MechanismLigament2d(
@@ -184,6 +184,17 @@ public class Climber extends SubsystemBase {
     return runOnce(
         () -> {
           climberOrchestra.stop();
+        });
+  }
+
+  public Command toggleJeopardy() {
+    return runOnce(
+        () -> {
+          if (climberOrchestra.isPlaying()) {
+            climberOrchestra.stop();
+          } else {
+            climberOrchestra.play();
+          }
         });
   }
 
@@ -257,6 +268,24 @@ public class Climber extends SubsystemBase {
     }
   }
 
+  public void toggleClimb() {
+    if (Robot.isSimulation()) {
+      toggleClimbingSim();
+    } else {
+      // Implement real robot behavior for toggling climb state
+      if (isClimbingStateSim) {
+        climberMotorFront.getConfigurator().apply(frontConfigs.withSlot0(climberConfigsToClimber));
+        climberMotorBack.getConfigurator().apply(backConfigs.withSlot0(climberConfigsToClimber));
+        isClimbingStateSim = false;
+      } else {
+        climberMotorFront.getConfigurator().apply(frontConfigs.withSlot1(climberConfigsAtClimber));
+        climberMotorBack.getConfigurator().apply(backConfigs.withSlot1(climberConfigsAtClimber));
+        isClimbingStateSim = true;
+      }
+      SmartDashboard.putBoolean("Climbing", isClimbingStateSim);
+    }
+  }
+
   private void toggleClimbingSim() {
     if (isClimbingStateSim) {
       climberSimNormal.setState(
@@ -298,15 +327,21 @@ public class Climber extends SubsystemBase {
         Radians.of(simulator.getAngleRads())
             .minus(ClimberConstants.kClimberOffsetAngle)
             .in(Degrees));
+    climbMechLigament2.setAngle(
+        Radians.of(simulator.getAngleRads())
+            .minus(ClimberConstants.kClimberOffsetAngle)
+            .times(-1)
+            .plus(Degrees.of(180))
+            .in(Degrees));
 
     SmartDashboard.putNumber("Climber Angle", Radians.of(simulator.getAngleRads()).in(Degrees));
     if (climbMechLigament1.getAngle() > ClimberConstants.kClimberAtCageSetpoint.in(Degrees)) {
       if (simulator == climberSimNormal) {
-        toggleClimbingSim();
+        toggleClimb();
       }
     } else {
       if (simulator == climberSimLifting) {
-        toggleClimbingSim();
+        toggleClimb();
       }
     }
   }
