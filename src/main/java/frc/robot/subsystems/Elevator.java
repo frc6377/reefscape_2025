@@ -42,6 +42,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import utilities.TunableNumber;
 
+@SuppressWarnings("unused")
 public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor1;
   private TalonFXSimState simElvMotor1;
@@ -238,7 +239,7 @@ public class Elevator extends SubsystemBase {
     double Pos3 = gear3.get() * gear1Toothing;
     double Pos11 = gear11.get() * gear2Toothing;
     return Rotations.of(
-        Constants.ElevatorConstants.CRTA[(int) (Pos3 - 1)][(int) (Pos11 - 1)] + Pos3 - (int) Pos3);
+        Constants.ElevatorConstants.CRTA[(int) (Pos3)][(int) (Pos11)] + Pos3 - (int) Pos3);
   }
 
   public static AngularVelocity heightToRotations(LinearVelocity vel) {
