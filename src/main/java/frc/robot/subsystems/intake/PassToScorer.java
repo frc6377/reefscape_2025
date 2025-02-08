@@ -11,8 +11,6 @@ import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.subsystems.CoralScorer;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 

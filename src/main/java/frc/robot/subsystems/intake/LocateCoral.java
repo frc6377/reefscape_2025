@@ -11,7 +11,6 @@ import static frc.robot.Constants.IntakeConstants.kcoralStation;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
-import frc.robot.subsystems.CoralScorer;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -21,20 +20,15 @@ public class LocateCoral extends Command {
   private Supplier<CoralEnum> state;
   private IntakeSubsystem intakeSubsystem;
   private BooleanSupplier elevatorNotL1;
-  private CoralScorer coralScorer;
 
   /** Creates a new LocateCoral. */
   public LocateCoral(
-      Supplier<CoralEnum> state,
-      IntakeSubsystem subsystem,
-      BooleanSupplier elevatorNotL1,
-      CoralScorer coralScorer) {
+      Supplier<CoralEnum> state, IntakeSubsystem subsystem, BooleanSupplier elevatorNotL1) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
     this.state = state;
     this.intakeSubsystem = subsystem;
     this.elevatorNotL1 = elevatorNotL1;
-    this.coralScorer = coralScorer;
   }
 
   // Called when the command is initially scheduled.
@@ -81,5 +75,14 @@ public class LocateCoral extends Command {
   @Override
   public boolean isFinished() {
     return state.get() == CoralEnum.DONE && intakeSubsystem.atSetpoint(kPivotRetractAngle);
+  }
+
+  @Override
+  public InterruptionBehavior getInterruptionBehavior() {
+    if (state.get() == CoralEnum.CORAL_TOO_CLOSE || state.get() == CoralEnum.CORAL_TOO_FAR) {
+      return InterruptionBehavior.kCancelIncoming;
+    } else {
+      return InterruptionBehavior.kCancelSelf;
+    }
   }
 }
