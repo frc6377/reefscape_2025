@@ -62,7 +62,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private final IntakeSubsystem intake = new IntakeSubsystem();
+  private final IntakeSubsystem intake;
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
   private MapleSimArenaSubsystem mapleSimArenaSubsystem;
