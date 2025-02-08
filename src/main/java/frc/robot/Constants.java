@@ -218,13 +218,5 @@ public final class Constants {
     public static final int kSensor3ID = 1;
     public static final int kSensor4ID = 2;
     public static final int kScorerSensorID = 3;
-
-    public static enum CoralEnum{
-        DONE,
-        CORAL_TOO_FAR,
-        CORAL_TOO_CLOSE,
-        NO_CORAL,
-        IN_ELEVATOR
-    }
   }
 }

@@ -137,6 +137,10 @@ public class IntakeSubsystem extends SubsystemBase {
     }
   }
 
+  public void elevatorMode(){
+    
+  }
+
   public Trigger getBeamBroken() {
     return sensor.beamBroken();
   }

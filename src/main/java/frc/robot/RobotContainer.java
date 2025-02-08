@@ -35,6 +35,7 @@ import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -197,6 +198,10 @@ public class RobotContainer {
     //     .and(OI.getButton(OI.Driver.RBumper).negate())
     //     .whileTrue(intake.intakeToBirdhouse());
     OI.getPOVButton(OI.Driver.DPAD_UP).whileTrue(coralScorer.scoreClockWise());
+    OI.getButton(OI.Driver.X).whileTrue(null);
+    OI.getButton(OI.Driver.RBumper).whileTrue(intake.intakeCommand());
+    OI.getButton(OI.Driver.LBumper).whileTrue(intake.outtakeCommand());
+
     // OI.getPOVButton(OI.Driver.DPAD_DOWN)
     //     .and(OI.getButton(OI.Driver.RBumper).negate())
     //     .whileTrue(intake.ejectFromBirdhouse());
