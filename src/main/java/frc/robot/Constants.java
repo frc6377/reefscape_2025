@@ -14,6 +14,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -90,6 +92,9 @@ public final class Constants {
     public static final Angle kClimberAtCageSetpoint = Degrees.of(170).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
     public static final Angle kClimberSensorTolerance = Degrees.of(2.5);
+    public static final Angle kExpectedStartAngle = Degrees.of(90);
+    public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
     // Sim Constants
     public static final int KClimberMotorsCount = 2;
     public static final Distance kClimberArmLength = Inches.of(6);

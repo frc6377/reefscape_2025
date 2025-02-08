@@ -75,8 +75,8 @@ public class Climber extends SubsystemBase {
 
   public Climber() {
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
-    climberFrontEncoder = new DutyCycleEncoder(DIOConstants.kClimberFrontEncoderID, 1, 0.25);
-    climberBackEncoder = new DutyCycleEncoder(DIOConstants.kClimberBackEncoderID, 1, 0.25);
+    climberFrontEncoder = new DutyCycleEncoder(DIOConstants.kClimberFrontEncoderID, 1, ClimberConstants.kExpectedStartAngle.in(Rotations));
+    climberBackEncoder = new DutyCycleEncoder(DIOConstants.kClimberBackEncoderID, 1, ClimberConstants.kExpectedStartAngle.in(Rotations));
     climberMotorFront = new TalonFX(CANIDs.kClimberMotorFront);
     climberMotorBack = new TalonFX(CANIDs.kClimberMotorBack);
     feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.kGearRatio);
@@ -103,17 +103,18 @@ public class Climber extends SubsystemBase {
             .withSlot0(climberConfigsToClimber)
             .withSlot1(climberConfigsAtClimber)
             .withMotorOutput(
-                climberOutputConfigs.withInverted(InvertedValue.CounterClockwise_Positive))
+                climberOutputConfigs.withInverted(ClimberConstants.kClimberFrontInvert))
             .withFeedback(feedbackConfigs);
     backConfigs =
         new TalonFXConfiguration()
             .withSlot0(climberConfigsToClimber)
             .withSlot1(climberConfigsAtClimber)
-            .withMotorOutput(climberOutputConfigs.withInverted(InvertedValue.Clockwise_Positive))
+            .withMotorOutput(climberOutputConfigs.withInverted(ClimberConstants.kClimberBackInvert))
             .withFeedback(feedbackConfigs);
     climberMotorFront.getConfigurator().apply(frontConfigs);
     climberMotorBack.getConfigurator().apply(backConfigs);
     climberMotorFront.setPosition(climberTargetAngle.in(Rotations));
+    climberMotorBack.setPosition(climberTargetAngle.in(Rotations));
     climberOrchestra =
         new Orchestra(new ArrayList<ParentDevice>(Collections.singletonList(climberMotorFront)));
     climberOrchestra.loadMusic("music/jeopardymusic.chrp");
@@ -201,8 +202,8 @@ public class Climber extends SubsystemBase {
   public Command zero() {
     return runOnce(
         () -> {
-          climberMotorFront.setPosition(climberFrontEncoder.get() + 0.25);
-          climberMotorBack.setPosition(climberBackEncoder.get() + 0.25);
+          climberMotorFront.setPosition(climberFrontEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations)+ClimberConstants.kExpectedStartAngle.in(Rotations));
+          climberMotorBack.setPosition(climberBackEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations)+ClimberConstants.kExpectedStartAngle.in(Rotations));
         });
   }
 
