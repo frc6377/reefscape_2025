@@ -193,7 +193,6 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-
     // Set the intake rollers to the left and right triggers
     // OI.getPOVButton(OI.Driver.DPAD_UP)
     //     .and(OI.getButton(OI.Driver.RBumper).negate())
@@ -235,7 +234,7 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.AD : OI.Driver.LeftY).get(),
+            () -> -OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.AD : OI.Driver.LeftY).get(),
             () -> OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.WS : OI.Driver.LeftX).get(),
             () ->
                 OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.ArrowLeftRight : OI.Driver.RightX)
