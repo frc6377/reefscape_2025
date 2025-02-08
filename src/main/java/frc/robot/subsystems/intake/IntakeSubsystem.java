@@ -34,11 +34,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
+import frc.robot.Constants.SensorIDs;
 import frc.robot.Robot;
 import org.littletonrobotics.junction.Logger;
 import utilities.DebugEntry;
 import utilities.TOFSensorSimple;
-import utilities.TOFSensorSimple.TOFType;
 
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
@@ -88,7 +88,6 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
     conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);
-    sensor = new TOFSensorSimple(CANIDs.kIntakeTOFID2, Inches.of(1), TOFType.LASER_CAN);
     throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero);
 
     var slot0Configs = new Slot0Configs();
@@ -142,7 +141,7 @@ public class IntakeSubsystem extends SubsystemBase {
       if (widget == null) {
         widget = Shuffleboard.getTab(getName()).add("Pivot Arm", mech);
       }
-      simSensor = new SimDeviceSim("TOF", CANIDs.kIntakeTOFID2);
+      simSensor = new SimDeviceSim("TOF", SensorIDs.kScorerSensorID);
       simbeam = simSensor.getBoolean("BeamBroken");
     }
   }

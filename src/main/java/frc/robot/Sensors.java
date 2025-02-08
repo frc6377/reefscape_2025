@@ -10,13 +10,13 @@ import utilities.TOFSensorSimple.TOFType;
 
 public class Sensors {
   private TOFSensorSimple sensor2 =
-      new TOFSensorSimple(kSensor2ID, Inches.of(1), TOFType.LASER_CAN);
+      new TOFSensorSimple(kSensor2ID, Inches.of(2.5), TOFType.LASER_CAN);
   private TOFSensorSimple sensor3 =
-      new TOFSensorSimple(kSensor3ID, Inches.of(1), TOFType.LASER_CAN);
+      new TOFSensorSimple(kSensor3ID, Inches.of(2.5), TOFType.LASER_CAN);
   private TOFSensorSimple sensor4 =
-      new TOFSensorSimple(kSensor4ID, Inches.of(1), TOFType.LASER_CAN);
+      new TOFSensorSimple(kSensor4ID, Inches.of(2.5), TOFType.LASER_CAN);
   private TOFSensorSimple scorerSensor =
-      new TOFSensorSimple(kScorerSensorID, Inches.of(1), TOFType.LASER_CAN);
+      new TOFSensorSimple(kScorerSensorID, Inches.of(2.5), TOFType.LASER_CAN);
 
   public CoralEnum simState = CoralEnum.NO_CORAL;
 
