@@ -68,15 +68,16 @@ public final class Constants {
   // Scorer Constants
   public static class CoralScorerConstants {
     public static final double kSpeed = 0.5;
+    public static final double kIntakeSpeed = 1;
   }
 
   // Intake Constants
   public static class IntakeConstants {
     public static final double kIntakeSpeed = -1;
-    public static final double kIntakeHandoffSpeed = 0.8;
-    public static final double kConveyorSpeed = 0.8;
+    public static final double kIntakeHandoffSpeed = -1;
+    public static final double kConveyorSpeed = 0.5;
     public static final double kPivotSpeed = 0.2;
-    public static final Angle kPivotRetractAngle = Degrees.of(129.28); // FIXME: Put actual value
+    public static final Angle kPivotRetractAngle = Degrees.of(129);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
     public static final Angle kcoralStation = Degrees.of(101);
     public static final Angle kl1 = Degrees.of(75.5);
@@ -98,11 +99,10 @@ public final class Constants {
     public static final MomentOfInertia kMOI =
         KilogramSquareMeters.of(
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
-    public static final AngularVelocity kMotionMagicCruiseVelocity =
-        DegreesPerSecond.of(30); // RevolutionsPerSecond.of(10);
+    public static final AngularVelocity kMotionMagicCruiseVelocity = DegreesPerSecond.of(450);
     public static final AngularAcceleration kMotionMagicAcceleration =
         kMotionMagicCruiseVelocity.times(Hertz.of(5));
-    public static final double kMotionMagicJerk = 10.0;
+    public static final double kMotionMagicJerk = 80.0;
 
     public static final double armZero = 0.35;
   }
@@ -154,7 +154,7 @@ public final class Constants {
     public static final Distance kMaxElevatorHeight = Inches.of(72);
     public static final Distance kElevatorDrumCircumference =
         kElevatorDrumRadius.times(2 * Math.PI);
-    public static final AngularVelocity MMVel = Elevator.heightToRotations(InchesPerSecond.of(60));
+    public static final AngularVelocity MMVel = Elevator.heightToRotations(InchesPerSecond.of(100));
     public static final AngularAcceleration MMAcc = MMVel.times(Hertz.of(5));
     public static final Velocity<AngularAccelerationUnit> MMJerk =
         RotationsPerSecondPerSecond.per(Second).of(MMAcc.in(RotationsPerSecondPerSecond)).times(10);

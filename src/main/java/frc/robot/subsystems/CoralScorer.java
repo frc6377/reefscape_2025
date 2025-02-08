@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
+import org.littletonrobotics.junction.Logger;
 import utilities.TOFSensorSimple;
 import utilities.TOFSensorSimple.TOFType;
 
@@ -26,16 +27,20 @@ public class CoralScorer extends SubsystemBase {
   public CoralScorer() {
     scorerMotor = new TalonFX(CANIDs.kScorerMotor, Constants.RIOName);
 
-    TOFSensor = new TOFSensorSimple(1, Inches.of(1), TOFType.LASER_CAN);
+    TOFSensor = new TOFSensorSimple(1, Inches.of(2.5), TOFType.LASER_CAN);
   }
 
   public Trigger hasCoral() {
-    return TOFSensor.beamBroken();
+    return TOFSensor.beamBrokenTrigger();
   }
 
   // Made a command to spin clockwise
   public Command scoreCommand() {
     return startEnd(() -> scorerMotor.set(-kSpeed), () -> scorerMotor.set(0));
+  }
+
+  public Command intakeCommand() {
+    return startEnd(() -> scorerMotor.set(-kIntakeSpeed), () -> scorerMotor.set(0));
   }
 
   // Made a command to spin counter clockwise
@@ -47,5 +52,8 @@ public class CoralScorer extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("CoralScorer/Motor Output", scorerMotor.get());
+    Logger.recordOutput(
+        "TOFSensors/Coral Scorer Sensor Distance (Inches)", TOFSensor.getDistance().in(Inches));
+    Logger.recordOutput("TOFSensor/Coroal Scorer Bool", TOFSensor.isBeamBroke());
   }
 }

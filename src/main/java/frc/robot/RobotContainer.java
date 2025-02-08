@@ -170,21 +170,12 @@ public class RobotContainer {
   }
 
   private void configureTestButtonBindsing() {
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getPOVButton(OI.Driver.DPAD_UP))
-        .whileTrue(
-            usingKeyboard
-                ? elevator.goUp(() -> 1.0)
-                : elevator.goUp(OI.getAxisSupplier(OI.Driver.RightY)));
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getPOVButton(OI.Driver.DPAD_DOWN))
-        .whileTrue(
-            usingKeyboard
-                ? elevator.goDown(() -> 1.0)
-                : elevator.goDown(OI.getAxisSupplier(OI.Driver.RightY)));
+    testTrig(OI.getPOVButton(OI.Driver.DPAD_UP))
+        .whileTrue(elevator.setElvPercent(OI.getAxisSupplier(OI.Driver.RightY).get()));
     testTrig(OI.getPOVButton(OI.Driver.DPAD_RIGHT)).whileTrue(intake.intakeCommand());
     testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
     testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
     testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
-    testTrig(OI.getButton(OI.Driver.A)).onTrue(intake.seedEncoder());
     testTrig(OI.getButton(OI.Driver.X)).whileTrue(intake.extendPivotCommand());
     testTrig(OI.getButton(OI.Driver.Y)).whileTrue(intake.retractPivotCommand());
   }
@@ -204,7 +195,11 @@ public class RobotContainer {
 
     // Handoff Buttons
     OI.getPOVButton(OI.Driver.DPAD_RIGHT)
-        .whileTrue(intake.conveyerInCommand().onlyWhile(coralScorer.hasCoral()));
+        .whileTrue(
+            intake
+                .conveyerInCommand()
+                .alongWith(coralScorer.scoreCommand())
+                .onlyWhile(coralScorer.hasCoral().negate()));
     OI.getPOVButton(OI.Driver.DPAD_LEFT).whileTrue(intake.conveyerOutCommand());
 
     // Scorer Buttons
@@ -239,6 +234,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void seedIntakeEncoder() {
+    intake.seedEncoder();
   }
 
   public void resetSimulationField() {

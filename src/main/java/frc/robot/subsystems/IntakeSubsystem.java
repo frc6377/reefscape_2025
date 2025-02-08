@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
 import frc.robot.Robot;
+import org.littletonrobotics.junction.Logger;
 import utilities.DebugEntry;
 import utilities.TOFSensorSimple;
 import utilities.TOFSensorSimple.TOFType;
@@ -111,6 +112,8 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
 
+    pivotMotor.setPosition(throughBoreEncoder.get());
+
     if (Robot.isSimulation()) {
       simPivotMotor = pivotMotor.getSimState();
       simPivotMotor.Orientation =
@@ -139,7 +142,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Trigger getBeamBroken() {
-    return sensor.beamBroken();
+    return sensor.beamBrokenTrigger();
   }
 
   private boolean atSetpoint() {
@@ -159,8 +162,12 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   private void setPivotAngle(Angle setPoint) {
-    pivotMotor.setControl(new MotionMagicVoltage(kPivotExtendAngle));
-    pivotSetpoint = kPivotExtendAngle;
+    pivotMotor.setControl(new MotionMagicVoltage(setPoint));
+    pivotSetpoint = setPoint;
+  }
+
+  public void seedEncoder() {
+    pivotMotor.setPosition(throughBoreEncoder.get());
   }
 
   public Angle getPivotPosition() {
@@ -169,7 +176,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   // Pivot and Intake
   public Command intakePivotIntakeCommand() {
-    return runEnd(
+    return startEnd(
         () -> {
           setPivotAngle(kPivotExtendAngle);
           setIntakeMotor(kIntakeSpeed);
@@ -276,13 +283,13 @@ public class IntakeSubsystem extends SubsystemBase {
               intakeCommand().end(false);
               conveyorFeed().end(false);
             })
-        .until(sensor.beamBroken());
+        .until(sensor.beamBrokenTrigger());
   }
 
   public Command intakeToBirdhousePhase2() {
     return retractPivotCommand()
         .andThen(Commands.waitUntil(this::atSetpoint)) // FIXME: Fix debouncing if neccesary
-        .andThen(conveyorFeed().until(sensor.beamBroken().negate()));
+        .andThen(conveyorFeed().until(sensor.beamBrokenTrigger().negate()));
   }
 
   public Command intakeToBirdhouse() {
@@ -295,13 +302,6 @@ public class IntakeSubsystem extends SubsystemBase {
     return conveyorEject();
   }
 
-  public Command seedEncoder() {
-    return runOnce(
-        () -> {
-          pivotMotor.setPosition(throughBoreEncoder.get());
-        });
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -310,14 +310,19 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Intake/Conveyor Motor Output", conveyorMotor.get());
     SmartDashboard.putNumber("Intake/Pivot Setpoint", pivotSetpoint.in(Degrees));
     SmartDashboard.putNumber(
-        "Intake/Pivot Position in Rotations", pivotMotor.getPosition().getValue().in(Rotations));
-    SmartDashboard.putNumber("Intake/Absolute Encoder Position", throughBoreEncoder.get());
+        "Intake/Pivot Position (Degrees)", pivotMotor.getPosition().getValue().in(Degrees));
+    SmartDashboard.putNumber(
+        "Intake/Absolute Encoder Position (Rotation)",
+        Rotations.of(throughBoreEncoder.get()).in(Degrees));
     pivotOutput.log(pivotMotor.get());
     if (this.getCurrentCommand() != null) {
       currentCommand.log(this.getCurrentCommand().getName());
     } else {
       currentCommand.log("none");
     }
+
+    Logger.recordOutput(
+        "TOFSensors/Intake Sensor Distance (Inches)", sensor.getDistance().in(Inches));
   }
 
   public void simulationPeriodic() {
