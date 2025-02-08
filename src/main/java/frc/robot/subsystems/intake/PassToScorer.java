@@ -48,7 +48,7 @@ public class PassToScorer extends Command {
     if (elevatorNotL1.getAsBoolean() && intakeSubsystem.atSetpoint(kPivotRetractAngle)) {
       intakeSubsystem.setIntakeMotor(kIntakeSpeed);
       intakeSubsystem.setConveyerMotor(kConveyorSpeed);
-      coralScorer.scoreClockWise().initialize();
+      coralScorer.scoreCommand().initialize();
     } else {
       intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
       intakeSubsystem.setIntakeMotor(kIntakeSpeed / 5);
@@ -62,7 +62,7 @@ public class PassToScorer extends Command {
     intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
     intakeSubsystem.setIntakeMotor(0);
     intakeSubsystem.setConveyerMotor(0);
-    coralScorer.scoreClockWise().end(interrupted);
+    coralScorer.scoreCommand().end(interrupted);
   }
 
   // Returns true when the command should end.

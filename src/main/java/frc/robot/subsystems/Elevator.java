@@ -104,8 +104,8 @@ public class Elevator extends SubsystemBase {
     m_sysIdElevator =
         new SysIdRoutine(
             new SysIdRoutine.Config(
-                null, // Use default ramp rate (1 V/s)
-                Volts.of(2), // Reduce dynamic step voltage to 4 to prevent brownout
+                Volts.of(0.5).div(Seconds.of(1)), // Use default ramp rate (1 V/s)
+                Volts.of(1), // Reduce dynamic step voltage to 4 to prevent brownout
                 Seconds.of(3), // Use default timeout (10 s)
                 // Log state with Phoenix SignalLogger class
                 (state) -> SignalLogger.writeString("Elevator/SysIdState", state.toString())),
@@ -207,7 +207,7 @@ public class Elevator extends SubsystemBase {
               kElevatorDrumRadius.in(Meters),
               kMinElevatorHeight.in(Meters),
               kMaxElevatorHeight.in(Meters),
-              true,
+              false,
               0);
       elevatorMech =
           mech.getRoot("root", 1, 0)
@@ -236,10 +236,12 @@ public class Elevator extends SubsystemBase {
   }
 
   public Angle ChineseRemander() {
-    double Pos3 = gear3.get() * gear1Toothing;
-    double Pos11 = gear11.get() * gear2Toothing;
-    return Rotations.of(
-        Constants.ElevatorConstants.CRTA[(int) (Pos3)][(int) (Pos11)] + Pos3 - (int) Pos3);
+    return Rotations.zero();
+    // double Pos3 = gear3.get() * gear1Toothing;
+    // double Pos11 = gear11.get() * gear2Toothing;
+    // return Rotations.of(
+    //     Constants.ElevatorConstants.CRTA[(int) (Pos3 - 1)][(int) (Pos11 - 1)] + Pos3 - (int)
+    // Pos3);
   }
 
   public static AngularVelocity heightToRotations(LinearVelocity vel) {
@@ -261,20 +263,14 @@ public class Elevator extends SubsystemBase {
         () -> elevatorMotor1.set(0));
   }
 
-  public Command goUp(Supplier<Double> downPower) {
+  public Command setElvPercent(double percentPower) {
     return runEnd(
         () -> {
-          elevatorMotor1.set(Math.abs(downPower.get()) * elevatorOutput);
+          elevatorMotor1.set(percentPower);
         },
-        () -> elevatorMotor1.set(0));
-  }
-
-  public Command goDown(Supplier<Double> downPower) {
-    return runEnd(
         () -> {
-          elevatorMotor1.set(Math.abs(downPower.get()) * -elevatorOutput);
-        },
-        () -> elevatorMotor1.set(0));
+          elevatorMotor1.set(0);
+        });
   }
 
   private void disableSoftLimits() {
@@ -292,7 +288,7 @@ public class Elevator extends SubsystemBase {
 
   public Command limitHit() {
     return runOnce(this::disableSoftLimits)
-        .andThen(goDown(() -> 0.3).until(elvLimitSwitch::get))
+        .andThen(setElvPercent(-0.1).until(elvLimitSwitch::get))
         .andThen(zeroMotorEncoder())
         .andThen(runOnce(this::enableSoftLimits));
   }
