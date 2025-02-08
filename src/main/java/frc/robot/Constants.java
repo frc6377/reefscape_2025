@@ -204,4 +204,19 @@ public final class Constants {
           new Pose2d(Meters.of(3.684), Meters.of(5.078), new Rotation2d(-60)),
         };
   }
+
+  public static class SensorIDs {
+    public static final int kSensor2ID = 0;
+    public static final int kSensor3ID = 1;
+    public static final int kSensor4ID = 2;
+    public static final int kScorerSensorID = 3;
+
+    public static enum CoralEnum{
+        DONE,
+        CORAL_TOO_FAR,
+        CORAL_TOO_CLOSE,
+        NO_CORAL,
+        IN_ELEVATOR
+    }
+  }
 }
