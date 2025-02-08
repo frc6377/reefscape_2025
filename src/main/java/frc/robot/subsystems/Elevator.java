@@ -226,9 +226,10 @@ public class Elevator extends SubsystemBase {
   }
 
   public Angle ChineseRemander() {
-    double Pos3 = gear3.get() * gear1Toothing;
-    double Pos11 = gear11.get() * gear2Toothing;
-    return Rotations.of(ElevatorConstants.CRTA[(int) (Pos3)][(int) (Pos11)] + Pos3 - (int) Pos3);
+    return Rotations.zero();
+    // double Pos3 = gear3.get() * gear1Toothing;
+    // double Pos11 = gear11.get() * gear2Toothing;
+    // return Rotations.of(ElevatorConstants.CRTA[(int) (Pos3)][(int) (Pos11)] + Pos3 - (int) Pos3);
   }
 
   public static AngularVelocity heightToRotations(LinearVelocity vel) {

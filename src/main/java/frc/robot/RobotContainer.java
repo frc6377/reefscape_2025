@@ -261,6 +261,10 @@ public class RobotContainer {
 
       OI.getButton(OI.Keyboard.M)
           .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose(), Set.of(drive)));
+
+      mapleSimArenaSubsystem
+          .canScore()
+          .whileTrue(Commands.runEnd(() -> OI.Driver.setRumble(1), () -> OI.Driver.setRumble(0)));
     } else {
       OI.getButton(OI.Driver.X).onTrue(elevator.L0());
       OI.getButton(OI.Driver.Back).onTrue(elevator.L1());
@@ -314,10 +318,6 @@ public class RobotContainer {
             .onFalse(drive.setPoseScored(Constants.kPoleLetters[i + 6], j));
       }
     }
-
-    mapleSimArenaSubsystem
-        .canScore()
-        .whileTrue(Commands.runEnd(() -> OI.Driver.setRumble(1), () -> OI.Driver.setRumble(0)));
   }
 
   /**
