@@ -335,7 +335,8 @@ public class Climber extends SubsystemBase {
             .in(Degrees));
 
     SmartDashboard.putNumber("Climber Angle", Radians.of(simulator.getAngleRads()).in(Degrees));
-    if (climbMechLigament1.getAngle() > ClimberConstants.kClimberAtCageSetpoint.in(Degrees)) {
+    SmartDashboard.putBoolean("Climbing", isClimbingStateSim);
+    if (climberMotorFront.getPosition().getValue().gt(ClimberConstants.kClimberAtCageSetpoint)) {
       if (simulator == climberSimNormal) {
         toggleClimb();
       }
