@@ -125,7 +125,7 @@ public final class Constants {
     public static final double I = 0.04;
     public static final double D = 0.02;
     public static final double FF = 0.0;
-    public static final Distance kBottomLimit = Inches.of(9);
+    public static final Distance kBottomLimit = Inches.of(0);
     public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;
 
@@ -149,7 +149,7 @@ public final class Constants {
 
     // Simulation Constants
     public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60(2);
-    public static final double elevatorOutput = .30;
+    public static final double elevatorOutput = .10;
     public static final double kElevatorGearing = 1.0;
     public static final Mass kCarriageMass = Pounds.of(4.75);
     public static final Distance kElevatorDrumRadius = Inches.of(.75 / 2);
@@ -211,5 +211,20 @@ public final class Constants {
           new Pose2d(Meters.of(3.972), Meters.of(5.244), new Rotation2d(-60)),
           new Pose2d(Meters.of(3.684), Meters.of(5.078), new Rotation2d(-60)),
         };
+  }
+
+  public static class SensorIDs {
+    public static final int kSensor2ID = 0;
+    public static final int kSensor3ID = 1;
+    public static final int kSensor4ID = 2;
+    public static final int kScorerSensorID = 3;
+
+    public static enum CoralEnum{
+        DONE,
+        CORAL_TOO_FAR,
+        CORAL_TOO_CLOSE,
+        NO_CORAL,
+        IN_ELEVATOR
+    }
   }
 }

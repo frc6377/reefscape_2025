@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import utilities.OI_Utils;
 import utilities.OI_Utils.Control.ControlType;
-import utilities.OI_Utils.ControlCurve;
 
 /** Add your docs here. */
 public class OI extends OI_Utils {
