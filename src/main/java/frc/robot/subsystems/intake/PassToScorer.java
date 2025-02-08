@@ -7,8 +7,6 @@ package frc.robot.subsystems.intake;
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
 import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
-import static frc.robot.Constants.IntakeConstants.kcoralStation;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.subsystems.CoralScorer;
@@ -17,62 +15,57 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class LocateCoral extends Command {
+public class PassToScorer extends Command {
 
-  private Supplier<CoralEnum> state;
   private IntakeSubsystem intakeSubsystem;
   private BooleanSupplier elevatorNotL1;
   private CoralScorer coralScorer;
+  private Supplier<CoralEnum> state;
 
-  /** Creates a new LocateCoral. */
-  public LocateCoral(Supplier<CoralEnum> state, IntakeSubsystem subsystem, BooleanSupplier elevatorNotL1, CoralScorer coralScorer) {
+  /** Creates a new PassToScorer. */
+  public PassToScorer(IntakeSubsystem subsystem, BooleanSupplier elevatorNotL1, CoralScorer coralScorer, Supplier<CoralEnum> state) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
-    this.state = state;
     this.intakeSubsystem = subsystem;
     this.elevatorNotL1 = elevatorNotL1;
     this.coralScorer = coralScorer;
+    this.state = state;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intakeSubsystem.goToPivotPosition(kcoralStation);
+    intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    switch (state.get()) {
-      case DONE:
-        intakeSubsystem.setIntakeMotor(0);
-        intakeSubsystem.setConveyerMotor(0);
-        intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
-        break;
-      case CORAL_TOO_CLOSE:
-        intakeSubsystem.setIntakeMotor(kIntakeSpeed / 5);
-        intakeSubsystem.setConveyerMotor(-kConveyorSpeed);
-        break;
-      case CORAL_TOO_FAR:
-        intakeSubsystem.setIntakeMotor(kIntakeSpeed / 5);
-        intakeSubsystem.setConveyerMotor(kConveyorSpeed);
-        break;
-      case NO_CORAL:
-        intakeSubsystem.setIntakeMotor(0);
-        intakeSubsystem.setConveyerMotor(0);
-        intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
-        break;
+    if (elevatorNotL1.getAsBoolean()){
+      intakeSubsystem.setIntakeMotor(kIntakeSpeed);
+      intakeSubsystem.setConveyerMotor(kConveyorSpeed);
+      coralScorer.scoreClockWise().initialize();
+    } else {
+      intakeSubsystem.l1ScoreModeB();
     }
   }
-
+  
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
+    intakeSubsystem.setIntakeMotor(0);
+    intakeSubsystem.setConveyerMotor(0);
+    coralScorer.scoreClockWise().end(interrupted);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return state.get() == CoralEnum.DONE
-        && intakeSubsystem.atSetpoint(kPivotRetractAngle);
+    if (elevatorNotL1.getAsBoolean()){
+      return state.get() == CoralEnum.IN_ELEVATOR;
+    } else {
+      return intakeSubsystem.atSetpoint(kPivotRetractAngle);
+    }
   }
 }

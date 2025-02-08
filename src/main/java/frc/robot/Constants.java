@@ -104,7 +104,9 @@ public final class Constants {
     public static enum CoralEnum {
       DONE,
       CORAL_TOO_CLOSE,
-      CORAL_TOO_FAR
+      CORAL_TOO_FAR,
+      NO_CORAL,
+      IN_ELEVATOR
     }
   }
 
