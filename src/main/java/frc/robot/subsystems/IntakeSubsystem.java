@@ -142,7 +142,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Trigger getBeamBroken() {
-    return sensor.beamBrokenTrigger();
+    return sensor.beamBroken();
   }
 
   private boolean atSetpoint() {
@@ -283,13 +283,13 @@ public class IntakeSubsystem extends SubsystemBase {
               intakeCommand().end(false);
               conveyorFeed().end(false);
             })
-        .until(sensor.beamBrokenTrigger());
+        .until(sensor.beamBroken());
   }
 
   public Command intakeToBirdhousePhase2() {
     return retractPivotCommand()
         .andThen(Commands.waitUntil(this::atSetpoint)) // FIXME: Fix debouncing if neccesary
-        .andThen(conveyorFeed().until(sensor.beamBrokenTrigger().negate()));
+        .andThen(conveyorFeed().until(sensor.beamBroken().negate()));
   }
 
   public Command intakeToBirdhouse() {
