@@ -21,7 +21,6 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
@@ -75,8 +74,16 @@ public class Climber extends SubsystemBase {
 
   public Climber() {
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
-    climberFrontEncoder = new DutyCycleEncoder(DIOConstants.kClimberFrontEncoderID, 1, ClimberConstants.kExpectedStartAngle.in(Rotations));
-    climberBackEncoder = new DutyCycleEncoder(DIOConstants.kClimberBackEncoderID, 1, ClimberConstants.kExpectedStartAngle.in(Rotations));
+    climberFrontEncoder =
+        new DutyCycleEncoder(
+            DIOConstants.kClimberFrontEncoderID,
+            1,
+            ClimberConstants.kExpectedStartAngle.in(Rotations));
+    climberBackEncoder =
+        new DutyCycleEncoder(
+            DIOConstants.kClimberBackEncoderID,
+            1,
+            ClimberConstants.kExpectedStartAngle.in(Rotations));
     climberMotorFront = new TalonFX(CANIDs.kClimberMotorFront);
     climberMotorBack = new TalonFX(CANIDs.kClimberMotorBack);
     feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.kGearRatio);
@@ -202,8 +209,14 @@ public class Climber extends SubsystemBase {
   public Command zero() {
     return runOnce(
         () -> {
-          climberMotorFront.setPosition(climberFrontEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations)+ClimberConstants.kExpectedStartAngle.in(Rotations));
-          climberMotorBack.setPosition(climberBackEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations)+ClimberConstants.kExpectedStartAngle.in(Rotations));
+          climberMotorFront.setPosition(
+              climberFrontEncoder.get()
+                  + ClimberConstants.kClimberOffsetAngle.in(Rotations)
+                  + ClimberConstants.kExpectedStartAngle.in(Rotations));
+          climberMotorBack.setPosition(
+              climberBackEncoder.get()
+                  + ClimberConstants.kClimberOffsetAngle.in(Rotations)
+                  + ClimberConstants.kExpectedStartAngle.in(Rotations));
         });
   }
 
