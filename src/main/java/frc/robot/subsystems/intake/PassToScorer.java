@@ -11,6 +11,8 @@ import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.subsystems.CoralScorer;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -45,12 +47,14 @@ public class PassToScorer extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (elevatorNotL1.getAsBoolean()) {
+    if (elevatorNotL1.getAsBoolean() && intakeSubsystem.atSetpoint(kPivotRetractAngle)) {
       intakeSubsystem.setIntakeMotor(kIntakeSpeed);
       intakeSubsystem.setConveyerMotor(kConveyorSpeed);
       coralScorer.scoreClockWise().initialize();
     } else {
-      intakeSubsystem.l1ScoreModeB();
+      intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
+      intakeSubsystem.setIntakeMotor(kIntakeSpeed / 5);
+      intakeSubsystem.setConveyerMotor(kConveyorSpeed);
     }
   }
 

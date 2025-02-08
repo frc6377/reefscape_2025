@@ -46,7 +46,6 @@ public class LocateCoral extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
     switch (state.get()) {
       case DONE:
         intakeSubsystem.setIntakeMotor(0);
@@ -72,7 +71,11 @@ public class LocateCoral extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    intakeSubsystem.setIntakeMotor(0);
+    intakeSubsystem.setConveyerMotor(0);
+    intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
+  }
 
   // Returns true when the command should end.
   @Override

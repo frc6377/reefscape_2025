@@ -59,7 +59,4 @@ public class Sensors {
   public void setSimState(CoralEnum state) {
     simState = state;
   }
-  // if (sensor2.isBeamBroke() && sensor3.isBeamBroke() && sensor4.isBeamBroke()) {
-  //   return CoralEnum.NO_CORAL;
-  // }
 }
