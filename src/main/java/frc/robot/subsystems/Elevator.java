@@ -32,7 +32,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
@@ -127,7 +126,7 @@ public class Elevator extends SubsystemBase {
     elevatorMotor1.getConfigurator().apply(elvMotionMagic);
     elevatorMotor2.setControl(new Follower(CANIDs.kElevatorMotor1, true));
     elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
-    new Trigger(elvLimitSwitch::get).onTrue(zeroMotorEncoder());
+    // new Trigger(elvLimitSwitch::get).onTrue(zeroMotorEncoder());
 
     // PID Tunable Numbers
     // P
@@ -196,7 +195,7 @@ public class Elevator extends SubsystemBase {
     // Simulation
     if (Robot.isSimulation()) {
       simElvMotor1 = elevatorMotor1.getSimState();
-      simElvMotor1.Orientation = ChassisReference.Clockwise_Positive;
+      simElvMotor1.Orientation = ChassisReference.CounterClockwise_Positive;
       simGear3 = new DutyCycleEncoderSim(gear3);
       simGear11 = new DutyCycleEncoderSim(gear11);
 
