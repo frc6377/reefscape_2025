@@ -177,13 +177,19 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     sysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
-                null, null, null, (state) -> SignalLogger.writeString("state", state.toString())),
+                null,
+                null,
+                null,
+                (state) -> SignalLogger.writeString("SwerveDrive/state", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
     sysIdTurning =
         new SysIdRoutine(
             new SysIdRoutine.Config(
-                null, null, null, (state) -> SignalLogger.writeString("state", state.toString())),
+                null,
+                null,
+                null,
+                (state) -> SignalLogger.writeString("SwerveTurn/state", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterizationTurning(voltage.in(Volts)), null, this));
 
@@ -314,19 +320,27 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> sysId.quasistatic(direction));
+    return run(() -> runCharacterization(6))
+        .withTimeout(0)
+        .andThen(sysId.quasistatic(direction).withTimeout(6));
   }
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> sysId.dynamic(direction));
+    return run(() -> runCharacterization(6))
+        .withTimeout(0)
+        .andThen(sysId.dynamic(direction).withTimeout(3));
   }
 
   public Command sysIdQuasistaticTurning(SysIdRoutine.Direction direction) {
-    return run(() -> sysIdTurning.quasistatic(direction));
+    return run(() -> runCharacterization(6))
+        .withTimeout(0)
+        .andThen(sysIdTurning.quasistatic(direction).withTimeout(6));
   }
 
   public Command sysIdDynamicTurning(SysIdRoutine.Direction direction) {
-    return run(() -> sysIdTurning.dynamic(direction));
+    return run(() -> runCharacterization(6))
+        .withTimeout(0)
+        .andThen(sysIdTurning.dynamic(direction).withTimeout(6));
   }
 
   public Command setPoseScored(String pole, int levelIndex) {
