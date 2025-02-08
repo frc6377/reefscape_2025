@@ -12,7 +12,6 @@ import static frc.robot.Constants.IntakeConstants.kcoralStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.subsystems.CoralScorer;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -25,7 +24,11 @@ public class LocateCoral extends Command {
   private CoralScorer coralScorer;
 
   /** Creates a new LocateCoral. */
-  public LocateCoral(Supplier<CoralEnum> state, IntakeSubsystem subsystem, BooleanSupplier elevatorNotL1, CoralScorer coralScorer) {
+  public LocateCoral(
+      Supplier<CoralEnum> state,
+      IntakeSubsystem subsystem,
+      BooleanSupplier elevatorNotL1,
+      CoralScorer coralScorer) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
     this.state = state;
@@ -43,6 +46,7 @@ public class LocateCoral extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
     switch (state.get()) {
       case DONE:
         intakeSubsystem.setIntakeMotor(0);
@@ -57,6 +61,7 @@ public class LocateCoral extends Command {
         intakeSubsystem.setIntakeMotor(kIntakeSpeed / 5);
         intakeSubsystem.setConveyerMotor(kConveyorSpeed);
         break;
+      case IN_ELEVATOR:
       case NO_CORAL:
         intakeSubsystem.setIntakeMotor(0);
         intakeSubsystem.setConveyerMotor(0);
@@ -72,7 +77,6 @@ public class LocateCoral extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return state.get() == CoralEnum.DONE
-        && intakeSubsystem.atSetpoint(kPivotRetractAngle);
+    return state.get() == CoralEnum.DONE && intakeSubsystem.atSetpoint(kPivotRetractAngle);
   }
 }

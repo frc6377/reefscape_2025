@@ -24,11 +24,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CoralScorer;
@@ -62,6 +64,9 @@ public class RobotContainer {
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
+  private final Sensors sensors = new Sensors();
+
+  private boolean mode = false;
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose;
@@ -198,14 +203,23 @@ public class RobotContainer {
     //     .and(OI.getButton(OI.Driver.RBumper).negate())
     //     .whileTrue(intake.intakeToBirdhouse());
     OI.getPOVButton(OI.Driver.DPAD_UP).whileTrue(coralScorer.scoreClockWise());
-    OI.getButton(OI.Driver.X).whileTrue(null);
-    OI.getButton(OI.Driver.RBumper).whileTrue(intake.intakeCommand());
-    OI.getButton(OI.Driver.LBumper).whileTrue(intake.outtakeCommand());
-
-    // OI.getPOVButton(OI.Driver.DPAD_DOWN)
-    //     .and(OI.getButton(OI.Driver.RBumper).negate())
-    //     .whileTrue(intake.ejectFromBirdhouse());
-    // intake.setDefaultCommand(intake.retractPivotCommand());
+    OI.getButton(OI.Driver.RBumper)
+        .whileTrue(
+            intake
+                .floorIntake()
+                .until(() -> sensors.getSensorState() != CoralEnum.NO_CORAL)
+                .andThen(
+                    new LocateCoral(sensors::getSensorState, intake, () -> mode, coralScorer)
+                        .asProxy()));
+    OI.getButton(OI.Driver.LBumper).whileTrue(intake.floorOuttake());
+    OI.getButton(OI.Driver.X)
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  mode = !mode;
+                  SmartDashboard.putBoolean("Intake/Mode", mode);
+                }));
+    intake.setDefaultCommand(intake.Idle());
 
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).onTrue(elevator.L1());

@@ -137,9 +137,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
   }
 
-  public void elevatorMode(){
-    
-  }
+  public void elevatorMode() {}
 
   public Trigger getBeamBroken() {
     return sensor.beamBroken();
@@ -322,10 +320,10 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(
         () -> {
           goToPivotPosition(kPivotRetractAngle);
+          setIntakeMotor(0);
+          setConveyerMotor(0);
         },
-        () -> {
-          setPivotMotor(0);
-        });
+        () -> {});
   }
 
   public Command seedEncoder() {

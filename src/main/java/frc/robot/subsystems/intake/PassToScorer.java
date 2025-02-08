@@ -7,10 +7,10 @@ package frc.robot.subsystems.intake;
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
 import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.subsystems.CoralScorer;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -23,7 +23,11 @@ public class PassToScorer extends Command {
   private Supplier<CoralEnum> state;
 
   /** Creates a new PassToScorer. */
-  public PassToScorer(IntakeSubsystem subsystem, BooleanSupplier elevatorNotL1, CoralScorer coralScorer, Supplier<CoralEnum> state) {
+  public PassToScorer(
+      IntakeSubsystem subsystem,
+      BooleanSupplier elevatorNotL1,
+      CoralScorer coralScorer,
+      Supplier<CoralEnum> state) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
     this.intakeSubsystem = subsystem;
@@ -41,7 +45,7 @@ public class PassToScorer extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (elevatorNotL1.getAsBoolean()){
+    if (elevatorNotL1.getAsBoolean()) {
       intakeSubsystem.setIntakeMotor(kIntakeSpeed);
       intakeSubsystem.setConveyerMotor(kConveyorSpeed);
       coralScorer.scoreClockWise().initialize();
@@ -49,7 +53,7 @@ public class PassToScorer extends Command {
       intakeSubsystem.l1ScoreModeB();
     }
   }
-  
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
@@ -62,7 +66,7 @@ public class PassToScorer extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (elevatorNotL1.getAsBoolean()){
+    if (elevatorNotL1.getAsBoolean()) {
       return state.get() == CoralEnum.IN_ELEVATOR;
     } else {
       return intakeSubsystem.atSetpoint(kPivotRetractAngle);

@@ -1,31 +1,26 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
 import static frc.robot.Constants.SensorIDs.*;
 
-import java.lang.Thread.State;
-
-import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import static edu.wpi.first.units.Units.Inches;
-
+import frc.robot.Constants.IntakeConstants.CoralEnum;
 import utilities.TOFSensorSimple;
 import utilities.TOFSensorSimple.TOFType;
 
-import utilities.TOFSensorSimple;
-
-
 public class Sensors {
-  private TOFSensorSimple sensor2 = new TOFSensorSimple(kSensor2ID, Inches.of(1), TOFType.LASER_CAN);
-  private TOFSensorSimple sensor3 = new TOFSensorSimple(kSensor3ID, Inches.of(1), TOFType.LASER_CAN);
-  private TOFSensorSimple sensor4 = new TOFSensorSimple(kSensor4ID, Inches.of(1), TOFType.LASER_CAN);
-  private TOFSensorSimple scorerSensor = new TOFSensorSimple(kScorerSensorID, Inches.of(1), TOFType.LASER_CAN);
+  private TOFSensorSimple sensor2 =
+      new TOFSensorSimple(kSensor2ID, Inches.of(1), TOFType.LASER_CAN);
+  private TOFSensorSimple sensor3 =
+      new TOFSensorSimple(kSensor3ID, Inches.of(1), TOFType.LASER_CAN);
+  private TOFSensorSimple sensor4 =
+      new TOFSensorSimple(kSensor4ID, Inches.of(1), TOFType.LASER_CAN);
+  private TOFSensorSimple scorerSensor =
+      new TOFSensorSimple(kScorerSensorID, Inches.of(1), TOFType.LASER_CAN);
 
   public CoralEnum simState = CoralEnum.NO_CORAL;
 
-  public Sensors() {
-
-  }
+  public Sensors() {}
 
   public CoralEnum getSensorState() {
     if (Robot.isSimulation()) {
@@ -64,7 +59,7 @@ public class Sensors {
   public void setSimState(CoralEnum state) {
     simState = state;
   }
-    // if (sensor2.isBeamBroke() && sensor3.isBeamBroke() && sensor4.isBeamBroke()) {
-    //   return CoralEnum.NO_CORAL;
-    // }
+  // if (sensor2.isBeamBroke() && sensor3.isBeamBroke() && sensor4.isBeamBroke()) {
+  //   return CoralEnum.NO_CORAL;
+  // }
 }
