@@ -35,7 +35,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
@@ -62,7 +61,7 @@ public class Elevator extends SubsystemBase {
   private final VoltageOut m_voltReq;
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
-      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
+      new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
   private static Mechanism2d mech = new Mechanism2d(2, 2);
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
@@ -133,8 +132,8 @@ public class Elevator extends SubsystemBase {
     elevatorMotor1.getConfigurator().apply(invertMotor);
     elevatorMotor1.getConfigurator().apply(elvMotionMagic);
     elevatorMotor2.setControl(new Follower(CANIDs.kElevatorMotor1, true));
-    elvLimitSwitch = new DigitalInput(ElevatorConstants.elvLimitID);
-    new Trigger(elvLimitSwitch::get).onTrue(zeroMotorEncoder());
+    elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
+    // new Trigger(elvLimitSwitch::get).onTrue(zeroMotorEncoder());
 
     // PID Tunable Numbers
     // P
@@ -175,7 +174,7 @@ public class Elevator extends SubsystemBase {
     // Simulation
     if (Robot.isSimulation()) {
       simElvMotor1 = elevatorMotor1.getSimState();
-      simElvMotor1.Orientation = ChassisReference.Clockwise_Positive;
+      simElvMotor1.Orientation = ChassisReference.CounterClockwise_Positive;
       simGear3 = new DutyCycleEncoderSim(gear3);
       simGear11 = new DutyCycleEncoderSim(gear11);
 
@@ -247,10 +246,18 @@ public class Elevator extends SubsystemBase {
     return Meters.of(elevatorMech.getLength());
   }
 
-  public Command goUp(Supplier<Double> upPower) {
+  public Command elevatorUpOrDown(Supplier<Double> upPower) {
     return runEnd(
         () -> {
-          elevatorMotor1.set(Math.abs(upPower.get()) * elevatorOutput);
+          elevatorMotor1.set(upPower.get() * elevatorOutput);
+        },
+        () -> elevatorMotor1.set(0));
+  }
+
+  public Command goUp(Supplier<Double> downPower) {
+    return runEnd(
+        () -> {
+          elevatorMotor1.set(Math.abs(downPower.get()) * elevatorOutput);
         },
         () -> elevatorMotor1.set(0));
   }
@@ -278,7 +285,7 @@ public class Elevator extends SubsystemBase {
 
   public Command limitHit() {
     return runOnce(this::disableSoftLimits)
-        .andThen(goDown(() -> 1.0).until(elvLimitSwitch::get))
+        .andThen(goDown(() -> 0.3).until(elvLimitSwitch::get))
         .andThen(zeroMotorEncoder())
         .andThen(runOnce(this::enableSoftLimits));
   }

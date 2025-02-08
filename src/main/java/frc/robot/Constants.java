@@ -139,7 +139,7 @@ public final class Constants {
     public static final double I = 0.04;
     public static final double D = 0.02;
     public static final double FF = 0.0;
-    public static final Distance kBottomLimit = Inches.of(9);
+    public static final Distance kBottomLimit = Inches.of(0);
     public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;
 
@@ -163,7 +163,7 @@ public final class Constants {
 
     // Simulation Constants
     public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60(2);
-    public static final double elevatorOutput = .30;
+    public static final double elevatorOutput = .10;
     public static final double kElevatorGearing = 1.0;
     public static final Mass kCarriageMass = Pounds.of(4.75);
     public static final Distance kElevatorDrumRadius = Inches.of(.75 / 2);

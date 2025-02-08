@@ -44,7 +44,6 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import utilities.TOFSensorSimple;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -63,8 +62,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private TOFSensorSimple sensor;
-  private final IntakeSubsystem intake;
+  private final IntakeSubsystem intake = new IntakeSubsystem();
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
   private MapleSimArenaSubsystem mapleSimArenaSubsystem;
