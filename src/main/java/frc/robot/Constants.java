@@ -100,6 +100,12 @@ public final class Constants {
     public static final double kMotionMagicJerk = 10.0;
 
     public static final double armZero = 0.35;
+
+    public static enum CoralEnum {
+      DONE,
+      CORAL_TOO_CLOSE,
+      CORAL_TOO_FAR
+    }
   }
 
   // Elevator Constants

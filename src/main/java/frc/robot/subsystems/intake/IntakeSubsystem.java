@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.IntakeConstants.*;
@@ -145,19 +145,23 @@ public class IntakeSubsystem extends SubsystemBase {
     return pivotMotor.getPosition().getValue().isNear(pivotSetpoint, kPivotTolerance);
   }
 
-  private void setPivotMotor(double speed) {
+  protected boolean atSetpoint(Angle setpoint) {
+    return pivotMotor.getPosition().getValue().isNear(setpoint, kPivotTolerance);
+  }
+
+  protected void setPivotMotor(double speed) {
     pivotMotor.set(speed);
   }
 
-  private void setConveyerMotor(double speed) {
+  protected void setConveyerMotor(double speed) {
     conveyorMotor.set(speed);
   }
 
-  private void setIntakeMotor(double speed) {
+  protected void setIntakeMotor(double speed) {
     intakeMotor.set(speed);
   }
 
-  private void goToPivotPosition(Angle setpoint) {
+  protected void goToPivotPosition(Angle setpoint) {
     pivotMotor.setControl(new MotionMagicVoltage(setpoint));
     pivotSetpoint = setpoint;
   }
@@ -317,11 +321,7 @@ public class IntakeSubsystem extends SubsystemBase {
         },
         () -> {
           setPivotMotor(0);
-        }); 
-  }
-
-  public Command locateCoral() {
-    return null;
+        });
   }
 
   public Command seedEncoder() {
