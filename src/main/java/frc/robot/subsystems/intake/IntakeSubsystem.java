@@ -15,7 +15,6 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.hal.SimBoolean;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -23,7 +22,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -34,11 +32,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
-import frc.robot.Constants.SensorIDs;
 import frc.robot.Robot;
-import org.littletonrobotics.junction.Logger;
 import utilities.DebugEntry;
-import utilities.TOFSensorSimple;
 
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
@@ -51,11 +46,6 @@ public class IntakeSubsystem extends SubsystemBase {
   private Angle pivotSetpoint = kPivotRetractAngle;
 
   private DutyCycleEncoder throughBoreEncoder;
-
-  // Sensor closest to birdhouse
-  private TOFSensorSimple sensor;
-  private SimDeviceSim simSensor;
-  private SimBoolean simbeam;
 
   private Mechanism2d mech = new Mechanism2d(2, 2);
   private ComplexWidget widget;
@@ -141,8 +131,6 @@ public class IntakeSubsystem extends SubsystemBase {
       if (widget == null) {
         widget = Shuffleboard.getTab(getName()).add("Pivot Arm", mech);
       }
-      simSensor = new SimDeviceSim("TOF", SensorIDs.kScorerSensorID);
-      simbeam = simSensor.getBoolean("BeamBroken");
     }
   }
 
@@ -378,9 +366,6 @@ public class IntakeSubsystem extends SubsystemBase {
     } else {
       currentCommand.log("none");
     }
-
-    Logger.recordOutput(
-        "TOFSensors/Intake Sensor Distance (Inches)", sensor.getDistance().in(Inches));
   }
 
   public void simulationPeriodic() {
