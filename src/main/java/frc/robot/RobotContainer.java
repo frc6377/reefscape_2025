@@ -43,7 +43,6 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import utilities.TOFSensorSimple;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -64,7 +63,6 @@ public class RobotContainer {
 
   private final Drive drive;
   private final Vision vision;
-  private TOFSensorSimple sensor;
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
@@ -205,17 +203,14 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-
     // Set the intake rollers to the left and right triggers
-    OI.getPOVButton(OI.Driver.DPAD_UP)
-        .and(OI.getButton(OI.Driver.RBumper).negate())
-        .whileTrue(intake.intakeToBirdhouse());
-    OI.getPOVButton(OI.Driver.DPAD_UP)
-        .and(intake.getBeamBroken().negate())
-        .whileTrue(coralScorer.scoreClockWise());
-    OI.getPOVButton(OI.Driver.DPAD_DOWN)
-        .and(OI.getButton(OI.Driver.RBumper).negate())
-        .whileTrue(intake.ejectFromBirdhouse());
+    // OI.getPOVButton(OI.Driver.DPAD_UP)
+    //     .and(OI.getButton(OI.Driver.RBumper).negate())
+    //     .whileTrue(intake.intakeToBirdhouse());
+    OI.getPOVButton(OI.Driver.DPAD_UP).whileTrue(coralScorer.scoreClockWise());
+    // OI.getPOVButton(OI.Driver.DPAD_DOWN)
+    //     .and(OI.getButton(OI.Driver.RBumper).negate())
+    //     .whileTrue(intake.ejectFromBirdhouse());
     // intake.setDefaultCommand(intake.retractPivotCommand());
 
     // Set the intake rollers to the left and right triggers
@@ -264,7 +259,7 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.AD : OI.Driver.LeftY).get(),
+            () -> -OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.AD : OI.Driver.LeftY).get(),
             () -> OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.WS : OI.Driver.LeftX).get(),
             () ->
                 OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.ArrowLeftRight : OI.Driver.RightX)
