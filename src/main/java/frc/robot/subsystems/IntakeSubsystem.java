@@ -238,7 +238,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command floorIntake() {
-    return runEnd(
+    return startEnd(
         () -> {
           goToPivotPosition(kPivotExtendAngle);
           intakeMotor.set(kIntakeSpeed);
@@ -247,7 +247,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command floorOuttake() {
-    return runEnd(
+    return startEnd(
         () -> {
           goToPivotPosition(kPivotExtendAngle);
           intakeMotor.set(-kIntakeSpeed);
@@ -256,7 +256,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command humanPlayerIntake() {
-    return runEnd(
+    return startEnd(
         () -> {
           goToPivotPosition(kcoralStation);
           intakeMotor.set(kIntakeSpeed);
@@ -265,7 +265,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command algaeIntake() {
-    return runEnd(
+    return startEnd(
         () -> {
           goToPivotPosition(kalgae);
           intakeMotor.set(-kIntakeSpeed);
@@ -274,7 +274,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command algaeHold() {
-    return runEnd(
+    return startEnd(
         () -> {
           goToPivotPosition(kalgae);
           intakeMotor.set(-kIntakeSpeed);
@@ -283,16 +283,16 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command algaeOuttake() {
-    return runEnd(
+    return startEnd(
         () -> {
           goToPivotPosition(kalgae);
-          intakeMotor.set(-kIntakeSpeed);
+          intakeMotor.set(kIntakeSpeed);
         },
         () -> {});
   }
 
   public Command l1ScoreModeA() {
-    return runEnd(
+    return startEnd(
         () -> {
           goToPivotPosition(kl1);
           intakeMotor.set(kIntakeSpeed);
@@ -300,8 +300,8 @@ public class IntakeSubsystem extends SubsystemBase {
         () -> {});
   }
 
-  public Command liScoreModeB() {
-    return runEnd(
+  public Command l1ScoreModeB() {
+    return startEnd(
         () -> {
           goToPivotPosition(kPivotRetractAngle);
           intakeMotor.set(kIntakeSpeed / 5);
@@ -311,11 +311,13 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command Idle() {
-    return runEnd(
+    return startEnd(
         () -> {
           goToPivotPosition(kPivotRetractAngle);
         },
-        () -> {});
+        () -> {
+          setPivotMotor(0);
+        }); 
   }
 
   public Command locateCoral() {
