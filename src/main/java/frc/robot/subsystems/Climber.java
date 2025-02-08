@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.ClimberConstants;
+import frc.robot.Constants.DIOConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Robot;
 import java.util.ArrayList;
@@ -47,7 +48,6 @@ import java.util.function.BooleanSupplier;
 public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
   private final DutyCycleEncoder climberFrontEncoder;
-
   private final DutyCycleEncoder climberBackEncoder;
   private TalonFX climberMotorFront;
   private Orchestra climberOrchestra;
@@ -56,25 +56,29 @@ public class Climber extends SubsystemBase {
   private MotorOutputConfigs climberOutputConfigs;
   private TalonFXConfiguration frontConfigs;
   private TalonFXConfiguration backConfigs;
+  private Angle climberTargetAngle;
+  private Slot0Configs climberConfigsToClimber;
+  private Slot1Configs climberConfigsAtClimber;
+  
+  // for simulation
   private DCMotor simClimberGearbox;
   private SingleJointedArmSim climberSimNormal;
   private SingleJointedArmSim climberSimLifting;
   private Mechanism2d climbMech;
-  private MechanismRoot2d climbMechRoot;
-  private MechanismLigament2d climbMechLigament;
+  private MechanismRoot2d climbMechRoot1;
+  private MechanismRoot2d climbMechRoot2;
+  private MechanismLigament2d climbMechLigament1;
+  private MechanismLigament2d climbMechLigament2;
   private MechanismLigament2d climbMechTargetLigament;
-  private Slot0Configs climberConfigsToClimber;
-  private Slot1Configs climberConfigsAtClimber;
-  private Angle climberTargetAngle;
-  private boolean isClimbing;
+  private boolean isClimbingStateSim;
 
   public Climber() {
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
-    climberFrontEncoder = new DutyCycleEncoder(10);
-    climberBackEncoder = new DutyCycleEncoder(11);
+    climberFrontEncoder = new DutyCycleEncoder(DIOConstants.kClimberFrontEncoderID, 1, 0.25);
+    climberBackEncoder = new DutyCycleEncoder(DIOConstants.kClimberBackEncoderID, 1, 0.25);
     climberMotorFront = new TalonFX(CANIDs.kClimberMotorFront);
     climberMotorBack = new TalonFX(CANIDs.kClimberMotorBack);
-    feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.KGearRatio);
+    feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.kGearRatio);
     climberConfigsToClimber =
         new Slot0Configs()
             .withKP(ClimberConstants.kClimberP0)
@@ -90,7 +94,7 @@ public class Climber extends SubsystemBase {
             .withKG(ClimberConstants.kClimberkG1)
             .withKV(ClimberConstants.kClimberkV1);
     // Boolean to check if the climber is climbing of if it is just idle
-    isClimbing = false;
+    isClimbingStateSim = false;
     // Set the configs
     climberOutputConfigs = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
     frontConfigs =
@@ -113,13 +117,14 @@ public class Climber extends SubsystemBase {
         new Orchestra(new ArrayList<ParentDevice>(Collections.singletonList(climberMotorFront)));
     climberOrchestra.loadMusic("music/jeopardymusic.chrp");
     // For simulation
-
+    // simulates the entire simulation, not just one arm
     if (Robot.isSimulation()) {
-      simClimberGearbox = DCMotor.getKrakenX60(2);
+
+      simClimberGearbox = DCMotor.getKrakenX60(ClimberConstants.KClimberMotorsCount);
       climberSimNormal =
           new SingleJointedArmSim(
               simClimberGearbox,
-              ClimberConstants.KGearRatio,
+              ClimberConstants.kGearRatio,
               SingleJointedArmSim.estimateMOI(
                   ClimberConstants.kClimberArmLength.in(Meters),
                   ClimberConstants.kClimberMass.in(Kilograms)),
@@ -131,7 +136,7 @@ public class Climber extends SubsystemBase {
       climberSimLifting =
           new SingleJointedArmSim(
               simClimberGearbox,
-              ClimberConstants.KGearRatio,
+              ClimberConstants.kGearRatio,
               Math.pow(ClimberConstants.kClimberArmLength.in(Meters), 2)
                   * DrivetrainConstants.ROBOT_MASS_KG,
               ClimberConstants.kClimberArmLength.in(Meters),
@@ -140,16 +145,23 @@ public class Climber extends SubsystemBase {
               true,
               ClimberConstants.kClimberRetractedSetpoint.in(Radians));
 
-      climbMech = new Mechanism2d(2, 2);
-      climbMechRoot = climbMech.getRoot("Climb Mech root", 1, 1);
-      climbMechLigament =
-          climbMechRoot.append(
+      climbMech = new Mechanism2d(4, 2);
+      climbMechRoot1 = climbMech.getRoot("Climb Mech root", 1, 1);
+      climbMechRoot2 = climbMech.getRoot("Climb Mech root 2", 3, 1);
+      climbMechLigament1 =
+          climbMechRoot1.append(
               new MechanismLigament2d(
-                  "Climb Mech Ligament",
+                  "Climb Mech Ligament 1",
+                  1,
+                  Radians.of(climberSimNormal.getAngleRads()).in(Degrees)));
+      climbMechLigament2 =
+          climbMechRoot2.append(
+              new MechanismLigament2d(
+                  "Climb Mech Ligament 2",
                   1,
                   Radians.of(climberSimNormal.getAngleRads()).in(Degrees)));
       climbMechTargetLigament =
-          climbMechRoot.append(
+          climbMechRoot1.append(
               new MechanismLigament2d(
                   "Climb Mech Target Ligament",
                   0.8,
@@ -177,12 +189,8 @@ public class Climber extends SubsystemBase {
   public Command zero() {
     return runOnce(
         () -> {
-          climberMotorFront.setPosition(
-              Degrees.of((climberFrontEncoder.get() + 90) * ClimberConstants.KGearRatio)
-                  .in(Rotations));
-          climberMotorBack.setPosition(
-              Degrees.of((climberBackEncoder.get() + 90) * ClimberConstants.KGearRatio)
-                  .in(Rotations));
+          climberMotorFront.setPosition(climberFrontEncoder.get() + 0.25);
+          climberMotorBack.setPosition(climberBackEncoder.get() + 0.25);
         });
   }
 
@@ -208,13 +216,13 @@ public class Climber extends SubsystemBase {
     if (Robot.isReal()) {
       return () ->
           position.isNear(
-                  climberMotorFront.getPosition().getValue(), ClimberConstants.kClimberSensorError)
+                  climberMotorFront.getPosition().getValue(), ClimberConstants.kClimberSensorTolerance)
               && position.isNear(
-                  climberMotorFront.getPosition().getValue(), ClimberConstants.kClimberSensorError);
+                  climberMotorFront.getPosition().getValue(), ClimberConstants.kClimberSensorTolerance);
     } else {
       return () ->
           position.isNear(
-              climberMotorFront.getPosition().getValue(), ClimberConstants.kClimberSensorError);
+              climberMotorFront.getPosition().getValue(), ClimberConstants.kClimberSensorTolerance);
     }
   }
 
@@ -224,13 +232,21 @@ public class Climber extends SubsystemBase {
         Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberAtCageSetpoint)),
         runClimber(ClimberConstants.kClimberExtendedSetpoint, 1));
   }
+  public Command extendToCage() {
+    return runClimber(ClimberConstants.kClimberAtCageSetpoint, 0)
+        .andThen(Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberAtCageSetpoint)));
+  }
+
+  public Command extendFully() {
+    return runClimber(ClimberConstants.kClimberExtendedSetpoint, 1);
+  }
 
   public Command retract() {
     return runClimber(ClimberConstants.kClimberRetractedSetpoint, 0);
   }
 
   private SingleJointedArmSim getSimulator() {
-    if (isClimbing) {
+    if (isClimbingStateSim) {
       return climberSimLifting;
     } else {
       return climberSimNormal;
@@ -238,16 +254,16 @@ public class Climber extends SubsystemBase {
   }
 
   private void toggleClimbingSim() {
-    if (isClimbing) {
+    if (isClimbingStateSim) {
       climberSimNormal.setState(
           climberSimLifting.getAngleRads(), climberSimLifting.getVelocityRadPerSec());
-      isClimbing = false;
+      isClimbingStateSim = false;
     } else {
       climberSimLifting.setState(
           climberSimNormal.getAngleRads(), climberSimNormal.getVelocityRadPerSec());
-      isClimbing = true;
+      isClimbingStateSim = true;
     }
-    SmartDashboard.putBoolean("Climbing", isClimbing);
+    SmartDashboard.putBoolean("Climbing", isClimbingStateSim);
   }
 
   @Override
@@ -259,33 +275,33 @@ public class Climber extends SubsystemBase {
         "Motor Voltage Back", climberMotorBack.getMotorVoltage().getValue().in(Volts));
     SmartDashboard.putNumber(
         "Climber Position Front",
-        climberMotorFront.getPosition().getValue().div(ClimberConstants.KGearRatio).in(Degrees));
+        climberMotorFront.getPosition().getValue().div(ClimberConstants.kGearRatio).in(Degrees));
     SmartDashboard.putNumber(
         "Climber Position Back",
-        climberMotorBack.getPosition().getValue().div(ClimberConstants.KGearRatio).in(Degrees));
+        climberMotorBack.getPosition().getValue().div(ClimberConstants.kGearRatio).in(Degrees));
   }
-
   @Override
   public void simulationPeriodic() {
     climbMechTargetLigament.setAngle(
         climberTargetAngle.minus(ClimberConstants.kClimberOffsetAngle).in(Degrees));
 
-    getSimulator().setInputVoltage(climberMotorFront.getMotorVoltage().getValue().in(Volts));
-    getSimulator().update(Robot.defaultPeriodSecs);
-    climberMotorFront.setPosition(Radians.of(getSimulator().getAngleRads()));
-    climbMechLigament.setAngle(
-        Radians.of(getSimulator().getAngleRads())
+    SingleJointedArmSim simulator = getSimulator();
+    simulator.setInputVoltage(climberMotorFront.getMotorVoltage().getValue().in(Volts));
+    simulator.update(Robot.defaultPeriodSecs);
+    climberMotorFront.setPosition(Radians.of(simulator.getAngleRads()));
+    climbMechLigament1.setAngle(
+        Radians.of(simulator.getAngleRads())
             .minus(ClimberConstants.kClimberOffsetAngle)
             .in(Degrees));
 
     SmartDashboard.putNumber(
-        "Climber Angle", Radians.of(getSimulator().getAngleRads()).in(Degrees));
-    if (climbMechLigament.getAngle() > ClimberConstants.kClimberAtCageSetpoint.in(Degrees)) {
-      if (getSimulator() == climberSimNormal) {
+        "Climber Angle", Radians.of(simulator.getAngleRads()).in(Degrees));
+    if (climbMechLigament1.getAngle() > ClimberConstants.kClimberAtCageSetpoint.in(Degrees)) {
+      if (simulator == climberSimNormal) {
         toggleClimbingSim();
       }
     } else {
-      if (getSimulator() == climberSimLifting) {
+      if (simulator == climberSimLifting) {
         toggleClimbingSim();
       }
     }

@@ -64,18 +64,11 @@ public final class Constants {
   }
 
   public static class DIOConstants {
-    public static final int kthroughBoreEncoderID = 1;
+    public static final int kthroughBoreEncoderID = 10;
+    public static final int kClimberFrontEncoderID = 11;
+    public static final int kClimberBackEncoderID = 3;
     public static final int gear11ID = 13;
     public static final int gear3ID = 14;
-  }
-
-  public static class MotorIDConstants {
-    // Rev Can Bus
-    public static final int kScorerMotor = 9;
-    public static final int kElevatorMotor1 = 10;
-    public static final int kElevatorMotor2 = 11;
-    public static final int kIntakeMotor = 12;
-    // CANivore Can Bus
   }
 
   public static class ClimberConstants {
@@ -91,13 +84,14 @@ public final class Constants {
     public static final double kClimberkG1 = 1;
     public static final double kClimberkV1 = 10;
 
-    public static final double KGearRatio = 126;
+    public static final double kGearRatio = 126;
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
     public static final Angle kClimberExtendedSetpoint = Degrees.of(190).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(170).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
-    public static final Angle kClimberSensorError = Degrees.of(2.5);
+    public static final Angle kClimberSensorTolerance = Degrees.of(2.5);
     // Sim Constants
+    public static final int KClimberMotorsCount = 2;
     public static final Distance kClimberArmLength = Inches.of(6);
     public static final Mass kClimberMass = Pounds.of(0.5);
     public static final Angle kClimberArmMinAngle = Degrees.of(-30).plus(kClimberOffsetAngle);
