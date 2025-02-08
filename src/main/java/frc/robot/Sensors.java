@@ -15,8 +15,8 @@ public class Sensors {
       new TOFSensorSimple(kSensor3ID, Inches.of(2.5), TOFType.LASER_CAN);
   private TOFSensorSimple sensor4 =
       new TOFSensorSimple(kSensor4ID, Inches.of(2.5), TOFType.LASER_CAN);
-  private TOFSensorSimple scorerSensor =
-      new TOFSensorSimple(kScorerSensorID, Inches.of(2.5), TOFType.LASER_CAN);
+  // private TOFSensorSimple scorerSensor =
+  //   new TOFSensorSimple(kScorerSensorID, Inches.of(2.5), TOFType.LASER_CAN);
 
   public CoralEnum simState = CoralEnum.NO_CORAL;
 
@@ -27,9 +27,9 @@ public class Sensors {
       return simState;
     }
 
-    if (scorerSensor.isBeamBroke()) {
-      return CoralEnum.IN_ELEVATOR;
-    }
+    // if (scorerSensor.isBeamBroke()) {
+    // return CoralEnum.IN_ELEVATOR;
+    // }
     int state = sensor2.isBeamBroke() ? 1 : 0;
     state += sensor3.isBeamBroke() ? 10 : 0;
     state += sensor4.isBeamBroke() ? 100 : 0;

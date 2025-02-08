@@ -191,6 +191,7 @@ public class RobotContainer {
     //     .and(OI.getButton(OI.Driver.RBumper).negate())
     //     .whileTrue(intake.intakeToBirdhouse());
     OI.getPOVButton(OI.Driver.DPAD_UP).whileTrue(coralScorer.scoreCommand());
+    // OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorIntake());
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorIntake());
     new Trigger(() -> sensors.getSensorState() != CoralEnum.NO_CORAL)
         .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> mode));

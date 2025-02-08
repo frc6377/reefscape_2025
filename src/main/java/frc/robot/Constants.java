@@ -70,7 +70,7 @@ public final class Constants {
   public static class IntakeConstants {
     public static final double kIntakeSpeed = -1;
     public static final double kIntakeHandoffSpeed = -1;
-    public static final double kConveyorSpeed = 0.5;
+    public static final double kConveyorSpeed = -0.8;
     public static final double kPivotSpeed = 0.2;
     public static final Angle kPivotRetractAngle = Degrees.of(129);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
