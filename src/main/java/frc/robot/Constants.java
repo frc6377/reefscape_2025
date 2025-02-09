@@ -66,8 +66,8 @@ public final class Constants {
 
   public static class DIOConstants {
     public static final int kthroughBoreEncoderID = 10;
-    public static final int kClimberFrontEncoderID = 11;
-    public static final int kClimberBackEncoderID = 3;
+    public static final int kClimberFrontEncoderID = 1;
+    public static final int kClimberBackEncoderID = 0;
     public static final int gear11ID = 13;
     public static final int gear3ID = 14;
   }
@@ -87,9 +87,11 @@ public final class Constants {
 
     public static final double kGearRatio = 126;
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(190).plus(kClimberOffsetAngle);
-    public static final Angle kClimberAtCageSetpoint = Degrees.of(170).plus(kClimberOffsetAngle);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(220).plus(kClimberOffsetAngle);
+    public static final Angle kClimberAtCageSetpoint = Degrees.of(190).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
+    public static final Angle kClimberExtendedSetpoint2 = Degrees.of(-10).plus(kClimberOffsetAngle);
+    public static final Angle kClimberAtCageSetpoint2 = Degrees.of(10).plus(kClimberOffsetAngle);
     public static final Angle kClimberSensorTolerance = Degrees.of(2.5);
     public static final Angle kExpectedStartAngle = Degrees.of(90);
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;

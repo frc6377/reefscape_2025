@@ -53,7 +53,8 @@ public class Climber extends SubsystemBase {
   private Orchestra climberOrchestra;
   private TalonFX climberMotorBack;
   private FeedbackConfigs feedbackConfigs;
-  private MotorOutputConfigs climberOutputConfigs;
+  private MotorOutputConfigs climberOutputConfigsFront;
+  private MotorOutputConfigs climberOutputConfigsBack;
   private TalonFXConfiguration frontConfigs;
   private TalonFXConfiguration backConfigs;
   private Angle climberTargetAngle;
@@ -75,15 +76,9 @@ public class Climber extends SubsystemBase {
   public Climber() {
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
     climberFrontEncoder =
-        new DutyCycleEncoder(
-            DIOConstants.kClimberFrontEncoderID,
-            1,
-            ClimberConstants.kExpectedStartAngle.in(Rotations));
+        new DutyCycleEncoder(DIOConstants.kClimberFrontEncoderID, 1, Degrees.of(196).in(Rotations));
     climberBackEncoder =
-        new DutyCycleEncoder(
-            DIOConstants.kClimberBackEncoderID,
-            1,
-            ClimberConstants.kExpectedStartAngle.in(Rotations));
+        new DutyCycleEncoder(DIOConstants.kClimberBackEncoderID, 1, Degrees.of(243).in(Rotations));
     climberMotorFront = new TalonFX(CANIDs.kClimberMotorFront);
     climberMotorBack = new TalonFX(CANIDs.kClimberMotorBack);
     feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.kGearRatio);
@@ -104,20 +99,22 @@ public class Climber extends SubsystemBase {
     // Boolean to check if the climber is climbing of if it is just idle
     isClimbingStateSim = false;
     // Set the configs
-    climberOutputConfigs = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
+    climberOutputConfigsFront = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
+    climberOutputConfigsBack = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
     frontConfigs =
         new TalonFXConfiguration()
             .withSlot0(climberConfigsToClimber)
             .withSlot1(climberConfigsAtClimber)
             .withMotorOutput(
-                climberOutputConfigs.withInverted(ClimberConstants.kClimberFrontInvert))
+                climberOutputConfigsFront.withInverted(ClimberConstants.kClimberFrontInvert))
             .withFeedback(feedbackConfigs);
     backConfigs =
         new TalonFXConfiguration()
             .withSlot0(climberConfigsToClimber)
             .withSlot1(climberConfigsAtClimber)
-            .withMotorOutput(climberOutputConfigs.withInverted(ClimberConstants.kClimberBackInvert))
-            .withFeedback(feedbackConfigs);
+            .withMotorOutput(
+                climberOutputConfigsBack.withInverted(ClimberConstants.kClimberBackInvert))
+            .withFeedback(feedbackConfigs.withSensorToMechanismRatio(ClimberConstants.kGearRatio));
     climberMotorFront.getConfigurator().apply(frontConfigs);
     climberMotorBack.getConfigurator().apply(backConfigs);
     climberMotorFront.setPosition(climberTargetAngle.in(Rotations));
@@ -210,21 +207,21 @@ public class Climber extends SubsystemBase {
     return runOnce(
         () -> {
           climberMotorFront.setPosition(
-              climberFrontEncoder.get()
-                  + ClimberConstants.kClimberOffsetAngle.in(Rotations)
-                  + ClimberConstants.kExpectedStartAngle.in(Rotations));
+              climberFrontEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations));
           climberMotorBack.setPosition(
-              climberBackEncoder.get()
-                  + ClimberConstants.kClimberOffsetAngle.in(Rotations)
-                  + ClimberConstants.kExpectedStartAngle.in(Rotations));
+              climberBackEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations));
         });
   }
 
   public Command runRaw(Voltage voltage) {
-    return runOnce(
+    return startEnd(
         () -> {
           climberMotorFront.setControl(new VoltageOut(voltage));
           climberMotorBack.setControl(new VoltageOut(voltage));
+        },
+        () -> {
+          climberMotorFront.setControl(new VoltageOut(Volts.zero()));
+          climberMotorBack.setControl(new VoltageOut(Volts.zero()));
         });
   }
 
@@ -245,7 +242,7 @@ public class Climber extends SubsystemBase {
                   climberMotorFront.getPosition().getValue(),
                   ClimberConstants.kClimberSensorTolerance)
               && position.isNear(
-                  climberMotorFront.getPosition().getValue(),
+                  climberMotorBack.getPosition().getValue(),
                   ClimberConstants.kClimberSensorTolerance);
     } else {
       return () ->
@@ -321,11 +318,13 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putNumber(
         "Motor Voltage Back", climberMotorBack.getMotorVoltage().getValue().in(Volts));
     SmartDashboard.putNumber(
-        "Climber Position Front",
-        climberMotorFront.getPosition().getValue().div(ClimberConstants.kGearRatio).in(Degrees));
+        "Climber Position Front", climberMotorFront.getPosition().getValue().in(Degrees));
     SmartDashboard.putNumber(
-        "Climber Position Back",
-        climberMotorBack.getPosition().getValue().div(ClimberConstants.kGearRatio).in(Degrees));
+        "Climber Position Back", climberMotorBack.getPosition().getValue().in(Degrees));
+    SmartDashboard.putNumber(
+        "Absolute Encoder Front", Rotations.of(climberFrontEncoder.get()).in(Degrees));
+    SmartDashboard.putNumber(
+        "Absolute Encoder Back", Rotations.of(climberBackEncoder.get()).in(Degrees));
   }
 
   @Override
