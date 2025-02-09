@@ -18,6 +18,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -237,6 +239,7 @@ public class RobotContainer {
       OI.getButton(OI.Keyboard.C).onTrue(elevator.L3());
       OI.getButton(OI.Keyboard.V).onTrue(elevator.L4());
       SmartDashboard.putData(elevator.limitHit());
+      SmartDashboard.putData(Commands.runOnce(() -> SignalLogger.stop(), new Subsystem[0]).withName("End hoot log"));
 
       // Score Commpands
       OI.getButton(OI.Keyboard.ForwardSlash)
