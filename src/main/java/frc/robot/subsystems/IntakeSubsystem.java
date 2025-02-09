@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
 import frc.robot.Robot;
+import org.littletonrobotics.junction.Logger;
 import utilities.DebugEntry;
 import utilities.TOFSensorSimple;
 import utilities.TOFSensorSimple.TOFType;
@@ -81,7 +82,7 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
     conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);
-    sensor = new TOFSensorSimple(CANIDs.kConveyorSensor, Inches.of(1), TOFType.LASER_CAN);
+    sensor = new TOFSensorSimple(CANIDs.kIntakeTOFID2, Inches.of(1.5), TOFType.LASER_CAN);
     throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero);
 
     var slot0Configs = new Slot0Configs();
@@ -111,6 +112,8 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
 
+    pivotMotor.setPosition(throughBoreEncoder.get());
+
     if (Robot.isSimulation()) {
       simPivotMotor = pivotMotor.getSimState();
       simPivotMotor.Orientation =
@@ -133,7 +136,7 @@ public class IntakeSubsystem extends SubsystemBase {
       if (widget == null) {
         widget = Shuffleboard.getTab(getName()).add("Pivot Arm", mech);
       }
-      simSensor = new SimDeviceSim("TOF", CANIDs.kConveyorSensor);
+      simSensor = new SimDeviceSim("TOF", CANIDs.kIntakeTOFID2);
       simbeam = simSensor.getBoolean("BeamBroken");
     }
   }
@@ -158,8 +161,67 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.set(speed);
   }
 
+  private void setPivotAngle(Angle setPoint) {
+    pivotMotor.setControl(new MotionMagicVoltage(setPoint));
+    pivotSetpoint = setPoint;
+  }
+
+  public void seedEncoder() {
+    pivotMotor.setPosition(throughBoreEncoder.get());
+  }
+
   public Angle getPivotPosition() {
     return pivotMotor.getPosition().getValue();
+  }
+
+  // Pivot and Intake
+  public Command intakePivotIntakeCommand() {
+    return startEnd(
+        () -> {
+          setPivotAngle(kPivotExtendAngle);
+          setIntakeMotor(kIntakeSpeed);
+        },
+        () -> {
+          setPivotAngle(kPivotRetractAngle);
+          setIntakeMotor(0);
+        });
+  }
+
+  public Command intakePivotOutakeCommand() {
+    return runEnd(
+        () -> {
+          setPivotAngle(kPivotExtendAngle);
+          setIntakeMotor(-kIntakeSpeed);
+        },
+        () -> {
+          setPivotAngle(kPivotRetractAngle);
+          setIntakeMotor(0);
+        });
+  }
+
+  // Belt Commands
+  public Command conveyerInCommand() {
+    return runEnd(
+        () -> {
+          setConveyerMotor(-kConveyorSpeed);
+          setIntakeMotor(kIntakeHandoffSpeed);
+        },
+        () -> {
+          setConveyerMotor(0);
+          setIntakeMotor(0);
+        });
+  }
+
+  public Command conveyerOutCommand() {
+    return runEnd(
+        () -> {
+          setConveyerMotor(kConveyorSpeed);
+          setIntakeMotor(kIntakeHandoffSpeed);
+        },
+        () -> {
+          setConveyerMotor(0);
+          setIntakeMotor(0);
+        });
   }
 
   /** Pivot down */
@@ -209,30 +271,6 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(() -> setConveyerMotor(kConveyorSpeed), () -> setConveyerMotor(0));
   }
 
-  public Command intakeAndConveyorCommandSafe() {
-    return runEnd(
-        () -> {
-          setConveyerMotor(-kConveyorSpeed);
-          setIntakeMotor(kIntakeSpeed);
-        },
-        () -> {
-          setConveyerMotor(0);
-          setIntakeMotor(0);
-        });
-  }
-
-  public Command intakeAndConveyorCommandScoreL1() {
-    return runEnd(
-        () -> {
-          setConveyerMotor(kConveyorSpeed);
-          setIntakeMotor(kIntakeSpeed);
-        },
-        () -> {
-          setConveyerMotor(0);
-          setIntakeMotor(0);
-        });
-  }
-
   public Command intakeToBirdhousePhase1() {
     return startEnd(
             () -> {
@@ -264,13 +302,6 @@ public class IntakeSubsystem extends SubsystemBase {
     return conveyorEject();
   }
 
-  public Command seedEncoder() {
-    return runOnce(
-        () -> {
-          pivotMotor.setPosition(throughBoreEncoder.get());
-        });
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -279,14 +310,19 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Intake/Conveyor Motor Output", conveyorMotor.get());
     SmartDashboard.putNumber("Intake/Pivot Setpoint", pivotSetpoint.in(Degrees));
     SmartDashboard.putNumber(
-        "Intake/Pivot Position in Rotations", pivotMotor.getPosition().getValue().in(Rotations));
-    SmartDashboard.putNumber("Intake/Absolute Encoder Position", throughBoreEncoder.get());
+        "Intake/Pivot Position (Degrees)", pivotMotor.getPosition().getValue().in(Degrees));
+    SmartDashboard.putNumber(
+        "Intake/Absolute Encoder Position (Rotation)",
+        Rotations.of(throughBoreEncoder.get()).in(Degrees));
     pivotOutput.log(pivotMotor.get());
     if (this.getCurrentCommand() != null) {
       currentCommand.log(this.getCurrentCommand().getName());
     } else {
       currentCommand.log("none");
     }
+
+    Logger.recordOutput(
+        "TOFSensors/Intake Sensor Distance (Inches)", sensor.getDistance().in(Inches));
   }
 
   public void simulationPeriodic() {

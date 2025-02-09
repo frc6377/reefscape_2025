@@ -119,7 +119,7 @@ public class Climber extends SubsystemBase {
     climberMotorBack.getConfigurator().apply(backConfigs);
     climberMotorFront.setPosition(climberTargetAngle.in(Rotations));
     climberMotorBack.setPosition(climberTargetAngle.in(Rotations));
-    climberOrchestra =
+    climberOrchestra =  
         new Orchestra(new ArrayList<ParentDevice>(Collections.singletonList(climberMotorFront)));
     climberOrchestra.loadMusic("music/jeopardymusic.chrp");
     // For simulation
