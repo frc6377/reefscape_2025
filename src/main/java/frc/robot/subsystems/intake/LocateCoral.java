@@ -41,11 +41,6 @@ public class LocateCoral extends Command {
   @Override
   public void execute() {
     switch (state.get()) {
-      case CORAL_ALIGNED:
-        intakeSubsystem.setIntakeMotor(0);
-        intakeSubsystem.setConveyerMotor(0);
-        intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
-        break;
       case CORAL_TOO_CLOSE:
         intakeSubsystem.setIntakeMotor(kIntakeSpeed / 5);
         intakeSubsystem.setConveyerMotor(-kConveyorSpeed);

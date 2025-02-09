@@ -30,6 +30,7 @@ public class PassToScorer extends Command {
       Supplier<CoralEnum> state) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
+    addRequirements(coralScorer);
     this.intakeSubsystem = subsystem;
     this.elevatorNotL1 = elevatorNotL1;
     this.coralScorer = coralScorer;
@@ -51,8 +52,8 @@ public class PassToScorer extends Command {
       coralScorer.scoreCommand().initialize();
     } else {
       intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
-      intakeSubsystem.setIntakeMotor(kIntakeSpeed / 5);
-      intakeSubsystem.setConveyerMotor(kConveyorSpeed);
+      intakeSubsystem.setIntakeMotor(0);
+      intakeSubsystem.setConveyerMotor(0);
     }
   }
 
@@ -69,7 +70,7 @@ public class PassToScorer extends Command {
   @Override
   public boolean isFinished() {
     if (elevatorNotL1.getAsBoolean()) {
-      return state.get() == CoralEnum.IN_ELEVATOR;
+      return coralScorer.hasCoral().getAsBoolean();
     } else {
       return intakeSubsystem.atSetpoint(kPivotRetractAngle);
     }

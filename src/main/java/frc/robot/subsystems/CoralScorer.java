@@ -4,8 +4,9 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.CoralScorerConstants.*;
 import static edu.wpi.first.units.Units.Inches;
+import static frc.robot.Constants.CoralScorerConstants.*;
+import static frc.robot.Constants.SensorIDs.kScorerSensorID;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -33,7 +34,7 @@ public class CoralScorer extends SubsystemBase {
     scoreMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     scorerMotor.getConfigurator().apply(scoreMotorConfig);
 
-    TOFSensor = new TOFSensorSimple(1, Inches.of(2.5), TOFType.LASER_CAN);
+    TOFSensor = new TOFSensorSimple(kScorerSensorID, Inches.of(2.5), TOFType.LASER_CAN);
   }
 
   public Trigger hasCoral() {

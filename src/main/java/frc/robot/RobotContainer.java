@@ -15,6 +15,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
@@ -35,10 +36,20 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOSim;
+import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
+import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
-import frc.robot.subsystems.vision.*;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -61,12 +72,12 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private final IntakeSubsystem intake = new IntakeSubsystem();
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
-  private final Sensors sensors = new Sensors();
+  public static final Sensors sensors = new Sensors();
+  private final IntakeSubsystem intake = new IntakeSubsystem();
 
-  private boolean mode = false;
+  private boolean elevatorOrL1Mode = false;
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose;
@@ -193,20 +204,23 @@ public class RobotContainer {
     OI.getPOVButton(OI.Driver.DPAD_UP).whileTrue(coralScorer.scoreCommand());
     // OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorIntake());
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorIntake());
-    new Trigger(() -> sensors.getSensorState() != CoralEnum.NO_CORAL)
-        .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> mode));
+    new Trigger(
+            () ->
+                sensors.getSensorState() != CoralEnum.NO_CORAL
+                    && !intake.atSetpoint(kPivotRetractAngle))
+        .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> elevatorOrL1Mode));
     OI.getButton(OI.Driver.LBumper).whileTrue(intake.floorOuttake());
-    OI.getButton(OI.Driver.X)
+    OI.getPOVButton(OI.Driver.DPAD_DOWN)
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  mode = !mode;
-                  SmartDashboard.putBoolean("Intake/Mode", mode);
+                  elevatorOrL1Mode = !elevatorOrL1Mode;
+                  SmartDashboard.putBoolean("Intake/Mode", elevatorOrL1Mode);
                 }));
     intake.setDefaultCommand(intake.Idle());
 
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
-    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).onTrue(elevator.L1());
+    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).whileTrue(intake.l1ScoreModeB());
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
@@ -223,7 +237,7 @@ public class RobotContainer {
     // Scorer Buttons
     OI.getTrigger(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.LTrigger)
         .whileTrue(coralScorer.scoreCommand());
-    OI.getButton(usingKeyboard ? OI.Keyboard.ArrowUpDown : OI.Driver.LBumper)
+    OI.getTrigger(usingKeyboard ? OI.Keyboard.ArrowUpDown : OI.Driver.RTrigger)
         .whileTrue(coralScorer.reverseCommand());
 
     // Reset gyro / odometry, Runnable

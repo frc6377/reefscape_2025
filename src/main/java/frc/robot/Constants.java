@@ -102,12 +102,11 @@ public final class Constants {
     public static final double armZero = 0.35;
 
     public static enum CoralEnum {
-      CORAL_ALIGNED,
-      CORAL_NOT_ALIGNED,
       CORAL_TOO_CLOSE,
       CORAL_TOO_FAR,
       NO_CORAL,
-      IN_ELEVATOR
+      IN_ELEVATOR,
+      CORAL_ALIGNED
     }
   }
 
