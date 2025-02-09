@@ -1,5 +1,6 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Feet;
@@ -21,6 +22,7 @@ import edu.wpi.first.units.AngularAccelerationUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
@@ -68,14 +70,22 @@ public final class Constants {
   // Scorer Constants
   public static class CoralScorerConstants {
     public static final double kSpeed = 0.5;
-    public static double kIntakeSpeed = 0.4;
+    public static final double kIntakeSpeed = 0.4;
+    public static final Current kIntakeAMPs = Amps.of(10);
+
+    public static final double kP = 0.1;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kS = 0;
+    public static final double kV = 0;
+    public static final double kA = 0;
   }
 
   // Intake Constants
   public static class IntakeConstants {
     public static final double kIntakeSpeed = -1;
-    public static double kIntakeHandoffSpeed = -0.75;
-    public static double kConveyorSpeed = 0.25;
+    public static final double kIntakeHandoffSpeed = -0.75;
+    public static final double kConveyorSpeed = 0.25;
     public static final double kPivotSpeed = 0.2;
     public static final Angle kPivotRetractAngle = Degrees.of(128);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);

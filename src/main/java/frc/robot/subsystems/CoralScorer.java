@@ -7,7 +7,9 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Inches;
 import static frc.robot.Constants.CoralScorerConstants.*;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,15 +27,23 @@ public class CoralScorer extends SubsystemBase {
   private TalonFX scorerMotor;
 
   private TalonFXConfiguration scoreMotorConfig;
+  private Slot0Configs scoreSlotConfigs = new Slot0Configs();
 
   private TOFSensorSimple TOFSensor;
+
+  private TorqueCurrentFOC CurrentFOC;
 
   public CoralScorer() {
     scorerMotor = new TalonFX(CANIDs.kScorerMotor, Constants.RIOName);
     scoreMotorConfig = new TalonFXConfiguration();
     scoreMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     scoreMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    scoreMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+    scoreMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
     scorerMotor.getConfigurator().apply(scoreMotorConfig);
+
+    scoreSlotConfigs.withKP(kP).withKI(kI).withKD(kD).withKS(kS).withKV(kV).withKA(kA);
+    scorerMotor.getConfigurator().apply(scoreSlotConfigs);
 
     TOFSensor = new TOFSensorSimple(1, Inches.of(2.5), TOFType.LASER_CAN);
   }
@@ -48,7 +58,8 @@ public class CoralScorer extends SubsystemBase {
   }
 
   public Command intakeCommand() {
-    return startEnd(() -> scorerMotor.set(-kIntakeSpeed), () -> scorerMotor.set(0));
+    return startEnd(
+        () -> scorerMotor.setControl(new TorqueCurrentFOC(kIntakeAMPs)), () -> scorerMotor.set(0));
   }
 
   // Made a command to spin counter clockwise
