@@ -59,6 +59,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
@@ -100,7 +101,11 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   private IntakeState state = IntakeState.IDLE;
-  private Timer t = new Timer();
+  private Timer t1 = new Timer();
+  private Timer t2 = new Timer();
+  private Timer t3 = new Timer();
+  private Timer t4 = new Timer();
+  private Timer t5 = new Timer();
 
   private SingleJointedArmSim pivotSim;
 
@@ -416,62 +421,65 @@ public class IntakeSubsystem extends SubsystemBase {
         RobotContainer.sensors.setSimState(CoralEnum.NO_CORAL);
 
         if (atSetpoint(kPivotExtendAngle) && intakeMotor.get() > 0) {
-          t.start();
+          t1.start();
         } else {
-          t.stop();
+          t1.stop();
         }
 
-        if (t.hasElapsed(0.5)) {
+        if (t1.hasElapsed(0.5)) {
           state = IntakeState.FLOOR_INTAKE;
         }
 
         if (atSetpoint(kcoralStation) && intakeMotor.get() > 0) {
-          t.start();
+          t2.start();
         } else {
-          t.stop();
+          t2.stop();
         }
 
-        if (t.hasElapsed(0.5)) {
+        if (t2.hasElapsed(0.5)) {
           state = IntakeState.HP_CORAL_INTAKE;
         }
 
         if (atSetpoint(kalgae) && intakeMotor.get() < 0) {
-          t.start();
+          t3.start();
         } else {
-          t.stop();
+          t3.stop();
         }
 
-        if (t.hasElapsed(0.5)) {
+        if (t3.hasElapsed(0.5)) {
           state = IntakeState.ALGAE_INTAKE;
         }
       case FLOOR_INTAKE:
         RobotContainer.sensors.setSimState(
             Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR);
         state = IntakeState.LOCATE_CORAL;
-        t.reset();
+        t1.reset();
       case FLOOR_OUTTAKE:
         break;
       case HP_CORAL_INTAKE:
         RobotContainer.sensors.setSimState(
             Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR);
         state = IntakeState.LOCATE_CORAL;
-        t.reset();
+        t2.reset();
       case ALGAE_INTAKE:
+        Commands.waitSeconds(0.5);
         state = IntakeState.ALGAE_HOLD;
       case ALGAE_HOLD:
+        Commands.waitSeconds(0.5);
         state = IntakeState.ALGAE_OUTTAKE;
       case ALGAE_OUTTAKE:
+        Commands.waitSeconds(0.5);
         if (intakeMotor.get() > 0) {
           state = IntakeState.IDLE;
         }
       case LOCATE_CORAL:
         if (atSetpoint(kcoralStation) && intakeMotor.get() > 0 && conveyorMotor.get() > 0) {
-          t.start();
+          t4.start();
         } else {
-          t.stop();
+          t4.stop();
         }
 
-        if (t.hasElapsed(0.5)) {
+        if (t4.hasElapsed(0.5)) {
           RobotContainer.sensors.setSimState(CoralEnum.CORAL_ALIGNED);
           state = IntakeState.PASS_CORAL_TO_SCORER;
         }
@@ -486,12 +494,12 @@ public class IntakeSubsystem extends SubsystemBase {
         state = IntakeState.L1_SCORE;
       case L1_SCORE:
         if (atSetpoint(kl1) && intakeMotor.get() < 0) {
-          t.start();
+          t5.start();
         } else {
-          t.stop();
+          t5.stop();
         }
 
-        if (t.hasElapsed(0.5)) {
+        if (t5.hasElapsed(0.5)) {
           state = IntakeState.IDLE;
         }
 
