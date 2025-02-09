@@ -52,7 +52,7 @@ public class CoralScorer extends SubsystemBase {
 
   // Made a command to spin counter clockwise
   public Command reverseCommand() {
-    return startEnd(() -> scorerMotor.set(kSpeed/2), () -> scorerMotor.set(0));
+    return startEnd(() -> scorerMotor.set(kSpeed / 2), () -> scorerMotor.set(0));
   }
 
   @Override
