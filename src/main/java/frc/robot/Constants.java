@@ -87,7 +87,7 @@ public final class Constants {
 
     public static final double kGearRatio = 126;
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(220).plus(kClimberOffsetAngle);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(225).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(190).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
     public static final Angle kClimberExtendedSetpoint2 = Degrees.of(-10).plus(kClimberOffsetAngle);
