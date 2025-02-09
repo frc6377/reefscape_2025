@@ -421,7 +421,7 @@ public class IntakeSubsystem extends SubsystemBase {
       case IDLE:
         RobotContainer.sensors.setSimState(CoralEnum.NO_CORAL);
 
-        if (atSetpoint(kPivotExtendAngle) && intakeMotor.get() > 0) {
+        if (atSetpoint(kPivotExtendAngle) && intakeMotor.get() == kIntakeSpeed) {
           t1.start();
         } else {
           t1.stop();
@@ -432,7 +432,7 @@ public class IntakeSubsystem extends SubsystemBase {
           t1.reset();
         }
 
-        if (atSetpoint(kcoralStation) && intakeMotor.get() > 0) {
+        if (atSetpoint(kcoralStation) && intakeMotor.get() == kIntakeSpeed) {
           t2.start();
         } else {
           t2.stop();
@@ -443,7 +443,7 @@ public class IntakeSubsystem extends SubsystemBase {
           t2.reset();
         }
 
-        if (atSetpoint(kalgae) && intakeMotor.get() < 0) {
+        if (atSetpoint(kalgae) && intakeMotor.get() == -kIntakeSpeed) {
           t3.start();
         } else {
           t3.stop();
@@ -482,11 +482,11 @@ public class IntakeSubsystem extends SubsystemBase {
         }
       case LOCATE_CORAL:
         if (coralState == CoralEnum.CORAL_TOO_CLOSE) {
-          if (atSetpoint(kcoralStation) && intakeMotor.get() > 0 && conveyorMotor.get() < 0) {
+          if (atSetpoint(kcoralStation) && intakeMotor.get() == kIntakeSpeed / 5 && conveyorMotor.get() < 0) {
             t4.start();
           }
         } else if (coralState == CoralEnum.CORAL_TOO_FAR) {
-          if (atSetpoint(kcoralStation) && intakeMotor.get() > 0 && conveyorMotor.get() > 0) {
+          if (atSetpoint(kcoralStation) && intakeMotor.get() == kIntakeSpeed && conveyorMotor.get() > 0) {
             t4.start();
           }
         } else if (coralState == CoralEnum.NO_CORAL) {
@@ -512,7 +512,7 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeState = IntakeState.L1_SCORE;
         break;
       case L1_SCORE:
-        if (atSetpoint(kl1) && intakeMotor.get() < 0) {
+        if (atSetpoint(kl1) && intakeMotor.get() == kIntakeSpeed) {
           t5.start();
         } else {
           t5.stop();
