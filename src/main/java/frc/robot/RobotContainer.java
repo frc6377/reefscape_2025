@@ -210,10 +210,17 @@ public class RobotContainer {
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
-    OI.getPOVButton(OI.Driver.DPAD_UP)
-        .and(OI.getButton(OI.Driver.RBumper).negate())
-        .whileTrue(intake.floorIntake());
-    // Score Commpands
+    SmartDashboard.putData(elevator.limitHit());
+
+    // Intake Buttons
+    // OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.floorIntake());
+    // OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
+
+    // Handoff Buttons
+    OI.getPOVButton(OI.Driver.DPAD_LEFT)
+        .whileTrue(intake.conveyerOutCommand().alongWith(coralScorer.reverseCommand()));
+
+    // Scorer Buttons
     OI.getTrigger(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.LTrigger)
         .whileTrue(coralScorer.scoreCommand());
     OI.getButton(usingKeyboard ? OI.Keyboard.ArrowUpDown : OI.Driver.LBumper)
