@@ -10,6 +10,7 @@ import static frc.robot.Constants.IntakeConstants.*;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -47,12 +48,18 @@ public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
   private TalonFX intakeMotor;
 
-  private TalonFXSimState simPivotMotor;
+  private TalonFXConfiguration intakeConfig;
+
+  private TalonFX conveyorMotor;
+  private TalonFXConfiguration conveyorConfig;
 
   private TalonFX pivotMotor;
-  private TalonFX conveyorMotor;
+  private TalonFXSimState simPivotMotor;
+  private Slot0Configs pivtoSlotConfigs;
+  private TalonFXConfiguration pivotConfig;
+  private FeedbackConfigs pivotFeedbackConfigs;
+  private MotionMagicConfigs pivotMotionMagicConfigs;
   private Angle pivotSetpoint = kPivotRetractAngle;
-
   private DutyCycleEncoder throughBoreEncoder;
 
   // Sensor closest to birdhouse
@@ -79,40 +86,55 @@ public class IntakeSubsystem extends SubsystemBase {
   private DebugEntry<String> currentCommand;
 
   public IntakeSubsystem() {
+    // intakeMotor
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
-    pivotMotor = new TalonFX(CANIDs.kPivotMotor);
+    intakeConfig = new TalonFXConfiguration();
+    intakeConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    intakeMotor.getConfigurator().apply(intakeConfig);
+
     conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);
-    sensor = new TOFSensorSimple(CANIDs.kIntakeTOFID2, Inches.of(1.5), TOFType.LASER_CAN);
-    throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero);
+    conveyorConfig = new TalonFXConfiguration();
+    conveyorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    conveyorMotor.getConfigurator().apply(conveyorConfig);
 
-    var slot0Configs = new Slot0Configs();
-    slot0Configs.kP = kPivotP;
-    slot0Configs.kI = kPivotI;
-    slot0Configs.kD = kPivotD;
-    slot0Configs.kG = kPivotG;
-    slot0Configs.kA = kPivotA;
-    slot0Configs.kV = kPivotV;
-    slot0Configs.GravityType = kPivotGravityType;
+    pivotMotor = new TalonFX(CANIDs.kPivotMotor);
 
-    var feedbackConfigs = new FeedbackConfigs();
-    feedbackConfigs.RotorToSensorRatio = 1;
-    feedbackConfigs.SensorToMechanismRatio = kSensorToMechanism;
+    pivtoSlotConfigs =
+        new Slot0Configs()
+            .withKP(kPivotP)
+            .withKI(kPivotI)
+            .withKD(kPivotD)
+            .withKG(kPivotG)
+            .withKA(kPivotA)
+            .withKV(kPivotV)
+            .withGravityType(kPivotGravityType);
 
-    var pivotMotionMagic =
+    pivotFeedbackConfigs = new FeedbackConfigs();
+    pivotFeedbackConfigs.RotorToSensorRatio = 1;
+    pivotFeedbackConfigs.SensorToMechanismRatio = kSensorToMechanism;
+
+    pivotMotionMagicConfigs =
         new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(kMotionMagicCruiseVelocity)
             .withMotionMagicAcceleration(kMotionMagicAcceleration)
             .withMotionMagicJerk(kMotionMagicJerk);
 
-    pivotMotor.getConfigurator().apply(slot0Configs);
-    pivotMotor.getConfigurator().apply(feedbackConfigs);
-    pivotMotor.getConfigurator().apply(pivotMotionMagic);
+    pivotConfig = new TalonFXConfiguration();
+    pivotConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+
+    pivotMotor.getConfigurator().apply(pivotConfig);
+    pivotMotor.getConfigurator().apply(pivtoSlotConfigs);
+    pivotMotor.getConfigurator().apply(pivotFeedbackConfigs);
+    pivotMotor.getConfigurator().apply(pivotMotionMagicConfigs);
     pivotMotor.setControl(new CoastOut()); // Temporary
 
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
 
     pivotMotor.setPosition(throughBoreEncoder.get());
+
+    sensor = new TOFSensorSimple(CANIDs.kIntakeTOFID2, Inches.of(1.5), TOFType.LASER_CAN);
+    throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero);
 
     if (Robot.isSimulation()) {
       simPivotMotor = pivotMotor.getSimState();

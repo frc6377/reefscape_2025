@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -46,7 +47,11 @@ import utilities.TunableNumber;
 public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor1;
   private TalonFXSimState simElvMotor1;
+  private TalonFXConfiguration elevatorConfig1;
+
   private TalonFX elevatorMotor2;
+  private TalonFXConfiguration elevatorConfig2;
+
   private DutyCycleEncoder gear3;
   private DutyCycleEncoder gear11;
   private DutyCycleEncoderSim simGear3;
@@ -55,8 +60,10 @@ public class Elevator extends SubsystemBase {
 
   private final VoltageOut m_voltReq;
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
+
   private MotorOutputConfigs invertMotor =
       new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
+
   private static Mechanism2d mech = new Mechanism2d(2, 2);
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
@@ -119,11 +126,19 @@ public class Elevator extends SubsystemBase {
     gear11 = new DutyCycleEncoder(DIOConstants.gear11ID, 1.0, ElevatorConstants.gear11Offset);
     elevatorMotor1 = new TalonFX(CANIDs.kElevatorMotor1, Constants.RIOName);
     elevatorMotor2 = new TalonFX(CANIDs.kElevatorMotor2, Constants.RIOName);
+
+    elevatorConfig1 = new TalonFXConfiguration();
+    elevatorConfig2 = new TalonFXConfiguration();
+    elevatorConfig1.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    elevatorConfig2.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+
     elevatorMotor1.getConfigurator().apply(loopCfg);
     elevatorMotor1.getConfigurator().apply(elvSoftLimit);
     elevatorMotor1.getConfigurator().apply(currentLimit);
     elevatorMotor1.getConfigurator().apply(invertMotor);
     elevatorMotor1.getConfigurator().apply(elvMotionMagic);
+    elevatorMotor1.getConfigurator().apply(elevatorConfig1);
+    elevatorMotor2.getConfigurator().apply(elevatorConfig2);
     elevatorMotor2.setControl(new Follower(CANIDs.kElevatorMotor1, true));
     elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
     // new Trigger(elvLimitSwitch::get).onTrue(zeroMotorEncoder());

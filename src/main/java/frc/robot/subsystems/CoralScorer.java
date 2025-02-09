@@ -32,6 +32,7 @@ public class CoralScorer extends SubsystemBase {
     scorerMotor = new TalonFX(CANIDs.kScorerMotor, Constants.RIOName);
     scoreMotorConfig = new TalonFXConfiguration();
     scoreMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    scoreMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     scorerMotor.getConfigurator().apply(scoreMotorConfig);
 
     TOFSensor = new TOFSensorSimple(1, Inches.of(2.5), TOFType.LASER_CAN);
