@@ -76,7 +76,7 @@ public class Climber extends SubsystemBase {
   public Climber() {
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
     climberFrontEncoder =
-        new DutyCycleEncoder(DIOConstants.kClimberFrontEncoderID, 1, Degrees.of(196).in(Rotations));
+        new DutyCycleEncoder(DIOConstants.kClimberFrontEncoderID, 1, Degrees.of(20).in(Rotations));
     climberBackEncoder =
         new DutyCycleEncoder(DIOConstants.kClimberBackEncoderID, 1, Degrees.of(243).in(Rotations));
     climberMotorFront = new TalonFX(CANIDs.kClimberMotorFront);
@@ -207,7 +207,7 @@ public class Climber extends SubsystemBase {
     return runOnce(
         () -> {
           climberMotorFront.setPosition(
-              climberFrontEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations));
+              1.0 - climberFrontEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations));
           climberMotorBack.setPosition(
               climberBackEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations));
         });
@@ -322,7 +322,7 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putNumber(
         "Climber Position Back", climberMotorBack.getPosition().getValue().in(Degrees));
     SmartDashboard.putNumber(
-        "Absolute Encoder Front", Rotations.of(climberFrontEncoder.get()).in(Degrees));
+        "Absolute Encoder Front", Rotations.of(1 - climberFrontEncoder.get()).in(Degrees));
     SmartDashboard.putNumber(
         "Absolute Encoder Back", Rotations.of(climberBackEncoder.get()).in(Degrees));
   }
