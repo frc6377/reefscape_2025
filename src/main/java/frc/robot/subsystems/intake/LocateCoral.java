@@ -41,7 +41,7 @@ public class LocateCoral extends Command {
   @Override
   public void execute() {
     switch (state.get()) {
-      case DONE:
+      case CORAL_ALIGNED:
         intakeSubsystem.setIntakeMotor(0);
         intakeSubsystem.setConveyerMotor(0);
         intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
@@ -74,7 +74,7 @@ public class LocateCoral extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return state.get() == CoralEnum.DONE && intakeSubsystem.atSetpoint(kPivotRetractAngle);
+    return state.get() == CoralEnum.CORAL_ALIGNED && intakeSubsystem.atSetpoint(kPivotRetractAngle);
   }
 
   @Override

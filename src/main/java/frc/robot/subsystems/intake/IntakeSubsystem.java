@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
 import frc.robot.Robot;
+import frc.robot.Sensors;
 import utilities.DebugEntry;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -57,9 +58,10 @@ public class IntakeSubsystem extends SubsystemBase {
     HP_CORAL_INTAKE,
     L1_SCORE_MODE_A,
     L1_SCORE_MODE_B,
+    L1_SCORE,
     ALGAE_INTAKE,
     ALGAE_HOLD,
-    ALGAE_OUT,
+    ALGAE_OUTTAKE,
     IDLE,
     LOCATE_CORAL,
     PASS_CORAL_TO_SCORER,
@@ -74,11 +76,14 @@ public class IntakeSubsystem extends SubsystemBase {
   private DebugEntry<Double> pivotOutput;
   private DebugEntry<String> currentCommand;
 
+  private Sensors sensors;
+
   public IntakeSubsystem() {
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
     conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);
     throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero);
+    sensors = new Sensors();
 
     var slot0Configs = new Slot0Configs();
     slot0Configs.kP = kPivotP;
@@ -111,9 +116,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     if (Robot.isSimulation()) {
       simPivotMotor = pivotMotor.getSimState();
-      simPivotMotor.Orientation =
-          ChassisReference
-              .CounterClockwise_Positive; // FIXME: Change orientation is it doesn't work
+      simPivotMotor.Orientation = ChassisReference.CounterClockwise_Positive;
       pivotSim =
           new SingleJointedArmSim(
               DCMotor.getFalcon500(1),
@@ -271,7 +274,7 @@ public class IntakeSubsystem extends SubsystemBase {
           goToPivotPosition(kPivotExtendAngle);
           intakeMotor.set(kIntakeSpeed);
         },
-        () -> {}); // FIXME: runENd might need to be a start end
+        () -> {});
   }
 
   public Command floorOuttake() {
@@ -360,6 +363,7 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber(
         "Intake/Absolute Encoder Position (Rotation)",
         Rotations.of(throughBoreEncoder.get()).in(Degrees));
+    SmartDashboard.putString("Intake/Intake State", state.toString());
     pivotOutput.log(pivotMotor.get());
     if (this.getCurrentCommand() != null) {
       currentCommand.log(this.getCurrentCommand().getName());
@@ -379,36 +383,98 @@ public class IntakeSubsystem extends SubsystemBase {
 
     switch (state) {
       case IDLE:
+        sensors.setSimState(CoralEnum.NO_CORAL);
+
         if (atSetpoint(kPivotExtendAngle) && intakeMotor.get() > 0) {
           t.start();
-          if (t.hasElapsed(0.5)) {
-            state = IntakeState.FLOOR_INTAKE;
-          }
         } else {
           t.stop();
+        }
+
+        if (t.hasElapsed(0.5)) {
+          state = IntakeState.FLOOR_INTAKE;
         }
 
         if (atSetpoint(kcoralStation) && intakeMotor.get() > 0) {
           t.start();
-          if (t.hasElapsed(0.5)) {
-            state = IntakeState.FLOOR_INTAKE;
-          }
         } else {
           t.stop();
         }
-    }
 
-    /**
-     * switch (state) { case IDLE: if (MathUtil.isNear( pivotSim.getAngleRads() *
-     * kPivotExtendAngle.in(Radians), kPivotTolerance.in(Radians)) && Math.abs(intakeMotor.get()) >
-     * 0 && Math.abs(conveyorMotor.get()) > 0) { timer.start(); } else { timer.stop(); }
-     *
-     * <p>if (timer.hasElapsed(2)) { simbeam.set(true); state = IntakeState.IDLE; timer.reset(); }
-     * break; case FLOOR_INTAKE: if (Math.abs(conveyorMotor.get()) > 0) { if (!timer.isRunning()) {
-     * timer.start(); } } else { if (timer.isRunning()) { timer.stop(); } }
-     *
-     * <p>if (timer.hasElapsed(2)) { simbeam.set(false); state = IntakeState.FLOOR_OUTTAKE;
-     * timer.reset(); } break; case ALGAE_HOLD: state = IntakeState.ALGAE_HOLD; break;
-     */
+        if (t.hasElapsed(0.5)) {
+          state = IntakeState.HP_CORAL_INTAKE;
+        }
+
+        if (atSetpoint(kalgae) && intakeMotor.get() < 0) {
+          t.start();
+        } else {
+          t.stop();
+        }
+
+        if (t.hasElapsed(0.5)) {
+          state = IntakeState.ALGAE_INTAKE;
+        }
+      case FLOOR_INTAKE:
+        sensors.setSimState(CoralEnum.CORAL_NOT_ALIGNED);
+        state = IntakeState.LOCATE_CORAL;
+      case FLOOR_OUTTAKE:
+        break;
+      case HP_CORAL_INTAKE:
+        sensors.setSimState(CoralEnum.CORAL_NOT_ALIGNED);
+        state = IntakeState.LOCATE_CORAL;
+      case ALGAE_INTAKE:
+        state = IntakeState.ALGAE_HOLD;
+      case ALGAE_HOLD:
+        state = IntakeState.ALGAE_OUTTAKE;
+      case ALGAE_OUTTAKE:
+        if (intakeMotor.get() > 0) {
+          state = IntakeState.IDLE;
+        }
+      case LOCATE_CORAL:
+        if (atSetpoint(kPivotRetractAngle) && intakeMotor.get() > 0 && conveyorMotor.get() > 0) {
+          t.start();
+        } else {
+          t.stop();
+        }
+
+        if (t.hasElapsed(0.5)) {
+          sensors.setSimState(CoralEnum.CORAL_ALIGNED);
+          state = IntakeState.PASS_CORAL_TO_SCORER;
+        }
+
+        if (atSetpoint(kPivotRetractAngle) && intakeMotor.get() == 0 && conveyorMotor.get() == 0) {
+          sensors.setSimState(CoralEnum.CORAL_ALIGNED);
+          state = IntakeState.HOLD_CORAL;
+        }
+      case HOLD_CORAL:
+        state = IntakeState.PASS_CORAL_TO_SCORER;
+      case PASS_CORAL_TO_SCORER:
+        state = IntakeState.L1_SCORE;
+      case L1_SCORE:
+        if (atSetpoint(kl1) && intakeMotor.get() < 0) {
+          t.start();
+        } else {
+          t.stop();
+        }
+
+        if (t.hasElapsed(0.5)) {
+          state = IntakeState.IDLE;
+        }
+
+        /**
+         * switch (state) { case IDLE: if (MathUtil.isNear( pivotSim.getAngleRads() *
+         * kPivotExtendAngle.in(Radians), kPivotTolerance.in(Radians)) &&
+         * Math.abs(intakeMotor.get()) > 0 && Math.abs(conveyorMotor.get()) > 0) { timer.start(); }
+         * else { timer.stop(); }
+         *
+         * <p>if (timer.hasElapsed(2)) { simbeam.set(true); state = IntakeState.IDLE; timer.reset();
+         * } break; case FLOOR_INTAKE: if (Math.abs(conveyorMotor.get()) > 0) { if
+         * (!timer.isRunning()) { timer.start(); } } else { if (timer.isRunning()) { timer.stop(); }
+         * }
+         *
+         * <p>if (timer.hasElapsed(2)) { simbeam.set(false); state = IntakeState.FLOOR_OUTTAKE;
+         * timer.reset(); } break; case ALGAE_HOLD: state = IntakeState.ALGAE_HOLD; break;
+         */
+    }
   }
 }

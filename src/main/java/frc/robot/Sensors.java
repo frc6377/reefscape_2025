@@ -40,7 +40,7 @@ public class Sensors {
       case 001:
         return CoralEnum.CORAL_TOO_CLOSE;
       case 011:
-        return CoralEnum.DONE;
+        return CoralEnum.CORAL_ALIGNED;
       case 010:
         return CoralEnum.CORAL_TOO_FAR;
       case 110:
