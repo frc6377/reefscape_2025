@@ -68,16 +68,16 @@ public final class Constants {
   // Scorer Constants
   public static class CoralScorerConstants {
     public static final double kSpeed = 0.5;
-    public static final double kIntakeSpeed = 1;
+    public static final double kIntakeSpeed = 0.4;
   }
 
   // Intake Constants
   public static class IntakeConstants {
-    public static final double kIntakeSpeed = -0.8;
+    public static final double kIntakeSpeed = -1;
     public static final double kIntakeHandoffSpeed = -0.75;
-    public static final double kConveyorSpeed = 0.3;
+    public static final double kConveyorSpeed = 0.25;
     public static final double kPivotSpeed = 0.2;
-    public static final Angle kPivotRetractAngle = Degrees.of(129);
+    public static final Angle kPivotRetractAngle = Degrees.of(128);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
     public static final Angle kcoralStation = Degrees.of(101);
     public static final Angle kl1 = Degrees.of(75.5);

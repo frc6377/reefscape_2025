@@ -82,7 +82,7 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
     conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);
-    sensor = new TOFSensorSimple(CANIDs.kIntakeTOFID2, Inches.of(1), TOFType.LASER_CAN);
+    sensor = new TOFSensorSimple(CANIDs.kIntakeTOFID2, Inches.of(1.5), TOFType.LASER_CAN);
     throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero);
 
     var slot0Configs = new Slot0Configs();

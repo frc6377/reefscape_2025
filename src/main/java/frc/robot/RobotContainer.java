@@ -198,9 +198,9 @@ public class RobotContainer {
         .whileTrue(
             intake
                 .conveyerInCommand()
-                .alongWith(coralScorer.scoreCommand())
-                .onlyWhile(coralScorer.hasCoral().negate()));
-    OI.getPOVButton(OI.Driver.DPAD_LEFT).whileTrue(intake.conveyerOutCommand());
+                .alongWith(coralScorer.scoreCommand().onlyWhile(intake.getBeamBroken())));
+    OI.getPOVButton(OI.Driver.DPAD_LEFT)
+        .whileTrue(intake.conveyerOutCommand().alongWith(coralScorer.reverseCommand()));
 
     // Scorer Buttons
     OI.getTrigger(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.LTrigger)
