@@ -131,7 +131,7 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
 
-    pivotMotor.setPosition(throughBoreEncoder.get());
+    // pivotMotor.setPosition(throughBoreEncoder.get());
 
     sensor = new TOFSensorSimple(CANIDs.kIntakeTOFID2, Inches.of(1.5), TOFType.LASER_CAN);
     throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero);
@@ -345,6 +345,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     Logger.recordOutput(
         "TOFSensors/Intake Sensor Distance (Inches)", sensor.getDistance().in(Inches));
+    Logger.recordOutput("TOFSensors/Intake Sensor Triggered", sensor.isBeamBroke());
   }
 
   public void simulationPeriodic() {

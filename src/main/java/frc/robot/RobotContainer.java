@@ -195,10 +195,9 @@ public class RobotContainer {
 
     // Handoff Buttons
     OI.getPOVButton(OI.Driver.DPAD_RIGHT)
-        .whileTrue(
-            intake
-                .conveyerInCommand()
-                .alongWith(coralScorer.scoreCommand().onlyWhile(intake.getBeamBroken())));
+        .whileTrue(intake.conveyerInCommand().alongWith(coralScorer.scoreCommand()));
+    intake.getBeamBroken().onFalse(coralScorer.stopCommand());
+    coralScorer.hasCoral().onTrue(coralScorer.stopCommand());
     OI.getPOVButton(OI.Driver.DPAD_LEFT)
         .whileTrue(intake.conveyerOutCommand().alongWith(coralScorer.reverseCommand()));
 

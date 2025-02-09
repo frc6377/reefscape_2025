@@ -56,6 +56,10 @@ public class CoralScorer extends SubsystemBase {
     return startEnd(() -> scorerMotor.set(kSpeed / 2), () -> scorerMotor.set(0));
   }
 
+  public Command stopCommand() {
+    return runOnce(() -> scorerMotor.stopMotor());
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -63,5 +67,6 @@ public class CoralScorer extends SubsystemBase {
     Logger.recordOutput(
         "TOFSensors/Coral Scorer Sensor Distance (Inches)", TOFSensor.getDistance().in(Inches));
     Logger.recordOutput("TOFSensor/Coroal Scorer Bool", TOFSensor.isBeamBroke());
+    Logger.recordOutput("CoralScorer/Motor Velocity", scorerMotor.getVelocity().getValueAsDouble());
   }
 }
