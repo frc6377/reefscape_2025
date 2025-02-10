@@ -239,7 +239,8 @@ public class RobotContainer {
       OI.getButton(OI.Keyboard.C).onTrue(elevator.L3());
       OI.getButton(OI.Keyboard.V).onTrue(elevator.L4());
       SmartDashboard.putData(elevator.limitHit());
-      SmartDashboard.putData(Commands.runOnce(() -> SignalLogger.stop(), new Subsystem[0]).withName("End hoot log"));
+      SmartDashboard.putData(
+          Commands.runOnce(() -> SignalLogger.stop(), new Subsystem[0]).withName("End hoot log"));
 
       // Score Commpands
       OI.getButton(OI.Keyboard.ForwardSlash)
@@ -309,12 +310,13 @@ public class RobotContainer {
      * The Driverstation has a hard limit of 32 buttons so we use 2 different vjoy controllers
      * to get the effective 64 buttons that we need for logging. this first 16 buttons of every controller are
      * used for the front and back coral scored poses. */
+    int rows = 3;
     for (int i = 0; i < Constants.kPoleLetters.length / 2; i++) {
-      for (int j = 0; j < 3; j++) {
-        OI.getButton(OI.StreamDeck.streamDeckButtons1[i * 3 + j])
+      for (int j = 0; j < rows; j++) {
+        OI.getButton(OI.StreamDeck.streamDeckButtons[0][i * rows + j])
             .onTrue(drive.setPoseScored(Constants.kPoleLetters[i], j))
             .onFalse(drive.setPoseScored(Constants.kPoleLetters[i], j));
-        OI.getButton(OI.StreamDeck.streamDeckButtons2[i * 3 + j])
+        OI.getButton(OI.StreamDeck.streamDeckButtons[1][i * rows + j])
             .onTrue(drive.setPoseScored(Constants.kPoleLetters[i + 6], j))
             .onFalse(drive.setPoseScored(Constants.kPoleLetters[i + 6], j));
       }

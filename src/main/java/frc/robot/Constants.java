@@ -53,7 +53,8 @@ public final class Constants {
   public static final String CANivoreName = "Default Name";
   public static final String RIOName = "rio";
 
-  public static final int kStreamDeckMaxButtonCount = 32;
+  public static final int kStreamDeckTotalButtonCount = 64;
+  public static final int kMaxControllerButtonCount = 32;
   public static final String[] kPoleLetters =
       new String[] {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"};
 

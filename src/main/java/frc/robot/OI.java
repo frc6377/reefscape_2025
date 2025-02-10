@@ -194,13 +194,12 @@ public class OI extends OI_Utils {
     public static final Control Nob4 =
         new Control(XboxController.Axis.kRightTrigger, null, streamDeck2, nobCurve);
 
-    public static Control[] streamDeckButtons1 = new Control[Constants.kStreamDeckMaxButtonCount];
-    public static Control[] streamDeckButtons2 = new Control[Constants.kStreamDeckMaxButtonCount];
+    public static Control[][] streamDeckButtons = new Control[2][Constants.kStreamDeckTotalButtonCount];
 
     static {
-      for (int i = 0; i < Constants.kStreamDeckMaxButtonCount; i++) {
-        streamDeckButtons1[i] = new Control(i + 1, null, null, streamDeck1, ControlType.BUTTON);
-        streamDeckButtons2[i] = new Control(i + 1, null, null, streamDeck1, ControlType.BUTTON);
+      for (int i = 0; i < Constants.kMaxControllerButtonCount; i++) {
+        streamDeckButtons[0][i] = new Control(i + 1, null, null, streamDeck1, ControlType.BUTTON);
+        streamDeckButtons[1][i] = new Control(i + 1, null, null, streamDeck2, ControlType.BUTTON);
       }
     }
   }
