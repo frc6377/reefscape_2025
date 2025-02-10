@@ -45,11 +45,11 @@ public class OI extends OI_Utils {
     public static final Control DPAD_LEFT = new Control(270, "", controller);
 
     // Control Curves
-    private static final ControlCurve xTranslationCurve = new ControlCurve(0.25, 0, 1, 0.01, true);
-    private static final ControlCurve yTranslationCurve = new ControlCurve(0.25, 0, 1, 0.01);
-    public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 1, 0.01);
-    public static final ControlCurve rotationCurve = new ControlCurve(0.5, 0, 1, 0.01, true);
-    public static final ControlCurve elevatorCurve = new ControlCurve(1, 0, 0, 0.01, true);
+    private static final ControlCurve xTranslationCurve = new ControlCurve(0.75, 0, 0, 0.1, true);
+    private static final ControlCurve yTranslationCurve = new ControlCurve(0.75, 0, 0, 0.1);
+    public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 1, 0.1);
+    public static final ControlCurve rotationCurve = new ControlCurve(0.5, 0, 0, 0.1, true);
+    public static final ControlCurve elevatorCurve = new ControlCurve(1, 0, 0, 0.1, true);
 
     // Joystick Axes
     public static final Control LeftX =

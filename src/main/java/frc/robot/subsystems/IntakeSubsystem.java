@@ -13,6 +13,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -20,6 +21,7 @@ import edu.wpi.first.hal.SimBoolean;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -95,7 +97,10 @@ public class IntakeSubsystem extends SubsystemBase {
     conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);
     conveyorConfig = new TalonFXConfiguration();
     conveyorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    conveyorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+    conveyorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
     conveyorMotor.getConfigurator().apply(conveyorConfig);
+    conveyorMotor.getConfigurator().apply(new Slot0Configs().withKP(0.02));
 
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
 
@@ -179,6 +184,10 @@ public class IntakeSubsystem extends SubsystemBase {
     conveyorMotor.set(speed);
   }
 
+  private void setConveyerTorque(AngularVelocity input) {
+    conveyorMotor.setControl(new VelocityDutyCycle(input));
+  }
+
   private void setIntakeMotor(double speed) {
     intakeMotor.set(speed);
   }
@@ -200,23 +209,21 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command intakePivotIntakeCommand() {
     return startEnd(
         () -> {
-          setPivotAngle(kPivotExtendAngle);
           setIntakeMotor(kIntakeSpeed);
+          setPivotAngle(kPivotExtendAngle);
         },
         () -> {
           setPivotAngle(kPivotRetractAngle);
-          setIntakeMotor(0);
+          setIntakeMotor(-kOuttakeSpeed);
         });
   }
 
   public Command intakePivotOutakeCommand() {
     return runEnd(
         () -> {
-          setPivotAngle(kPivotExtendAngle);
-          setIntakeMotor(-kIntakeSpeed);
+          setIntakeMotor(kOuttakeSpeed);
         },
         () -> {
-          setPivotAngle(kPivotRetractAngle);
           setIntakeMotor(0);
         });
   }
@@ -237,12 +244,19 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command conveyerOutCommand() {
     return runEnd(
         () -> {
-          setConveyerMotor(kConveyorSpeed);
+          setConveyerMotor(kConveyorSpeed + 0.55);
           setIntakeMotor(kIntakeHandoffSpeed);
         },
         () -> {
           setConveyerMotor(0);
           setIntakeMotor(0);
+        });
+  }
+
+  public Command setL1PivotPose() {
+    return runOnce(
+        () -> {
+          setPivotAngle(kPivotOuttakePose);
         });
   }
 
@@ -346,6 +360,9 @@ public class IntakeSubsystem extends SubsystemBase {
     Logger.recordOutput(
         "TOFSensors/Intake Sensor Distance (Inches)", sensor.getDistance().in(Inches));
     Logger.recordOutput("TOFSensors/Intake Sensor Triggered", sensor.isBeamBroke());
+    Logger.recordOutput(
+        "Intake/Belt Velocity",
+        RotationsPerSecond.of(conveyorMotor.getVelocity().getValueAsDouble()).in(RPM));
   }
 
   public void simulationPeriodic() {

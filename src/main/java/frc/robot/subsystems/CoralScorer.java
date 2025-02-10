@@ -31,8 +31,6 @@ public class CoralScorer extends SubsystemBase {
 
   private TOFSensorSimple TOFSensor;
 
-  private TorqueCurrentFOC CurrentFOC;
-
   public CoralScorer() {
     scorerMotor = new TalonFX(CANIDs.kScorerMotor, Constants.RIOName);
     scoreMotorConfig = new TalonFXConfiguration();

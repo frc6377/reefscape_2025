@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 
@@ -71,7 +72,7 @@ public final class Constants {
   public static class CoralScorerConstants {
     public static final double kSpeed = 0.5;
     public static final double kIntakeSpeed = 0.4;
-    public static final Current kIntakeAMPs = Amps.of(10);
+    public static final Current kIntakeAMPs = Amps.of(1);
 
     public static final double kP = 0.1;
     public static final double kI = 0;
@@ -84,10 +85,13 @@ public final class Constants {
   // Intake Constants
   public static class IntakeConstants {
     public static final double kIntakeSpeed = -1;
+    public static final double kOuttakeSpeed = 0.2;
     public static final double kIntakeHandoffSpeed = -0.75;
-    public static final double kConveyorSpeed = 0.25;
+    public static final double kConveyorSpeed = 0.45;
+    public static final AngularVelocity kConveyorVelocity = RPM.of(500);
     public static final double kPivotSpeed = 0.2;
     public static final Angle kPivotRetractAngle = Degrees.of(128);
+    public static final Angle kPivotOuttakePose = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
     public static final Angle kcoralStation = Degrees.of(101);
     public static final Angle kl1 = Degrees.of(75.5);

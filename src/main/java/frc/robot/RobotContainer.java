@@ -183,7 +183,6 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Elevator Buttons
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
-    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).onTrue(elevator.L1());
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
     OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
     OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
@@ -192,6 +191,7 @@ public class RobotContainer {
     // Intake Buttons
     OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.intakePivotIntakeCommand());
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.intakePivotOutakeCommand());
+    OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(intake.setL1PivotPose());
 
     // Handoff Buttons
     OI.getPOVButton(OI.Driver.DPAD_RIGHT)
