@@ -482,11 +482,15 @@ public class IntakeSubsystem extends SubsystemBase {
         }
       case LOCATE_CORAL:
         if (coralState == CoralEnum.CORAL_TOO_CLOSE) {
-          if (atSetpoint(kcoralStation) && intakeMotor.get() == kIntakeSpeed / 5 && conveyorMotor.get() < 0) {
+          if (atSetpoint(kcoralStation)
+              && intakeMotor.get() == kIntakeSpeed / 5
+              && conveyorMotor.get() < 0) {
             t4.start();
           }
         } else if (coralState == CoralEnum.CORAL_TOO_FAR) {
-          if (atSetpoint(kcoralStation) && intakeMotor.get() == kIntakeSpeed && conveyorMotor.get() > 0) {
+          if (atSetpoint(kcoralStation)
+              && intakeMotor.get() == kIntakeSpeed
+              && conveyorMotor.get() > 0) {
             t4.start();
           }
         } else if (coralState == CoralEnum.NO_CORAL) {
