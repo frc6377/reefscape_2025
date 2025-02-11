@@ -32,6 +32,7 @@ import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.subsystems.Elevator;
+import java.util.HashMap;
 
 public final class Constants {
   /**
@@ -181,7 +182,9 @@ public final class Constants {
   public final class DrivetrainConstants {
     // PathPlanner config constants
     public static final double ROBOT_MASS_KG = 34.2462254;
+    // TODO: Find calculated value after running SysID
     public static final double ROBOT_MOI = 4.682;
+    // TODO: Find actual value
     public static final double WHEEL_COF = 1.2;
 
     // TODO: Get Correct Values
@@ -189,21 +192,47 @@ public final class Constants {
         new PathConstraints(1, 1, Degrees.of(540).in(Radians), Degrees.of(720).in(Radians));
 
     // Scoring Poses for PathFinder
-    public static final Pose2d[] SCORE_POSES =
-        new Pose2d[] {
-          new Pose2d(Meters.of(3.173), Meters.of(4.193), new Rotation2d(Degrees.of(0))),
-          new Pose2d(Meters.of(3.173), Meters.of(3.854), new Rotation2d(Degrees.of(0))),
-          new Pose2d(Meters.of(3.686), Meters.of(2.973), new Rotation2d(Degrees.of(60))),
-          new Pose2d(Meters.of(3.974), Meters.of(2.801), new Rotation2d(Degrees.of(60))),
-          new Pose2d(Meters.of(5.000), Meters.of(2.799), new Rotation2d(Degrees.of(120))),
-          new Pose2d(Meters.of(5.286), Meters.of(2.966), new Rotation2d(Degrees.of(120))),
-          new Pose2d(Meters.of(5.803), Meters.of(3.854), new Rotation2d(Degrees.of(180))),
-          new Pose2d(Meters.of(5.803), Meters.of(4.194), new Rotation2d(Degrees.of(180))),
-          new Pose2d(Meters.of(5.288), Meters.of(5.082), new Rotation2d(Degrees.of(-120))),
-          new Pose2d(Meters.of(5.001), Meters.of(5.245), new Rotation2d(Degrees.of(-120))),
-          new Pose2d(Meters.of(3.972), Meters.of(5.244), new Rotation2d(Degrees.of(-60))),
-          new Pose2d(Meters.of(3.684), Meters.of(5.078), new Rotation2d(Degrees.of(-60))),
-        };
+    public static final HashMap<String, Pose2d> SCORE_POSES =
+        new HashMap<String, Pose2d>(kPoleLetters.length);
+
+    static {
+      SCORE_POSES.put(
+          kPoleLetters[0],
+          new Pose2d(Meters.of(3.183), Meters.of(4.157), new Rotation2d(Degrees.of(90))));
+      SCORE_POSES.put(
+          kPoleLetters[1],
+          new Pose2d(Meters.of(3.184), Meters.of(3.828), new Rotation2d(Degrees.of(90))));
+      SCORE_POSES.put(
+          kPoleLetters[2],
+          new Pose2d(Meters.of(3.726), Meters.of(2.960), new Rotation2d(Degrees.of(150))));
+      SCORE_POSES.put(
+          kPoleLetters[3],
+          new Pose2d(Meters.of(4.004), Meters.of(2.797), new Rotation2d(Degrees.of(150))));
+      SCORE_POSES.put(
+          kPoleLetters[4],
+          new Pose2d(Meters.of(5.029), Meters.of(2.834), new Rotation2d(Degrees.of(-150))));
+      SCORE_POSES.put(
+          kPoleLetters[5],
+          new Pose2d(Meters.of(5.311), Meters.of(2.993), new Rotation2d(Degrees.of(-150))));
+      SCORE_POSES.put(
+          kPoleLetters[6],
+          new Pose2d(Meters.of(5.791), Meters.of(3.898), new Rotation2d(Degrees.of(-90))));
+      SCORE_POSES.put(
+          kPoleLetters[7],
+          new Pose2d(Meters.of(5.790), Meters.of(4.219), new Rotation2d(Degrees.of(-90))));
+      SCORE_POSES.put(
+          kPoleLetters[8],
+          new Pose2d(Meters.of(5.250), Meters.of(5.093), new Rotation2d(Degrees.of(-30))));
+      SCORE_POSES.put(
+          kPoleLetters[9],
+          new Pose2d(Meters.of(4.964), Meters.of(5.259), new Rotation2d(Degrees.of(-30))));
+      SCORE_POSES.put(
+          kPoleLetters[10],
+          new Pose2d(Meters.of(3.942), Meters.of(5.215), new Rotation2d(Degrees.of(30))));
+      SCORE_POSES.put(
+          kPoleLetters[11],
+          new Pose2d(Meters.of(3.667), Meters.of(5.062), new Rotation2d(Degrees.of(30))));
+    }
 
     public static final Pose2d[] SOURSE_POSES =
         new Pose2d[] {
@@ -279,7 +308,6 @@ public final class Constants {
     public static final Distance kFeildLength = Inches.of(690 + (7 / 8));
 
     // Heights
-    private static final Distance kL1H = Meters.of(0.4572);
     private static final Distance kL2H = Inches.of(31.1843);
     private static final Distance kL3H = Inches.of(47.0542);
     private static final Distance kL4H = Inches.of(71.9348);
@@ -505,14 +533,6 @@ public final class Constants {
     };
 
     public static final Pose3d[] kRedCoralScorePoses = {
-      // Level 1 (L1 - Trough Positions)
-      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
-      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
-      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
-      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
-      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
-      new Pose3d(Meters.zero(), Meters.zero(), kL1H, new Rotation3d()),
-
       // Level 2 (L2 - Lower Branches)
       new Pose3d(
           kRedStickPoses[0][0],

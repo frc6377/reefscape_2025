@@ -14,7 +14,6 @@
 package frc.robot.commands;
 
 import static frc.robot.Constants.DrivetrainConstants.PATH_CONSTRAINTS;
-import static frc.robot.Constants.DrivetrainConstants.SCORE_POSES;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -53,7 +52,6 @@ public class DriveCommands {
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
   private DriveCommands() {
-    Logger.recordOutput("Scoring Poses", SCORE_POSES);
     Logger.recordOutput("Target Pose", new Pose2d());
   }
 

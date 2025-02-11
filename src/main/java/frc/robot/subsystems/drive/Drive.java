@@ -412,11 +412,12 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
     // Find the closest pose
     Pose2d robotPose = getPose();
-    for (Pose2d scorePose : SCORE_POSES) {
-      double current_dist = robotPose.getTranslation().getDistance(scorePose.getTranslation());
+    for (String PoleLetter : Constants.kPoleLetters) {
+      double current_dist =
+          robotPose.getTranslation().getDistance(SCORE_POSES.get(PoleLetter).getTranslation());
       if (current_dist < closest_pose_dist) {
         closest_pose_dist = current_dist;
-        closest_pose = scorePose;
+        closest_pose = SCORE_POSES.get(PoleLetter);
       }
     }
     return closest_pose;
