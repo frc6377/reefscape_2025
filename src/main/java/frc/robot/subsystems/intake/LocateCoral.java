@@ -51,6 +51,7 @@ public class LocateCoral extends Command {
         break;
       case IN_ELEVATOR:
       case NO_CORAL:
+      case CORAL_ALIGNED:
         intakeSubsystem.setIntakeMotor(0);
         intakeSubsystem.setConveyerMotor(0);
         intakeSubsystem.goToPivotPosition(kPivotRetractAngle);

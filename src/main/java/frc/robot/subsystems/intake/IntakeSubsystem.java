@@ -11,31 +11,7 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.Constants.IntakeConstants.armZero;
-import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
-import static frc.robot.Constants.IntakeConstants.kGearing;
-import static frc.robot.Constants.IntakeConstants.kIntakeHandoffSpeed;
-import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
-import static frc.robot.Constants.IntakeConstants.kLength;
-import static frc.robot.Constants.IntakeConstants.kMOI;
-import static frc.robot.Constants.IntakeConstants.kMotionMagicAcceleration;
-import static frc.robot.Constants.IntakeConstants.kMotionMagicCruiseVelocity;
-import static frc.robot.Constants.IntakeConstants.kMotionMagicJerk;
-import static frc.robot.Constants.IntakeConstants.kPivotA;
-import static frc.robot.Constants.IntakeConstants.kPivotD;
-import static frc.robot.Constants.IntakeConstants.kPivotExtendAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotG;
-import static frc.robot.Constants.IntakeConstants.kPivotGravityType;
-import static frc.robot.Constants.IntakeConstants.kPivotI;
-import static frc.robot.Constants.IntakeConstants.kPivotP;
-import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotSpeed;
-import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
-import static frc.robot.Constants.IntakeConstants.kPivotV;
-import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
-import static frc.robot.Constants.IntakeConstants.kalgae;
-import static frc.robot.Constants.IntakeConstants.kcoralStation;
-import static frc.robot.Constants.IntakeConstants.kl1;
+import static frc.robot.Constants.IntakeConstants.*;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -429,6 +405,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         if (t1.hasElapsed(0.5)) {
           intakeState = IntakeState.FLOOR_INTAKE;
+          t1.stop();
           t1.reset();
         }
 
@@ -440,6 +417,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         if (t2.hasElapsed(0.5)) {
           intakeState = IntakeState.HP_CORAL_INTAKE;
+          t2.stop();
           t2.reset();
         }
 
@@ -451,14 +429,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
         if (t3.hasElapsed(0.5)) {
           intakeState = IntakeState.ALGAE_INTAKE;
+          t3.stop();
           t3.reset();
         }
-
         break;
       case FLOOR_INTAKE:
         RobotContainer.sensors.setSimState(
             Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR);
         intakeState = IntakeState.LOCATE_CORAL;
+        coralState = Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR;
         break;
       case FLOOR_OUTTAKE:
         break;
@@ -466,6 +445,7 @@ public class IntakeSubsystem extends SubsystemBase {
         RobotContainer.sensors.setSimState(
             Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR);
         intakeState = IntakeState.LOCATE_CORAL;
+        coralState = Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR;
         break;
       case ALGAE_INTAKE:
         Commands.waitSeconds(0.5);
@@ -480,6 +460,7 @@ public class IntakeSubsystem extends SubsystemBase {
         if (intakeMotor.get() > 0) {
           intakeState = IntakeState.IDLE;
         }
+        break;
       case LOCATE_CORAL:
         if (coralState == CoralEnum.CORAL_TOO_CLOSE) {
           if (atSetpoint(kcoralStation)
@@ -501,12 +482,15 @@ public class IntakeSubsystem extends SubsystemBase {
         if (t4.hasElapsed(0.5)) {
           RobotContainer.sensors.setSimState(CoralEnum.CORAL_ALIGNED);
           intakeState = IntakeState.PASS_CORAL_TO_SCORER;
+          coralState = CoralEnum.CORAL_ALIGNED;
+          t4.stop();
           t4.reset();
         }
 
         if (atSetpoint(kPivotRetractAngle) && intakeMotor.get() == 0 && conveyorMotor.get() == 0) {
           RobotContainer.sensors.setSimState(CoralEnum.CORAL_ALIGNED);
           intakeState = IntakeState.HOLD_CORAL;
+          coralState = CoralEnum.CORAL_ALIGNED;
         }
         break;
       case HOLD_CORAL:
@@ -524,6 +508,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         if (t5.hasElapsed(0.5)) {
           intakeState = IntakeState.IDLE;
+          t5.stop();
           t5.reset();
         }
 
