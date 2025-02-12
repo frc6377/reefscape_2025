@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -239,8 +238,8 @@ public class RobotContainer {
       OI.getButton(OI.Keyboard.C).onTrue(elevator.L3());
       OI.getButton(OI.Keyboard.V).onTrue(elevator.L4());
       SmartDashboard.putData(elevator.limitHit());
-      SmartDashboard.putData(
-          Commands.runOnce(() -> SignalLogger.stop(), new Subsystem[0]).withName("End hoot log"));
+
+      OI.getPOVButton(OI.Driver.DPAD_DOWN).onTrue(Commands.runOnce(() -> SignalLogger.stop()));
 
       // Score Commpands
       OI.getButton(OI.Keyboard.ForwardSlash)

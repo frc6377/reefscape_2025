@@ -182,14 +182,12 @@ public final class Constants {
   public final class DrivetrainConstants {
     // PathPlanner config constants
     public static final double ROBOT_MASS_KG = 34.2462254;
-    // TODO: Find calculated value after running SysID
-    public static final double ROBOT_MOI = 4.682;
+    public static final double ROBOT_MOI = 24.772835573;
     // TODO: Find actual value
     public static final double WHEEL_COF = 1.2;
 
-    // TODO: Get Correct Values
     public static final PathConstraints PATH_CONSTRAINTS =
-        new PathConstraints(1, 1, Degrees.of(540).in(Radians), Degrees.of(720).in(Radians));
+        new PathConstraints(3, 3, Degrees.of(630).in(Radians), Degrees.of(630).in(Radians));
 
     // Scoring Poses for PathFinder
     public static final HashMap<String, Pose2d> SCORE_POSES =

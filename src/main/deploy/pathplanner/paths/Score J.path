@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4935917753940755,
-        "y": 6.580223839268564
+        "x": 2.3945260100716994,
+        "y": 6.641809802643011
       },
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
@@ -20,12 +20,12 @@
         "y": 5.5615298402549165
       },
       "prevControl": {
-        "x": 3.2375996700200194,
-        "y": 6.146821491578094
+        "x": 3.2286790979559106,
+        "y": 6.44262414892568
       },
       "nextControl": {
-        "x": 4.662642705028488,
-        "y": 5.4377029362486615
+        "x": 4.614428165307365,
+        "y": 5.412370475635545
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 5.258719312018543
       },
       "prevControl": {
-        "x": 4.749242972629118,
-        "y": 5.386018745009467
+        "x": 4.567695872684344,
+        "y": 5.572653175180446
       },
       "nextControl": null,
       "isLocked": false,
@@ -51,8 +51,8 @@
   "globalConstraints": {
     "maxVelocity": 4.5,
     "maxAcceleration": 4.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 630.0,
+    "maxAngularAcceleration": 630.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

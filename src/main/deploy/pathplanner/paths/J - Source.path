@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.573985111131335,
-        "y": 5.448190252348914
+        "x": 4.44460151808698,
+        "y": 5.513403780976659
       },
       "isLocked": false,
       "linkedName": "Reef J"
@@ -20,8 +20,8 @@
         "y": 6.933118750460409
       },
       "prevControl": {
-        "x": 3.4128855408790795,
-        "y": 6.259582682397662
+        "x": 3.4767401257353905,
+        "y": 6.13327617006163
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,8 +35,8 @@
   "globalConstraints": {
     "maxVelocity": 4.5,
     "maxAcceleration": 4.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 630.0,
+    "maxAngularAcceleration": 630.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

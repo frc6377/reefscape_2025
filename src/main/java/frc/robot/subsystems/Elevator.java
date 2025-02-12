@@ -287,7 +287,8 @@ public class Elevator extends SubsystemBase {
     return runOnce(this::disableSoftLimits)
         .andThen(goDown(() -> 0.3).until(elvLimitSwitch::get))
         .andThen(zeroMotorEncoder())
-        .andThen(runOnce(this::enableSoftLimits));
+        .andThen(runOnce(this::enableSoftLimits))
+        .withName("Elevator Zero");
   }
 
   public Command zeroMotorEncoder() {

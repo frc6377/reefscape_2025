@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.952032076593884,
-        "y": 4.606399589153088
+        "x": 5.847003946529848,
+        "y": 4.827692994932029
       },
       "isLocked": false,
       "linkedName": "Reef H"
@@ -20,12 +20,12 @@
         "y": 5.29617627196864
       },
       "prevControl": {
-        "x": 5.905027261037412,
-        "y": 4.974815828149497
+        "x": 5.822922969238106,
+        "y": 5.068644958086199
       },
       "nextControl": {
-        "x": 4.683490182200202,
-        "y": 6.348417769315126
+        "x": 4.9212804119410976,
+        "y": 6.075872143697202
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 6.933118750460409
       },
       "prevControl": {
-        "x": 2.8869671107880235,
-        "y": 6.377943327476242
+        "x": 3.1248959545638906,
+        "y": 5.754523922272501
       },
       "nextControl": null,
       "isLocked": false,
@@ -56,8 +56,8 @@
   "globalConstraints": {
     "maxVelocity": 4.5,
     "maxAcceleration": 4.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 630.0,
+    "maxAngularAcceleration": 630.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

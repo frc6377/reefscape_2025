@@ -51,12 +51,6 @@
           "data": {
             "pathName": "D - Source"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score C"
-          }
         }
       ]
     }

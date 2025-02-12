@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0516798080186227,
-        "y": 1.861487540086478
+        "x": 2.1219498184127086,
+        "y": 1.9680245732412638
       },
       "isLocked": false,
       "linkedName": "Right Coral Station Mid"
@@ -20,8 +20,8 @@
         "y": 2.960377528322649
       },
       "prevControl": {
-        "x": 3.3769450569955515,
-        "y": 2.636465596850867
+        "x": 3.064268033487037,
+        "y": 2.3972413136840913
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,8 +35,8 @@
   "globalConstraints": {
     "maxVelocity": 4.5,
     "maxAcceleration": 4.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 630.0,
+    "maxAngularAcceleration": 630.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
