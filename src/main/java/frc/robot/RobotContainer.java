@@ -15,6 +15,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
@@ -31,7 +32,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.Constants.SimulationFeildConstants;
+import frc.robot.Constants.FeildConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CoralScorer;
@@ -91,21 +92,21 @@ public class RobotContainer {
                 drive, new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation));
         intake = IntakeSubsystem.create();
 
+        DriverStation.getAlliance();
+
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
         driveSimDefualtPose =
-            DriverStation.getAlliance().orElse(Alliance.Red).equals(Alliance.Blue)
+            Constants.kAllianceColor.equals(Alliance.Blue)
                 ? new Pose2d(
-                    Meters.of(2),
-                    SimulationFeildConstants.kFieldWidth.minus(Meters.of(2)),
-                    new Rotation2d())
+                    Meters.of(2), FeildConstants.kFieldWidth.minus(Meters.of(2)), new Rotation2d())
                 : new Pose2d(
-                    SimulationFeildConstants.kFieldLength.minus(Meters.of(2)),
+                    FeildConstants.kFieldLength.minus(Meters.of(2)),
                     Meters.of(2),
                     new Rotation2d(Degrees.of(180)));
 
-        driveSimulation = new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d());
+        driveSimulation = new SwerveDriveSimulation(Drive.mapleSimConfig, driveSimDefualtPose);
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         mapleSimArenaSubsystem = new MapleSimArenaSubsystem(driveSimulation);
 
@@ -178,6 +179,8 @@ public class RobotContainer {
         "Elevator SysID (Dynamic Forward)", elevator.sysIdDynamic(Direction.kForward));
     autoChooser.addOption(
         "Elevator SysID (Dynamic Reverse)", elevator.sysIdDynamic(Direction.kReverse));
+    autoChooser.addOption(
+        "Drive Velocity Test", DriveCommands.RunVelocity(drive, MetersPerSecond.of(1), 5));
 
     // Configure the button bindings
     configureButtonBindings();

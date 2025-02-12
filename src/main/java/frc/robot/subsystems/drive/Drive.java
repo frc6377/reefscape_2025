@@ -52,6 +52,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.FeildConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
@@ -81,27 +82,26 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   // PathPlanner config constants
   private static final RobotConfig PP_CONFIG =
       new RobotConfig(
-          DrivetrainConstants.ROBOT_MASS_KG,
-          DrivetrainConstants.ROBOT_MOI,
+          DrivetrainConstants.ROBOT_MASS.in(Kilograms),
+          DrivetrainConstants.ROBOT_MOI.in(KilogramSquareMeters),
           new ModuleConfig(
               TunerConstants.FrontLeft.WheelRadius,
               TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
               DrivetrainConstants.WHEEL_COF,
-              DCMotor.getKrakenX60Foc(1)
-                  .withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
+              DCMotor.getKrakenX60(1).withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
               TunerConstants.FrontLeft.SlipCurrent,
               1),
           getModuleTranslations());
 
   public static final DriveTrainSimulationConfig mapleSimConfig =
       DriveTrainSimulationConfig.Default()
-          .withRobotMass(Kilograms.of(DrivetrainConstants.ROBOT_MASS_KG))
+          .withRobotMass(DrivetrainConstants.ROBOT_MASS)
           .withCustomModuleTranslations(getModuleTranslations())
           .withGyro(COTS.ofPigeon2())
           .withSwerveModule(
               new SwerveModuleSimulationConfig(
                   DCMotor.getKrakenX60(1),
-                  DCMotor.getFalcon500(1),
+                  DCMotor.getKrakenX60(1),
                   TunerConstants.FrontLeft.DriveMotorGearRatio,
                   TunerConstants.FrontLeft.SteerMotorGearRatio,
                   Volts.of(TunerConstants.FrontLeft.DriveFrictionVoltage),
@@ -158,10 +158,11 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+            new PIDConstants(5, 0.0, 0.0), new PIDConstants(5, 0.0, 0.0)),
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
+
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {
@@ -277,6 +278,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     // Log unoptimized setpoints and setpoint speeds
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
     Logger.recordOutput("SwerveChassisSpeeds/Setpoints", speeds);
+    Logger.recordOutput("SwerveChassisSpeeds/X Setpoint", speeds.vxMetersPerSecond);
+    Logger.recordOutput("SwerveChassisSpeeds/X Real", getChassisSpeeds().vxMetersPerSecond);
 
     // Send setpoints to modules
     for (int i = 0; i < 4; i++) {
@@ -405,6 +408,29 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     return poseEstimator.getEstimatedPosition();
   }
 
+  public Pose2d getAllianceAdjustedPose(String poleLetter) {
+    Pose2d originalPose = SCORE_POSES.get(poleLetter);
+
+    if (originalPose == null) {
+      return null;
+    }
+
+    if (Constants.kAllianceColor.equals(Alliance.Red)) {
+      Translation2d flippedTranslation =
+          originalPose
+              .getTranslation()
+              .rotateAround(
+                  new Translation2d(
+                      FeildConstants.kFieldLength.div(2), FeildConstants.kFieldWidth.div(2)),
+                  new Rotation2d(Degrees.of(180)));
+
+      return new Pose2d(
+          flippedTranslation, originalPose.getRotation().rotateBy(new Rotation2d(Degrees.of(180))));
+    } else {
+      return originalPose;
+    }
+  }
+
   @AutoLogOutput(key = "Odometry/Closest Score Pose")
   public Pose2d getClosestScorePose() {
     Pose2d closest_pose = new Pose2d();
@@ -413,11 +439,11 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     // Find the closest pose
     Pose2d robotPose = getPose();
     for (String PoleLetter : Constants.kPoleLetters) {
-      double current_dist =
-          robotPose.getTranslation().getDistance(SCORE_POSES.get(PoleLetter).getTranslation());
+      Pose2d currentPose = getAllianceAdjustedPose(PoleLetter);
+      double current_dist = robotPose.getTranslation().getDistance(currentPose.getTranslation());
       if (current_dist < closest_pose_dist) {
         closest_pose_dist = current_dist;
-        closest_pose = SCORE_POSES.get(PoleLetter);
+        closest_pose = currentPose;
       }
     }
     return closest_pose;

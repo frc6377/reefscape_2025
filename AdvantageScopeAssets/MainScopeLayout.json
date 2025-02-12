@@ -11,9 +11,6 @@
           "expanded": [
             "/AdvantageKit",
             "/AdvantageKit/RealOutputs",
-            "/AdvantageKit/RealOutputs/FieldSimulation",
-            "/AdvantageKit/RealOutputs/Odometry",
-            "/AdvantageKit/RealOutputs/Odometry/Mech Poses",
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/0",
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/1",
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/2",
@@ -26,14 +23,14 @@
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/3/translation",
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/4/translation",
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/5/translation",
-            "/AdvantageKit/RealOutputs/SwerveChassisSpeeds",
-            "/AdvantageKit/RealOutputs/SwerveStates",
             "/SmartDashboard",
-            "/SmartDashboard/Intake"
+            "/AdvantageKit/SystemStats",
+            "/AdvantageKit/Drive",
+            "/AdvantageKit/Drive/Gyro"
           ]
         },
         "tabs": {
-          "selected": 2,
+          "selected": 5,
           "tabs": [
             {
               "type": 0,
@@ -50,38 +47,46 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/SmartDashboard/Intake/Pivot Position (Degrees)",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#e5b31b",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "stepped",
-                    "logKey": "NT:/SmartDashboard/Intake/Pivot Setpoint (Degrees)",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#af2437",
-                      "size": "normal"
-                    }
-                  }
-                ],
-                "rightSources": [
-                  {
-                    "type": "stepped",
-                    "logKey": "NT:/SmartDashboard/Intake/Pivot Motor Output",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveChassisSpeeds/X Real",
                     "logType": "Number",
                     "visible": true,
                     "options": {
                       "color": "#2b66a2",
                       "size": "normal"
                     }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveChassisSpeeds/X Setpoint",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
                   }
                 ],
-                "discreteSources": [],
+                "rightSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/SystemStats/BrownedOut",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/USING KEYBOARD",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e"
+                    }
+                  }
+                ],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
@@ -255,7 +260,7 @@
                 "cameraPosition": [
                   1.1164746933102532,
                   5.646841828021415,
-                  5.276147668987857
+                  5.276147668987858
                 ],
                 "cameraTarget": [
                   0,
@@ -317,6 +322,16 @@
               "controllerUUID": "32qsjv5klfollfjxtnm8og6apt8mtf7m",
               "renderer": null,
               "controlsHeight": 200
+            },
+            {
+              "type": 5,
+              "title": "Console",
+              "controller": "NT:/AdvantageKit/RealOutputs/Console",
+              "controllerUUID": "zvskdw8xx3r527gnhxkmgwbp0nixzjnh",
+              "renderer": {
+                "highlight": false
+              },
+              "controlsHeight": 0
             }
           ]
         }

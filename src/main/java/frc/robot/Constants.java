@@ -30,26 +30,25 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Velocity;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.subsystems.Elevator;
 import java.util.HashMap;
 
 public final class Constants {
-  /**
-   * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when
-   * running on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and
-   * "replay" (log replay from a file).
-   */
+  // Robot Mode
   public static final Mode simMode = Mode.SIM;
-
   public static final Mode currentMode = Robot.isReal() ? Mode.REAL : simMode;
 
   public static enum Mode {
     REAL,
     SIM,
-    /** Replaying from a log file. */
     REPLAY
   }
+
+  public static final Alliance kAllianceColor =
+      DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Red;
 
   public static final String CANivoreName = "Default Name";
   public static final String RIOName = "rio";
@@ -68,7 +67,7 @@ public final class Constants {
     public static final int kIntakeMotor = 13;
     public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
-    public static final int kConveyorSensor = 18; // FIXME: Change to correct ID -> 1
+    public static final int kConveyorSensor = 18;
   }
 
   public static class DIOConstants {
@@ -87,7 +86,7 @@ public final class Constants {
     public static final double kIntakeSpeed = -1;
     public static final double kConveyorSpeed = 0.8;
     public static final double kPivotSpeed = 1;
-    public static final Angle kPivotRetractAngle = Degrees.of(129.28); // FIXME: Put actual value
+    public static final Angle kPivotRetractAngle = Degrees.of(129.28);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
     public static final Angle kcoralStation = Degrees.of(101);
     public static final Angle kl1 = Degrees.of(75.5);
@@ -118,7 +117,7 @@ public final class Constants {
         kMotionMagicCruiseVelocity.times(Hertz.of(5));
     public static final double kMotionMagicJerk = 10;
 
-    public static final double armZero = 0.35; // TODO: Get units for this!
+    public static final double armZero = 0.35;
 
     // For maplesim Intake
     public static final Distance kIntakeWidth = Meters.of(0.470);
@@ -181,13 +180,12 @@ public final class Constants {
 
   public final class DrivetrainConstants {
     // PathPlanner config constants
-    public static final double ROBOT_MASS_KG = 34.2462254;
-    public static final double ROBOT_MOI = 24.772835573;
-    // TODO: Find actual value
+    public static final Mass ROBOT_MASS = Pounds.of(75.5);
+    public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(49.5459894327);
     public static final double WHEEL_COF = 1.2;
 
     public static final PathConstraints PATH_CONSTRAINTS =
-        new PathConstraints(3, 3, Degrees.of(630).in(Radians), Degrees.of(630).in(Radians));
+        new PathConstraints(4.4, 4.4, Degrees.of(630).in(Radians), Degrees.of(630).in(Radians));
 
     // Scoring Poses for PathFinder
     public static final HashMap<String, Pose2d> SCORE_POSES =
@@ -239,7 +237,7 @@ public final class Constants {
         };
   }
 
-  public final class SimulatedMechPoses {
+  public final class MechPoses {
     public static final Pose3d kIntakeStartPose =
         new Pose3d(
             Meters.of(0.191591),
@@ -274,11 +272,13 @@ public final class Constants {
             new Rotation3d(Degrees.of(0), Degrees.of(-45), Degrees.of(90)));
   }
 
-  public final class SimulationFeildConstants {
-    public static final Distance kScoreDistance = Inch.of(8.5);
-
+  public final class FeildConstants {
     public static final Distance kFieldWidth = Inches.of(317);
     public static final Distance kFieldLength = Inches.of(690 + (7 / 8));
+  }
+
+  public final class SimulationFeildConstants {
+    public static final Distance kScoreDistance = Inch.of(8.5);
 
     public static final Pose2d[][] kSourceAreas =
         new Pose2d[][] {

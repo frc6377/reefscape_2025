@@ -40,7 +40,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.SimulatedMechPoses;
+import frc.robot.Constants.MechPoses;
 import frc.robot.Robot;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -195,8 +195,8 @@ public class Elevator extends SubsystemBase {
                       "Elevator Mech [0]", 1, 90, 10, new Color8Bit(Color.kPurple)));
       SmartDashboard.putData("Elevator/2d mechanism", mech);
 
-      elvSimPose1 = SimulatedMechPoses.kElvStage1Pose;
-      elvSimPose2 = SimulatedMechPoses.kElvStage2Pose;
+      elvSimPose1 = MechPoses.kElvStage1Pose;
+      elvSimPose2 = MechPoses.kElvStage2Pose;
       Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", elvSimPose1);
       Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", elvSimPose2);
     }
@@ -367,14 +367,14 @@ public class Elevator extends SubsystemBase {
             new Translation3d(
                 elvSimPose1.getX(),
                 elvSimPose1.getY(),
-                SimulatedMechPoses.kElvStage1Pose.getZ() + simDist.in(Meters) / 2.0),
+                MechPoses.kElvStage1Pose.getZ() + simDist.in(Meters) / 2.0),
             new Rotation3d());
     elvSimPose2 =
         new Pose3d(
             new Translation3d(
                 elvSimPose2.getX(),
                 elvSimPose2.getY(),
-                SimulatedMechPoses.kElvStage2Pose.getZ() + (simDist.in(Meters))),
+                MechPoses.kElvStage2Pose.getZ() + (simDist.in(Meters))),
             new Rotation3d());
 
     SmartDashboard.putNumber("Elevator/Sim Length", simDist.in(Inches));

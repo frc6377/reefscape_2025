@@ -6,7 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.IntakeConstants.*;
-import static frc.robot.Constants.SimulatedMechPoses.kIntakeStartPose;
+import static frc.robot.Constants.MechPoses.kIntakeStartPose;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -39,7 +39,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.SimulatedMechPoses;
+import frc.robot.Constants.MechPoses;
 import frc.robot.Robot;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -83,7 +83,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private DebugEntry<String> currentCommand;
 
   private IntakeSimulation intakeSim;
-  private Pose3d intakeSimPose = Robot.isSimulation() ? SimulatedMechPoses.kIntakeStartPose : null;
+  private Pose3d intakeSimPose = Robot.isSimulation() ? MechPoses.kIntakeStartPose : null;
 
   public IntakeSubsystem(SwerveDriveSimulation driveSim) {
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);

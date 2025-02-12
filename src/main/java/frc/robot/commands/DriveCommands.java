@@ -13,6 +13,8 @@
 
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.Constants.DrivetrainConstants.PATH_CONSTRAINTS;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -25,6 +27,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -72,6 +75,17 @@ public class DriveCommands {
   public static Command GoToPose(Supplier<Pose2d> targetPose, Set<Subsystem> drive) {
     return new DeferredCommand(
         () -> AutoBuilder.pathfindToPose(targetPose.get(), PATH_CONSTRAINTS), drive);
+  }
+
+  public static Command RunVelocity(Drive drive, LinearVelocity velocity, double timeSec) {
+    return Commands.deadline(
+        Commands.waitSeconds(timeSec),
+        Commands.run(
+            () -> {
+              drive.runVelocity(
+                  new ChassisSpeeds(velocity, MetersPerSecond.zero(), DegreesPerSecond.zero()));
+            },
+            drive));
   }
 
   /**

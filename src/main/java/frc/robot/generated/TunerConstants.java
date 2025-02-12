@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.hardware.*;
-import com.ctre.phoenix6.signals.*;
 import com.ctre.phoenix6.swerve.*;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.*;
 import edu.wpi.first.math.Matrix;
@@ -26,8 +25,7 @@ public class TunerConstants {
           .withKD(3.593975)
           .withKS(0.131719)
           .withKV(2.73735)
-          .withKA(0.25078)
-          .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+          .withKA(0.25078);
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
   private static final Slot0Configs driveGains =
@@ -77,7 +75,7 @@ public class TunerConstants {
   // Theoretical free speed (m/s) at 12 V applied output;
   // This needs to be tuned to your individual robot
   // TODO: Find real value (temp number from recalc)
-  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(100);
+  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(4.4);
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot
@@ -93,11 +91,11 @@ public class TunerConstants {
   private static final int kPigeonId = 0;
 
   // These are only used for simulation
-  private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.02);
+  private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.0739);
   private static final MomentOfInertia kDriveInertia = KilogramSquareMeters.of(0.00648);
   // Simulated voltage necessary to overcome friction
-  private static final Voltage kSteerFrictionVoltage = Volts.of(0.2);
-  private static final Voltage kDriveFrictionVoltage = Volts.of(0.2);
+  private static final Voltage kSteerFrictionVoltage = Volts.of(0.131719);
+  private static final Voltage kDriveFrictionVoltage = Volts.of(0.2314325);
 
   public static final SwerveDrivetrainConstants DrivetrainConstants =
       new SwerveDrivetrainConstants()

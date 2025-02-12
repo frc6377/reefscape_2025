@@ -5,7 +5,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Meters;
-import static frc.robot.Constants.SimulatedMechPoses.kCoralScorerPose;
+import static frc.robot.Constants.MechPoses.kCoralScorerPose;
 import static frc.robot.Constants.SimulationFeildConstants.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.SimulatedMechPoses;
+import frc.robot.Constants.MechPoses;
 import java.util.ArrayList;
 import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
@@ -34,7 +34,7 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
 
   private List<Pose3d> scoredCoralPoses = new ArrayList<Pose3d>();
 
-  private Pose3d robotCoralPose = SimulatedMechPoses.kCoralScorerPose;
+  private Pose3d robotCoralPose = MechPoses.kCoralScorerPose;
   private Pose3d closestScorePose = null;
 
   private boolean robotHasCoral = false;
@@ -81,8 +81,8 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     Logger.recordOutput("FieldSimulation/Source Area", newPoses);
 
     // Temp until we have real climb code
-    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", SimulatedMechPoses.kClimber1Pose);
-    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", SimulatedMechPoses.kClimber2Pose);
+    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", MechPoses.kClimber1Pose);
+    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", MechPoses.kClimber2Pose);
   }
 
   public void setRobotHasCoral(boolean newRobotHasCoral) {
