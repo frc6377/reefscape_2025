@@ -19,7 +19,6 @@ import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -40,8 +39,6 @@ import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DIOConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Robot;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.function.BooleanSupplier;
 
 public class Climber extends SubsystemBase {
@@ -119,8 +116,9 @@ public class Climber extends SubsystemBase {
     climberMotorBack.getConfigurator().apply(backConfigs);
     climberMotorFront.setPosition(climberTargetAngle.in(Rotations));
     climberMotorBack.setPosition(climberTargetAngle.in(Rotations));
-    climberOrchestra =  
-        new Orchestra(new ArrayList<ParentDevice>(Collections.singletonList(climberMotorFront)));
+    climberOrchestra = new Orchestra();
+    climberOrchestra.addInstrument(climberMotorFront, 2);
+    climberOrchestra.addInstrument(climberMotorBack, 6);
     climberOrchestra.loadMusic("music/jeopardymusic.chrp");
     // For simulation
     // simulates the entire simulation, not just one arm
@@ -174,7 +172,7 @@ public class Climber extends SubsystemBase {
                   climberTargetAngle.in(Degrees),
                   10,
                   new Color8Bit(255, 255, 0)));
-      SmartDashboard.putData("Climb Mech", climbMech);
+      SmartDashboard.putData("Climber/Climb Mech", climbMech);
     }
   }
 
@@ -186,14 +184,14 @@ public class Climber extends SubsystemBase {
   }
 
   public Command stopJeopardy() {
-    return runOnce(
+    return Commands.runOnce(
         () -> {
           climberOrchestra.stop();
         });
   }
 
   public Command toggleJeopardy() {
-    return runOnce(
+    return Commands.runOnce(
         () -> {
           if (climberOrchestra.isPlaying()) {
             climberOrchestra.stop();
@@ -226,13 +224,15 @@ public class Climber extends SubsystemBase {
   }
 
   private Command runClimber(Angle position, int slot) {
-    return runOnce(
-        () -> {
-          climberTargetAngle = position;
-          climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
-          climberMotorBack.setControl(new PositionVoltage(position).withSlot(slot));
-          SmartDashboard.putNumber("Climber Position Setpoint", position.in(Degrees));
-        });
+    return Commands.sequence(
+        stopJeopardy(),
+        runOnce(
+            () -> {
+              climberTargetAngle = position;
+              climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
+              climberMotorBack.setControl(new PositionVoltage(position).withSlot(slot));
+              SmartDashboard.putNumber("Climber/Climber Position Setpoint", position.in(Degrees));
+            }));
   }
 
   private BooleanSupplier isClimberAtPosition(Angle position) {
@@ -307,24 +307,24 @@ public class Climber extends SubsystemBase {
           climberSimNormal.getAngleRads(), climberSimNormal.getVelocityRadPerSec());
       isClimbingStateSim = true;
     }
-    SmartDashboard.putBoolean("Climbing", isClimbingStateSim);
+    SmartDashboard.putBoolean("Climber/Climbing", isClimbingStateSim);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber(
-        "Motor Voltage Front", climberMotorFront.getMotorVoltage().getValue().in(Volts));
+        "Climber/Motor Voltage Front", climberMotorFront.getMotorVoltage().getValue().in(Volts));
     SmartDashboard.putNumber(
-        "Motor Voltage Back", climberMotorBack.getMotorVoltage().getValue().in(Volts));
+        "Climber/Motor Voltage Back", climberMotorBack.getMotorVoltage().getValue().in(Volts));
     SmartDashboard.putNumber(
-        "Climber Position Front", climberMotorFront.getPosition().getValue().in(Degrees));
+        "Climber/Climber Position Front", climberMotorFront.getPosition().getValue().in(Degrees));
     SmartDashboard.putNumber(
-        "Climber Position Back", climberMotorBack.getPosition().getValue().in(Degrees));
+        "Climber/Climber Position Back", climberMotorBack.getPosition().getValue().in(Degrees));
     SmartDashboard.putNumber(
-        "Absolute Encoder Front", Rotations.of(1 - climberFrontEncoder.get()).in(Degrees));
+        "Climber/Absolute Encoder Front", Rotations.of(1 - climberFrontEncoder.get()).in(Degrees));
     SmartDashboard.putNumber(
-        "Absolute Encoder Back", Rotations.of(climberBackEncoder.get()).in(Degrees));
+        "Climber/Absolute Encoder Back", Rotations.of(climberBackEncoder.get()).in(Degrees));
   }
 
   @Override
@@ -347,8 +347,9 @@ public class Climber extends SubsystemBase {
             .plus(Degrees.of(180))
             .in(Degrees));
 
-    SmartDashboard.putNumber("Climber Angle", Radians.of(simulator.getAngleRads()).in(Degrees));
-    SmartDashboard.putBoolean("Climbing", isClimbingStateSim);
+    SmartDashboard.putNumber(
+        "Climber/Climber Angle", Radians.of(simulator.getAngleRads()).in(Degrees));
+    SmartDashboard.putBoolean("Climber/Climbing", isClimbingStateSim);
     if (climberMotorFront.getPosition().getValue().gt(ClimberConstants.kClimberAtCageSetpoint)) {
       if (simulator == climberSimNormal) {
         toggleClimb();
