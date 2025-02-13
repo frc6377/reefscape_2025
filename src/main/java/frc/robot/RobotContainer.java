@@ -38,11 +38,16 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOSim;
+import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
+import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.intake.PassToScorer;
-import frc.robot.subsystems.vision.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -215,7 +220,7 @@ public class RobotContainer {
                 sensors.getSensorState() != CoralEnum.NO_CORAL
                     && !intake.atSetpoint(kPivotRetractAngle))
         .onTrue(
-            new LocateCoral(sensors::getSensorState, intake, () -> elevatorOrL1Mode)
+            new LocateCoral(sensors::getSensorState, intake, OI.getButton(OI.Driver.LBumper))
                 .andThen(
                     new PassToScorer(
                         intake, () -> elevatorOrL1Mode, coralScorer, sensors::getSensorState)));

@@ -19,16 +19,16 @@ public class LocateCoral extends Command {
 
   private Supplier<CoralEnum> state;
   private IntakeSubsystem intakeSubsystem;
-  private BooleanSupplier elevatorNotL1;
+  private BooleanSupplier override;
 
   /** Creates a new LocateCoral. */
   public LocateCoral(
-      Supplier<CoralEnum> state, IntakeSubsystem subsystem, BooleanSupplier elevatorNotL1) {
+      Supplier<CoralEnum> state, IntakeSubsystem subsystem, BooleanSupplier override) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
     this.state = state;
     this.intakeSubsystem = subsystem;
-    this.elevatorNotL1 = elevatorNotL1;
+    this.override = override;
   }
 
   // Called when the command is initially scheduled.
@@ -75,7 +75,8 @@ public class LocateCoral extends Command {
 
   @Override
   public InterruptionBehavior getInterruptionBehavior() {
-    if (state.get() == CoralEnum.CORAL_TOO_CLOSE || state.get() == CoralEnum.CORAL_TOO_FAR) {
+    if (state.get() == CoralEnum.CORAL_TOO_CLOSE
+        || state.get() == CoralEnum.CORAL_TOO_FAR) { // !override.getAsBoolean()
       return InterruptionBehavior.kCancelIncoming;
     } else {
       return InterruptionBehavior.kCancelSelf;

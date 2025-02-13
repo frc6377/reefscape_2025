@@ -512,7 +512,7 @@ public class IntakeSubsystem extends SubsystemBase {
           System.out.println("Compbot is haunted");
         }
 
-        if (t4.hasElapsed(0.5)) {
+        if (t4.hasElapsed(5)) {
           sensors.setSimState(CoralEnum.CORAL_ALIGNED);
           intakeState = IntakeState.PASS_CORAL_TO_SCORER;
           t4.stop();
