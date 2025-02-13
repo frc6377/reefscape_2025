@@ -16,6 +16,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
@@ -34,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.drive.*;
@@ -66,6 +68,8 @@ public class RobotContainer {
   private final boolean usingKeyboard = false && Robot.isSimulation();
 
   // Subsystems
+  private final Climber climber = new Climber();
+
   private final Drive drive;
   private final Vision vision;
   private final Elevator elevator = new Elevator();
@@ -190,6 +194,12 @@ public class RobotContainer {
     testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
     testTrig(OI.getButton(OI.Driver.X)).whileTrue(intake.extendPivotCommand());
     testTrig(OI.getButton(OI.Driver.Y)).whileTrue(intake.retractPivotCommand());
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
+        .whileTrue(climber.runRaw(Volts.of(3)));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
+        .whileTrue(climber.runRaw(Volts.of(-3)));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
+        .onTrue(climber.toggleJeopardy());
   }
 
   private void configureButtonBindings() {
@@ -219,6 +229,9 @@ public class RobotContainer {
                 }));
     intake.setDefaultCommand(intake.Idle());
 
+    OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
+    OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
+    OI.getButton(OI.Operator.Start).onTrue(climber.zero());
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).whileTrue(intake.l1ScoreModeB());
     OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
