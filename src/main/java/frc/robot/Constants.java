@@ -53,8 +53,8 @@ public final class Constants {
   public static class CANIDs {
     // Rev Can Bus
     // 1-8 Motor ID is reserved by the drivebase
-    public static final int kClimberMotorFront = 16;
-    public static final int kClimberMotorBack = 17;
+    public static final int kClimberMotorFront = 16; // FIXME
+    public static final int kClimberMotorBack = 17; // FIXME
     public static final int kScorerMotor = 15;
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
@@ -66,8 +66,8 @@ public final class Constants {
 
   public static class DIOConstants {
     public static final int kthroughBoreEncoderID = 10;
-    public static final int kClimberFrontEncoderID = 1;
-    public static final int kClimberBackEncoderID = 0;
+    public static final int kClimberFrontEncoderID = 5;
+    public static final int kClimberBackEncoderID = 6;
     public static final int gear11ID = 13;
     public static final int gear3ID = 14;
   }
@@ -192,7 +192,7 @@ public final class Constants {
     public static final Distance kMaxElevatorHeight = Inches.of(72);
     public static final Distance kElevatorDrumCircumference =
         kElevatorDrumRadius.times(2 * Math.PI);
-    public static final AngularVelocity MMVel = Elevator.heightToRotations(InchesPerSecond.of(60));
+    public static final AngularVelocity MMVel = Elevator.heightToRotations(InchesPerSecond.of(100));
     public static final AngularAcceleration MMAcc = MMVel.times(Hertz.of(5));
     public static final Velocity<AngularAccelerationUnit> MMJerk =
         RotationsPerSecondPerSecond.per(Second).of(MMAcc.in(RotationsPerSecondPerSecond)).times(10);
