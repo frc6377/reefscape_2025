@@ -203,27 +203,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    // Set the intake rollers to the left and right triggers
-    // OI.getPOVButton(OI.Driver.DPAD_UP)
-    //     .and(OI.getButton(OI.Driver.RBumper).negate())
-    //     .whileTrue(intake.intakeToBirdhouse());
-    OI.getPOVButton(OI.Driver.DPAD_UP).whileTrue(coralScorer.scoreClockWise());
-    // OI.getPOVButton(OI.Driver.DPAD_DOWN)
-    //     .and(OI.getButton(OI.Driver.RBumper).negate())
-    //     .whileTrue(intake.ejectFromBirdhouse());
-    // intake.setDefaultCommand(intake.retractPivotCommand());
 
-    // Set the intake rollers to the left and right triggers
-    OI.getPOVButton(OI.Driver.DPAD_UP)
-        .and(OI.getButton(OI.Driver.RBumper).negate())
-        .whileTrue(intake.intakeToBirdhouse());
-    OI.getPOVButton(OI.Driver.DPAD_UP)
-        .and(intake.getBeamBroken().negate())
-        .whileTrue(coralScorer.scoreClockWise());
-    OI.getPOVButton(OI.Driver.DPAD_DOWN)
-        .and(OI.getButton(OI.Driver.RBumper).negate())
-        .whileTrue(intake.ejectFromBirdhouse());
-    // intake.setDefaultCommand(intake.retractPivotCommand());
 
     OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
     OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
