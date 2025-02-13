@@ -20,7 +20,7 @@ public class PassToScorer extends Command {
   private IntakeSubsystem intakeSubsystem;
   private BooleanSupplier elevatorNotL1;
   private CoralScorer coralScorer;
-  private Supplier<CoralEnum> state;
+  public Supplier<CoralEnum> state;
 
   /** Creates a new PassToScorer. */
   public PassToScorer(

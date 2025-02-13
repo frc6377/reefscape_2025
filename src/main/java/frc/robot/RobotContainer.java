@@ -16,7 +16,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
@@ -32,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
@@ -192,8 +190,6 @@ public class RobotContainer {
     testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
     testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
     testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
-    testTrig(OI.getButton(OI.Driver.X)).whileTrue(intake.extendPivotCommand());
-    testTrig(OI.getButton(OI.Driver.Y)).whileTrue(intake.retractPivotCommand());
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
         .whileTrue(climber.runRaw(Volts.of(3)));
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
@@ -203,24 +199,27 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    // Set the intake rollers to the left and right triggers
-    // OI.getPOVButton(OI.Driver.DPAD_UP)
-    //     .and(OI.getButton(OI.Driver.RBumper).negate())
-    //     .whileTrue(intake.intakeToBirdhouse());
-    OI.getPOVButton(OI.Driver.DPAD_UP).whileTrue(coralScorer.scoreCommand());
-    // OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorIntake());
-    OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorIntake());
-    new Trigger(
-            () ->
-                sensors.getSensorState() != CoralEnum.NO_CORAL
-                    && !intake.atSetpoint(kPivotRetractAngle))
+    // Temp Keyboard Buttons for sim
+    if (usingKeyboard) {}
+
+    // Elevator Buttons
+    OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
+    OI.getPOVButton(OI.Driver.DPAD_LEFT).onTrue(elevator.L2());
+    OI.getPOVButton(OI.Driver.DPAD_RIGHT).onTrue(elevator.L3());
+    OI.getPOVButton(OI.Driver.DPAD_DOWN).onTrue(elevator.L4());
+    OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
+
+    // Intake Buttons
+    OI.getTrigger(OI.Driver.RTrigger).whileFalse(intake.floorIntake());
+    intake
+        .intakeHasCoralTrigger()
         .onTrue(
             new LocateCoral(sensors::getSensorState, intake, () -> elevatorOrL1Mode)
                 .andThen(
                     new PassToScorer(
                         intake, () -> elevatorOrL1Mode, coralScorer, sensors::getSensorState)));
-    OI.getButton(OI.Driver.LBumper).whileTrue(intake.floorOuttake());
-    OI.getPOVButton(OI.Driver.DPAD_DOWN)
+    OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
+    OI.getPOVButton(OI.Operator.Y)
         .onTrue(
             Commands.runOnce(
                 () -> {
@@ -229,29 +228,9 @@ public class RobotContainer {
                 }));
     intake.setDefaultCommand(intake.Idle());
 
-    OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
-    OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
-    OI.getButton(OI.Operator.Start).onTrue(climber.zero());
-    OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
-    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).whileTrue(intake.l1ScoreModeB());
-    OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
-    OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
-    OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
-    SmartDashboard.putData(elevator.limitHit());
-
-    // Intake Buttons
-    // OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.floorIntake());
-    // OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
-
-    // Handoff Buttons
-    OI.getPOVButton(OI.Driver.DPAD_LEFT)
-        .whileTrue(intake.conveyerOutCommand().alongWith(coralScorer.reverseCommand()));
-
     // Scorer Buttons
-    OI.getTrigger(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.LTrigger)
-        .whileTrue(coralScorer.scoreCommand());
-    OI.getTrigger(usingKeyboard ? OI.Keyboard.ArrowUpDown : OI.Driver.RTrigger)
-        .whileTrue(coralScorer.reverseCommand());
+    OI.getTrigger(OI.Driver.LTrigger).whileTrue(coralScorer.scoreCommand());
+    OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
@@ -263,13 +242,10 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.AD : OI.Driver.LeftY).get(),
-            () -> OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.WS : OI.Driver.LeftX).get(),
-            () ->
-                OI.getAxisSupplier(usingKeyboard ? OI.Keyboard.ArrowLeftRight : OI.Driver.RightX)
-                    .get()));
-    OI.getButton(usingKeyboard ? OI.Keyboard.ForwardSlash : OI.Driver.Start)
-        .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+            () -> OI.getAxisSupplier(OI.Driver.LeftY).get(),
+            () -> OI.getAxisSupplier(OI.Driver.LeftX).get(),
+            () -> OI.getAxisSupplier(OI.Driver.RightX).get()));
+    OI.getButton(OI.Driver.Back).onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
   }
 
   /**

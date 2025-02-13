@@ -5,11 +5,14 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.armZero;
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
@@ -21,17 +24,11 @@ import static frc.robot.Constants.IntakeConstants.kMOI;
 import static frc.robot.Constants.IntakeConstants.kMotionMagicAcceleration;
 import static frc.robot.Constants.IntakeConstants.kMotionMagicCruiseVelocity;
 import static frc.robot.Constants.IntakeConstants.kMotionMagicJerk;
-import static frc.robot.Constants.IntakeConstants.kPivotA;
-import static frc.robot.Constants.IntakeConstants.kPivotD;
+import static frc.robot.Constants.IntakeConstants.kOuttakeSpeed;
 import static frc.robot.Constants.IntakeConstants.kPivotExtendAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotG;
-import static frc.robot.Constants.IntakeConstants.kPivotGravityType;
-import static frc.robot.Constants.IntakeConstants.kPivotI;
-import static frc.robot.Constants.IntakeConstants.kPivotP;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotSpeed;
 import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
-import static frc.robot.Constants.IntakeConstants.kPivotV;
 import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
 import static frc.robot.Constants.IntakeConstants.kalgae;
 import static frc.robot.Constants.IntakeConstants.kcoralStation;
@@ -39,7 +36,7 @@ import static frc.robot.Constants.IntakeConstants.kl1;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -50,8 +47,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -61,27 +56,33 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.Robot;
 import frc.robot.Sensors;
+import org.littletonrobotics.junction.Logger;
 import utilities.DebugEntry;
 
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
   private TalonFX intakeMotor;
 
+  private TalonFX conveyorMotor;
+  private TalonFX pivotMotor;
   private TalonFXSimState simPivotMotor;
 
-  private TalonFX pivotMotor;
-  private TalonFX conveyorMotor;
+  private TalonFXConfiguration intakeMotorConfig;
+  private TalonFXConfiguration conveyorMotorConfig;
+  private TalonFXConfiguration pivotMotorConfig;
+
   private Angle pivotSetpoint = kPivotRetractAngle;
 
   private DutyCycleEncoder throughBoreEncoder;
 
   private Mechanism2d mech = new Mechanism2d(2, 2);
-  private ComplexWidget widget;
   private MechanismLigament2d pivotArmMech;
 
   private enum IntakeState {
@@ -102,6 +103,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private IntakeState intakeState = IntakeState.IDLE;
   private CoralEnum coralState = CoralEnum.NO_CORAL;
+
+  private DebugEntry<Double> pivotOutput;
+  private DebugEntry<String> currentCommand;
+
+  private Sensors sensors;
+
+  // Simulation
   private Timer t1 = new Timer();
   private Timer t2 = new Timer();
   private Timer t3 = new Timer();
@@ -110,11 +118,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private SingleJointedArmSim pivotSim;
 
-  private DebugEntry<Double> pivotOutput;
-  private DebugEntry<String> currentCommand;
-
-  private Sensors sensors;
-
   public IntakeSubsystem(Sensors sensors) {
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
@@ -122,29 +125,29 @@ public class IntakeSubsystem extends SubsystemBase {
     throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero);
     this.sensors = sensors;
 
-    var slot0Configs = new Slot0Configs();
-    slot0Configs.kP = kPivotP;
-    slot0Configs.kI = kPivotI;
-    slot0Configs.kD = kPivotD;
-    slot0Configs.kG = kPivotG;
-    slot0Configs.kA = kPivotA;
-    slot0Configs.kV = kPivotV;
-    slot0Configs.GravityType = kPivotGravityType;
+    intakeMotorConfig = new TalonFXConfiguration();
+    intakeMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    intakeMotor.getConfigurator().apply(intakeMotorConfig);
 
-    var feedbackConfigs = new FeedbackConfigs();
-    feedbackConfigs.RotorToSensorRatio = 1;
-    feedbackConfigs.SensorToMechanismRatio = kSensorToMechanism;
+    conveyorMotorConfig = new TalonFXConfiguration();
+    conveyorMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    conveyorMotor.getConfigurator().apply(conveyorMotorConfig);
 
-    var pivotMotionMagic =
+    pivotMotorConfig = new TalonFXConfiguration();
+    pivotMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    pivotMotorConfig.Slot0 = IntakeConstants.kPivotArmPID.getSlotConfigs();
+    pivotMotorConfig.Feedback =
+        new FeedbackConfigs()
+            .withRotorToSensorRatio(1)
+            .withSensorToMechanismRatio(kSensorToMechanism);
+    pivotMotorConfig.MotionMagic =
         new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(kMotionMagicCruiseVelocity)
             .withMotionMagicAcceleration(kMotionMagicAcceleration)
             .withMotionMagicJerk(kMotionMagicJerk);
 
-    pivotMotor.getConfigurator().apply(slot0Configs);
-    pivotMotor.getConfigurator().apply(feedbackConfigs);
-    pivotMotor.getConfigurator().apply(pivotMotionMagic);
-    pivotMotor.setControl(new CoastOut()); // Temporary
+    pivotMotor.getConfigurator().apply(pivotMotorConfig);
+    pivotMotor.setControl(new CoastOut()); // Temporary (TODO: Is this still needed?)
 
     pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
     currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
@@ -168,17 +171,11 @@ public class IntakeSubsystem extends SubsystemBase {
           mech.getRoot("Root", 1, 0)
               .append(
                   new MechanismLigament2d("Pivot Mech", 1, 90, 10, new Color8Bit(Color.kPurple)));
-      if (widget == null) {
-        widget = Shuffleboard.getTab(getName()).add("Pivot Arm", mech);
-      }
+      SmartDashboard.putData("Intake/Pivot Arm", mech);
     }
   }
 
   public void elevatorMode() {}
-
-  private boolean atSetpoint() {
-    return pivotMotor.getPosition().getValue().isNear(pivotSetpoint, kPivotTolerance);
-  }
 
   public boolean atSetpoint(Angle setpoint) {
     return pivotMotor.getPosition().getValue().isNear(setpoint, kPivotTolerance);
@@ -209,6 +206,15 @@ public class IntakeSubsystem extends SubsystemBase {
     return pivotMotor.getPosition().getValue();
   }
 
+  public Trigger pivotAtSetpoint(Angle pivotSetpoint) {
+    return new Trigger(() -> atSetpoint(pivotSetpoint));
+  }
+
+  public Trigger intakeHasCoralTrigger() {
+    return new Trigger(
+        () -> sensors.getSensorState() != CoralEnum.NO_CORAL && !atSetpoint(kPivotRetractAngle));
+  }
+
   // Belt Commands
   public Command conveyerInCommand() {
     return runEnd(
@@ -231,24 +237,6 @@ public class IntakeSubsystem extends SubsystemBase {
         () -> {
           setConveyerMotor(0);
           setIntakeMotor(0);
-        });
-  }
-
-  /** Pivot down */
-  public Command extendPivotCommand() {
-    return runOnce(
-        () -> {
-          pivotMotor.setControl(new MotionMagicVoltage(kPivotExtendAngle));
-          pivotSetpoint = kPivotExtendAngle;
-        });
-  }
-
-  /** Pivot up */
-  public Command retractPivotCommand() {
-    return runOnce(
-        () -> {
-          pivotMotor.setControl(new MotionMagicVoltage(kPivotRetractAngle));
-          pivotSetpoint = kPivotRetractAngle;
         });
   }
 
@@ -315,12 +303,10 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command floorOuttake() {
-    return startEnd(
-        () -> {
-          goToPivotPosition(kPivotExtendAngle);
-          intakeMotor.set(-kIntakeSpeed);
-        },
-        () -> {});
+    return runEnd(
+            () -> goToPivotPosition(kPivotExtendAngle), () -> goToPivotPosition(kPivotRetractAngle))
+        .until(pivotAtSetpoint(pivotSetpoint))
+        .andThen(() -> intakeMotor.set(kOuttakeSpeed));
   }
 
   public Command humanPlayerIntake() {
@@ -388,33 +374,44 @@ public class IntakeSubsystem extends SubsystemBase {
         () -> {});
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Intake/Intake Motor Output", intakeMotor.get());
-    SmartDashboard.putNumber("Intake/Pivot Motor Output", pivotMotor.get());
-    SmartDashboard.putNumber("Intake/Conveyor Motor Output", conveyorMotor.get());
-    SmartDashboard.putNumber("Intake/Pivot Setpoint", pivotSetpoint.in(Degrees));
-    SmartDashboard.putNumber(
-        "Intake/Pivot Position (Degrees)", pivotMotor.getPosition().getValue().in(Degrees));
-    SmartDashboard.putNumber(
-        "Intake/Absolute Encoder Position (Rotation)",
-        Rotations.of(throughBoreEncoder.get()).in(Degrees));
-    SmartDashboard.putString("Intake/Intake State", intakeState.toString());
-    pivotOutput.log(pivotMotor.get());
-    if (this.getCurrentCommand() != null) {
-      currentCommand.log(this.getCurrentCommand().getName());
-    } else {
-      currentCommand.log("none");
-    }
-  }
-
   private boolean checkSimIntake(double expectedSpeed) {
     return Math.signum(expectedSpeed) == Math.signum(intakeMotor.get());
   }
 
   private boolean checkSimConveyor(double expectedSpeed) {
     return Math.signum(expectedSpeed) == Math.signum(conveyorMotor.get());
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Intake/Intake Motor Output", intakeMotor.get());
+    SmartDashboard.putNumber("Intake/Pivot Motor Output", pivotMotor.get());
+    SmartDashboard.putNumber("Intake/Conveyor Motor Output", conveyorMotor.get());
+    SmartDashboard.putNumber("Intake/Pivot Setpoint (Degrees)", pivotSetpoint.in(Degrees));
+    SmartDashboard.putNumber(
+        "Intake/Pivot Position (Degrees)", pivotMotor.getPosition().getValue().in(Degrees));
+    SmartDashboard.putNumber(
+        "Intake/Absolute Encoder Position (Degrees)",
+        Rotations.of(throughBoreEncoder.get()).in(Degrees));
+    SmartDashboard.putString("Intake/Intake State", intakeState.toString());
+    SmartDashboard.putNumber(
+        "Intake/Belt Velocity (RPM)",
+        RotationsPerSecond.of(conveyorMotor.getVelocity().getValueAsDouble()).in(RPM));
+
+    // Log TOF Sensors
+    for (int i = 2; i < 5; i++) {
+      Logger.recordOutput(
+          "Intake/TOF/Sensor" + i + " Dist (Inches)", sensors.getSensorDist(i).in(Inches));
+      Logger.recordOutput("Intake/TOF/Sensor" + i + " bool", sensors.getSensorBool(i));
+    }
+
+    pivotOutput.log(pivotMotor.get());
+    if (this.getCurrentCommand() != null) {
+      currentCommand.log(this.getCurrentCommand().getName());
+    } else {
+      currentCommand.log("none");
+    }
   }
 
   public void simulationPeriodic() {

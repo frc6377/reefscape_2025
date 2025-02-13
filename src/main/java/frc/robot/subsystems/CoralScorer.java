@@ -11,12 +11,12 @@ import static frc.robot.Constants.SensorIDs.kScorerSensorID;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
+import org.littletonrobotics.junction.Logger;
 import utilities.TOFSensorSimple;
 import utilities.TOFSensorSimple.TOFType;
 
@@ -32,6 +32,7 @@ public class CoralScorer extends SubsystemBase {
     scorerMotor = new TalonFX(CANIDs.kScorerMotor, Constants.RIOName);
     scoreMotorConfig = new TalonFXConfiguration();
     scoreMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    scoreMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     scorerMotor.getConfigurator().apply(scoreMotorConfig);
 
     TOFSensor = new TOFSensorSimple(kScorerSensorID, Inches.of(2.5), TOFType.LASER_CAN);
@@ -58,6 +59,10 @@ public class CoralScorer extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("CoralScorer/Motor Output", scorerMotor.get());
+    Logger.recordOutput("CoralScorer/Motor Output", scorerMotor.get());
+    Logger.recordOutput(
+        "TOFSensors/Coral Scorer Sensor Distance (Inches)", TOFSensor.getDistance().in(Inches));
+    Logger.recordOutput("TOFSensor/Coroal Scorer Bool", TOFSensor.isBeamBroke());
+    Logger.recordOutput("CoralScorer/Motor Velocity", scorerMotor.getVelocity().getValueAsDouble());
   }
 }

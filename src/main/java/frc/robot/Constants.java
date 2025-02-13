@@ -29,6 +29,7 @@ import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.subsystems.Elevator;
+import utilities.HowdyPID;
 
 // Copyright 2021-2024 FRC 6328
 // http://github.com/Mechanical-Advantage
@@ -112,23 +113,20 @@ public final class Constants {
   // Intake Constants
   public static class IntakeConstants {
     public static final double kIntakeSpeed = -1;
+    public static final double kOuttakeSpeed = 0.2;
     public static final double kIntakeHandoffSpeed = -0.75;
-    public static final double kConveyorSpeed = 0.25;
+    public static final double kConveyorSpeed = 0.45;
     public static final double kPivotSpeed = 0.2;
     public static final Angle kPivotRetractAngle = Degrees.of(128);
+    public static final Angle kPivotOuttakePose = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
     public static final Angle kcoralStation = Degrees.of(101);
     public static final Angle kl1 = Degrees.of(75.5);
     public static final Angle kalgae = Degrees.of(44.5);
     public static final Angle kPivotTolerance = Degrees.of(3);
-    public static final double kPivotP = 100.0;
-    public static final double kPivotI = 0.0;
-    public static final double kPivotD = 0.0;
-    public static final double kPivotG = 0.0;
 
-    public static final double kPivotV = 7.29; // 7.20;
-    public static final double kPivotA = 0.03; // 0.03;
-    public static final GravityTypeValue kPivotGravityType = GravityTypeValue.Arm_Cosine;
+    public static final HowdyPID kPivotArmPID =
+        new HowdyPID(0, 100.0, 0.0, 0.0, 0.0, 7.29, 0.03, 0.0, GravityTypeValue.Arm_Cosine);
 
     public static final double kGearing = 60;
     public static final double kSensorToMechanism = 60;

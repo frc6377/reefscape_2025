@@ -19,7 +19,7 @@ public class LocateCoral extends Command {
 
   private Supplier<CoralEnum> state;
   private IntakeSubsystem intakeSubsystem;
-  private BooleanSupplier elevatorNotL1;
+  public BooleanSupplier elevatorNotL1;
 
   /** Creates a new LocateCoral. */
   public LocateCoral(
