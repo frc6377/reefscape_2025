@@ -190,7 +190,7 @@ public class RobotContainer {
     // Intake Buttons
     OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.intakePivotIntakeCommand());
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.intakePivotOutakeCommand());
-    // OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(intake.setL1PivotPose());
+    OI.getPOVButton(OI.Driver.Y).onTrue(intake.setL1PivotPose());
 
     // Handoff Buttons
     OI.getButton(OI.Driver.B)

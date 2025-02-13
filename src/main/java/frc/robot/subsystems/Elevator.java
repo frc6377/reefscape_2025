@@ -132,12 +132,12 @@ public class Elevator extends SubsystemBase {
     elevatorConfig1.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     elevatorConfig2.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
 
+    elevatorMotor1.getConfigurator().apply(elevatorConfig1);
     elevatorMotor1.getConfigurator().apply(loopCfg);
     elevatorMotor1.getConfigurator().apply(elvSoftLimit);
     elevatorMotor1.getConfigurator().apply(currentLimit);
     elevatorMotor1.getConfigurator().apply(invertMotor);
     elevatorMotor1.getConfigurator().apply(elvMotionMagic);
-    elevatorMotor1.getConfigurator().apply(elevatorConfig1);
     elevatorMotor2.getConfigurator().apply(elevatorConfig2);
     elevatorMotor2.setControl(new Follower(CANIDs.kElevatorMotor1, true));
     elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
