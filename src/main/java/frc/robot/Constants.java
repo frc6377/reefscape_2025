@@ -105,7 +105,7 @@ public final class Constants {
     public static final Distance kClimberArmLength = Inches.of(6);
     public static final Mass kClimberMass = Pounds.of(0.5);
     public static final Angle kClimberArmMinAngle = Degrees.of(-30).plus(kClimberOffsetAngle);
-    public static final Angle kClimberArmMaxAngle = Degrees.of(200).plus(kClimberOffsetAngle);
+    public static final Angle kClimberArmMaxAngle = Degrees.of(250).plus(kClimberOffsetAngle);
   }
 
   // Scorer Constants

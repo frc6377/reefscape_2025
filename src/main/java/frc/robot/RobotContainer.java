@@ -211,15 +211,7 @@ public class RobotContainer {
         .whileTrue(
             intake
                 .conveyerInCommand()
-            .alongWith(
-                coralScorer
-                    .scoreCommand()
-                    .onlyWhile(
-                        intake
-                            .getBeamBroken()
-                )
-            )
-        );
+                .alongWith(coralScorer.scoreCommand().onlyWhile(intake.getBeamBroken())));
     OI.getPOVButton(OI.Driver.DPAD_LEFT)
         .whileTrue(intake.conveyerOutCommand().alongWith(coralScorer.reverseCommand()));
 
