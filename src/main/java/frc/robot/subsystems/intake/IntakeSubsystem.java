@@ -393,6 +393,9 @@ public class IntakeSubsystem extends SubsystemBase {
     simPivotMotor.setSupplyVoltage(RobotController.getBatteryVoltage());
     pivotArmMech.setAngle(Radians.of(pivotSim.getAngleRads()).in(Degrees));
 
+    coralState = RobotContainer.sensors.getSensorState();
+
+
     switch (intakeState) {
       case IDLE:
         RobotContainer.sensors.setSimState(CoralEnum.NO_CORAL);
@@ -437,7 +440,6 @@ public class IntakeSubsystem extends SubsystemBase {
         RobotContainer.sensors.setSimState(
             Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR);
         intakeState = IntakeState.LOCATE_CORAL;
-        coralState = Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR;
         break;
       case FLOOR_OUTTAKE:
         break;
@@ -445,7 +447,6 @@ public class IntakeSubsystem extends SubsystemBase {
         RobotContainer.sensors.setSimState(
             Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR);
         intakeState = IntakeState.LOCATE_CORAL;
-        coralState = Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR;
         break;
       case ALGAE_INTAKE:
         Commands.waitSeconds(0.5);
@@ -482,7 +483,6 @@ public class IntakeSubsystem extends SubsystemBase {
         if (t4.hasElapsed(0.5)) {
           RobotContainer.sensors.setSimState(CoralEnum.CORAL_ALIGNED);
           intakeState = IntakeState.PASS_CORAL_TO_SCORER;
-          coralState = CoralEnum.CORAL_ALIGNED;
           t4.stop();
           t4.reset();
         }
@@ -490,7 +490,6 @@ public class IntakeSubsystem extends SubsystemBase {
         if (atSetpoint(kPivotRetractAngle) && intakeMotor.get() == 0 && conveyorMotor.get() == 0) {
           RobotContainer.sensors.setSimState(CoralEnum.CORAL_ALIGNED);
           intakeState = IntakeState.HOLD_CORAL;
-          coralState = CoralEnum.CORAL_ALIGNED;
         }
         break;
       case HOLD_CORAL:
