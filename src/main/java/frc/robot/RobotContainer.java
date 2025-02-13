@@ -39,6 +39,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
+import frc.robot.subsystems.intake.PassToScorer;
 import frc.robot.subsystems.vision.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -203,7 +204,8 @@ public class RobotContainer {
             () ->
                 sensors.getSensorState() != CoralEnum.NO_CORAL
                     && !intake.atSetpoint(kPivotRetractAngle))
-        .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> elevatorOrL1Mode));
+        .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> elevatorOrL1Mode)
+        .andThen(new PassToScorer(intake, () -> elevatorOrL1Mode, coralScorer, sensors::getSensorState)));
     OI.getButton(OI.Driver.LBumper).whileTrue(intake.floorOuttake());
     OI.getPOVButton(OI.Driver.DPAD_DOWN)
         .onTrue(
