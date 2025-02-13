@@ -45,7 +45,6 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -363,7 +362,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(
         () -> {
           goToPivotPosition(kl1);
-          intakeMotor.set(kIntakeSpeed);
+          intakeMotor.set(-kIntakeSpeed);
         },
         () -> {});
   }
@@ -427,7 +426,6 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotArmMech.setAngle(Radians.of(pivotSim.getAngleRads()).in(Degrees));
 
     coralState = RobotContainer.sensors.getSensorState();
-
 
     switch (intakeState) {
       case IDLE:
@@ -499,7 +497,7 @@ public class IntakeSubsystem extends SubsystemBase {
         if (coralState == CoralEnum.CORAL_TOO_CLOSE) {
           if (atSetpoint(kcoralStation)
               && checkSimIntake(kIntakeSpeed / 5)
-              && checkSimConveyor(kConveyorSpeed)) {
+              && checkSimConveyor(-kConveyorSpeed)) {
             t4.start();
           }
         } else if (coralState == CoralEnum.CORAL_TOO_FAR) {
@@ -520,7 +518,9 @@ public class IntakeSubsystem extends SubsystemBase {
           t4.reset();
         }
 
-        if (atSetpoint(kPivotRetractAngle) && checkSimIntake(0) && checkSimConveyor(kConveyorSpeed)) {
+        if (atSetpoint(kPivotRetractAngle)
+            && checkSimIntake(0)
+            && checkSimConveyor(kConveyorSpeed)) {
           RobotContainer.sensors.setSimState(CoralEnum.CORAL_ALIGNED);
           intakeState = IntakeState.HOLD_CORAL;
         }
@@ -532,7 +532,9 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeState = IntakeState.L1_SCORE;
         break;
       case L1_SCORE:
-        if (atSetpoint(kl1) && checkSimIntake(kIntakeSpeed)) {
+        if (atSetpoint(kPivotRetractAngle)
+            && checkSimIntake(kIntakeSpeed)
+            && checkSimConveyor(kConveyorSpeed)) {
           t5.start();
         } else {
           t5.stop();
@@ -540,6 +542,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         if (t5.hasElapsed(0.5)) {
           intakeState = IntakeState.IDLE;
+          RobotContainer.sensors.setSimState(CoralEnum.NO_CORAL);
           t5.stop();
           t5.reset();
         }

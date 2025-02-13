@@ -62,7 +62,7 @@ public class RobotContainer {
   private EventLoop testEventLoop = new EventLoop();
 
   // Change the raw boolean to true to pick keyboard during simulation
-  private final boolean usingKeyboard = true && Robot.isSimulation();
+  private final boolean usingKeyboard = false && Robot.isSimulation();
 
   // Subsystems
   private final Drive drive;
