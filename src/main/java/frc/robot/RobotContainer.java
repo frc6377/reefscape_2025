@@ -15,8 +15,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
@@ -74,7 +74,7 @@ public class RobotContainer {
   private final Vision vision;
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
-  public static final Sensors sensors = new Sensors();
+  private static final Sensors sensors = new Sensors();
   private final IntakeSubsystem intake = new IntakeSubsystem(sensors);
 
   private boolean elevatorOrL1Mode = false;
