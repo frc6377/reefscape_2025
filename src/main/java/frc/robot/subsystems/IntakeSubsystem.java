@@ -13,7 +13,6 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -21,7 +20,6 @@ import edu.wpi.first.hal.SimBoolean;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -184,9 +182,9 @@ public class IntakeSubsystem extends SubsystemBase {
     conveyorMotor.set(speed);
   }
 
-  private void setConveyerTorque(AngularVelocity input) {
-    conveyorMotor.setControl(new VelocityDutyCycle(input));
-  }
+  // private void setConveyerTorque(AngularVelocity input) {
+  //   conveyorMotor.setControl(new VelocityDutyCycle(input));
+  // }
 
   private void setIntakeMotor(double speed) {
     intakeMotor.set(speed);
