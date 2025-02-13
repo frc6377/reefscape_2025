@@ -75,7 +75,7 @@ public class RobotContainer {
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
   public static final Sensors sensors = new Sensors();
-  private final IntakeSubsystem intake = new IntakeSubsystem();
+  private final IntakeSubsystem intake = new IntakeSubsystem(sensors);
 
   private boolean elevatorOrL1Mode = false;
 

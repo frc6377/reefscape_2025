@@ -66,6 +66,7 @@ import frc.robot.Constants.DIOConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.Sensors;
 import utilities.DebugEntry;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -115,7 +116,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   // private Sensors sensors;
 
-  public IntakeSubsystem() {
+  public IntakeSubsystem(Sensors sensors) {
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
     conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);
