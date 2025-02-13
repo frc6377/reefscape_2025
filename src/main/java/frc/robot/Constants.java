@@ -14,6 +14,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -43,9 +44,17 @@ import frc.robot.subsystems.Elevator;
 // GNU General Public License for more details.
 
 public final class Constants {
+
+  /**
+   * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when
+   * running on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and
+   * "replay" (log replay from a file).
+   */
   public static class CANIDs {
     // Rev Can Bus
     // 1-8 Motor ID is reserved by the drivebase
+    public static final int kClimberMotorFront = 16; // FIXME
+    public static final int kClimberMotorBack = 17; // FIXME
     public static final int kScorerMotor = 15;
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
@@ -56,9 +65,43 @@ public final class Constants {
   }
 
   public static class DIOConstants {
-    public static final int kthroughBoreEncoderID = 1;
+    public static final int kthroughBoreEncoderID = 10;
+    public static final int kClimberFrontEncoderID = 5;
+    public static final int kClimberBackEncoderID = 6;
     public static final int gear11ID = 13;
     public static final int gear3ID = 14;
+  }
+
+  public static class ClimberConstants {
+    public static final double kClimberP0 = 100;
+    public static final double kClimberI0 = 0;
+    public static final double kClimberD0 = 5;
+    public static final double kClimberkG0 = 0;
+    public static final double kClimberkV0 = 10;
+
+    public static final double kClimberP1 = 100;
+    public static final double kClimberI1 = 0;
+    public static final double kClimberD1 = 5;
+    public static final double kClimberkG1 = 1;
+    public static final double kClimberkV1 = 10;
+
+    public static final double kGearRatio = 126;
+    public static final Angle kClimberOffsetAngle = Degrees.of(180);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(225).plus(kClimberOffsetAngle);
+    public static final Angle kClimberAtCageSetpoint = Degrees.of(190).plus(kClimberOffsetAngle);
+    public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
+    public static final Angle kClimberExtendedSetpoint2 = Degrees.of(-10).plus(kClimberOffsetAngle);
+    public static final Angle kClimberAtCageSetpoint2 = Degrees.of(10).plus(kClimberOffsetAngle);
+    public static final Angle kClimberSensorTolerance = Degrees.of(2.5);
+    public static final Angle kExpectedStartAngle = Degrees.of(90);
+    public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
+    // Sim Constants
+    public static final int KClimberMotorsCount = 2;
+    public static final Distance kClimberArmLength = Inches.of(6);
+    public static final Mass kClimberMass = Pounds.of(0.5);
+    public static final Angle kClimberArmMinAngle = Degrees.of(-30).plus(kClimberOffsetAngle);
+    public static final Angle kClimberArmMaxAngle = Degrees.of(250).plus(kClimberOffsetAngle);
   }
 
   // Scorer Constants
@@ -149,7 +192,7 @@ public final class Constants {
     public static final Distance kMaxElevatorHeight = Inches.of(72);
     public static final Distance kElevatorDrumCircumference =
         kElevatorDrumRadius.times(2 * Math.PI);
-    public static final AngularVelocity MMVel = Elevator.heightToRotations(InchesPerSecond.of(60));
+    public static final AngularVelocity MMVel = Elevator.heightToRotations(InchesPerSecond.of(100));
     public static final AngularAcceleration MMAcc = MMVel.times(Hertz.of(5));
     public static final Velocity<AngularAccelerationUnit> MMJerk =
         RotationsPerSecondPerSecond.per(Second).of(MMAcc.in(RotationsPerSecondPerSecond)).times(10);
