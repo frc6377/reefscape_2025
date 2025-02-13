@@ -11,7 +11,31 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.Constants.IntakeConstants.*;
+import static frc.robot.Constants.IntakeConstants.armZero;
+import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
+import static frc.robot.Constants.IntakeConstants.kGearing;
+import static frc.robot.Constants.IntakeConstants.kIntakeHandoffSpeed;
+import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
+import static frc.robot.Constants.IntakeConstants.kLength;
+import static frc.robot.Constants.IntakeConstants.kMOI;
+import static frc.robot.Constants.IntakeConstants.kMotionMagicAcceleration;
+import static frc.robot.Constants.IntakeConstants.kMotionMagicCruiseVelocity;
+import static frc.robot.Constants.IntakeConstants.kMotionMagicJerk;
+import static frc.robot.Constants.IntakeConstants.kPivotA;
+import static frc.robot.Constants.IntakeConstants.kPivotD;
+import static frc.robot.Constants.IntakeConstants.kPivotExtendAngle;
+import static frc.robot.Constants.IntakeConstants.kPivotG;
+import static frc.robot.Constants.IntakeConstants.kPivotGravityType;
+import static frc.robot.Constants.IntakeConstants.kPivotI;
+import static frc.robot.Constants.IntakeConstants.kPivotP;
+import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
+import static frc.robot.Constants.IntakeConstants.kPivotSpeed;
+import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
+import static frc.robot.Constants.IntakeConstants.kPivotV;
+import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
+import static frc.robot.Constants.IntakeConstants.kalgae;
+import static frc.robot.Constants.IntakeConstants.kcoralStation;
+import static frc.robot.Constants.IntakeConstants.kl1;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -21,6 +45,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -384,6 +409,14 @@ public class IntakeSubsystem extends SubsystemBase {
     }
   }
 
+  private boolean checkSimIntake(double expectedSpeed) {
+    return Math.signum(expectedSpeed) == Math.signum(intakeMotor.get());
+  }
+
+  private boolean checkSimConveyor(double expectedSpeed) {
+    return Math.signum(expectedSpeed) == Math.signum(conveyorMotor.get());
+  }
+
   public void simulationPeriodic() {
     pivotSim.setInputVoltage(pivotMotor.getMotorVoltage().getValue().in(Volts));
     pivotSim.update(Robot.defaultPeriodSecs);
@@ -400,7 +433,7 @@ public class IntakeSubsystem extends SubsystemBase {
       case IDLE:
         RobotContainer.sensors.setSimState(CoralEnum.NO_CORAL);
 
-        if (atSetpoint(kPivotExtendAngle) && intakeMotor.get() == kIntakeSpeed) {
+        if (atSetpoint(kPivotExtendAngle) && checkSimIntake(kIntakeSpeed)) {
           t1.start();
         } else {
           t1.stop();
@@ -412,7 +445,7 @@ public class IntakeSubsystem extends SubsystemBase {
           t1.reset();
         }
 
-        if (atSetpoint(kcoralStation) && intakeMotor.get() == kIntakeSpeed) {
+        if (atSetpoint(kcoralStation) && checkSimIntake(kIntakeSpeed)) {
           t2.start();
         } else {
           t2.stop();
@@ -424,7 +457,7 @@ public class IntakeSubsystem extends SubsystemBase {
           t2.reset();
         }
 
-        if (atSetpoint(kalgae) && intakeMotor.get() == -kIntakeSpeed) {
+        if (atSetpoint(kalgae) && checkSimIntake(-kIntakeSpeed)) {
           t3.start();
         } else {
           t3.stop();
@@ -465,14 +498,14 @@ public class IntakeSubsystem extends SubsystemBase {
       case LOCATE_CORAL:
         if (coralState == CoralEnum.CORAL_TOO_CLOSE) {
           if (atSetpoint(kcoralStation)
-              && intakeMotor.get() == kIntakeSpeed / 5
-              && conveyorMotor.get() < 0) {
+              && checkSimIntake(kIntakeSpeed / 5)
+              && checkSimConveyor(kConveyorSpeed)) {
             t4.start();
           }
         } else if (coralState == CoralEnum.CORAL_TOO_FAR) {
           if (atSetpoint(kcoralStation)
-              && intakeMotor.get() == kIntakeSpeed
-              && conveyorMotor.get() > 0) {
+              && checkSimIntake(kIntakeSpeed)
+              && checkSimConveyor(kConveyorSpeed)) {
             t4.start();
           }
         } else if (coralState == CoralEnum.NO_CORAL) {
@@ -487,7 +520,7 @@ public class IntakeSubsystem extends SubsystemBase {
           t4.reset();
         }
 
-        if (atSetpoint(kPivotRetractAngle) && intakeMotor.get() == 0 && conveyorMotor.get() == 0) {
+        if (atSetpoint(kPivotRetractAngle) && checkSimIntake(0) && checkSimConveyor(kConveyorSpeed)) {
           RobotContainer.sensors.setSimState(CoralEnum.CORAL_ALIGNED);
           intakeState = IntakeState.HOLD_CORAL;
         }
@@ -499,7 +532,7 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeState = IntakeState.L1_SCORE;
         break;
       case L1_SCORE:
-        if (atSetpoint(kl1) && intakeMotor.get() == kIntakeSpeed) {
+        if (atSetpoint(kl1) && checkSimIntake(kIntakeSpeed)) {
           t5.start();
         } else {
           t5.stop();
