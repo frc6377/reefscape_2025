@@ -204,7 +204,6 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
 
-
     OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
     OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
     OI.getButton(OI.Operator.Start).onTrue(climber.zero());
