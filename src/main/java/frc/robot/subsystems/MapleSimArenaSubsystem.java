@@ -5,8 +5,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Meters;
-import static frc.robot.Constants.MechPoses.kCoralScorerPose;
-import static frc.robot.Constants.SimulationFeildConstants.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -21,7 +19,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.MechPoses;
+import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.SimulationConstants;
 import java.util.ArrayList;
 import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
@@ -34,7 +33,7 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
 
   private List<Pose3d> scoredCoralPoses = new ArrayList<Pose3d>();
 
-  private Pose3d robotCoralPose = MechPoses.kCoralScorerPose;
+  private Pose3d robotCoralPose = DrivetrainConstants.kCoralScorerPose;
   private Pose3d closestScorePose = null;
 
   private boolean robotHasCoral = false;
@@ -43,10 +42,10 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
   public MapleSimArenaSubsystem(SwerveDriveSimulation swerveDriveSimulation) {
     this.swerveDriveSimulation = swerveDriveSimulation;
 
-    logFeildArea(kSourceAreas);
+    logSourceAreas(SimulationConstants.kSourceAreas);
   }
 
-  public void logFeildArea(Pose2d[][] area) {
+  public void logSourceAreas(Pose2d[][] area) {
     Pose2d[][] newPoses =
         new Pose2d[][] {
           new Pose2d[] {
@@ -81,8 +80,8 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     Logger.recordOutput("FieldSimulation/Source Area", newPoses);
 
     // Temp until we have real climb code
-    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", MechPoses.kClimber1Pose);
-    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", MechPoses.kClimber2Pose);
+    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", DrivetrainConstants.kClimber1Pose);
+    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", DrivetrainConstants.kClimber2Pose);
   }
 
   public void setRobotHasCoral(boolean newRobotHasCoral) {
@@ -95,8 +94,8 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
 
       Translation2d newCoralTranslation =
           new Translation2d(
-                  kCoralScorerPose.getMeasureX().plus(drivePose.getMeasureX()),
-                  kCoralScorerPose.getMeasureY().plus(drivePose.getMeasureY()))
+                  DrivetrainConstants.kCoralScorerPose.getMeasureX().plus(drivePose.getMeasureX()),
+                  DrivetrainConstants.kCoralScorerPose.getMeasureY().plus(drivePose.getMeasureY()))
               .rotateAround(
                   new Translation2d(drivePose.getMeasureX(), drivePose.getMeasureY()),
                   new Rotation2d(drivePose.getRotation().getMeasure()));
@@ -105,8 +104,10 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
               new Translation3d(
                   newCoralTranslation.getMeasureX(),
                   newCoralTranslation.getMeasureY(),
-                  kCoralScorerPose.getMeasureZ().plus(elevatorHeight)),
-              kCoralScorerPose.getRotation().plus(new Rotation3d(drivePose.getRotation())));
+                  DrivetrainConstants.kCoralScorerPose.getMeasureZ().plus(elevatorHeight)),
+              DrivetrainConstants.kCoralScorerPose
+                  .getRotation()
+                  .plus(new Rotation3d(drivePose.getRotation())));
     } else {
       robotCoralPose = new Pose3d();
     }
@@ -129,15 +130,15 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
   public Pose3d getClosestScorePose() {
     Pose3d[] scorePoseList =
         DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Blue)
-            ? kBlueCoralScorePoses
-            : kRedCoralScorePoses;
+            ? SimulationConstants.kBlueCoralScorePoses
+            : SimulationConstants.kRedCoralScorePoses;
 
     Pose3d closestScorePose = null;
-    double closestDistance = kScoreDistance.in(Meters);
+    double closestDistance = SimulationConstants.kScoreDistance.in(Meters);
     for (Pose3d scorePose : scorePoseList) {
       double currentDistance =
           robotCoralPose.getTranslation().getDistance(scorePose.getTranslation());
-      if (currentDistance < kScoreDistance.in(Meters)
+      if (currentDistance < SimulationConstants.kScoreDistance.in(Meters)
           && currentDistance < closestDistance
           && !scoredCoralPoses.contains(scorePose)) {
         closestDistance = currentDistance;
@@ -177,8 +178,8 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     closestScorePose = getClosestScorePose();
 
     // Add game pieces at sources for robot to score
-    for (int i = 0; i < kSourceAreas.length; i++) {
-      Pose2d[] currentSourse = kSourceAreas[i];
+    for (int i = 0; i < SimulationConstants.kSourceAreas.length; i++) {
+      Pose2d[] currentSourse = SimulationConstants.kSourceAreas[i];
 
       // Check if there is a coral at the source area
       if (isInArea(currentSourse, swerveDriveSimulation.getSimulatedDriveTrainPose())) {

@@ -65,10 +65,10 @@ public class OI extends OI_Utils {
     public static final Control DPAD_LEFT = new Control(270, "", controller);
 
     // Control Curves
-    private static final ControlCurve xTranslationCurve = new ControlCurve(1, 0, 0.5, 0.1, true);
-    private static final ControlCurve yTranslationCurve = new ControlCurve(1, 0, 0.5, 0.1, true);
-    public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 0.5, 0.1);
-    public static final ControlCurve rotationCurve = new ControlCurve(1, 0, 0.5, 0.1, true);
+    private static final ControlCurve xTranslationCurve = new ControlCurve(0.75, 0, 0.5, 0.1, true);
+    private static final ControlCurve yTranslationCurve = new ControlCurve(0.75, 0, 0.5, 0.1, true);
+    public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 1, 0.1);
+    public static final ControlCurve rotationCurve = new ControlCurve(0.5, 0, 0.5, 0.1, true);
     public static final ControlCurve elevatorCurve = new ControlCurve(1, 0, 0, 0.1, true);
 
     // Joystick Axes
@@ -156,7 +156,6 @@ public class OI extends OI_Utils {
     public static final Control X = new Control(2, null, null, keyboard1, ControlType.BUTTON);
     public static final Control C = new Control(3, null, null, keyboard1, ControlType.BUTTON);
     public static final Control V = new Control(4, null, null, keyboard1, ControlType.BUTTON);
-
     public static final Control WS =
         new Control(XboxController.Axis.kLeftX, null, keyboard1, TranslationCurveX);
     public static final Control AD =
@@ -167,7 +166,6 @@ public class OI extends OI_Utils {
     public static final Control Period = new Control(3, null, null, keyboard2, ControlType.BUTTON);
     public static final Control ForwardSlash =
         new Control(4, null, null, keyboard2, ControlType.BUTTON);
-
     public static final Control IK =
         new Control(XboxController.Axis.kLeftX, null, keyboard2, defualtCurve);
     public static final Control JL =
