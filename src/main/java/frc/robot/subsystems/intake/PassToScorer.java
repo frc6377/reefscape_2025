@@ -70,7 +70,7 @@ public class PassToScorer extends Command {
   @Override
   public boolean isFinished() {
     if (elevatorNotL1.getAsBoolean()) {
-      return coralScorer.hasCoral().getAsBoolean(); //FIXME: Using different sensors now
+      return coralScorer.hasCoral().getAsBoolean(); // FIXME: Using different sensors now
     } else {
       return intakeSubsystem.atSetpoint(kPivotRetractAngle);
     }

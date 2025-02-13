@@ -204,8 +204,11 @@ public class RobotContainer {
             () ->
                 sensors.getSensorState() != CoralEnum.NO_CORAL
                     && !intake.atSetpoint(kPivotRetractAngle))
-        .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> elevatorOrL1Mode)
-        .andThen(new PassToScorer(intake, () -> elevatorOrL1Mode, coralScorer, sensors::getSensorState)));
+        .onTrue(
+            new LocateCoral(sensors::getSensorState, intake, () -> elevatorOrL1Mode)
+                .andThen(
+                    new PassToScorer(
+                        intake, () -> elevatorOrL1Mode, coralScorer, sensors::getSensorState)));
     OI.getButton(OI.Driver.LBumper).whileTrue(intake.floorOuttake());
     OI.getPOVButton(OI.Driver.DPAD_DOWN)
         .onTrue(
