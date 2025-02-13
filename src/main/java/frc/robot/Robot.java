@@ -15,6 +15,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Seconds;
 
+import au.grapplerobotics.CanBridge;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import edu.wpi.first.units.measure.Time;
@@ -45,6 +46,9 @@ public class Robot extends LoggedRobot {
   private RobotContainer robotContainer;
 
   public Robot() {
+    // For TOF Sensor
+    CanBridge.runTCP();
+
     // Record metadata
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -124,6 +128,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     robotContainer.resetSimulationField();
+    robotContainer.seedIntakeEncoder();
   }
 
   /** This function is called periodically when disabled. */

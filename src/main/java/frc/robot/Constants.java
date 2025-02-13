@@ -61,7 +61,6 @@ public final class Constants {
     public static final int kIntakeMotor = 13;
     public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
-    public static final int kConveyorSensor = 18; // FIXME: Change to correct ID -> 1
   }
 
   public static class DIOConstants {
@@ -107,14 +106,16 @@ public final class Constants {
   // Scorer Constants
   public static class CoralScorerConstants {
     public static final double kSpeed = 0.5;
+    public static final double kIntakeSpeed = 0.4;
   }
 
   // Intake Constants
   public static class IntakeConstants {
     public static final double kIntakeSpeed = -1;
-    public static final double kConveyorSpeed = 0.8;
+    public static final double kIntakeHandoffSpeed = -0.75;
+    public static final double kConveyorSpeed = 0.25;
     public static final double kPivotSpeed = 0.2;
-    public static final Angle kPivotRetractAngle = Degrees.of(129.28); // FIXME: Put actual value
+    public static final Angle kPivotRetractAngle = Degrees.of(128);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
     public static final Angle kcoralStation = Degrees.of(101);
     public static final Angle kl1 = Degrees.of(75.5);
@@ -136,13 +137,20 @@ public final class Constants {
     public static final MomentOfInertia kMOI =
         KilogramSquareMeters.of(
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
-    public static final AngularVelocity kMotionMagicCruiseVelocity =
-        DegreesPerSecond.of(30); // RevolutionsPerSecond.of(10);
+    public static final AngularVelocity kMotionMagicCruiseVelocity = DegreesPerSecond.of(450);
     public static final AngularAcceleration kMotionMagicAcceleration =
         kMotionMagicCruiseVelocity.times(Hertz.of(5));
-    public static final double kMotionMagicJerk = 10.0;
+    public static final double kMotionMagicJerk = 80.0;
 
     public static final double armZero = 0.35;
+
+    public static enum CoralEnum {
+      CORAL_TOO_CLOSE,
+      CORAL_TOO_FAR,
+      NO_CORAL,
+      IN_ELEVATOR,
+      CORAL_ALIGNED
+    }
   }
 
   // Elevator Constants
@@ -246,5 +254,12 @@ public final class Constants {
           new Pose2d(Meters.of(3.972), Meters.of(5.244), new Rotation2d(-60)),
           new Pose2d(Meters.of(3.684), Meters.of(5.078), new Rotation2d(-60)),
         };
+  }
+
+  public static class SensorIDs {
+    public static final int kSensor2ID = 2;
+    public static final int kSensor3ID = 3;
+    public static final int kSensor4ID = 4;
+    public static final int kScorerSensorID = 1;
   }
 }
