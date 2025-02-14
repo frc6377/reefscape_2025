@@ -18,12 +18,14 @@ import static edu.wpi.first.units.Units.Meters;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -186,6 +188,7 @@ public class RobotContainer {
     OI.getPOVButton(OI.Driver.DPAD_RIGHT).onTrue(elevator.L3());
     OI.getPOVButton(OI.Driver.DPAD_DOWN).onTrue(elevator.L4());
     OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
+    SmartDashboard.putData("Stop Log", Commands.runOnce(() -> SignalLogger.stop()));
 
     // Intake Buttons
     OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.intakePivotIntakeCommand());

@@ -10,13 +10,13 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.ctre.phoenix6.controls.Follower;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -82,9 +82,9 @@ public class Elevator extends SubsystemBase {
               heightToRotations(Constants.ElevatorConstants.kBottomLimit));
   public static final Slot0Configs loopCfg =
       new Slot0Configs()
-          .withKP(Constants.ElevatorConstants.P)
-          .withKI(Constants.ElevatorConstants.I)
-          .withKD(Constants.ElevatorConstants.D);
+          .withKP(ElevatorConstants.P)
+          .withKI(ElevatorConstants.I)
+          .withKD(ElevatorConstants.D);
   private ElevatorSim m_elevatorSim;
   private TunableNumber tunableP;
   private TunableNumber tunableI;
@@ -101,7 +101,7 @@ public class Elevator extends SubsystemBase {
 
   public Elevator() {
     // TODO: set up for canivore
-    currentLimit.StatorCurrentLimit = 90;
+    currentLimit.StatorCurrentLimit = 120;
     currentLimit.SupplyCurrentLimit = 70;
     m_voltReq = new VoltageOut(0.0);
     currentLimit.SupplyCurrentLowerLimit = 40;
@@ -112,8 +112,8 @@ public class Elevator extends SubsystemBase {
         new SysIdRoutine(
             new SysIdRoutine.Config(
                 Volts.of(0.5).div(Seconds.of(1)), // Use default ramp rate (1 V/s)
-                Volts.of(1), // Reduce dynamic step voltage to 4 to prevent brownout
-                Seconds.of(3), // Use default timeout (10 s)
+                Volts.of(3), // Reduce dynamic step voltage to 4 to prevent brownout
+                Seconds.of(10), // Use default timeout (10 s)
                 // Log state with Phoenix SignalLogger class
                 (state) -> SignalLogger.writeString("Elevator/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
@@ -131,6 +131,7 @@ public class Elevator extends SubsystemBase {
     elevatorConfig2 = new TalonFXConfiguration();
     elevatorConfig1.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     elevatorConfig2.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    // elevatorConfig2.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     elevatorMotor1.getConfigurator().apply(elevatorConfig1);
     elevatorMotor1.getConfigurator().apply(loopCfg);
@@ -303,7 +304,7 @@ public class Elevator extends SubsystemBase {
 
   public Command limitHit() {
     return runOnce(this::disableSoftLimits)
-        .andThen(setElvPercent(-0.1).until(elvLimitSwitch::get))
+        .andThen(setElvPercent(-0.2).until(elvLimitSwitch::get))
         .andThen(zeroMotorEncoder())
         .andThen(runOnce(this::enableSoftLimits));
   }

@@ -132,7 +132,7 @@ public final class Constants {
 
     public static final int elvLimitID = 0;
 
-    public static final double P = 1.5;
+    public static final double P = 2;
     public static final double I = 0.16;
     public static final double D = 0.02;
     public static final double FF = 0.0;
