@@ -43,11 +43,11 @@ public class LocateCoral extends Command {
     switch (state.get()) {
       case CORAL_TOO_CLOSE:
         intakeSubsystem.setIntakeMotor(kIntakeSpeed / 5);
-        intakeSubsystem.setConveyerMotor(-kConveyorSpeed);
+        intakeSubsystem.setConveyerMotor(kConveyorSpeed);
         break;
       case CORAL_TOO_FAR:
         intakeSubsystem.setIntakeMotor(kIntakeSpeed / 5);
-        intakeSubsystem.setConveyerMotor(kConveyorSpeed);
+        intakeSubsystem.setConveyerMotor(-kConveyorSpeed);
         break;
       case IN_ELEVATOR:
       case NO_CORAL:
@@ -70,7 +70,8 @@ public class LocateCoral extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return state.get() == CoralEnum.CORAL_ALIGNED && intakeSubsystem.atSetpoint(kPivotRetractAngle);
+    return (state.get() == CoralEnum.NO_CORAL || state.get() == CoralEnum.CORAL_ALIGNED)
+        && intakeSubsystem.atSetpoint(kPivotRetractAngle);
   }
 
   @Override

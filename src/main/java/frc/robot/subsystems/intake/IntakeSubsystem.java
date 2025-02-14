@@ -122,7 +122,8 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
     conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);
-    throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero);
+    throughBoreEncoder =
+        new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero.in(Rotations));
     this.sensors = sensors;
 
     intakeMotorConfig = new TalonFXConfiguration();

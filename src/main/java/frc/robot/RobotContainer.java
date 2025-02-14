@@ -15,7 +15,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
@@ -27,13 +26,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.drive.*;
@@ -66,7 +65,7 @@ public class RobotContainer {
   private final boolean usingKeyboard = false && Robot.isSimulation();
 
   // Subsystems
-  private final Climber climber = new Climber();
+  //   private final Climber climber = new Climber();
 
   private final Drive drive;
   private final Vision vision;
@@ -190,12 +189,12 @@ public class RobotContainer {
     testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
     testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
     testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
-        .whileTrue(climber.runRaw(Volts.of(3)));
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
-        .whileTrue(climber.runRaw(Volts.of(-3)));
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
-        .onTrue(climber.toggleJeopardy());
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
+    //     .whileTrue(climber.runRaw(Volts.of(3)));
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
+    //     .whileTrue(climber.runRaw(Volts.of(-3)));
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
+    //     .onTrue(climber.toggleJeopardy());
   }
 
   private void configureButtonBindings() {
@@ -210,16 +209,17 @@ public class RobotContainer {
     OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
 
     // Intake Buttons
-    OI.getTrigger(OI.Driver.RTrigger).whileFalse(intake.floorIntake());
+    OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.floorIntake());
     intake
         .intakeHasCoralTrigger()
         .onTrue(
             new LocateCoral(sensors::getSensorState, intake, () -> elevatorOrL1Mode)
                 .andThen(
                     new PassToScorer(
-                        intake, () -> elevatorOrL1Mode, coralScorer, sensors::getSensorState)));
+                        intake, () -> elevatorOrL1Mode, coralScorer, sensors::getSensorState))
+                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
-    OI.getPOVButton(OI.Operator.Y)
+    OI.getButton(OI.Operator.Y)
         .onTrue(
             Commands.runOnce(
                 () -> {
@@ -246,6 +246,9 @@ public class RobotContainer {
             () -> OI.getAxisSupplier(OI.Driver.LeftX).get(),
             () -> OI.getAxisSupplier(OI.Driver.RightX).get()));
     OI.getButton(OI.Driver.Back).onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+
+    OI.getPOVButton(OI.Operator.DPAD_LEFT).whileTrue(intake.pivotUpCommand());
+    OI.getPOVButton(OI.Operator.DPAD_RIGHT).whileTrue(intake.pivotDownCommand());
   }
 
   /**
