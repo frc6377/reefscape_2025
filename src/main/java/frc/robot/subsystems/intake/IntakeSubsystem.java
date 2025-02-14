@@ -115,6 +115,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private Sensors sensors;
 
+  private boolean elevatorNotL1 = false;
+
   public IntakeSubsystem(Sensors sensors) {
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
@@ -530,7 +532,11 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeState = IntakeState.PASS_CORAL_TO_SCORER;
         break;
       case PASS_CORAL_TO_SCORER:
-        intakeState = IntakeState.L1_SCORE;
+        if (elevatorNotL1){
+          intakeState = IntakeState.L1_SCORE;   //FIXME: Change to elevator score state if we have one
+        } else{
+          intakeState = IntakeState.L1_SCORE;
+        }
         break;
       case L1_SCORE:
         if (atSetpoint(kPivotRetractAngle)
