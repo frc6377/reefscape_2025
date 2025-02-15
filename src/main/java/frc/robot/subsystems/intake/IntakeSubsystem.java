@@ -17,6 +17,7 @@ import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.armZero;
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
 import static frc.robot.Constants.IntakeConstants.kGearing;
+import static frc.robot.Constants.IntakeConstants.kHoldPower;
 import static frc.robot.Constants.IntakeConstants.kIntakeHandoffSpeed;
 import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
 import static frc.robot.Constants.IntakeConstants.kLength;
@@ -36,9 +37,11 @@ import static frc.robot.Constants.IntakeConstants.kl1;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -130,6 +133,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     intakeMotorConfig = new TalonFXConfiguration();
     intakeMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    intakeMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+    intakeMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+    intakeMotorConfig.Slot0 = new Slot0Configs().withKP(10).withKI(0).withKD(0);
     intakeMotor.getConfigurator().apply(intakeMotorConfig);
 
     conveyorMotorConfig = new TalonFXConfiguration();
@@ -343,7 +349,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(
         () -> {
           goToPivotPosition(kalgae);
-          intakeMotor.set(-kIntakeSpeed);
+          intakeMotor.setControl(new TorqueCurrentFOC(kHoldPower));
         },
         () -> {});
   }

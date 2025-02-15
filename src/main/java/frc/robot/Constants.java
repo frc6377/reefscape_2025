@@ -1,5 +1,6 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
@@ -22,6 +23,7 @@ import edu.wpi.first.units.AngularAccelerationUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
@@ -122,8 +124,10 @@ public final class Constants {
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
     public static final Angle kcoralStation = Degrees.of(101);
     public static final Angle kl1 = Degrees.of(75.5);
-    public static final Angle kalgae = Degrees.of(44.5);
+    public static final Angle kalgae = Degrees.of(55);
     public static final Angle kPivotTolerance = Degrees.of(5);
+
+    public static final Current kHoldPower = Amps.of(40);
 
     public static final HowdyPID kPivotArmPID =
         new HowdyPID(0, 100.0, 0.0, 0.0, 0.0, 7.29, 0.03, 0.0); // GravityTypeValue.Arm_Cosine

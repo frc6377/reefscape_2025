@@ -74,6 +74,7 @@ public class RobotContainer {
   private final IntakeSubsystem intake = new IntakeSubsystem(sensors);
 
   private boolean elevatorNotL1 = true;
+  private boolean intakeAlgeaMode = false;
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose;
@@ -208,14 +209,12 @@ public class RobotContainer {
     OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
 
     // Intake Buttons
-    OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.floorIntake());
+    OI.getTrigger(OI.Driver.RTrigger).and(() -> !intakeAlgeaMode).whileTrue(intake.floorIntake());
+    OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
+    OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
     intake
         .intakeHasUnalignedCoralTrigger()
         .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> elevatorNotL1).asProxy());
-    // .andThen(
-    //     new PassToScorer(
-    //             intake, () -> elevatorNotL1, coralScorer, sensors::getSensorState)
-    //         .asProxy()));
 
     intake
         .intakeHasCoralTrigger()
@@ -227,6 +226,7 @@ public class RobotContainer {
                     () ->
                         sensors.getSensorState() == CoralEnum.NO_CORAL
                             || coralScorer.hasCoral().getAsBoolean()));
+
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
     OI.getButton(OI.Operator.Y)
         .onTrue(
@@ -235,11 +235,22 @@ public class RobotContainer {
                   elevatorNotL1 = !elevatorNotL1;
                   SmartDashboard.putBoolean("Intake/Mode", elevatorNotL1);
                 }));
+    OI.getButton(OI.Operator.X)
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  intakeAlgeaMode = !intakeAlgeaMode;
+                  SmartDashboard.putBoolean("Intake/Algea Mode", intakeAlgeaMode);
+                }));
+
     OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
     intake.setDefaultCommand(intake.Idle());
 
     // Scorer Buttons
-    OI.getTrigger(OI.Driver.LTrigger).whileTrue(coralScorer.scoreCommand());
+    OI.getTrigger(OI.Driver.LTrigger)
+        .and(() -> !intakeAlgeaMode)
+        .whileTrue(coralScorer.scoreCommand());
+    OI.getTrigger(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
     OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
 
     // Reset gyro / odometry, Runnable
