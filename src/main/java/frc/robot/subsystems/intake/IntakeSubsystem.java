@@ -403,6 +403,7 @@ public class IntakeSubsystem extends SubsystemBase {
         "Intake/Absolute Encoder Position (Rotation)",
         Rotations.of(throughBoreEncoder.get()).in(Degrees));
     SmartDashboard.putString("Intake/Intake State", intakeState.toString());
+    SmartDashboard.putString("Intake/Coral State", coralState.toString());
     pivotOutput.log(pivotMotor.get());
     if (this.getCurrentCommand() != null) {
       currentCommand.log(this.getCurrentCommand().getName());
@@ -471,25 +472,25 @@ public class IntakeSubsystem extends SubsystemBase {
         }
         break;
       case FLOOR_INTAKE:
-      if (Math.random() <= 0.33) {
-        sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
-      } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
-        sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
-      } else {
-        sensors.setSimState(CoralEnum.NO_CORAL);
-      }
+        if (Math.random() <= 0.33) {
+          sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
+        } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
+          sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
+        } else {
+          sensors.setSimState(CoralEnum.NO_CORAL);
+        }
         intakeState = IntakeState.LOCATE_CORAL;
         break;
       case FLOOR_OUTTAKE:
         break;
       case HP_CORAL_INTAKE:
-      if (Math.random() <= 0.33) {
-        sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
-      } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
-        sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
-      } else {
-        sensors.setSimState(CoralEnum.NO_CORAL);
-      }
+        if (Math.random() <= 0.33) {
+          sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
+        } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
+          sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
+        } else {
+          sensors.setSimState(CoralEnum.NO_CORAL);
+        }
         intakeState = IntakeState.LOCATE_CORAL;
         break;
       case ALGAE_INTAKE:
@@ -542,9 +543,10 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeState = IntakeState.PASS_CORAL_TO_SCORER;
         break;
       case PASS_CORAL_TO_SCORER:
-        if (elevatorNotL1){
-          intakeState = IntakeState.L1_SCORE;   //FIXME: Change to elevator score state if we have one
-        } else{
+        if (elevatorNotL1) {
+          intakeState =
+              IntakeState.L1_SCORE; // FIXME: Change to elevator score state if we have one
+        } else {
           intakeState = IntakeState.L1_SCORE;
         }
         break;
