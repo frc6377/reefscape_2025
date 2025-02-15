@@ -114,7 +114,7 @@ public final class Constants {
     public static final double kIntakeSpeed = -1;
     public static final double kOuttakeSpeed = 0.2;
     public static final double kIntakeHandoffSpeed = -0.75;
-    public static final double kConveyorSpeed = -0.3;
+    public static final double kConveyorSpeed = 0.3;
     public static final double kPivotSpeed = 0.2;
     public static final Angle kPivotRetractAngle = Degrees.of(128);
     public static final Angle kPivotOuttakePose = Degrees.of(87);

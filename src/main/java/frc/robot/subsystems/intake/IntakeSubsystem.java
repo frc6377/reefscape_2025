@@ -513,13 +513,13 @@ public class IntakeSubsystem extends SubsystemBase {
         if (coralState == CoralEnum.CORAL_TOO_CLOSE) {
           if (atSetpoint(kcoralStation)
               && checkSimIntake(kIntakeSpeed)
-              && checkSimConveyor(kConveyorSpeed)) {
+              && checkSimConveyor(-kConveyorSpeed)) {
             t4.start();
           }
         } else if (coralState == CoralEnum.CORAL_TOO_FAR) {
           if (atSetpoint(kcoralStation)
               && checkSimIntake(kIntakeSpeed)
-              && checkSimConveyor(-kConveyorSpeed)) {
+              && checkSimConveyor(kConveyorSpeed)) {
             t4.start();
           }
         } else if (coralState == CoralEnum.CORAL_ALIGNED) {
@@ -538,7 +538,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         if (atSetpoint(kPivotRetractAngle)
             && checkSimIntake(0)
-            && checkSimConveyor(kConveyorSpeed)) {
+            && checkSimConveyor(-kConveyorSpeed)) {
           sensors.setSimState(CoralEnum.CORAL_ALIGNED);
           intakeState = IntakeState.HOLD_CORAL;
         }
@@ -557,7 +557,7 @@ public class IntakeSubsystem extends SubsystemBase {
       case L1_SCORE:
         if (atSetpoint(kPivotRetractAngle)
             && checkSimIntake(kIntakeSpeed)
-            && checkSimConveyor(kConveyorSpeed)) {
+            && checkSimConveyor(-kConveyorSpeed)) {
           t5.start();
         } else {
           t5.stop();
