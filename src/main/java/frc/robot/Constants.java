@@ -61,6 +61,7 @@ public final class Constants {
     public static final int kIntakeMotor = 13;
     public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
+    public static final int kClimberServoID = 100;
   }
 
   public static class DIOConstants {
@@ -101,6 +102,9 @@ public final class Constants {
     public static final Mass kClimberMass = Pounds.of(0.5);
     public static final Angle kClimberArmMinAngle = Degrees.of(-30).plus(kClimberOffsetAngle);
     public static final Angle kClimberArmMaxAngle = Degrees.of(250).plus(kClimberOffsetAngle);
+
+    public static final double kServoEngageAngle = 200;
+    public static final double kServoDisengageAngle = 90;
   }
 
   // Scorer Constants
