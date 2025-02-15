@@ -235,6 +235,7 @@ public class RobotContainer {
                   elevatorNotL1 = !elevatorNotL1;
                   SmartDashboard.putBoolean("Intake/Mode", elevatorNotL1);
                 }));
+    OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
     intake.setDefaultCommand(intake.Idle());
 
     // Scorer Buttons

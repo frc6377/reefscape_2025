@@ -14,7 +14,6 @@ import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -127,7 +126,7 @@ public final class Constants {
     public static final Angle kPivotTolerance = Degrees.of(5);
 
     public static final HowdyPID kPivotArmPID =
-        new HowdyPID(0, 100.0, 0.0, 0.0, 0.0, 7.29, 0.03, 0.0, GravityTypeValue.Arm_Cosine);
+        new HowdyPID(0, 100.0, 0.0, 0.0, 0.0, 7.29, 0.03, 0.0); // GravityTypeValue.Arm_Cosine
 
     public static final double kGearing = 60;
     public static final double kSensorToMechanism = 60;
