@@ -13,7 +13,6 @@ import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -115,7 +114,7 @@ public final class Constants {
     public static final double kIntakeSpeed = -1;
     public static final double kOuttakeSpeed = 0.2;
     public static final double kIntakeHandoffSpeed = -0.75;
-    public static final double kConveyorSpeed = 0.3;
+    public static final double kConveyorSpeed = -0.3;
     public static final double kPivotSpeed = 0.2;
     public static final Angle kPivotRetractAngle = Degrees.of(128);
     public static final Angle kPivotOuttakePose = Degrees.of(87);
@@ -126,7 +125,7 @@ public final class Constants {
     public static final Angle kPivotTolerance = Degrees.of(2.5);
 
     public static final HowdyPID kPivotArmPID =
-        new HowdyPID(0, 100.0, 0.0, 0.0, 0.0, 7.29, 0.03, 0.0, GravityTypeValue.Arm_Cosine);
+        new HowdyPID(0, 100.0, 0.0, 0.0, 0.0, 7.29, 0.03, 0.0); // GravityTypeValue.Arm_Cosine
 
     public static final double kGearing = 60;
     public static final double kSensorToMechanism = 60;
