@@ -107,7 +107,7 @@ public final class Constants {
   // Scorer Constants
   public static class CoralScorerConstants {
     public static final double kSpeed = 0.5;
-    public static final double kIntakeSpeed = 0.4;
+    public static final double kIntakeSpeed = 0.3;
   }
 
   // Intake Constants
@@ -115,7 +115,7 @@ public final class Constants {
     public static final double kIntakeSpeed = -1;
     public static final double kOuttakeSpeed = 0.2;
     public static final double kIntakeHandoffSpeed = -0.75;
-    public static final double kConveyorSpeed = 0.45;
+    public static final double kConveyorSpeed = 0.3;
     public static final double kPivotSpeed = 0.2;
     public static final Angle kPivotRetractAngle = Degrees.of(128);
     public static final Angle kPivotOuttakePose = Degrees.of(87);
@@ -123,7 +123,7 @@ public final class Constants {
     public static final Angle kcoralStation = Degrees.of(101);
     public static final Angle kl1 = Degrees.of(75.5);
     public static final Angle kalgae = Degrees.of(44.5);
-    public static final Angle kPivotTolerance = Degrees.of(3);
+    public static final Angle kPivotTolerance = Degrees.of(2.5);
 
     public static final HowdyPID kPivotArmPID =
         new HowdyPID(0, 100.0, 0.0, 0.0, 0.0, 7.29, 0.03, 0.0, GravityTypeValue.Arm_Cosine);

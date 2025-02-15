@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class LocateCoral extends Command {
@@ -48,6 +49,7 @@ public class LocateCoral extends Command {
       case CORAL_TOO_FAR:
         intakeSubsystem.setIntakeMotor(kIntakeSpeed / 5);
         intakeSubsystem.setConveyerMotor(-kConveyorSpeed);
+        intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
         break;
       case IN_ELEVATOR:
       case NO_CORAL:
@@ -65,6 +67,7 @@ public class LocateCoral extends Command {
     intakeSubsystem.setIntakeMotor(0);
     intakeSubsystem.setConveyerMotor(0);
     intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
+    Logger.recordOutput("Locate Coral Ended", true);
   }
 
   // Returns true when the command should end.

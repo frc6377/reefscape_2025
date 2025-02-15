@@ -5,6 +5,7 @@ import static frc.robot.Constants.SensorIDs.*;
 
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import utilities.TOFSensorSimple;
 import utilities.TOFSensorSimple.TOFType;
@@ -44,6 +45,19 @@ public class Sensors {
         return sensor4.isBeamBroke();
       default:
         return false;
+    }
+  }
+
+  public Trigger getSensorTrigger(int sensorID) {
+    switch (sensorID) {
+      case 2:
+        return sensor2.beamBroken();
+      case 3:
+        return sensor3.beamBroken();
+      case 4:
+        return sensor4.beamBroken();
+      default:
+        return new Trigger(null);
     }
   }
 

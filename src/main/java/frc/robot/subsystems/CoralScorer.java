@@ -42,18 +42,26 @@ public class CoralScorer extends SubsystemBase {
     return TOFSensor.beamBroken();
   }
 
+  public void stopMotor() {
+    scorerMotor.stopMotor();
+  }
+
   // Made a command to spin clockwise
   public Command scoreCommand() {
-    return startEnd(() -> scorerMotor.set(-kSpeed), () -> scorerMotor.set(0));
+    return startEnd(() -> scorerMotor.set(-kSpeed), () -> stopMotor());
   }
 
   public Command intakeCommand() {
-    return startEnd(() -> scorerMotor.set(-kIntakeSpeed), () -> scorerMotor.set(0));
+    return startEnd(() -> scorerMotor.set(-kIntakeSpeed), () -> stopMotor());
   }
 
   // Made a command to spin counter clockwise
   public Command reverseCommand() {
-    return startEnd(() -> scorerMotor.set(kSpeed), () -> scorerMotor.set(0));
+    return startEnd(() -> scorerMotor.set(kSpeed), () -> stopMotor());
+  }
+
+  public Command stopCommand() {
+    return runOnce(() -> scorerMotor.stopMotor());
   }
 
   @Override

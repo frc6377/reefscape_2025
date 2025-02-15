@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -74,7 +73,7 @@ public class RobotContainer {
   private static final Sensors sensors = new Sensors();
   private final IntakeSubsystem intake = new IntakeSubsystem(sensors);
 
-  private boolean elevatorOrL1Mode = false;
+  private boolean elevatorNotL1 = true;
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose;
@@ -213,18 +212,17 @@ public class RobotContainer {
     intake
         .intakeHasCoralTrigger()
         .onTrue(
-            new LocateCoral(sensors::getSensorState, intake, () -> elevatorOrL1Mode)
+            new LocateCoral(sensors::getSensorState, intake, () -> elevatorNotL1)
                 .andThen(
                     new PassToScorer(
-                        intake, () -> elevatorOrL1Mode, coralScorer, sensors::getSensorState))
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+                        intake, () -> elevatorNotL1, coralScorer, sensors::getSensorState)));
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
     OI.getButton(OI.Operator.Y)
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  elevatorOrL1Mode = !elevatorOrL1Mode;
-                  SmartDashboard.putBoolean("Intake/Mode", elevatorOrL1Mode);
+                  elevatorNotL1 = !elevatorNotL1;
+                  SmartDashboard.putBoolean("Intake/Mode", elevatorNotL1);
                 }));
     intake.setDefaultCommand(intake.Idle());
 

@@ -178,6 +178,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void elevatorMode() {}
 
+  public Sensors getSensors() {
+    return sensors;
+  }
+
   public boolean atSetpoint(Angle setpoint) {
     return pivotMotor.getPosition().getValue().isNear(setpoint, kPivotTolerance);
   }

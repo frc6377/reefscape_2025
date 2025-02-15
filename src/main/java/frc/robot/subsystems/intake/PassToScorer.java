@@ -13,6 +13,7 @@ import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.subsystems.CoralScorer;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class PassToScorer extends Command {
@@ -48,7 +49,7 @@ public class PassToScorer extends Command {
   public void execute() {
     if (elevatorNotL1.getAsBoolean() && intakeSubsystem.atSetpoint(kPivotRetractAngle)) {
       intakeSubsystem.setIntakeMotor(kIntakeSpeed);
-      intakeSubsystem.setConveyerMotor(kConveyorSpeed);
+      intakeSubsystem.setConveyerMotor(-kConveyorSpeed);
       coralScorer.scoreCommand().initialize();
     } else {
       intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
@@ -64,13 +65,23 @@ public class PassToScorer extends Command {
     intakeSubsystem.setIntakeMotor(0);
     intakeSubsystem.setConveyerMotor(0);
     coralScorer.scoreCommand().end(interrupted);
+    Logger.recordOutput("Pass To Scorer Ended", true);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     if (elevatorNotL1.getAsBoolean()) {
-      return coralScorer.hasCoral().getAsBoolean(); // FIXME: Using different sensors now
+      Logger.recordOutput(
+          "PassToScorer State",
+          intakeSubsystem.getSensors().getSensorTrigger(2).negate().debounce(0.02).getAsBoolean());
+      return coralScorer.hasCoral().getAsBoolean()
+          || intakeSubsystem
+              .getSensors()
+              .getSensorTrigger(2)
+              .negate()
+              .debounce(0.04)
+              .getAsBoolean();
     } else {
       return intakeSubsystem.atSetpoint(kPivotRetractAngle);
     }
