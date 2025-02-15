@@ -3,6 +3,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Inches;
@@ -115,7 +116,7 @@ public final class Constants {
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
     public static final AngularVelocity kMotionMagicCruiseVelocity = DegreesPerSecond.of(450);
     public static final AngularAcceleration kMotionMagicAcceleration =
-        kMotionMagicCruiseVelocity.times(Hertz.of(5));
+        DegreesPerSecondPerSecond.of(400);
     public static final double kMotionMagicJerk = 80.0;
 
     public static final double armZero = 0.35;
@@ -132,10 +133,10 @@ public final class Constants {
 
     public static final int elvLimitID = 0;
 
-    public static final double P = 2;
-    public static final double I = 0.16;
-    public static final double D = 0.02;
-    public static final double FF = 0.0;
+    public static final double P = 24;
+    public static final double I = 4;
+    public static final double D = 0;
+    public static final double FF = 8;
     public static final Distance kBottomLimit = Inches.of(0);
     public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;

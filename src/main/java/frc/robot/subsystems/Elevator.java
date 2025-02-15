@@ -10,13 +10,14 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import com.ctre.phoenix6.controls.Follower;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -84,7 +85,9 @@ public class Elevator extends SubsystemBase {
       new Slot0Configs()
           .withKP(ElevatorConstants.P)
           .withKI(ElevatorConstants.I)
-          .withKD(ElevatorConstants.D);
+          .withKD(ElevatorConstants.D)
+          .withKS(ElevatorConstants.FF)
+          .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   private ElevatorSim m_elevatorSim;
   private TunableNumber tunableP;
   private TunableNumber tunableI;
@@ -329,7 +332,7 @@ public class Elevator extends SubsystemBase {
     return runOnce(
         () -> {
           Angle adjustedSetpoint = heightToRotations(heightLevel);
-          elevatorMotor1.setControl(new MotionMagicVoltage(adjustedSetpoint));
+          elevatorMotor1.setControl(new MotionMagicExpoTorqueCurrentFOC(adjustedSetpoint));
           SmartDashboard.putNumber("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
           SmartDashboard.putNumber("Elevator/Setpoint Rotations", adjustedSetpoint.in(Rotations));
         });

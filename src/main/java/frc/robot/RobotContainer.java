@@ -182,6 +182,13 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+    if (usingKeyboard) {
+      OI.getPOVButton(OI.Keyboard.Z).onTrue(elevator.L0());
+      OI.getPOVButton(OI.Keyboard.X).onTrue(elevator.L2());
+      OI.getPOVButton(OI.Keyboard.C).onTrue(elevator.L3());
+      OI.getPOVButton(OI.Keyboard.V).onTrue(elevator.L4());
+    }
+
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
     OI.getPOVButton(OI.Driver.DPAD_LEFT).onTrue(elevator.L2());
