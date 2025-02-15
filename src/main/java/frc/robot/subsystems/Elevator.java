@@ -42,12 +42,9 @@ import frc.robot.Constants.DIOConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Robot;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
-import utilities.TunableNumber;
 
-@SuppressWarnings("unused")
 public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor1;
   private TalonFXSimState simElvMotor1;
@@ -142,7 +139,7 @@ public class Elevator extends SubsystemBase {
       m_elevatorSim =
           new ElevatorSim(
               kElevatorGearbox,
-              kElevatorGearing,
+              kElevatorGearing * 2,
               kCarriageMass.in(Kilograms),
               kElevatorDrumRadius.in(Meters),
               kMinElevatorHeight.in(Meters),
@@ -167,16 +164,13 @@ public class Elevator extends SubsystemBase {
 
   public static Distance rotationsToHeight(Angle rotations) {
     return ElevatorConstants.kElevatorDrumCircumference
-        .times(rotations.in(Rotations) * ElevatorConstants.kCarageFactor)
+        .times(rotations.in(Rotations))
         .div(kElevatorGearing);
   }
 
   // height = C * rot * 2/75 -> rot = height * 75/2C
   public static Angle heightToRotations(Distance height) {
-    return height
-        .times(kElevatorGearing)
-        .div(kElevatorDrumCircumference.times(kCarageFactor))
-        .times(Rotations.one());
+    return height.times(kElevatorGearing).div(kElevatorDrumCircumference).times(Rotations.one());
   }
 
   public Angle ChineseRemander() {
@@ -189,9 +183,7 @@ public class Elevator extends SubsystemBase {
 
   public static AngularVelocity heightToRotations(LinearVelocity vel) {
     // rot/s = (G)/(C*2/vel)
-    return Rotations.one()
-        .times(kElevatorGearing)
-        .div((kElevatorDrumCircumference.times(kCarageFactor)).div(vel));
+    return Rotations.one().times(kElevatorGearing).div((kElevatorDrumCircumference).div(vel));
   }
 
   public Distance getElevatorHeight() {

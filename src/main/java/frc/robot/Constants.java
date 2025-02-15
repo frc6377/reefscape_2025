@@ -225,23 +225,23 @@ public final class Constants {
       {11, 23, 2, 14, 26, 5, 17, 29, 8, 20, 32}
     };
 
-    // The carriage on the elv effectivly adds a gearing multiplier of 1
-    public static final double kCarageFactor = 1;
+    // Mech Constants
+    public static final Distance kElevatorDrumRadius = Inches.of(.75 / 2.0);
+    public static final Distance kElevatorDrumCircumference =
+        kElevatorDrumRadius.times(2 * Math.PI);
+
+    public static final AngularVelocity MMVel = Elevator.heightToRotations(InchesPerSecond.of(100));
+    public static final AngularAcceleration MMAcc = MMVel.times(Hertz.of(5));
+    public static final Velocity<AngularAccelerationUnit> MMJerk =
+        RotationsPerSecondPerSecond.per(Second).of(MMAcc.in(RotationsPerSecondPerSecond)).times(10);
 
     // Simulation Constants
     public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60(2);
     public static final double elevatorOutput = .10;
     public static final double kElevatorGearing = 1.0;
     public static final Mass kCarriageMass = Pounds.of(4.75);
-    public static final Distance kElevatorDrumRadius = Inches.of(.75 / 2);
     public static final Distance kMinElevatorHeight = Inches.zero();
     public static final Distance kMaxElevatorHeight = Inches.of(72);
-    public static final Distance kElevatorDrumCircumference =
-        kElevatorDrumRadius.times(2 * Math.PI);
-    public static final AngularVelocity MMVel = Elevator.heightToRotations(InchesPerSecond.of(100));
-    public static final AngularAcceleration MMAcc = MMVel.times(Hertz.of(5));
-    public static final Velocity<AngularAccelerationUnit> MMJerk =
-        RotationsPerSecondPerSecond.per(Second).of(MMAcc.in(RotationsPerSecondPerSecond)).times(10);
   }
 
   public final class DrivetrainConstants {
