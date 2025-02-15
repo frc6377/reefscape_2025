@@ -137,7 +137,8 @@ public class IntakeSubsystem extends SubsystemBase {
     // pivotMotor.setPosition(throughBoreEncoder.get());
 
     sensor = new TOFSensorSimple(CANIDs.kIntakeTOFID2, Inches.of(1.5), TOFType.LASER_CAN);
-    throughBoreEncoder = new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero);
+    throughBoreEncoder =
+        new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero.in(Rotations));
 
     if (Robot.isSimulation()) {
       simPivotMotor = pivotMotor.getSimState();

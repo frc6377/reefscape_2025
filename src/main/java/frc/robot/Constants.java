@@ -119,7 +119,7 @@ public final class Constants {
         DegreesPerSecondPerSecond.of(400);
     public static final double kMotionMagicJerk = 80.0;
 
-    public static final double armZero = 0.35;
+    public static final Angle armZero = Degrees.of(83.05);
   }
 
   // Elevator Constants
