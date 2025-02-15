@@ -5,7 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
-import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
+import static frc.robot.Constants.IntakeConstants.kIntakeHandoffSpeed;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,7 +48,7 @@ public class PassToScorer extends Command {
   @Override
   public void execute() {
     if (elevatorNotL1.getAsBoolean() && intakeSubsystem.atSetpoint(kPivotRetractAngle)) {
-      intakeSubsystem.setIntakeMotor(kIntakeSpeed);
+      intakeSubsystem.setIntakeMotor(kIntakeHandoffSpeed);
       intakeSubsystem.setConveyerMotor(-kConveyorSpeed);
       coralScorer.scoreCommand().initialize();
     } else {
@@ -72,16 +72,11 @@ public class PassToScorer extends Command {
   @Override
   public boolean isFinished() {
     if (elevatorNotL1.getAsBoolean()) {
-      Logger.recordOutput(
-          "PassToScorer State",
-          intakeSubsystem.getSensors().getSensorTrigger(2).negate().debounce(0.02).getAsBoolean());
-      return coralScorer.hasCoral().getAsBoolean()
-          || intakeSubsystem
-              .getSensors()
-              .getSensorTrigger(2)
-              .negate()
-              .debounce(0.04)
-              .getAsBoolean();
+      boolean intakeSensorBool =
+          intakeSubsystem.getSensors().getSensorTrigger(2).negate().debounce(0.04).getAsBoolean();
+      Logger.recordOutput("PassToScorer Intake State", intakeSensorBool);
+      Logger.recordOutput("PassToScorer Coral State", coralScorer.hasCoral().getAsBoolean());
+      return coralScorer.hasCoral().getAsBoolean() || intakeSensorBool;
     } else {
       return intakeSubsystem.atSetpoint(kPivotRetractAngle);
     }

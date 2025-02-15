@@ -2,6 +2,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Inches;
@@ -107,7 +108,7 @@ public final class Constants {
   // Scorer Constants
   public static class CoralScorerConstants {
     public static final double kSpeed = 0.5;
-    public static final double kIntakeSpeed = 0.3;
+    public static final double kIntakeSpeed = 0.4;
   }
 
   // Intake Constants
@@ -115,7 +116,7 @@ public final class Constants {
     public static final double kIntakeSpeed = -1;
     public static final double kOuttakeSpeed = 0.2;
     public static final double kIntakeHandoffSpeed = -0.75;
-    public static final double kConveyorSpeed = 0.3;
+    public static final double kConveyorSpeed = 0.45;
     public static final double kPivotSpeed = 0.2;
     public static final Angle kPivotRetractAngle = Degrees.of(128);
     public static final Angle kPivotOuttakePose = Degrees.of(87);
@@ -123,7 +124,7 @@ public final class Constants {
     public static final Angle kcoralStation = Degrees.of(101);
     public static final Angle kl1 = Degrees.of(75.5);
     public static final Angle kalgae = Degrees.of(44.5);
-    public static final Angle kPivotTolerance = Degrees.of(2.5);
+    public static final Angle kPivotTolerance = Degrees.of(5);
 
     public static final HowdyPID kPivotArmPID =
         new HowdyPID(0, 100.0, 0.0, 0.0, 0.0, 7.29, 0.03, 0.0, GravityTypeValue.Arm_Cosine);
@@ -137,7 +138,7 @@ public final class Constants {
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
     public static final AngularVelocity kMotionMagicCruiseVelocity = DegreesPerSecond.of(450);
     public static final AngularAcceleration kMotionMagicAcceleration =
-        kMotionMagicCruiseVelocity.times(Hertz.of(5));
+        DegreesPerSecondPerSecond.of(2250);
     public static final double kMotionMagicJerk = 80.0;
 
     public static final Angle armZero = Degrees.of(83.05);
@@ -147,7 +148,8 @@ public final class Constants {
       CORAL_TOO_FAR,
       NO_CORAL,
       IN_ELEVATOR,
-      CORAL_ALIGNED
+      CORAL_ALIGNED,
+      OTHER
     }
   }
 
