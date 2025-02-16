@@ -366,7 +366,7 @@ public class IntakeSubsystem extends SubsystemBase {
         () -> {
           goToPivotPosition(kPivotRetractAngle);
           intakeMotor.set(kIntakeSpeed / 5);
-          conveyorMotor.set(kConveyorSpeed);
+          conveyorMotor.set(-kConveyorSpeed);
         },
         () -> {});
   }
@@ -511,15 +511,15 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case LOCATE_CORAL:
         if (coralState == CoralEnum.CORAL_TOO_CLOSE) {
-          if (atSetpoint(kcoralStation)
+          if (atSetpoint(kcoralStation) // coral station
               && checkSimIntake(kIntakeSpeed)
-              && checkSimConveyor(-kConveyorSpeed)) {
+              && checkSimConveyor(kConveyorSpeed)) {
             t4.start();
           }
         } else if (coralState == CoralEnum.CORAL_TOO_FAR) {
-          if (atSetpoint(kcoralStation)
+          if (atSetpoint(kPivotRetractAngle)
               && checkSimIntake(kIntakeSpeed)
-              && checkSimConveyor(kConveyorSpeed)) {
+              && checkSimConveyor(-kConveyorSpeed)) {
             t4.start();
           }
         } else if (coralState == CoralEnum.CORAL_ALIGNED) {
@@ -529,7 +529,7 @@ public class IntakeSubsystem extends SubsystemBase {
           System.out.println("Compbot is haunted");
         }
 
-        if (t4.hasElapsed(0.8)) {
+        if (t4.hasElapsed(1)) {
           sensors.setSimState(CoralEnum.CORAL_ALIGNED);
           intakeState = IntakeState.PASS_CORAL_TO_SCORER;
           t4.stop();
