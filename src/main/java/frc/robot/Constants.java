@@ -66,6 +66,7 @@ public final class Constants {
 
   public static class DIOConstants {
     public static final int kthroughBoreEncoderID = 10;
+    public static final int kAlgeaEncoderID = 15;
     public static final int kClimberFrontEncoderID = 5;
     public static final int kClimberBackEncoderID = 6;
     public static final int gear11ID = 13;
@@ -216,6 +217,7 @@ public final class Constants {
     public static final int kAlegeaGearRatio = 80;
     public static final Angle algeaStowed = Degrees.of(0);
     public static final Angle algeaRemove = Degrees.of(90);
+    public static final double algeaZero = 0.0; // update with actual value
   }
 
   /**
