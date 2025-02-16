@@ -20,6 +20,7 @@ import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -33,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.FeildConstants;
+import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
@@ -49,6 +51,7 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import java.util.Set;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -188,7 +191,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Elevator SysID (Dynamic Reverse)", elevator.sysIdDynamic(Direction.kReverse));
     autoChooser.addOption(
-        "Drive Velocity Test", DriveCommands.RunVelocity(drive, MetersPerSecond.of(1), 5));
+        "Drive Velocity Test", DriveCommands.RunVelocity(drive, MetersPerSecond.of(2), 5));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -215,6 +218,12 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+    SmartDashboard.putData(
+        Commands.runOnce(
+            () -> {
+              SignalLogger.stop();
+            }));
+
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
     OI.getPOVButton(OI.Driver.DPAD_LEFT).onTrue(elevator.L2());
@@ -259,8 +268,13 @@ public class RobotContainer {
             drive,
             () -> OI.getAxisSupplier(OI.Driver.LeftY).get(),
             () -> OI.getAxisSupplier(OI.Driver.LeftX).get(),
-            () -> OI.getAxisSupplier(OI.Driver.RightX).get()));
+            () ->
+                OI.getButton(Driver.RSB).getAsBoolean()
+                    ? 0.0
+                    : OI.getAxisSupplier(OI.Driver.RightX).get()));
     OI.getButton(OI.Driver.Back).onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+    OI.getButton(OI.Driver.RSB)
+        .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose(), Set.of(drive)));
 
     /* This is for creating the button mappings for logging what coral have been scored
      * The Driverstation has a hard limit of 32 buttons so we use 2 different vjoy controllers

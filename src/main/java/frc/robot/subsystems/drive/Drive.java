@@ -158,7 +158,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(5, 0.0, 0.0), new PIDConstants(5, 0.0, 0.0)),
+            new PIDConstants(2.5, 0.0, 0.0), new PIDConstants(10, 0.0, 0.0)),
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -178,7 +178,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     sysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
-                null,
+                Volts.of(0.25).per(Second),
                 null,
                 null,
                 (state) -> SignalLogger.writeString("SwerveDrive/state", state.toString())),
@@ -323,9 +323,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(6))
-        .withTimeout(0)
-        .andThen(sysId.quasistatic(direction).withTimeout(6));
+    return run(() -> runCharacterization(6)).withTimeout(0).andThen(sysId.quasistatic(direction));
   }
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
@@ -337,13 +335,13 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   public Command sysIdQuasistaticTurning(SysIdRoutine.Direction direction) {
     return run(() -> runCharacterization(6))
         .withTimeout(0)
-        .andThen(sysIdTurning.quasistatic(direction).withTimeout(6));
+        .andThen(sysIdTurning.quasistatic(direction).withTimeout(20));
   }
 
   public Command sysIdDynamicTurning(SysIdRoutine.Direction direction) {
     return run(() -> runCharacterization(6))
         .withTimeout(0)
-        .andThen(sysIdTurning.dynamic(direction).withTimeout(6));
+        .andThen(sysIdTurning.dynamic(direction).withTimeout(20));
   }
 
   public Command setPoseScored(String pole, int levelIndex) {

@@ -74,7 +74,7 @@ public final class Constants {
   }
 
   public static class DIOConstants {
-    public static final int kthroughBoreEncoderID = 10;
+    public static final int kthroughBoreEncoderID = 1;
     public static final int kClimberFrontEncoderID = 5;
     public static final int kClimberBackEncoderID = 6;
     public static final int gear11ID = 13;
@@ -165,7 +165,7 @@ public final class Constants {
         kMotionMagicCruiseVelocity.times(Hertz.of(5));
     public static final double kMotionMagicJerk = 80.0;
 
-    public static final double armZero = 0.35;
+    public static final Angle armZero = Degrees.of(83.05);
 
     public static enum CoralEnum {
       CORAL_TOO_CLOSE,
