@@ -217,9 +217,14 @@ public class IntakeSubsystem extends SubsystemBase {
     return new Trigger(() -> atSetpoint(pivotSetpoint));
   }
 
-  public Trigger intakeHasCoralTrigger() {
+  public Trigger intakeHasUnalignedCoralTrigger() {
     return new Trigger(
         () -> sensors.getSensorState() != CoralEnum.NO_CORAL && !atSetpoint(kPivotRetractAngle));
+  }
+
+  public Trigger intakeHasCoralTrigger() {
+    return new Trigger(
+        () -> sensors.getSensorState() != CoralEnum.NO_CORAL && atSetpoint(kPivotRetractAngle));
   }
 
   // Belt Commands
@@ -406,6 +411,7 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber(
         "Intake/Belt Velocity (RPM)",
         RotationsPerSecond.of(conveyorMotor.getVelocity().getValueAsDouble()).in(RPM));
+    Logger.recordOutput("Intake/Pivot At Setpoint", atSetpoint(pivotSetpoint));
 
     // Log TOF Sensors
     for (int i = 2; i < 5; i++) {

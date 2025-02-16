@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CoralScorer;
@@ -37,7 +38,6 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
-import frc.robot.subsystems.intake.PassToScorer;
 import frc.robot.subsystems.vision.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -210,12 +210,23 @@ public class RobotContainer {
     // Intake Buttons
     OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.floorIntake());
     intake
+        .intakeHasUnalignedCoralTrigger()
+        .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> elevatorNotL1).asProxy());
+    // .andThen(
+    //     new PassToScorer(
+    //             intake, () -> elevatorNotL1, coralScorer, sensors::getSensorState)
+    //         .asProxy()));
+
+    intake
         .intakeHasCoralTrigger()
         .onTrue(
-            new LocateCoral(sensors::getSensorState, intake, () -> elevatorNotL1)
-                .andThen(
-                    new PassToScorer(
-                        intake, () -> elevatorNotL1, coralScorer, sensors::getSensorState)));
+            intake
+                .conveyerInCommand()
+                .alongWith(coralScorer.intakeCommand())
+                .until(
+                    () ->
+                        sensors.getSensorState() == CoralEnum.NO_CORAL
+                            || coralScorer.hasCoral().getAsBoolean()));
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
     OI.getButton(OI.Operator.Y)
         .onTrue(
