@@ -111,6 +111,7 @@ public final class Constants {
   // Scorer Constants
   public static class CoralScorerConstants {
     public static final double kSpeed = 0.5;
+    public static final double kAlignSpeed = 0.5;
     public static final double kIntakeSpeed = 0.4;
   }
 
