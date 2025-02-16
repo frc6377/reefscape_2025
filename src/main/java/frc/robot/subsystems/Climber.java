@@ -276,10 +276,9 @@ public class Climber extends SubsystemBase {
     return runOnce(() -> servo.setAngle(angle));
   }
 
-
   // Not entirely confident in the implementation of engageServo and disengageServo
-  
-  private Command engageServo() {
+
+  public Command engageServo() {
     return runEnd(
         () -> {
           setServoAngle(frontClimberServo, ClimberConstants.kServoEngageAngle);
@@ -288,7 +287,7 @@ public class Climber extends SubsystemBase {
         () -> {});
   }
 
-  private Command disengageServo() {
+  public Command disengageServo() {
     return runEnd(
         () -> {
           setServoAngle(frontClimberServo, ClimberConstants.kServoDisengageAngle);
