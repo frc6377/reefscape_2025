@@ -9,8 +9,10 @@ import static frc.robot.Constants.CoralScorerConstants.*;
 import static frc.robot.Constants.SensorIDs.kScorerSensorID;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -46,18 +48,22 @@ public class CoralScorer extends SubsystemBase {
     scorerMotor.stopMotor();
   }
 
+  public void setMotor(Current current) {
+    scorerMotor.setControl(new TorqueCurrentFOC(current));
+  }
+
   // Made a command to spin clockwise
   public Command scoreCommand() {
-    return startEnd(() -> scorerMotor.set(-kSpeed), () -> stopMotor());
+    return startEnd(() -> setMotor(kScoreAMPs), () -> stopMotor());
   }
 
   public Command intakeCommand() {
-    return startEnd(() -> scorerMotor.set(-kIntakeSpeed), () -> stopMotor());
+    return startEnd(() -> setMotor(kIntakeAMPs), () -> stopMotor());
   }
 
   // Made a command to spin counter clockwise
   public Command reverseCommand() {
-    return startEnd(() -> scorerMotor.set(kSpeed), () -> stopMotor());
+    return startEnd(() -> setMotor(kIntakeAMPs.times(-1)), () -> stopMotor());
   }
 
   public Command stopCommand() {

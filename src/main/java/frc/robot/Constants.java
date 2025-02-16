@@ -116,8 +116,14 @@ public final class Constants {
 
   // Scorer Constants
   public static class CoralScorerConstants {
-    public static final double kSpeed = 0.5;
-    public static final double kIntakeSpeed = 0.4;
+    public static final Current kScoreAMPs = Amps.of(1.5);
+    public static final Current kIntakeAMPs = Amps.of(1);
+
+    public static final HowdyPID CoralScorerPID = new HowdyPID();
+
+    static {
+      CoralScorerPID.setKP(0.1);
+    }
   }
 
   // Intake Constants
