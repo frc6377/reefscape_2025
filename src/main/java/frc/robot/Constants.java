@@ -15,7 +15,9 @@ import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -75,17 +77,22 @@ public final class Constants {
   }
 
   public static class ClimberConstants {
-    public static final double kClimberP0 = 100;
-    public static final double kClimberI0 = 0;
-    public static final double kClimberD0 = 5;
-    public static final double kClimberkG0 = 0;
-    public static final double kClimberkV0 = 10;
+    public static final HowdyPID kClimberPID0 = new HowdyPID();
 
-    public static final double kClimberP1 = 100;
-    public static final double kClimberI1 = 0;
-    public static final double kClimberD1 = 5;
-    public static final double kClimberkG1 = 1;
-    public static final double kClimberkV1 = 10;
+    static {
+      kClimberPID0.setKP(100);
+      kClimberPID0.setKD(5);
+      kClimberPID0.setKV(10);
+    }
+
+    public static final HowdyPID kClimberPID1 = new HowdyPID();
+
+    static {
+      kClimberPID1.setKP(100);
+      kClimberPID1.setKD(5);
+      kClimberPID1.setKV(10);
+      kClimberPID1.setKG(1);
+    }
 
     public static final double kGearRatio = 126;
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
@@ -98,6 +105,7 @@ public final class Constants {
     public static final Angle kExpectedStartAngle = Degrees.of(90);
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
+
     // Sim Constants
     public static final int KClimberMotorsCount = 2;
     public static final Distance kClimberArmLength = Inches.of(6);
@@ -129,8 +137,14 @@ public final class Constants {
 
     public static final Current kHoldPower = Amps.of(40);
 
-    public static final HowdyPID kPivotArmPID =
-        new HowdyPID(100.0, 0.0, 0.0, 0.0, 7.29, 0.03, 0.0); // GravityTypeValue.Arm_Cosine
+    public static final HowdyPID kPivotArmPID = new HowdyPID();
+
+    static {
+      kPivotArmPID.setKP(100);
+      kPivotArmPID.setKV(7.29);
+      kPivotArmPID.setKA(0.03);
+      kPivotArmPID.setGravityType(GravityTypeValue.Arm_Cosine);
+    }
 
     public static final double kGearing = 60;
     public static final double kSensorToMechanism = 60;
@@ -159,18 +173,21 @@ public final class Constants {
   // Elevator Constants
   public static class ElevatorConstants {
     public static final Distance kL0Height = Inches.of(0);
-    // L1 needs to be adjusted once it actually is worth it
-    public static final Distance kL1Height = Inches.of(15);
     public static final Distance kL2Height = Inches.of(16.62);
     public static final Distance kL3Height = Inches.of(30.9);
     public static final Distance kL4Height = Inches.of(55);
 
     public static final int elvLimitID = 0;
 
-    public static final double P = 1.5;
-    public static final double I = 0.04;
-    public static final double D = 0.02;
-    public static final double FF = 0.0;
+    public static final HowdyPID kElevatorPID = new HowdyPID();
+
+    static {
+      kElevatorPID.setKP(1.5);
+      kElevatorPID.setKP(0.04);
+      kElevatorPID.setKP(0.02);
+      kElevatorPID.setStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+    }
+
     public static final Distance kBottomLimit = Inches.of(0);
     public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;

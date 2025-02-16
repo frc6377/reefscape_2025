@@ -10,7 +10,6 @@
           "width": 377,
           "expanded": [
             "/AdvantageKit",
-            "/AdvantageKit/RealOutputs",
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/0",
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/1",
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/2",
@@ -29,13 +28,17 @@
             "/AdvantageKit/RealOutputs/SwerveStates/Setpoints/0/angle",
             "/AdvantageKit/RealOutputs/SwerveStates/SetpointsOptimized/0",
             "/AdvantageKit/RealOutputs/SwerveStates/SetpointsOptimized/0/angle",
-            "/AdvantageKit/RealOutputs/Intake",
             "/AdvantageKit/RealOutputs/TOFSensor",
-            "/AdvantageKit/RealOutputs/TOFSensors"
+            "/AdvantageKit/RealOutputs/TOFSensors",
+            "/AdvantageKit/RealOutputs/Scoring Poses",
+            "/AdvantageKit/RealOutputs",
+            "/AdvantageKit/RealOutputs/Swerve",
+            "/AdvantageKit/RealOutputs/Swerve/SwerveChassisSpeeds",
+            "/AdvantageKit/RealOutputs/Swerve/SwerveStates"
           ]
         },
         "tabs": {
-          "selected": 4,
+          "selected": 1,
           "tabs": [
             {
               "type": 0,
@@ -88,15 +91,6 @@
                     "visible": true,
                     "options": {
                       "color": "#00ff00"
-                    }
-                  },
-                  {
-                    "type": "heatmap",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/RobotPosition",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "timeRange": "full"
                     }
                   },
                   {
@@ -253,14 +247,14 @@
                 "cameraIndex": -7,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -10.24986258343236,
-                  1.5747999999999986,
-                  -2.127265881179292
+                  -10.203653580521452,
+                  1.5821537290306236,
+                  -2.7023753499271077
                 ],
                 "cameraTarget": [
-                  0,
+                  0.11633806137732285,
                   0.5,
-                  0
+                  -0.5605548196351565
                 ]
               },
               "controlsHeight": 200
@@ -271,28 +265,8 @@
               "controller": {
                 "sources": [
                   {
-                    "type": "states",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveStates/Measured",
-                    "logType": "SwerveModuleState[]",
-                    "visible": true,
-                    "options": {
-                      "color": "#ff0000",
-                      "arrangement": "0,1,2,3"
-                    }
-                  },
-                  {
-                    "type": "states",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveStates/SetpointsOptimized",
-                    "logType": "SwerveModuleState[]",
-                    "visible": true,
-                    "options": {
-                      "color": "#00ff00",
-                      "arrangement": "0,1,2,3"
-                    }
-                  },
-                  {
                     "type": "chassisSpeeds",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveChassisSpeeds/Measured",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Swerve/SwerveChassisSpeeds/Measured",
                     "logType": "ChassisSpeeds",
                     "visible": true,
                     "options": {
@@ -301,11 +275,31 @@
                   },
                   {
                     "type": "chassisSpeeds",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveChassisSpeeds/Setpoints",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Swerve/SwerveChassisSpeeds/Setpoints",
                     "logType": "ChassisSpeeds",
                     "visible": true,
                     "options": {
                       "color": "#ff00ff"
+                    }
+                  },
+                  {
+                    "type": "states",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Swerve/SwerveStates/Measured",
+                    "logType": "SwerveModuleState[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#0000ff",
+                      "arrangement": "0,1,2,3"
+                    }
+                  },
+                  {
+                    "type": "states",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Swerve/SwerveStates/SetpointsOptimized",
+                    "logType": "SwerveModuleState[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff0000",
+                      "arrangement": "0,1,2,3"
                     }
                   }
                 ],

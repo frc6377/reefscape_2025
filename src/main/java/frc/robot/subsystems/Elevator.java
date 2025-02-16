@@ -79,11 +79,7 @@ public class Elevator extends SubsystemBase {
           .withReverseSoftLimitEnable(true)
           .withReverseSoftLimitThreshold(
               heightToRotations(Constants.ElevatorConstants.kBottomLimit));
-  public static final Slot0Configs loopCfg =
-      new Slot0Configs()
-          .withKP(Constants.ElevatorConstants.P)
-          .withKI(Constants.ElevatorConstants.I)
-          .withKD(Constants.ElevatorConstants.D);
+  public static final Slot0Configs loopCfg = kElevatorPID.getSlot0Configs();
   private ElevatorSim m_elevatorSim;
   private TunableNumber tunableP;
   private TunableNumber tunableI;
@@ -141,31 +137,6 @@ public class Elevator extends SubsystemBase {
     elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
     // new Trigger(elvLimitSwitch::get).onTrue(zeroMotorEncoder());
 
-    // PID Tunable Numbers
-    // P
-    consumerP =
-        newP -> {
-          loopCfg.kP = newP;
-          elevatorMotor1.getConfigurator().apply(loopCfg);
-        };
-    tunableP =
-        new TunableNumber("Tunable Number P", Constants.ElevatorConstants.P, consumerP, this);
-    // I
-    consumerI =
-        newI -> {
-          loopCfg.kI = newI;
-          elevatorMotor1.getConfigurator().apply(loopCfg);
-        };
-    tunableI =
-        new TunableNumber("Tunable Number I", Constants.ElevatorConstants.I, consumerI, this);
-    // D
-    consumerD =
-        newD -> {
-          loopCfg.kD = newD;
-          elevatorMotor1.getConfigurator().apply(loopCfg);
-        };
-    tunableD =
-        new TunableNumber("Tunable Number D", Constants.ElevatorConstants.D, consumerD, this);
     // Motion Magic Tunable Numbers
     // MM Velocity
     consumerMMVel =
@@ -333,10 +304,6 @@ public class Elevator extends SubsystemBase {
 
   public Command L0() {
     return changeElevation(Constants.ElevatorConstants.kL0Height);
-  }
-
-  public Command L1() {
-    return changeElevation(Constants.ElevatorConstants.kL1Height);
   }
 
   public Command L2() {
