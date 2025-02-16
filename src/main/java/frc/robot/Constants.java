@@ -19,8 +19,8 @@ import static edu.wpi.first.units.Units.Second;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.pathplanner.lib.path.PathConstraints;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -149,7 +149,7 @@ public final class Constants {
     public static final Angle kPivotOuttakePose = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
     public static final Angle kcoralStation = Degrees.of(101);
-    public static final Angle kl1 = Degrees.of(75.5);
+    public static final Angle kPivotL1Score = Degrees.of(75.5);
     public static final Angle kalgae = Degrees.of(55);
     public static final Angle kPivotTolerance = Degrees.of(5);
 

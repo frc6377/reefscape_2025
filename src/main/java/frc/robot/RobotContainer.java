@@ -63,11 +63,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 @SuppressWarnings("unused")
 public class RobotContainer {
-
-  private EventLoop testEventLoop = new EventLoop();
-
   // Change the raw boolean to true to pick keyboard during simulation
   private final boolean usingKeyboard = true && Robot.isSimulation();
+
+  private EventLoop testEventLoop = new EventLoop();
 
   // Subsystems
   private final Drive drive;

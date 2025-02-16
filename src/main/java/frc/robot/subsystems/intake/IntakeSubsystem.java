@@ -26,12 +26,12 @@ import static frc.robot.Constants.IntakeConstants.kMotionMagicCruiseVelocity;
 import static frc.robot.Constants.IntakeConstants.kMotionMagicJerk;
 import static frc.robot.Constants.IntakeConstants.kOuttakeSpeed;
 import static frc.robot.Constants.IntakeConstants.kPivotExtendAngle;
+import static frc.robot.Constants.IntakeConstants.kPivotL1Score;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
 import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
 import static frc.robot.Constants.IntakeConstants.kalgae;
 import static frc.robot.Constants.IntakeConstants.kcoralStation;
-import static frc.robot.Constants.IntakeConstants.kl1;
 import static frc.robot.Constants.SensorIDs.kSensor2ID;
 import static frc.robot.Constants.SensorIDs.kSensor3ID;
 import static frc.robot.Constants.SensorIDs.kSensor4ID;
@@ -282,10 +282,10 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command floorOuttake() {
-    return startEnd(
-            () -> goToPivotPosition(kPivotExtendAngle), () -> goToPivotPosition(kPivotRetractAngle))
+    return startEnd(() -> goToPivotPosition(kPivotExtendAngle), () -> {})
         .until(pivotAtSetpoint(pivotSetpoint))
-        .andThen(() -> intakeMotor.set(kOuttakeSpeed));
+        .andThen(() -> intakeMotor.set(kOuttakeSpeed))
+        .finallyDo(() -> goToPivotPosition(kPivotRetractAngle));
   }
 
   public Command humanPlayerIntake() {
@@ -325,12 +325,10 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command l1ScoreModeA() {
-    return startEnd(
-        () -> {
-          goToPivotPosition(kl1);
-          intakeMotor.set(-kIntakeSpeed);
-        },
-        () -> {});
+    return startEnd(() -> goToPivotPosition(kPivotL1Score), () -> {})
+        .until(pivotAtSetpoint(pivotSetpoint))
+        .andThen(() -> intakeMotor.set(kOuttakeSpeed))
+        .finallyDo(() -> goToPivotPosition(kPivotRetractAngle));
   }
 
   public Command l1ScoreModeB() {

@@ -45,7 +45,6 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Robot;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
-import utilities.TunableNumber;
 
 public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor1;
@@ -308,7 +307,6 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
     Logger.recordOutput("Elevator/CRT", ChineseRemander().in(Rotations));
     Logger.recordOutput("Elevator/limit switch state", elvLimitSwitch.get());
-
 
     Distance elvHeight = getElevatorHeight();
     elvSimPose1 =
