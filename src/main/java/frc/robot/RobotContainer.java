@@ -16,7 +16,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
@@ -34,8 +33,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.FeildConstants;
-import frc.robot.OI.Driver;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
+import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CoralScorer;
@@ -209,16 +208,6 @@ public class RobotContainer {
   private void configureTestButtonBindsing() {
     testTrig(OI.getPOVButton(OI.Driver.DPAD_UP))
         .whileTrue(elevator.setElvPercent(OI.getAxisSupplier(OI.Driver.RightY).get()));
-    testTrig(OI.getPOVButton(OI.Driver.DPAD_RIGHT)).whileTrue(intake.intakeCommand());
-    testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
-    testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
-    testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
-    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
-    //     .whileTrue(climber.runRaw(Volts.of(3)));
-    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
-    //     .whileTrue(climber.runRaw(Volts.of(-3)));
-    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
-    //     .onTrue(climber.toggleJeopardy());
   }
 
   private void configureButtonBindings() {
@@ -339,9 +328,6 @@ public class RobotContainer {
       // Scorer
       OI.getButton(OI.Keyboard.Period).whileTrue(coralScorer.scoreCommand());
     }
-
-    OI.getPOVButton(OI.Operator.DPAD_LEFT).whileTrue(intake.pivotUpCommand());
-    OI.getPOVButton(OI.Operator.DPAD_RIGHT).whileTrue(intake.pivotDownCommand());
   }
 
   /**
