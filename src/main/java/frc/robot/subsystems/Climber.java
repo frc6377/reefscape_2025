@@ -61,7 +61,6 @@ public class Climber extends SubsystemBase {
   private Servo frontClimberServo;
   private Servo backClimberServo;
 
-
   // for simulation
   private DCMotor simClimberGearbox;
   private SingleJointedArmSim climberSimNormal;
@@ -273,13 +272,38 @@ public class Climber extends SubsystemBase {
     return runClimber(ClimberConstants.kClimberExtendedSetpoint, 1);
   }
 
-  public Command retract() {
-    return runOnce(
+  private Command setServoAngle(Servo servo, double angle) {
+    return runOnce(() -> servo.setAngle(angle));
+  }
+
+
+  // Not entirely confident in the implementation of engageServo and disengageServo
+  
+  private Command engageServo() {
+    return runEnd(
         () -> {
-          frontClimberServo.setAngle(ClimberConstants.kServoDisengageAngle);
-          backClimberServo.setAngle(ClimberConstants.kServoDisengageAngle);
-          runClimber(ClimberConstants.kClimberRetractedSetpoint, 0);
-        });
+          setServoAngle(frontClimberServo, ClimberConstants.kServoEngageAngle);
+          setServoAngle(backClimberServo, ClimberConstants.kServoEngageAngle);
+        },
+        () -> {});
+  }
+
+  private Command disengageServo() {
+    return runEnd(
+        () -> {
+          setServoAngle(frontClimberServo, ClimberConstants.kServoDisengageAngle);
+          setServoAngle(backClimberServo, ClimberConstants.kServoDisengageAngle);
+        },
+        () -> {});
+  }
+
+  public Command retract() {
+    return runOnce(() -> disengageServo())
+        .andThen(Commands.waitSeconds(1))
+        .andThen(runClimber(ClimberConstants.kClimberRetractedSetpoint, 0))
+        .andThen(
+            Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberRetractedSetpoint)))
+        .andThen(runOnce(() -> engageServo()));
   }
 
   private SingleJointedArmSim getSimulator() {
