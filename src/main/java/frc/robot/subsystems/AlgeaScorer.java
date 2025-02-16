@@ -22,14 +22,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DIOConstants;
+import frc.robot.Robot;
 
 public class AlgeaScorer extends SubsystemBase {
   private SparkMax algeaMotor;
   private DutyCycleEncoder algeaEncoder;
   private SparkMaxSim simAlgeaMotor;
+  private double simAngle;
 
   private Mechanism2d mech = new Mechanism2d(2, 2);
   private ComplexWidget widget;
@@ -52,12 +55,14 @@ public class AlgeaScorer extends SubsystemBase {
         new SparkMaxConfig().apply(algeaCfg),
         ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
-
-    algeaMech =
-        mech.getRoot("root", 1, 0)
-            .append(
-                new MechanismLigament2d(
-                    "Algea Mech [0]", 15, 0, 10, new Color8Bit(Color.kDarkViolet)));
+    if (Robot.isSimulation()) {
+      simAlgeaMotor = new SparkMaxSim(algeaMotor, Constants.AlgeaScorerConstants.kAlgeaGearbox);
+      algeaMech =
+          mech.getRoot("root", 1, 0)
+              .append(
+                  new MechanismLigament2d(
+                      "Algea Mech [0]", 15, 0, 10, new Color8Bit(Color.kDarkViolet)));
+    }
     if (widget == null) {
       widget = Shuffleboard.getTab(getName()).add("Algea Score", mech);
     }
@@ -77,6 +82,13 @@ public class AlgeaScorer extends SubsystemBase {
           algeaMotor.set(-Constants.AlgeaScorerConstants.kAlgeaPercent);
         },
         () -> algeaMotor.set(0));
+  }
+
+  public Command zeroAlgeaEncoder() {
+    return Commands.runOnce(
+        () -> {
+          algeaMotor.getEncoder().setPosition(0);
+        });
   }
 
   public Command changeAngle(Angle angle) {
@@ -109,5 +121,13 @@ public class AlgeaScorer extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Algea/Motor Rotation", algeaMotor.getEncoder().getPosition());
     SmartDashboard.putNumber("Algea/Motor Percent", algeaMotor.get());
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    simAngle = simAlgeaMotor.getPosition();
+
+    algeaMech.setAngle(simAngle);
+    SmartDashboard.putNumber("Algea/Sim Angle", simAngle);
   }
 }

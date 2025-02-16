@@ -218,6 +218,7 @@ public final class Constants {
     public static final Angle algeaStowed = Degrees.of(0);
     public static final Angle algeaRemove = Degrees.of(90);
     public static final double algeaZero = 0.0; // update with actual value
+    public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
   }
 
   /**
