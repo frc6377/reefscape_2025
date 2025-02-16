@@ -282,10 +282,10 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command floorOuttake() {
-    return startEnd(() -> goToPivotPosition(kPivotExtendAngle), () -> {})
-        .until(pivotAtSetpoint(pivotSetpoint))
-        .andThen(() -> intakeMotor.set(kOuttakeSpeed))
-        .finallyDo(() -> goToPivotPosition(kPivotRetractAngle));
+    return startEnd(
+            () -> goToPivotPosition(kPivotExtendAngle), () -> {})
+        .until(pivotAtSetpoint(kPivotExtendAngle))
+        .andThen(() -> intakeMotor.set(kOuttakeSpeed));
   }
 
   public Command humanPlayerIntake() {

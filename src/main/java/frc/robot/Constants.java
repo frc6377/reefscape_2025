@@ -94,6 +94,13 @@ public final class Constants {
     public static final int kScorerSensorID = 1;
   }
 
+  public static class SensorIDs {
+    public static final int kSensor2ID = 2;
+    public static final int kSensor3ID = 3;
+    public static final int kSensor4ID = 4;
+    public static final int kScorerSensorID = 1;
+  }
+
   public static class ClimberConstants {
     public static final HowdyPID kClimberPID0 = new HowdyPID();
 
