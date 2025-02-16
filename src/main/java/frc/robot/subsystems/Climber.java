@@ -25,6 +25,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -57,6 +58,8 @@ public class Climber extends SubsystemBase {
   private Angle climberTargetAngle;
   private Slot0Configs climberConfigsToClimber;
   private Slot1Configs climberConfigsAtClimber;
+  private Servo frontClimberServo;
+  private Servo backClimberServo;
 
   // for simulation
   private DCMotor simClimberGearbox;
@@ -93,6 +96,8 @@ public class Climber extends SubsystemBase {
             .withKD(ClimberConstants.kClimberD1)
             .withKG(ClimberConstants.kClimberkG1)
             .withKV(ClimberConstants.kClimberkV1);
+    frontClimberServo = new Servo(CANIDs.kFrontClimberServoID);
+    backClimberServo = new Servo(CANIDs.kBackClimberServoID);
     // Boolean to check if the climber is climbing of if it is just idle
     isClimbingStateSim = false;
     // Set the configs
@@ -267,8 +272,37 @@ public class Climber extends SubsystemBase {
     return runClimber(ClimberConstants.kClimberExtendedSetpoint, 1);
   }
 
+  private Command setServoAngle(Servo servo, double angle) {
+    return runOnce(() -> servo.setAngle(angle));
+  }
+
+  // Not entirely confident in the implementation of engageServo and disengageServo
+
+  public Command engageServo() {
+    return runEnd(
+        () -> {
+          setServoAngle(frontClimberServo, ClimberConstants.kServoEngageAngle);
+          setServoAngle(backClimberServo, ClimberConstants.kServoEngageAngle);
+        },
+        () -> {});
+  }
+
+  public Command disengageServo() {
+    return runEnd(
+        () -> {
+          setServoAngle(frontClimberServo, ClimberConstants.kServoDisengageAngle);
+          setServoAngle(backClimberServo, ClimberConstants.kServoDisengageAngle);
+        },
+        () -> {});
+  }
+
   public Command retract() {
-    return runClimber(ClimberConstants.kClimberRetractedSetpoint, 0);
+    return runOnce(() -> disengageServo())
+        .andThen(Commands.waitSeconds(1))
+        .andThen(runClimber(ClimberConstants.kClimberRetractedSetpoint, 0))
+        .andThen(
+            Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberRetractedSetpoint)))
+        .andThen(runOnce(() -> engageServo()));
   }
 
   private SingleJointedArmSim getSimulator() {

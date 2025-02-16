@@ -188,12 +188,15 @@ public class RobotContainer {
   private void configureTestButtonBindsing() {
     testTrig(OI.getPOVButton(OI.Driver.DPAD_UP))
         .whileTrue(elevator.setElvPercent(OI.getAxisSupplier(OI.Driver.RightY).get()));
-    testTrig(OI.getPOVButton(OI.Driver.DPAD_RIGHT)).whileTrue(intake.intakeCommand());
-    testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
-    testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
-    testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
-    testTrig(OI.getButton(OI.Driver.X)).whileTrue(intake.extendPivotCommand());
-    testTrig(OI.getButton(OI.Driver.Y)).whileTrue(intake.retractPivotCommand());
+    // testTrig(OI.getPOVButton(OI.Driver.DPAD_RIGHT)).whileTrue(intake.intakeCommand());
+    // testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
+    // testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
+    // testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
+    // testTrig(OI.getButton(OI.Driver.X)).whileTrue(intake.extendPivotCommand());
+    // testTrig(OI.getButton(OI.Driver.Y)).whileTrue(intake.retractPivotCommand());
+
+    testTrig(OI.getButton(OI.Driver.LBumper)).onTrue(climber.engageServo());
+    testTrig(OI.getButton(OI.Driver.RBumper)).onTrue(climber.disengageServo());
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
         .whileTrue(climber.runRaw(Volts.of(3)));
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))

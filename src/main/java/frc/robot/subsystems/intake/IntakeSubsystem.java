@@ -470,14 +470,14 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case FLOOR_INTAKE:
         sensors.setSimState(
-            Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR);
+            Math.random() <= 0.5 ? CoralEnum.CORAL_TOO_FAR : CoralEnum.CORAL_TOO_CLOSE);
         intakeState = IntakeState.LOCATE_CORAL;
         break;
       case FLOOR_OUTTAKE:
         break;
       case HP_CORAL_INTAKE:
         sensors.setSimState(
-            Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR);
+            Math.random() <= 0.5 ? CoralEnum.CORAL_TOO_FAR : CoralEnum.CORAL_TOO_CLOSE);
         intakeState = IntakeState.LOCATE_CORAL;
         break;
       case ALGAE_INTAKE:
