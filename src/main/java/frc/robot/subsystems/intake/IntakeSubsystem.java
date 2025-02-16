@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -41,10 +40,10 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -148,6 +147,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     pivotMotorConfig = new TalonFXConfiguration();
     pivotMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    pivotMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     pivotMotorConfig.Slot0 = IntakeConstants.kPivotArmPID.getSlot0Configs();
     pivotMotorConfig.Feedback =
         new FeedbackConfigs()
@@ -160,7 +160,6 @@ public class IntakeSubsystem extends SubsystemBase {
             .withMotionMagicJerk(kMotionMagicJerk);
 
     pivotMotor.getConfigurator().apply(pivotMotorConfig);
-    pivotMotor.setControl(new CoastOut()); // Temporary (TODO: Is this still needed?)
 
     pivotMotor.setPosition(throughBoreEncoder.get());
 
@@ -364,20 +363,35 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Intake/Intake Motor Output", intakeMotor.get());
-    SmartDashboard.putNumber("Intake/Pivot Motor Output", pivotMotor.get());
-    SmartDashboard.putNumber("Intake/Conveyor Motor Output", conveyorMotor.get());
-    SmartDashboard.putNumber("Intake/Pivot Setpoint (Degrees)", pivotSetpoint.in(Degrees));
-    SmartDashboard.putNumber("Intake/Pivot Position (Degrees)", getPivotAngle().in(Degrees));
-    SmartDashboard.putNumber(
-        "Intake/Absolute Encoder Position (Degrees)",
+    // Intake Rollers
+    Logger.recordOutput("Intake/Rollers/Motor Output", intakeMotor.get());
+    Logger.recordOutput(
+        "Intake/Rollers/Motor Voltage (Volts)", intakeMotor.getMotorVoltage().getValue().in(Volts));
+
+    // Convayor
+    Logger.recordOutput("Intake/Conveyor/Motor Output", conveyorMotor.get());
+    Logger.recordOutput(
+        "Intake/Conveyor/Motor Voltage (Volts)",
+        conveyorMotor.getMotorVoltage().getValue().in(Volts));
+    Logger.recordOutput(
+        "Intake/Conveyor/Velocity (RPS)",
+        conveyorMotor.getVelocity().getValue().in(RotationsPerSecond));
+
+    // Pivot
+    Logger.recordOutput("Intake/Pivot/Motor Output", pivotMotor.get());
+    Logger.recordOutput("Intake/Pivot/Setpoint (Degrees)", pivotSetpoint.in(Degrees));
+    Logger.recordOutput(
+        "Intake/Pivot/Position (Degrees)", pivotMotor.getPosition().getValue().in(Degrees));
+    Logger.recordOutput(
+        "Intake/Pivot/Absolute Encoder (Degrees)",
         Rotations.of(throughBoreEncoder.get()).in(Degrees));
-    SmartDashboard.putString("Intake/Intake State", intakeState.toString());
-    SmartDashboard.putString("Intake/Coral State", coralState.toString());
-    SmartDashboard.putNumber(
-        "Intake/Belt Velocity (RPM)",
-        RotationsPerSecond.of(conveyorMotor.getVelocity().getValueAsDouble()).in(RPM));
+    Logger.recordOutput("Intake/Pivot/At Setpoint", atSetpoint(pivotSetpoint));
+
+    // States
+    Logger.recordOutput("Intake/States/Intake State", intakeState.toString());
+    Logger.recordOutput("Intake/States/Coral State", coralState.toString());
+
+    // Pose 3D of Intake
     Logger.recordOutput(
         "Odometry/Mech Poses/Intake Pose",
         new Pose3d(
@@ -385,13 +399,12 @@ public class IntakeSubsystem extends SubsystemBase {
             DrivetrainConstants.kIntakeStartPose
                 .getRotation()
                 .plus(new Rotation3d(0, -getPivotAngle().in(Radians), 0))));
-    Logger.recordOutput("Intake/Pivot At Setpoint", atSetpoint(pivotSetpoint));
 
     // Log TOF Sensors
     for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID}) {
       Logger.recordOutput(
-          "TOFSensors/Sensor" + i + " Dist (Inches)", sensors.getSensorDist(i).in(Inches));
-      Logger.recordOutput("TOFSensors/Sensor" + i + " bool", sensors.getSensorBool(i));
+          "Intake/TOFSensors/" + i + " Dist (Inches)", sensors.getSensorDist(i).in(Inches));
+      Logger.recordOutput("Intake/TOFSensors/" + i + " bool", sensors.getSensorBool(i));
     }
 
     String currentCommand =

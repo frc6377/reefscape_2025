@@ -20,6 +20,7 @@ import static edu.wpi.first.units.Units.Second;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.pathplanner.lib.path.PathConstraints;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -95,15 +96,16 @@ public final class Constants {
 
   public static class ClimberConstants {
     public static final HowdyPID kClimberPID0 = new HowdyPID();
-    public static final HowdyPID kClimberPID1 = new HowdyPID();
 
     static {
-      // PID 0
       kClimberPID0.setKP(100);
       kClimberPID0.setKD(5);
       kClimberPID0.setKV(10);
+    }
 
-      // PID 1
+    public static final HowdyPID kClimberPID1 = new HowdyPID();
+
+    static {
       kClimberPID1.setKP(100);
       kClimberPID1.setKD(5);
       kClimberPID1.setKV(10);
@@ -121,6 +123,7 @@ public final class Constants {
     public static final Angle kExpectedStartAngle = Degrees.of(90);
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
+
     // Sim Constants
     public static final int KClimberMotorsCount = 2;
     public static final Distance kClimberArmLength = Inches.of(6);
@@ -152,7 +155,6 @@ public final class Constants {
 
     public static final Current kHoldPower = Amps.of(40);
 
-    // PID
     public static final HowdyPID kPivotArmPID = new HowdyPID();
 
     static {
@@ -198,8 +200,6 @@ public final class Constants {
   // Elevator Constants
   public static class ElevatorConstants {
     public static final Distance kL0Height = Inches.of(0);
-    // L1 needs to be adjusted once it actually is worth it
-    public static final Distance kL1Height = Inches.of(15);
     public static final Distance kL2Height = Inches.of(16.62);
     public static final Distance kL3Height = Inches.of(30.9);
     public static final Distance kL4Height = Inches.of(55);
@@ -208,8 +208,9 @@ public final class Constants {
 
     static {
       kElevatorPID.setKP(1.5);
-      kElevatorPID.setKI(0.04);
-      kElevatorPID.setKD(0.02);
+      kElevatorPID.setKP(0.04);
+      kElevatorPID.setKP(0.02);
+      kElevatorPID.setStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
     }
 
     public static final Distance kBottomLimit = Inches.of(0);

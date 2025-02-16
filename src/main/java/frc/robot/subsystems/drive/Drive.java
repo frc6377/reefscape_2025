@@ -217,8 +217,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
     // Log empty setpoint states when disabled
     if (DriverStation.isDisabled()) {
-      Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[] {});
-      Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
+      Logger.recordOutput("Swerve/SwerveStates/Setpoints", new SwerveModuleState[] {});
+      Logger.recordOutput("Swerve/SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
     }
 
     // Update odometry
@@ -250,7 +250,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
       }
 
       // Apply update
-      Logger.recordOutput("modulePositions (?)", modulePositions);
+      Logger.recordOutput("Swerve/modulePositions (?)", modulePositions);
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
 
@@ -276,10 +276,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, TunerConstants.kSpeedAt12Volts);
 
     // Log unoptimized setpoints and setpoint speeds
-    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-    Logger.recordOutput("SwerveChassisSpeeds/Setpoints", speeds);
-    Logger.recordOutput("SwerveChassisSpeeds/X Setpoint", speeds.vxMetersPerSecond);
-    Logger.recordOutput("SwerveChassisSpeeds/X Real", getChassisSpeeds().vxMetersPerSecond);
+    Logger.recordOutput("Swerve/SwerveStates/Setpoints", setpointStates);
+    Logger.recordOutput("Swerve/SwerveChassisSpeeds/Setpoints", speeds);
 
     // Send setpoints to modules
     for (int i = 0; i < 4; i++) {
@@ -287,7 +285,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     }
 
     // Log optimized setpoints (runSetpoint mutates each state)
-    Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
+    Logger.recordOutput("Swerve/SwerveStates/SetpointsOptimized", setpointStates);
   }
 
   /** Runs the drive in a straight line with the specified drive output. */
@@ -358,7 +356,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   }
 
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
-  @AutoLogOutput(key = "SwerveStates/Measured")
+  @AutoLogOutput(key = "Swerve/SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
@@ -377,7 +375,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   }
 
   /** Returns the measured chassis speeds of the robot. */
-  @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
+  @AutoLogOutput(key = "Swerve/SwerveChassisSpeeds/Measured")
   private ChassisSpeeds getChassisSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
   }

@@ -52,6 +52,7 @@ import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import java.util.Set;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -69,8 +70,6 @@ public class RobotContainer {
   private final boolean usingKeyboard = true && Robot.isSimulation();
 
   // Subsystems
-  //   private final Climber climber = new Climber();
-
   private final Drive drive;
   private final Vision vision;
   private MapleSimArenaSubsystem mapleSimArenaSubsystem;
@@ -249,14 +248,14 @@ public class RobotContainer {
             Commands.runOnce(
                 () -> {
                   elevatorNotL1 = !elevatorNotL1;
-                  SmartDashboard.putBoolean("Intake/Mode", elevatorNotL1);
+                  Logger.recordOutput("Intake/Mode", elevatorNotL1);
                 }));
     OI.getButton(OI.Operator.X)
         .onTrue(
             Commands.runOnce(
                 () -> {
                   intakeAlgeaMode = !intakeAlgeaMode;
-                  SmartDashboard.putBoolean("Intake/Algea Mode", intakeAlgeaMode);
+                  Logger.recordOutput("Intake/Algea Mode", intakeAlgeaMode);
                 }));
 
     OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary

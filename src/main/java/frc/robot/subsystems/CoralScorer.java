@@ -39,7 +39,7 @@ public class CoralScorer extends SubsystemBase {
   }
 
   public Trigger hasCoral() {
-    return TOFSensor.beamBroken();
+    return TOFSensor.getBeamBrokenTrigger();
   }
 
   public void stopMotor() {
@@ -69,8 +69,8 @@ public class CoralScorer extends SubsystemBase {
     // This method will be called once per scheduler run
     Logger.recordOutput("CoralScorer/Motor Output", scorerMotor.get());
     Logger.recordOutput(
-        "TOFSensors/Coral Scorer Sensor Distance (Inches)", TOFSensor.getDistance().in(Inches));
-    Logger.recordOutput("TOFSensors/Coroal Scorer Bool", TOFSensor.isBeamBroke());
-    Logger.recordOutput("CoralScorer/Motor Velocity", scorerMotor.getVelocity().getValueAsDouble());
+        "CoralScorer/Motor Velocity (RPS)", scorerMotor.getVelocity().getValueAsDouble());
+    Logger.recordOutput("CoralScorer/Sensor Distance (Inches)", TOFSensor.getDistance().in(Inches));
+    Logger.recordOutput("CoralScorer/Sensor Bool", TOFSensor.getBeamBroke());
   }
 }
