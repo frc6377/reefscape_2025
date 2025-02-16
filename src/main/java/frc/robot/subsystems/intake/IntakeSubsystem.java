@@ -17,6 +17,7 @@ import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.armZero;
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
 import static frc.robot.Constants.IntakeConstants.kGearing;
+import static frc.robot.Constants.IntakeConstants.kHoldPower;
 import static frc.robot.Constants.IntakeConstants.kIntakeHandoffSpeed;
 import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
 import static frc.robot.Constants.IntakeConstants.kLength;
@@ -32,12 +33,17 @@ import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
 import static frc.robot.Constants.IntakeConstants.kalgae;
 import static frc.robot.Constants.IntakeConstants.kcoralStation;
 import static frc.robot.Constants.IntakeConstants.kl1;
+import static frc.robot.Constants.SensorIDs.kSensor2ID;
+import static frc.robot.Constants.SensorIDs.kSensor3ID;
+import static frc.robot.Constants.SensorIDs.kSensor4ID;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -109,6 +115,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private Sensors sensors;
 
+  private boolean elevatorNotL1 = false;
+
   // Simulation
   private Timer t1 = new Timer();
   private Timer t2 = new Timer();
@@ -129,6 +137,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     intakeMotorConfig = new TalonFXConfiguration();
     intakeMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    intakeMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+    intakeMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+    intakeMotorConfig.Slot0 = new Slot0Configs().withKP(10).withKI(0).withKD(0);
     intakeMotor.getConfigurator().apply(intakeMotorConfig);
 
     conveyorMotorConfig = new TalonFXConfiguration();
@@ -188,6 +199,10 @@ public class IntakeSubsystem extends SubsystemBase {
   public boolean GetPieceFromIntake() {
     return intakeSim.obtainGamePieceFromIntake();
   }
+  
+  public Sensors getSensors() {
+    return sensors;
+  }
 
   public boolean atSetpoint(Angle setpoint) {
     return pivotMotor.getPosition().getValue().isNear(setpoint, kPivotTolerance);
@@ -223,9 +238,14 @@ public class IntakeSubsystem extends SubsystemBase {
     return new Trigger(() -> atSetpoint(pivotSetpoint));
   }
 
-  public Trigger intakeHasCoralTrigger() {
+  public Trigger intakeHasUnalignedCoralTrigger() {
     return new Trigger(
         () -> sensors.getSensorState() != CoralEnum.NO_CORAL && !atSetpoint(kPivotRetractAngle));
+  }
+
+  public Trigger intakeHasCoralTrigger() {
+    return new Trigger(
+        () -> sensors.getSensorState() != CoralEnum.NO_CORAL && atSetpoint(kPivotRetractAngle));
   }
 
   // Belt Commands
@@ -263,7 +283,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command floorOuttake() {
-    return runEnd(
+    return startEnd(
             () -> goToPivotPosition(kPivotExtendAngle), () -> goToPivotPosition(kPivotRetractAngle))
         .until(pivotAtSetpoint(pivotSetpoint))
         .andThen(() -> intakeMotor.set(kOuttakeSpeed));
@@ -291,7 +311,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(
         () -> {
           goToPivotPosition(kalgae);
-          intakeMotor.set(-kIntakeSpeed);
+          intakeMotor.setControl(new TorqueCurrentFOC(kHoldPower));
         },
         () -> {});
   }
@@ -319,7 +339,7 @@ public class IntakeSubsystem extends SubsystemBase {
         () -> {
           goToPivotPosition(kPivotRetractAngle);
           intakeMotor.set(kIntakeSpeed / 5);
-          conveyorMotor.set(kConveyorSpeed);
+          conveyorMotor.set(-kConveyorSpeed);
         },
         () -> {});
   }
@@ -354,6 +374,7 @@ public class IntakeSubsystem extends SubsystemBase {
         "Intake/Absolute Encoder Position (Degrees)",
         Rotations.of(throughBoreEncoder.get()).in(Degrees));
     SmartDashboard.putString("Intake/Intake State", intakeState.toString());
+    SmartDashboard.putString("Intake/Coral State", coralState.toString());
     SmartDashboard.putNumber(
         "Intake/Belt Velocity (RPM)",
         RotationsPerSecond.of(conveyorMotor.getVelocity().getValueAsDouble()).in(RPM));
@@ -364,9 +385,10 @@ public class IntakeSubsystem extends SubsystemBase {
             DrivetrainConstants.kIntakeStartPose
                 .getRotation()
                 .plus(new Rotation3d(0, -getPivotAngle().in(Radians), 0))));
+    Logger.recordOutput("Intake/Pivot At Setpoint", atSetpoint(pivotSetpoint));
 
     // Log TOF Sensors
-    for (int i = 2; i < 5; i++) {
+    for (int i : new int[]{kSensor2ID, kSensor3ID, kSensor4ID}) {
       Logger.recordOutput(
           "TOFSensors/Sensor" + i + " Dist (Inches)", sensors.getSensorDist(i).in(Inches));
       Logger.recordOutput("TOFSensors/Sensor" + i + " bool", sensors.getSensorBool(i));
@@ -429,15 +451,25 @@ public class IntakeSubsystem extends SubsystemBase {
         }
         break;
       case FLOOR_INTAKE:
-        sensors.setSimState(
-            Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR);
+        if (Math.random() <= 0.33) {
+          sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
+        } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
+          sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
+        } else {
+          sensors.setSimState(CoralEnum.CORAL_ALIGNED);
+        }
         intakeState = IntakeState.LOCATE_CORAL;
         break;
       case FLOOR_OUTTAKE:
         break;
       case HP_CORAL_INTAKE:
-        sensors.setSimState(
-            Math.random() > 0.5 ? CoralEnum.CORAL_TOO_CLOSE : CoralEnum.CORAL_TOO_FAR);
+        if (Math.random() <= 0.33) {
+          sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
+        } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
+          sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
+        } else {
+          sensors.setSimState(CoralEnum.CORAL_ALIGNED);
+        }
         intakeState = IntakeState.LOCATE_CORAL;
         break;
       case ALGAE_INTAKE:
@@ -456,23 +488,25 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
       case LOCATE_CORAL:
         if (coralState == CoralEnum.CORAL_TOO_CLOSE) {
-          if (atSetpoint(kcoralStation)
-              && checkSimIntake(kIntakeSpeed / 5)
-              && checkSimConveyor(-kConveyorSpeed)) {
-            t4.start();
-          }
-        } else if (coralState == CoralEnum.CORAL_TOO_FAR) {
-          if (atSetpoint(kcoralStation)
+          if (atSetpoint(kcoralStation) // coral station
               && checkSimIntake(kIntakeSpeed)
               && checkSimConveyor(kConveyorSpeed)) {
             t4.start();
           }
+        } else if (coralState == CoralEnum.CORAL_TOO_FAR) {
+          if (atSetpoint(kPivotRetractAngle)
+              && checkSimIntake(kIntakeSpeed)
+              && checkSimConveyor(-kConveyorSpeed)) {
+            t4.start();
+          }
+        } else if (coralState == CoralEnum.CORAL_ALIGNED) {
+          t4.start();
         } else if (coralState == CoralEnum.NO_CORAL) {
           t4.stop();
           System.out.println("Compbot is haunted");
         }
 
-        if (t4.hasElapsed(0.5)) {
+        if (t4.hasElapsed(1)) {
           sensors.setSimState(CoralEnum.CORAL_ALIGNED);
           intakeState = IntakeState.PASS_CORAL_TO_SCORER;
           t4.stop();
@@ -481,7 +515,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         if (atSetpoint(kPivotRetractAngle)
             && checkSimIntake(0)
-            && checkSimConveyor(kConveyorSpeed)) {
+            && checkSimConveyor(-kConveyorSpeed)) {
           sensors.setSimState(CoralEnum.CORAL_ALIGNED);
           intakeState = IntakeState.HOLD_CORAL;
         }
@@ -490,12 +524,17 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeState = IntakeState.PASS_CORAL_TO_SCORER;
         break;
       case PASS_CORAL_TO_SCORER:
-        intakeState = IntakeState.L1_SCORE;
+        if (elevatorNotL1) {
+          intakeState =
+              IntakeState.L1_SCORE; // FIXME: Change to elevator score state if we have one
+        } else {
+          intakeState = IntakeState.L1_SCORE;
+        }
         break;
       case L1_SCORE:
         if (atSetpoint(kPivotRetractAngle)
             && checkSimIntake(kIntakeSpeed)
-            && checkSimConveyor(kConveyorSpeed)) {
+            && checkSimConveyor(-kConveyorSpeed)) {
           t5.start();
         } else {
           t5.stop();

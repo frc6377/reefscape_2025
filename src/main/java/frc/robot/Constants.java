@@ -1,7 +1,9 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Inch;
@@ -27,6 +29,7 @@ import edu.wpi.first.units.AngularAccelerationUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
@@ -144,8 +147,10 @@ public final class Constants {
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
     public static final Angle kcoralStation = Degrees.of(101);
     public static final Angle kl1 = Degrees.of(75.5);
-    public static final Angle kalgae = Degrees.of(44.5);
-    public static final Angle kPivotTolerance = Degrees.of(3);
+    public static final Angle kalgae = Degrees.of(55);
+    public static final Angle kPivotTolerance = Degrees.of(5);
+
+    public static final Current kHoldPower = Amps.of(40);
 
     // PID
     public static final HowdyPID kPivotArmPID = new HowdyPID();
@@ -162,7 +167,7 @@ public final class Constants {
 
     public static final AngularVelocity kMotionMagicCruiseVelocity = DegreesPerSecond.of(450);
     public static final AngularAcceleration kMotionMagicAcceleration =
-        kMotionMagicCruiseVelocity.times(Hertz.of(5));
+        DegreesPerSecondPerSecond.of(2250);
     public static final double kMotionMagicJerk = 80.0;
 
     public static final Angle armZero = Degrees.of(83.05);
@@ -172,7 +177,8 @@ public final class Constants {
       CORAL_TOO_FAR,
       NO_CORAL,
       IN_ELEVATOR,
-      CORAL_ALIGNED
+      CORAL_ALIGNED,
+      OTHER
     }
 
     // Simulation
