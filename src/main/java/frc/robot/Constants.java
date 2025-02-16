@@ -61,7 +61,8 @@ public final class Constants {
     public static final int kIntakeMotor = 13;
     public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
-    public static final int kClimberServoID = 100;
+    public static final int kFrontClimberServoID = 100;
+    public static final int kBackClimberServoID = 100;
   }
 
   public static class DIOConstants {

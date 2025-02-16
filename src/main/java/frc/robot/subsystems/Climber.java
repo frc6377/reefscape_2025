@@ -58,7 +58,9 @@ public class Climber extends SubsystemBase {
   private Angle climberTargetAngle;
   private Slot0Configs climberConfigsToClimber;
   private Slot1Configs climberConfigsAtClimber;
-  private Servo climberServo;
+  private Servo frontClimberServo;
+  private Servo backClimberServo;
+
 
   // for simulation
   private DCMotor simClimberGearbox;
@@ -95,7 +97,8 @@ public class Climber extends SubsystemBase {
             .withKD(ClimberConstants.kClimberD1)
             .withKG(ClimberConstants.kClimberkG1)
             .withKV(ClimberConstants.kClimberkV1);
-    climberServo = new Servo(CANIDs.kClimberServoID);
+    frontClimberServo = new Servo(CANIDs.kFrontClimberServoID);
+    backClimberServo = new Servo(CANIDs.kBackClimberServoID);
     // Boolean to check if the climber is climbing of if it is just idle
     isClimbingStateSim = false;
     // Set the configs
@@ -273,7 +276,8 @@ public class Climber extends SubsystemBase {
   public Command retract() {
     return runOnce(
         () -> {
-          climberServo.setAngle(ClimberConstants.kServoDisengageAngle);
+          frontClimberServo.setAngle(ClimberConstants.kServoDisengageAngle);
+          backClimberServo.setAngle(ClimberConstants.kServoDisengageAngle);
           runClimber(ClimberConstants.kClimberRetractedSetpoint, 0);
         });
   }
