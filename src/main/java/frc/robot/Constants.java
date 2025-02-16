@@ -76,6 +76,13 @@ public final class Constants {
     public static final int gear3ID = 14;
   }
 
+  public static class SensorIDs {
+    public static final int kSensor2ID = 2;
+    public static final int kSensor3ID = 3;
+    public static final int kSensor4ID = 4;
+    public static final int kScorerSensorID = 1;
+  }
+
   public static class ClimberConstants {
     public static final HowdyPID kClimberPID0 = new HowdyPID();
 
@@ -280,12 +287,5 @@ public final class Constants {
           new Pose2d(Meters.of(3.972), Meters.of(5.244), new Rotation2d(-60)),
           new Pose2d(Meters.of(3.684), Meters.of(5.078), new Rotation2d(-60)),
         };
-  }
-
-  public static class SensorIDs {
-    public static final int kSensor2ID = 2;
-    public static final int kSensor3ID = 3;
-    public static final int kSensor4ID = 4;
-    public static final int kScorerSensorID = 1;
   }
 }
