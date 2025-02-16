@@ -9,10 +9,8 @@ import static frc.robot.Constants.IntakeConstants.kIntakeHandoffSpeed;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.subsystems.CoralScorer;
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -21,21 +19,16 @@ public class PassToScorer extends Command {
   private IntakeSubsystem intakeSubsystem;
   private BooleanSupplier elevatorNotL1;
   private CoralScorer coralScorer;
-  public Supplier<CoralEnum> state;
 
   /** Creates a new PassToScorer. */
   public PassToScorer(
-      IntakeSubsystem subsystem,
-      BooleanSupplier elevatorNotL1,
-      CoralScorer coralScorer,
-      Supplier<CoralEnum> state) {
+      IntakeSubsystem subsystem, BooleanSupplier elevatorNotL1, CoralScorer coralScorer) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
     addRequirements(coralScorer);
     this.intakeSubsystem = subsystem;
     this.elevatorNotL1 = elevatorNotL1;
     this.coralScorer = coralScorer;
-    this.state = state;
   }
 
   // Called when the command is initially scheduled.

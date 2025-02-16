@@ -41,6 +41,7 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Robot;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 import utilities.TunableNumber;
 
 @SuppressWarnings("unused")
@@ -98,7 +99,6 @@ public class Elevator extends SubsystemBase {
   private Consumer<Double> consumerMMJerk;
 
   public Elevator() {
-    // TODO: set up for canivore (Do we still need this? -Jackson)
     currentLimit.StatorCurrentLimit = 90;
     currentLimit.SupplyCurrentLimit = 70;
     m_voltReq = new VoltageOut(0.0);
@@ -227,11 +227,11 @@ public class Elevator extends SubsystemBase {
               .append(
                   new MechanismLigament2d(
                       "Elevator Mech [0]", 1, 90, 10, new Color8Bit(Color.kPurple)));
-      SmartDashboard.putData("Elevator/2d mechanism", mech);
+      SmartDashboard.putData("Mech2Ds/Elevator Mech", mech);
     }
 
-    SmartDashboard.putNumber("Elevator/Setpoint", 0);
-    SmartDashboard.putNumber("Elevator/Setpoint Rotations", 0);
+    Logger.recordOutput("Elevator/Setpoint", 0);
+    Logger.recordOutput("Elevator/Setpoint Rotations", 0);
   }
 
   public static Distance rotationsToHeight(Angle rotations) {
@@ -326,8 +326,8 @@ public class Elevator extends SubsystemBase {
         () -> {
           Angle adjustedSetpoint = heightToRotations(heightLevel);
           elevatorMotor1.setControl(new MotionMagicVoltage(adjustedSetpoint));
-          SmartDashboard.putNumber("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
-          SmartDashboard.putNumber("Elevator/Setpoint Rotations", adjustedSetpoint.in(Rotations));
+          Logger.recordOutput("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
+          Logger.recordOutput("Elevator/Setpoint Rotations", adjustedSetpoint.in(Rotations));
         });
   }
 
@@ -353,13 +353,31 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Elevator/limit switch state", elvLimitSwitch.get());
-    SmartDashboard.putNumber(
-        "Elevator/Motor Encoder Rotation", elevatorMotor1.getPosition().getValue().in(Revolutions));
-    SmartDashboard.putNumber("Elevator/Motor1 Percent", elevatorMotor1.get());
-    SmartDashboard.putNumber("Elevator/Motor2 Percent", elevatorMotor2.get());
-    SmartDashboard.putNumber("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
-    SmartDashboard.putNumber("Elevator/CRT", ChineseRemander().in(Rotations));
+    Logger.recordOutput("Elevator/Motor1/Percent Out", elevatorMotor1.get());
+    Logger.recordOutput(
+        "Elevator/Motor1/Voltage (Volts)", elevatorMotor1.getMotorVoltage().getValue().in(Volts));
+    Logger.recordOutput(
+        "Elevator/Motor1/Rotation (Degrees)", elevatorMotor1.getPosition().getValue().in(Degrees));
+    Logger.recordOutput(
+        "Elevator/Motor1/Temp (Fahrenheit)",
+        elevatorMotor1.getDeviceTemp().getValue().in(Fahrenheit));
+    Logger.recordOutput(
+        "Elevator/Motor1/Closed Loop Output", elevatorMotor1.getClosedLoopOutput().getValue());
+
+    Logger.recordOutput("Elevator/Motor2/Percent Out", elevatorMotor2.get());
+    Logger.recordOutput(
+        "Elevator/Motor2/Voltage (Volts)", elevatorMotor2.getMotorVoltage().getValue().in(Volts));
+    Logger.recordOutput(
+        "Elevator/Motor2/Rotation (Degrees)", elevatorMotor2.getPosition().getValue().in(Degrees));
+    Logger.recordOutput(
+        "Elevator/Motor2/Temp (Fahrenheit)",
+        elevatorMotor2.getDeviceTemp().getValue().in(Fahrenheit));
+    Logger.recordOutput(
+        "Elevator/Motor2/Closed Loop Output", elevatorMotor2.getClosedLoopOutput().getValue());
+
+    Logger.recordOutput("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
+    Logger.recordOutput("Elevator/CRT", ChineseRemander().in(Rotations));
+    Logger.recordOutput("Elevator/limit switch state", elvLimitSwitch.get());
   }
 
   @Override
@@ -376,10 +394,10 @@ public class Elevator extends SubsystemBase {
 
     elevatorMech.setLength(0.1 + (simDist.in(Meters)));
 
-    SmartDashboard.putNumber("Elevator/Sim Length", simDist.in(Inches));
-    SmartDashboard.putNumber("Elevator/Sim velocity", simVel.in(InchesPerSecond));
-    SmartDashboard.putNumber("Elevator/Sim Pose", m_elevatorSim.getPositionMeters());
-    SmartDashboard.putNumber("Gear3", simGear3.get());
-    SmartDashboard.putNumber("Gear11", simGear11.get());
+    Logger.recordOutput("Elevator/Sim Length", simDist.in(Inches));
+    Logger.recordOutput("Elevator/Sim velocity", simVel.in(InchesPerSecond));
+    Logger.recordOutput("Elevator/Sim Pose", m_elevatorSim.getPositionMeters());
+    Logger.recordOutput("Elevator/Gear3", simGear3.get());
+    Logger.recordOutput("Elevator/Gear11", simGear11.get());
   }
 }

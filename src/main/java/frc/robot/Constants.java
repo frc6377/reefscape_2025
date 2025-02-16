@@ -130,7 +130,7 @@ public final class Constants {
     public static final Current kHoldPower = Amps.of(40);
 
     public static final HowdyPID kPivotArmPID =
-        new HowdyPID(0, 100.0, 0.0, 0.0, 0.0, 7.29, 0.03, 0.0); // GravityTypeValue.Arm_Cosine
+        new HowdyPID(100.0, 0.0, 0.0, 0.0, 7.29, 0.03, 0.0); // GravityTypeValue.Arm_Cosine
 
     public static final double kGearing = 60;
     public static final double kSensorToMechanism = 60;

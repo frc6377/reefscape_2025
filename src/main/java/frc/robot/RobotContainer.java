@@ -24,7 +24,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -63,14 +62,13 @@ public class RobotContainer {
   // Change the raw boolean to true to pick keyboard during simulation
   private final boolean usingKeyboard = false && Robot.isSimulation();
 
-  // Subsystems
-  //   private final Climber climber = new Climber();
+  private static final Sensors sensors = new Sensors();
 
+  // Subsystems
   private final Drive drive;
   private final Vision vision;
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
-  private static final Sensors sensors = new Sensors();
   private final IntakeSubsystem intake = new IntakeSubsystem(sensors);
 
   private boolean elevatorNotL1 = true;
@@ -195,6 +193,9 @@ public class RobotContainer {
     //     .whileTrue(climber.runRaw(Volts.of(-3)));
     // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
     //     .onTrue(climber.toggleJeopardy());
+    // OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
+    // OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
+    // OI.getButton(OI.Operator.Start).onTrue(climber.zero());
   }
 
   private void configureButtonBindings() {
@@ -233,14 +234,14 @@ public class RobotContainer {
             Commands.runOnce(
                 () -> {
                   elevatorNotL1 = !elevatorNotL1;
-                  SmartDashboard.putBoolean("Intake/Mode", elevatorNotL1);
+                  Logger.recordOutput("Intake/Mode", elevatorNotL1);
                 }));
     OI.getButton(OI.Operator.X)
         .onTrue(
             Commands.runOnce(
                 () -> {
                   intakeAlgeaMode = !intakeAlgeaMode;
-                  SmartDashboard.putBoolean("Intake/Algea Mode", intakeAlgeaMode);
+                  Logger.recordOutput("Intake/Algea Mode", intakeAlgeaMode);
                 }));
 
     OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary

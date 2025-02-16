@@ -16,11 +16,12 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+@SuppressWarnings("unused")
 public class LocateCoral extends Command {
 
   private Supplier<CoralEnum> state;
   private IntakeSubsystem intakeSubsystem;
-  public BooleanSupplier elevatorNotL1;
+  private BooleanSupplier elevatorNotL1; // TODO: Repurpose
 
   /** Creates a new LocateCoral. */
   public LocateCoral(

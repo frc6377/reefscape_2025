@@ -4,10 +4,10 @@ import static edu.wpi.first.units.Units.Inches;
 import static frc.robot.Constants.SensorIDs.*;
 
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 import utilities.TOFSensorSimple;
 import utilities.TOFSensorSimple.TOFType;
 
@@ -23,13 +23,26 @@ public class Sensors {
 
   public Sensors() {}
 
+  public TOFSensorSimple getSensor(int sensorID) {
+    switch (sensorID) {
+      case kSensor2ID:
+        return sensor2;
+      case kSensor3ID:
+        return sensor3;
+      case kSensor4ID:
+        return sensor4;
+      default:
+        return null;
+    }
+  }
+
   public Distance getSensorDist(int sensorID) {
     switch (sensorID) {
-      case 2:
+      case kSensor2ID:
         return sensor2.getDistance();
-      case 3:
+      case kSensor3ID:
         return sensor3.getDistance();
-      case 4:
+      case kSensor4ID:
         return sensor4.getDistance();
       default:
         return Inches.zero();
@@ -38,12 +51,12 @@ public class Sensors {
 
   public boolean getSensorBool(int sensorID) {
     switch (sensorID) {
-      case 2:
-        return sensor2.isBeamBroke();
-      case 3:
-        return sensor3.isBeamBroke();
-      case 4:
-        return sensor4.isBeamBroke();
+      case kSensor2ID:
+        return sensor2.getBeamBroke();
+      case kSensor3ID:
+        return sensor3.getBeamBroke();
+      case kSensor4ID:
+        return sensor4.getBeamBroke();
       default:
         return false;
     }
@@ -51,27 +64,27 @@ public class Sensors {
 
   public Trigger getSensorTrigger(int sensorID) {
     switch (sensorID) {
-      case 2:
-        return sensor2.beamBroken();
-      case 3:
-        return sensor3.beamBroken();
-      case 4:
-        return sensor4.beamBroken();
+      case kSensor2ID:
+        return sensor2.getBeamBrokenTrigger();
+      case kSensor3ID:
+        return sensor3.getBeamBrokenTrigger();
+      case kSensor4ID:
+        return sensor4.getBeamBrokenTrigger();
       default:
         return new Trigger(null);
     }
   }
 
-  @AutoLogOutput(key = "Intake/Sensor State Enum")
+  @AutoLogOutput(key = "Intake/States/Sensor State Enum")
   public CoralEnum getSensorState() {
     if (Robot.isSimulation()) {
       return simState;
     }
 
-    int state = sensor2.isBeamBroke() ? 1 : 0;
-    state += sensor3.isBeamBroke() ? 10 : 0;
-    state += sensor4.isBeamBroke() ? 100 : 0;
-    SmartDashboard.putNumber("Laser Can State", state);
+    int state = sensor2.getBeamBroke() ? 1 : 0;
+    state += sensor3.getBeamBroke() ? 10 : 0;
+    state += sensor4.getBeamBroke() ? 100 : 0;
+    Logger.recordOutput("Intake/Laser Can State", state);
     switch (state) {
       case 0:
         return CoralEnum.NO_CORAL;
