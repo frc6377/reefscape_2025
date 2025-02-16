@@ -34,6 +34,9 @@ import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
 import static frc.robot.Constants.IntakeConstants.kalgae;
 import static frc.robot.Constants.IntakeConstants.kcoralStation;
 import static frc.robot.Constants.IntakeConstants.kl1;
+import static frc.robot.Constants.SensorIDs.kSensor2ID;
+import static frc.robot.Constants.SensorIDs.kSensor3ID;
+import static frc.robot.Constants.SensorIDs.kSensor4ID;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -321,7 +324,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command floorOuttake() {
-    return runEnd(
+    return startEnd(
             () -> goToPivotPosition(kPivotExtendAngle), () -> goToPivotPosition(kPivotRetractAngle))
         .until(pivotAtSetpoint(pivotSetpoint))
         .andThen(() -> intakeMotor.set(kOuttakeSpeed));
@@ -420,7 +423,7 @@ public class IntakeSubsystem extends SubsystemBase {
     Logger.recordOutput("Intake/Pivot At Setpoint", atSetpoint(pivotSetpoint));
 
     // Log TOF Sensors
-    for (int i = 2; i < 5; i++) {
+    for (int i : new int[]{kSensor2ID, kSensor3ID, kSensor4ID}) {
       Logger.recordOutput(
           "Intake/TOF/Sensor" + i + " Dist (Inches)", sensors.getSensorDist(i).in(Inches));
       Logger.recordOutput("Intake/TOF/Sensor" + i + " bool", sensors.getSensorBool(i));
