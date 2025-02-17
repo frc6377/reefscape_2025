@@ -61,10 +61,12 @@ public final class Constants {
     public static final int kIntakeMotor = 13;
     public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
+    public static final int kAlgeaMotor = 18;
   }
 
   public static class DIOConstants {
     public static final int kthroughBoreEncoderID = 10;
+    public static final int kAlgeaEncoderID = 15;
     public static final int kClimberFrontEncoderID = 5;
     public static final int kClimberBackEncoderID = 6;
     public static final int gear11ID = 13;
@@ -204,6 +206,20 @@ public final class Constants {
     public static final AngularAcceleration MMAcc = MMVel.times(Hertz.of(5));
     public static final Velocity<AngularAccelerationUnit> MMJerk =
         RotationsPerSecondPerSecond.per(Second).of(MMAcc.in(RotationsPerSecondPerSecond)).times(10);
+  }
+
+  // Algea scorer Constants
+  public static class AlgeaScorerConstants {
+    public static final double kAlgeaP = 1.0;
+    public static final double kAlgeaI = 0.0;
+    public static final double kAlgeaD = 0.0;
+    public static final double kAlgeaPercent = .2;
+    public static final int kAlegeaGearRatio = 80;
+    public static final Angle algeaStowed = Degrees.of(0);
+    public static final Angle algeaRemove = Degrees.of(90);
+    public static final double algeaZero = 0.0; // update with actual value
+    public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
+    public static final Distance algeaArmLength = Inches.of(19);
   }
 
   /**
