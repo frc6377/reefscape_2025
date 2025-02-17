@@ -13,7 +13,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.ChassisReference;
@@ -61,7 +60,6 @@ public class Elevator extends SubsystemBase {
   private DutyCycleEncoderSim simGear11;
   private final SysIdRoutine m_sysIdElevator;
 
-  private final VoltageOut m_voltReq;
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
       new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
@@ -116,7 +114,6 @@ public class Elevator extends SubsystemBase {
     gear3 = new DutyCycleEncoder(DIOConstants.gear3ID, 1.0, ElevatorConstants.gear3Offset);
     gear11 = new DutyCycleEncoder(DIOConstants.gear11ID, 1.0, ElevatorConstants.gear11Offset);
 
-    m_voltReq = new VoltageOut(0.0);
     m_sysIdElevator =
         new SysIdRoutine(
             new SysIdRoutine.Config(
