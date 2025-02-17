@@ -1,7 +1,9 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Inches;
@@ -15,6 +17,7 @@ import static edu.wpi.first.units.Units.Second;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -22,6 +25,7 @@ import edu.wpi.first.units.AngularAccelerationUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
@@ -29,6 +33,7 @@ import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.subsystems.Elevator;
+import utilities.HowdyPID;
 
 // Copyright 2021-2024 FRC 6328
 // http://github.com/Mechanical-Advantage
@@ -64,25 +69,37 @@ public final class Constants {
   }
 
   public static class DIOConstants {
-    public static final int kthroughBoreEncoderID = 10;
+    public static final int kthroughBoreEncoderID = 1;
     public static final int kClimberFrontEncoderID = 5;
     public static final int kClimberBackEncoderID = 6;
     public static final int gear11ID = 13;
     public static final int gear3ID = 14;
   }
 
-  public static class ClimberConstants {
-    public static final double kClimberP0 = 100;
-    public static final double kClimberI0 = 0;
-    public static final double kClimberD0 = 5;
-    public static final double kClimberkG0 = 0;
-    public static final double kClimberkV0 = 10;
+  public static class SensorIDs {
+    public static final int kSensor2ID = 2;
+    public static final int kSensor3ID = 3;
+    public static final int kSensor4ID = 4;
+    public static final int kScorerSensorID = 1;
+  }
 
-    public static final double kClimberP1 = 100;
-    public static final double kClimberI1 = 0;
-    public static final double kClimberD1 = 5;
-    public static final double kClimberkG1 = 1;
-    public static final double kClimberkV1 = 10;
+  public static class ClimberConstants {
+    public static final HowdyPID kClimberPID0 = new HowdyPID();
+
+    static {
+      kClimberPID0.setKP(100);
+      kClimberPID0.setKD(5);
+      kClimberPID0.setKV(10);
+    }
+
+    public static final HowdyPID kClimberPID1 = new HowdyPID();
+
+    static {
+      kClimberPID1.setKP(100);
+      kClimberPID1.setKD(5);
+      kClimberPID1.setKV(10);
+      kClimberPID1.setKG(1);
+    }
 
     public static final double kGearRatio = 126;
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
@@ -95,6 +112,7 @@ public final class Constants {
     public static final Angle kExpectedStartAngle = Degrees.of(90);
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
+
     // Sim Constants
     public static final int KClimberMotorsCount = 2;
     public static final Distance kClimberArmLength = Inches.of(6);
@@ -105,30 +123,41 @@ public final class Constants {
 
   // Scorer Constants
   public static class CoralScorerConstants {
-    public static final double kSpeed = 0.5;
-    public static final double kIntakeSpeed = 0.4;
+    public static final Current kScoreAMPs = Amps.of(1.5);
+    public static final Current kIntakeAMPs = Amps.of(1);
+
+    public static final HowdyPID CoralScorerPID = new HowdyPID();
+
+    static {
+      CoralScorerPID.setKP(0.1);
+    }
   }
 
   // Intake Constants
   public static class IntakeConstants {
     public static final double kIntakeSpeed = -1;
+    public static final double kOuttakeSpeed = 0.2;
     public static final double kIntakeHandoffSpeed = -0.75;
-    public static final double kConveyorSpeed = 0.25;
+    public static final double kConveyorSpeed = 0.45;
     public static final double kPivotSpeed = 0.2;
     public static final Angle kPivotRetractAngle = Degrees.of(128);
+    public static final Angle kPivotOuttakePose = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
     public static final Angle kcoralStation = Degrees.of(101);
     public static final Angle kl1 = Degrees.of(75.5);
-    public static final Angle kalgae = Degrees.of(44.5);
-    public static final Angle kPivotTolerance = Degrees.of(3);
-    public static final double kPivotP = 100.0;
-    public static final double kPivotI = 0.0;
-    public static final double kPivotD = 0.0;
-    public static final double kPivotG = 0.0;
+    public static final Angle kalgae = Degrees.of(55);
+    public static final Angle kPivotTolerance = Degrees.of(5);
 
-    public static final double kPivotV = 7.29; // 7.20;
-    public static final double kPivotA = 0.03; // 0.03;
-    public static final GravityTypeValue kPivotGravityType = GravityTypeValue.Arm_Cosine;
+    public static final Current kHoldPower = Amps.of(40);
+
+    public static final HowdyPID kPivotArmPID = new HowdyPID();
+
+    static {
+      kPivotArmPID.setKP(100);
+      kPivotArmPID.setKV(7.29);
+      kPivotArmPID.setKA(0.03);
+      kPivotArmPID.setGravityType(GravityTypeValue.Arm_Cosine);
+    }
 
     public static final double kGearing = 60;
     public static final double kSensorToMechanism = 60;
@@ -139,35 +168,39 @@ public final class Constants {
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
     public static final AngularVelocity kMotionMagicCruiseVelocity = DegreesPerSecond.of(450);
     public static final AngularAcceleration kMotionMagicAcceleration =
-        kMotionMagicCruiseVelocity.times(Hertz.of(5));
+        DegreesPerSecondPerSecond.of(2250);
     public static final double kMotionMagicJerk = 80.0;
 
-    public static final double armZero = 0.35;
+    public static final Angle armZero = Degrees.of(83.05);
 
     public static enum CoralEnum {
       CORAL_TOO_CLOSE,
       CORAL_TOO_FAR,
       NO_CORAL,
       IN_ELEVATOR,
-      CORAL_ALIGNED
+      CORAL_ALIGNED,
+      OTHER
     }
   }
 
   // Elevator Constants
   public static class ElevatorConstants {
     public static final Distance kL0Height = Inches.of(0);
-    // L1 needs to be adjusted once it actually is worth it
-    public static final Distance kL1Height = Inches.of(15);
     public static final Distance kL2Height = Inches.of(16.62);
     public static final Distance kL3Height = Inches.of(30.9);
     public static final Distance kL4Height = Inches.of(55);
 
     public static final int elvLimitID = 0;
 
-    public static final double P = 1.5;
-    public static final double I = 0.04;
-    public static final double D = 0.02;
-    public static final double FF = 0.0;
+    public static final HowdyPID kElevatorPID = new HowdyPID();
+
+    static {
+      kElevatorPID.setKP(1.5);
+      kElevatorPID.setKP(0.04);
+      kElevatorPID.setKP(0.02);
+      kElevatorPID.setStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+    }
+
     public static final Distance kBottomLimit = Inches.of(0);
     public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;
@@ -254,12 +287,5 @@ public final class Constants {
           new Pose2d(Meters.of(3.972), Meters.of(5.244), new Rotation2d(-60)),
           new Pose2d(Meters.of(3.684), Meters.of(5.078), new Rotation2d(-60)),
         };
-  }
-
-  public static class SensorIDs {
-    public static final int kSensor2ID = 2;
-    public static final int kSensor3ID = 3;
-    public static final int kSensor4ID = 4;
-    public static final int kScorerSensorID = 1;
   }
 }
