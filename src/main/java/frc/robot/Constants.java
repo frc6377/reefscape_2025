@@ -14,7 +14,6 @@ import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Second;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -207,17 +206,15 @@ public final class Constants {
     public static final HowdyPID kElevatorPID = new HowdyPID();
 
     static {
-      kElevatorPID.setKP(1.5);
-      kElevatorPID.setKP(0.04);
-      kElevatorPID.setKP(0.02);
+      kElevatorPID.setKP(30);
+      kElevatorPID.setKI(0);
+      kElevatorPID.setKD(0);
+      kElevatorPID.setKS(4);
       kElevatorPID.setStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
     }
 
     public static final HowdyMM kElevatorMM =
-        new HowdyMM(
-            RotationsPerSecond.of(50),
-            RotationsPerSecondPerSecond.of(250),
-            RotationsPerSecondPerSecond.per(Second).of(2500));
+        new HowdyMM(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(500));
 
     // Mech Constants
     public static final Distance kElevatorDrumRadius = Inches.of(0.375);

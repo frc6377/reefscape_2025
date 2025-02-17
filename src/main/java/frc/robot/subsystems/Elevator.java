@@ -11,7 +11,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -96,6 +96,7 @@ public class Elevator extends SubsystemBase {
     elevatorConfig1 = new TalonFXConfiguration();
     elevatorConfig1.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     elevatorConfig1.Slot0 = ElevatorConstants.kElevatorPID.getSlot0Configs();
+    ElevatorConstants.kElevatorPID.createTunableNumbers("Elevator PID", this);
     elevatorConfig1.SoftwareLimitSwitch = elvSoftLimit;
     elevatorConfig1.CurrentLimits = currentLimit;
     elevatorConfig1.MotorOutput = invertMotor;
@@ -251,7 +252,7 @@ public class Elevator extends SubsystemBase {
     return runOnce(
         () -> {
           Angle adjustedSetpoint = heightToRotations(heightLevel);
-          elevatorMotor1.setControl(new MotionMagicVoltage(adjustedSetpoint));
+          elevatorMotor1.setControl(new MotionMagicExpoTorqueCurrentFOC(adjustedSetpoint));
           Logger.recordOutput("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
           Logger.recordOutput("Elevator/Setpoint Rotations", adjustedSetpoint.in(Rotations));
         });
