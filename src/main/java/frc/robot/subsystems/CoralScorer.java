@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
+import frc.robot.Constants.IntakeConstants.AlignMode;
 import utilities.TOFSensorSimple;
 import utilities.TOFSensorSimple.TOFType;
 
@@ -26,7 +27,9 @@ public class CoralScorer extends SubsystemBase {
 
   private TalonFXConfiguration scoreMotorConfig;
 
-  private TOFSensorSimple TOFSensor;
+  private TOFSensorSimple scorerSensor;
+
+  private AlignMode alignMode;
 
   public CoralScorer() {
     scorerMotor = new TalonFX(CANIDs.kScorerMotor, Constants.RIOName);
@@ -34,11 +37,11 @@ public class CoralScorer extends SubsystemBase {
     scoreMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     scorerMotor.getConfigurator().apply(scoreMotorConfig);
 
-    TOFSensor = new TOFSensorSimple(kScorerSensorID, Inches.of(2.5), TOFType.LASER_CAN);
+    scorerSensor = new TOFSensorSimple(kScorerSensorID, Inches.of(2.5), TOFType.LASER_CAN);
   }
 
   public Trigger hasCoral() {
-    return TOFSensor.beamBroken();
+    return scorerSensor.beamBroken();
   }
 
   // Made a command to spin clockwise
@@ -53,6 +56,24 @@ public class CoralScorer extends SubsystemBase {
   // Made a command to spin counter clockwise
   public Command reverseCommand() {
     return startEnd(() -> scorerMotor.set(kSpeed), () -> scorerMotor.set(0));
+  }
+
+  public Command inwardAlign() {
+    return runOnce(() -> scorerMotor.set(kAlignSpeed))
+        .until(scorerSensor.beamBroken().negate())
+        .andThen(() -> scorerMotor.set(-kAlignSpeed))
+        .until(scorerSensor.beamBroken());
+  }
+
+  public Command outwardAlign() {
+    return runOnce(() -> scorerMotor.set(-kAlignSpeed))
+        .until(scorerSensor.beamBroken().negate())
+        .andThen(() -> scorerMotor.set(kAlignSpeed))
+        .until(scorerSensor.beamBroken());
+  }
+
+  public void setAlignMode(AlignMode mode) {
+    alignMode = mode;
   }
 
   @Override
