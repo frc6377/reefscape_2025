@@ -157,6 +157,11 @@ public final class Constants {
       IN_ELEVATOR,
       CORAL_ALIGNED
     }
+
+    public enum AlignMode {
+      OUTWARD_ALIGN,
+      INWARD_ALIGN
+    }
   }
 
   // Elevator Constants

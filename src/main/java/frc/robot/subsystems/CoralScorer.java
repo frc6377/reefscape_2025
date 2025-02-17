@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
+import frc.robot.Constants.IntakeConstants.AlignMode;
 import utilities.TOFSensorSimple;
 import utilities.TOFSensorSimple.TOFType;
 
@@ -28,7 +29,7 @@ public class CoralScorer extends SubsystemBase {
 
   private TOFSensorSimple scorerSensor;
 
-  boolean mode = false;
+  private AlignMode alignMode;
 
   public CoralScorer() {
     scorerMotor = new TalonFX(CANIDs.kScorerMotor, Constants.RIOName);
@@ -57,22 +58,22 @@ public class CoralScorer extends SubsystemBase {
     return startEnd(() -> scorerMotor.set(kSpeed), () -> scorerMotor.set(0));
   }
 
-  public Command alignScorerModeA() {
+  public Command inwardAlign() {
     return runOnce(() -> scorerMotor.set(kAlignSpeed))
-        .until(scorerSensor.beamBroken())
+        .until(scorerSensor.beamBroken().negate())
         .andThen(() -> scorerMotor.set(-kAlignSpeed))
-        .until(scorerSensor.beamBroken().negate());
+        .until(scorerSensor.beamBroken());
   }
 
-  public Command alignScorerModeB() {
+  public Command outwardAlign() {
     return runOnce(() -> scorerMotor.set(-kAlignSpeed))
-        .until(scorerSensor.beamBroken())
+        .until(scorerSensor.beamBroken().negate())
         .andThen(() -> scorerMotor.set(kAlignSpeed))
-        .until(scorerSensor.beamBroken().negate());
+        .until(scorerSensor.beamBroken());
   }
 
-  public Command toggleMode() {
-    return runOnce(() -> mode = !mode);
+  public void setAlignMode(AlignMode mode) {
+    alignMode = mode;
   }
 
   @Override
