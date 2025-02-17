@@ -27,6 +27,7 @@ public class CoralScorer extends SubsystemBase {
   private TalonFX scorerMotor;
 
   private TalonFXConfiguration scoreMotorConfig;
+  private TorqueCurrentFOC torqueCurrentFOC = new TorqueCurrentFOC(0);
 
   private TOFSensorSimple TOFSensor;
 
@@ -48,22 +49,22 @@ public class CoralScorer extends SubsystemBase {
     scorerMotor.stopMotor();
   }
 
-  public void setMotor(Current current) {
-    scorerMotor.setControl(new TorqueCurrentFOC(current));
+  public void setMotorCurrent(Current current) {
+    scorerMotor.setControl(torqueCurrentFOC.withOutput(current));
   }
 
   // Made a command to spin clockwise
   public Command scoreCommand() {
-    return startEnd(() -> setMotor(kScoreAMPs), () -> stopMotor());
+    return startEnd(() -> setMotorCurrent(kScoreAMPs), () -> stopMotor());
   }
 
   public Command intakeCommand() {
-    return startEnd(() -> setMotor(kIntakeAMPs), () -> stopMotor());
+    return startEnd(() -> setMotorCurrent(kIntakeAMPs), () -> stopMotor());
   }
 
   // Made a command to spin counter clockwise
   public Command reverseCommand() {
-    return startEnd(() -> setMotor(kIntakeAMPs.times(-1)), () -> stopMotor());
+    return startEnd(() -> setMotorCurrent(kIntakeAMPs.times(-1)), () -> stopMotor());
   }
 
   public Command stopCommand() {

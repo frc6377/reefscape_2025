@@ -14,6 +14,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.armZero;
+import static frc.robot.Constants.IntakeConstants.kAlgae;
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
 import static frc.robot.Constants.IntakeConstants.kGearing;
 import static frc.robot.Constants.IntakeConstants.kHoldPower;
@@ -21,26 +22,20 @@ import static frc.robot.Constants.IntakeConstants.kIntakeHandoffSpeed;
 import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
 import static frc.robot.Constants.IntakeConstants.kLength;
 import static frc.robot.Constants.IntakeConstants.kMOI;
-import static frc.robot.Constants.IntakeConstants.kMotionMagicAcceleration;
-import static frc.robot.Constants.IntakeConstants.kMotionMagicCruiseVelocity;
-import static frc.robot.Constants.IntakeConstants.kMotionMagicJerk;
 import static frc.robot.Constants.IntakeConstants.kOuttakeSpeed;
 import static frc.robot.Constants.IntakeConstants.kPivotExtendAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotL1Score;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
 import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
-import static frc.robot.Constants.IntakeConstants.kalgae;
 import static frc.robot.Constants.IntakeConstants.kcoralStation;
 import static frc.robot.Constants.SensorIDs.kSensor2ID;
 import static frc.robot.Constants.SensorIDs.kSensor3ID;
 import static frc.robot.Constants.SensorIDs.kSensor4ID;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -138,7 +133,6 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     intakeMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
     intakeMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
-    intakeMotorConfig.Slot0 = new Slot0Configs().withKP(10).withKI(0).withKD(0);
     intakeMotor.getConfigurator().apply(intakeMotorConfig);
 
     conveyorMotorConfig = new TalonFXConfiguration();
@@ -149,15 +143,11 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     pivotMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     pivotMotorConfig.Slot0 = IntakeConstants.kPivotArmPID.getSlot0Configs();
+    pivotMotorConfig.MotionMagic = IntakeConstants.kPivotArmMM.getMotionMagicConfigs();
     pivotMotorConfig.Feedback =
         new FeedbackConfigs()
             .withRotorToSensorRatio(1)
             .withSensorToMechanismRatio(kSensorToMechanism);
-    pivotMotorConfig.MotionMagic =
-        new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(kMotionMagicCruiseVelocity)
-            .withMotionMagicAcceleration(kMotionMagicAcceleration)
-            .withMotionMagicJerk(kMotionMagicJerk);
 
     pivotMotor.getConfigurator().apply(pivotMotorConfig);
 
@@ -207,10 +197,6 @@ public class IntakeSubsystem extends SubsystemBase {
     return pivotMotor.getPosition().getValue().isNear(setpoint, kPivotTolerance);
   }
 
-  protected void setPivotMotor(double speed) {
-    pivotMotor.set(speed);
-  }
-
   protected void setConveyerMotor(double speed) {
     conveyorMotor.set(speed);
   }
@@ -220,7 +206,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   protected void goToPivotPosition(Angle setpoint) {
-    pivotMotor.setControl(new MotionMagicVoltage(setpoint));
+    pivotMotor.setControl(new MotionMagicExpoTorqueCurrentFOC(setpoint));
     pivotSetpoint = setpoint;
   }
 
@@ -282,8 +268,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command floorOuttake() {
-    return startEnd(
-            () -> goToPivotPosition(kPivotExtendAngle), () -> {})
+    return startEnd(() -> goToPivotPosition(kPivotExtendAngle), () -> {})
         .until(pivotAtSetpoint(kPivotExtendAngle))
         .andThen(() -> intakeMotor.set(kOuttakeSpeed));
   }
@@ -300,7 +285,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command algaeIntake() {
     return startEnd(
         () -> {
-          goToPivotPosition(kalgae);
+          goToPivotPosition(kAlgae);
           intakeMotor.set(-kIntakeSpeed);
         },
         () -> {});
@@ -309,7 +294,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command algaeHold() {
     return startEnd(
         () -> {
-          goToPivotPosition(kalgae);
+          goToPivotPosition(kAlgae);
           intakeMotor.setControl(new TorqueCurrentFOC(kHoldPower));
         },
         () -> {});
@@ -318,7 +303,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command algaeOuttake() {
     return startEnd(
         () -> {
-          goToPivotPosition(kalgae);
+          goToPivotPosition(kAlgae);
           intakeMotor.set(kIntakeSpeed);
         },
         () -> {});
@@ -326,7 +311,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command l1ScoreModeA() {
     return startEnd(() -> goToPivotPosition(kPivotL1Score), () -> {})
-        .until(pivotAtSetpoint(pivotSetpoint))
+        .until(pivotAtSetpoint(kPivotL1Score))
         .andThen(() -> intakeMotor.set(kOuttakeSpeed))
         .finallyDo(() -> goToPivotPosition(kPivotRetractAngle));
   }
@@ -449,7 +434,7 @@ public class IntakeSubsystem extends SubsystemBase {
           t2.reset();
         }
 
-        if (atSetpoint(kalgae) && checkSimIntake(-kIntakeSpeed)) {
+        if (atSetpoint(kAlgae) && checkSimIntake(-kIntakeSpeed)) {
           t3.start();
         } else {
           t3.stop();

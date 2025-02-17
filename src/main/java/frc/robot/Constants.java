@@ -5,15 +5,14 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Feet;
-import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Inch;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 
@@ -26,20 +25,16 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.AngularAccelerationUnit;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
-import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import frc.robot.subsystems.Elevator;
 import java.util.HashMap;
+import utilities.HowdyMM;
 import utilities.HowdyPID;
 
 public final class Constants {
@@ -85,13 +80,6 @@ public final class Constants {
     public static final int gear3ID = 14;
 
     public static final int elvLimitID = 0;
-  }
-
-  public static class SensorIDs {
-    public static final int kSensor2ID = 2;
-    public static final int kSensor3ID = 3;
-    public static final int kSensor4ID = 4;
-    public static final int kScorerSensorID = 1;
   }
 
   public static class SensorIDs {
@@ -158,15 +146,16 @@ public final class Constants {
     public static final double kIntakeHandoffSpeed = -0.75;
     public static final double kConveyorSpeed = 0.45;
     public static final double kPivotSpeed = 0.2;
+
+    // Pivot Arm Setpoints
+    public static final Angle armZero = Degrees.of(83.05);
     public static final Angle kPivotRetractAngle = Degrees.of(128);
     public static final Angle kPivotOuttakePose = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
     public static final Angle kcoralStation = Degrees.of(101);
     public static final Angle kPivotL1Score = Degrees.of(75.5);
-    public static final Angle kalgae = Degrees.of(55);
+    public static final Angle kAlgae = Degrees.of(55);
     public static final Angle kPivotTolerance = Degrees.of(5);
-
-    public static final Current kHoldPower = Amps.of(40);
 
     public static final HowdyPID kPivotArmPID = new HowdyPID();
 
@@ -177,15 +166,13 @@ public final class Constants {
       kPivotArmPID.setGravityType(GravityTypeValue.Arm_Cosine);
     }
 
+    public static final HowdyMM kPivotArmMM =
+        new HowdyMM(DegreesPerSecond.of(450), DegreesPerSecondPerSecond.of(2250), 80.0);
+
+    public static final Current kHoldPower = Amps.of(40);
+
     public static final double kGearing = 60;
     public static final double kSensorToMechanism = 60;
-
-    public static final AngularVelocity kMotionMagicCruiseVelocity = DegreesPerSecond.of(450);
-    public static final AngularAcceleration kMotionMagicAcceleration =
-        DegreesPerSecondPerSecond.of(2250);
-    public static final double kMotionMagicJerk = 80.0;
-
-    public static final Angle armZero = Degrees.of(83.05);
 
     public static enum CoralEnum {
       CORAL_TOO_CLOSE,
@@ -226,6 +213,17 @@ public final class Constants {
       kElevatorPID.setStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
     }
 
+    public static final HowdyMM kElevatorMM =
+        new HowdyMM(
+            RotationsPerSecond.of(50),
+            RotationsPerSecondPerSecond.of(250),
+            RotationsPerSecondPerSecond.per(Second).of(2500));
+
+    // Mech Constants
+    public static final Distance kElevatorDrumRadius = Inches.of(0.375);
+    public static final Distance kElevatorDrumCircumference =
+        kElevatorDrumRadius.times(2 * Math.PI);
+
     public static final Distance kBottomLimit = Inches.of(0);
     public static final Distance kTopLimit = Inches.of(75);
     public static final double kElevatorConversion = 1.0;
@@ -244,16 +242,6 @@ public final class Constants {
       {22, 1, 13, 25, 4, 16, 28, 7, 19, 31, 10},
       {11, 23, 2, 14, 26, 5, 17, 29, 8, 20, 32}
     };
-
-    // Mech Constants
-    public static final Distance kElevatorDrumRadius = Inches.of(.75 / 2.0);
-    public static final Distance kElevatorDrumCircumference =
-        kElevatorDrumRadius.times(2 * Math.PI);
-
-    public static final AngularVelocity MMVel = Elevator.heightToRotations(InchesPerSecond.of(100));
-    public static final AngularAcceleration MMAcc = MMVel.times(Hertz.of(5));
-    public static final Velocity<AngularAccelerationUnit> MMJerk =
-        RotationsPerSecondPerSecond.per(Second).of(MMAcc.in(RotationsPerSecondPerSecond)).times(10);
 
     // Simulation Constants
     public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60(2);

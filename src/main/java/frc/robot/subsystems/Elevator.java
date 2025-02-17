@@ -12,6 +12,7 @@ import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -67,11 +68,7 @@ public class Elevator extends SubsystemBase {
   private static Mechanism2d mech = new Mechanism2d(2, 2);
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
-  private MotionMagicConfigs elvMotionMagic =
-      new MotionMagicConfigs()
-          .withMotionMagicCruiseVelocity(MMVel)
-          .withMotionMagicAcceleration(MMAcc)
-          .withMotionMagicJerk(MMJerk);
+  private MotionMagicConfigs elvMotionMagic = ElevatorConstants.kElevatorMM.getMotionMagicConfigs();
 
   public static final SoftwareLimitSwitchConfigs elvSoftLimit =
       new SoftwareLimitSwitchConfigs()
@@ -127,10 +124,7 @@ public class Elevator extends SubsystemBase {
                 Volts.of(1), // Reduce dynamic step voltage to 4 to prevent brownout
                 Seconds.of(3), // Use default timeout (10 s)
                 (state) -> SignalLogger.writeString("Elevator/SysIdState", state.toString())),
-            new SysIdRoutine.Mechanism(
-                (volts) -> elevatorMotor1.setControl(m_voltReq.withOutput(volts.in(Volts))),
-                null,
-                this));
+            new SysIdRoutine.Mechanism((volts) -> setElvCurrentFOC(volts.in(Volts)), null, this));
 
     // Simulation
     if (Robot.isSimulation()) {
@@ -163,6 +157,10 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", elvSimPose2);
     Logger.recordOutput("Elevator/Setpoint", 0);
     Logger.recordOutput("Elevator/Setpoint Rotations", 0);
+  }
+
+  public void setElvCurrentFOC(double amps) {
+    elevatorMotor1.setControl(new TorqueCurrentFOC(amps));
   }
 
   public static Distance rotationsToHeight(Angle rotations) {
@@ -312,16 +310,16 @@ public class Elevator extends SubsystemBase {
     elvSimPose1 =
         new Pose3d(
             new Translation3d(
-                elvSimPose1.getX(),
-                elvSimPose1.getY(),
-                DrivetrainConstants.kElvStage1Pose.getZ() + elvHeight.in(Meters) / 2.0),
+                elvSimPose1.getMeasureX(),
+                elvSimPose1.getMeasureY(),
+                DrivetrainConstants.kElvStage1Pose.getMeasureZ().plus(elvHeight.div(2))),
             new Rotation3d());
     elvSimPose2 =
         new Pose3d(
             new Translation3d(
-                elvSimPose2.getX(),
-                elvSimPose2.getY(),
-                DrivetrainConstants.kElvStage2Pose.getZ() + (elvHeight.in(Meters))),
+                elvSimPose2.getMeasureX(),
+                elvSimPose2.getMeasureY(),
+                DrivetrainConstants.kElvStage2Pose.getMeasureZ().plus(elvHeight)),
             new Rotation3d());
   }
 
