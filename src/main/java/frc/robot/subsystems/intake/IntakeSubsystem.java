@@ -323,8 +323,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command floorOuttake() {
-    return startEnd(
-            () -> goToPivotPosition(kPivotExtendAngle), () -> {})
+    return startEnd(() -> goToPivotPosition(kPivotExtendAngle), () -> {})
         .until(pivotAtSetpoint(kPivotExtendAngle))
         .andThen(() -> intakeMotor.set(kOuttakeSpeed));
   }
