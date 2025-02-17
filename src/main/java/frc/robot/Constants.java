@@ -219,6 +219,7 @@ public final class Constants {
     public static final Angle algeaRemove = Degrees.of(90);
     public static final double algeaZero = 0.0; // update with actual value
     public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
+    public static final Distance algeaArmLength = Inches.of(19);
   }
 
   /**
