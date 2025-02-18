@@ -1,0 +1,70 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.791037454804503,
+        "y": 3.8979533186718593
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.776353555970769,
+        "y": 3.64838492500984
+      },
+      "isLocked": false,
+      "linkedName": "Reef G"
+    },
+    {
+      "anchor": {
+        "x": 5.61446429753615,
+        "y": 2.7596431408875755
+      },
+      "prevControl": {
+        "x": 5.828624826938641,
+        "y": 3.0550475095280776
+      },
+      "nextControl": {
+        "x": 4.998707299250116,
+        "y": 1.9102928529416507
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.360303832517342,
+        "y": 1.116308343612883
+      },
+      "prevControl": {
+        "x": 2.4099720016006363,
+        "y": 1.7092619882818216
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Right Coral Station Mid"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.3,
+    "maxAcceleration": 6.25,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 2979.381,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -126.0
+  },
+  "reversed": false,
+  "folder": "Score - Source",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "useDefaultConstraints": true
+}

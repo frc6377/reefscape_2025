@@ -1,27 +1,29 @@
 {
-  "robotWidth": 0.8763,
+  "robotWidth": 0.876,
   "robotLength": 0.8763,
   "holonomicMode": true,
   "pathFolders": [
+    "Score - Source",
     "Source - Score",
+    "Start - Score",
     "Testing"
   ],
   "autoFolders": [
     "Test Autos"
   ],
-  "defaultMaxVel": 3.0,
-  "defaultMaxAccel": 3.0,
-  "defaultMaxAngVel": 540.0,
-  "defaultMaxAngAccel": 720.0,
+  "defaultMaxVel": 4.3,
+  "defaultMaxAccel": 6.25,
+  "defaultMaxAngVel": 300.0,
+  "defaultMaxAngAccel": 2979.381,
   "defaultNominalVoltage": 12.0,
-  "robotMass": 74.088,
-  "robotMOI": 6.883,
+  "robotMass": 34.246,
+  "robotMOI": 24.772835573,
   "robotTrackwidth": 0.546,
-  "driveWheelRadius": 0.0508,
+  "driveWheelRadius": 0.0489458,
   "driveGearing": 6.12,
-  "maxDriveSpeed": 5.45,
-  "driveMotorType": "krakenX60FOC",
-  "driveCurrentLimit": 60.0,
+  "maxDriveSpeed": 4.4,
+  "driveMotorType": "krakenX60",
+  "driveCurrentLimit": 80.0,
   "wheelCOF": 1.2,
   "flModuleX": 0.2794,
   "flModuleY": 0.2794,
@@ -33,5 +35,9 @@
   "brModuleY": -0.2794,
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
-  "robotFeatures": []
+  "robotFeatures": [
+    "{\"name\":\"Elevator\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.035,\"y\":-0.267},\"size\":{\"width\":0.5,\"length\":0.114},\"borderRadius\":0.0,\"strokeWidth\":0.0125,\"filled\":false}}",
+    "{\"name\":\"Intake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.538,\"y\":0.1},\"size\":{\"width\":0.47,\"length\":0.191},\"borderRadius\":0.0,\"strokeWidth\":0.01,\"filled\":false}}",
+    "{\"name\":\"No Bumper\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.0,\"y\":0.0},\"size\":{\"width\":0.7109,\"length\":0.7109},\"borderRadius\":0.05,\"strokeWidth\":0.005,\"filled\":false}}"
+  ]
 }

@@ -42,6 +42,8 @@ public class Robot extends LoggedRobot {
   public static final Time period = Seconds.of(Robot.defaultPeriodSecs);
   public static final boolean isCompetition = false;
 
+  public Alliance robotAlliance;
+
   private Command autonomousCommand;
   private RobotContainer robotContainer;
 
@@ -115,10 +117,8 @@ public class Robot extends LoggedRobot {
     // finished or interrupted commands, and running subsystem periodic() methods.
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
+    Logger.recordOutput("Alliance Color Real?", DriverStation.getAlliance().isPresent());
     CommandScheduler.getInstance().run();
-    Logger.recordOutput(
-        "Allience Color", DriverStation.getAlliance().equals(Alliance.Red) ? "RED" : "BLUE");
-    Logger.recordOutput("Allience Color", DriverStation.getRawAllianceStation());
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
@@ -143,6 +143,7 @@ public class Robot extends LoggedRobot {
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
+      robotContainer.startAuto();
     }
   }
 
@@ -187,7 +188,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    SimulatedArena.getInstance().resetFieldForAuto();
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override

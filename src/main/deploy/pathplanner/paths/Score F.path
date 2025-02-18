@@ -3,73 +3,68 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.255966963421563,
-        "y": 0.9550863896519501
+        "x": 1.360303832517342,
+        "y": 1.116308343612883
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.167531141857852,
-        "y": 1.4025486214694187
+        "x": 2.3249544707120613,
+        "y": 1.5084197296412611
       },
       "isLocked": false,
       "linkedName": "Right Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 5.033771050624861,
-        "y": 2.717296551655212
+        "x": 4.711073945180848,
+        "y": 2.6052442283516406
       },
       "prevControl": {
-        "x": 4.723042455404916,
-        "y": 2.447168825784224
+        "x": 4.0964683468474385,
+        "y": 2.3191324860517604
       },
       "nextControl": {
-        "x": 5.22244379195987,
-        "y": 2.881316662242703
+        "x": 5.011517823078835,
+        "y": 2.745107128399768
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.286080184272741,
-        "y": 2.966006153373796
+        "x": 5.310748013924974,
+        "y": 2.993467003580317
       },
       "prevControl": {
-        "x": 5.054565274787485,
-        "y": 2.697801585989434
+        "x": 4.7548632840129175,
+        "y": 2.6697572417961117
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Reef F"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.9209368848425199,
-      "rotationDegrees": 119.99999999999999
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxVelocity": 4.3,
+    "maxAcceleration": 6.25,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 2979.381,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -150.0
   },
   "reversed": false,
   "folder": "Source - Score",
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": 54.0
+    "rotation": -126.0
   },
   "useDefaultConstraints": true
 }

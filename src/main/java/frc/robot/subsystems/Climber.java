@@ -14,8 +14,6 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -40,6 +38,7 @@ import frc.robot.Constants.DIOConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Robot;
 import java.util.function.BooleanSupplier;
+import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
@@ -55,8 +54,6 @@ public class Climber extends SubsystemBase {
   private TalonFXConfiguration frontConfigs;
   private TalonFXConfiguration backConfigs;
   private Angle climberTargetAngle;
-  private Slot0Configs climberConfigsToClimber;
-  private Slot1Configs climberConfigsAtClimber;
 
   // for simulation
   private DCMotor simClimberGearbox;
@@ -79,20 +76,7 @@ public class Climber extends SubsystemBase {
     climberMotorFront = new TalonFX(CANIDs.kClimberMotorFront);
     climberMotorBack = new TalonFX(CANIDs.kClimberMotorBack);
     feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.kGearRatio);
-    climberConfigsToClimber =
-        new Slot0Configs()
-            .withKP(ClimberConstants.kClimberP0)
-            .withKI(ClimberConstants.kClimberI0)
-            .withKD(ClimberConstants.kClimberD0)
-            .withKG(ClimberConstants.kClimberkG0)
-            .withKV(ClimberConstants.kClimberkV0);
-    climberConfigsAtClimber =
-        new Slot1Configs()
-            .withKP(ClimberConstants.kClimberP1)
-            .withKI(ClimberConstants.kClimberI1)
-            .withKD(ClimberConstants.kClimberD1)
-            .withKG(ClimberConstants.kClimberkG1)
-            .withKV(ClimberConstants.kClimberkV1);
+
     // Boolean to check if the climber is climbing of if it is just idle
     isClimbingStateSim = false;
     // Set the configs
@@ -100,15 +84,15 @@ public class Climber extends SubsystemBase {
     climberOutputConfigsBack = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
     frontConfigs =
         new TalonFXConfiguration()
-            .withSlot0(climberConfigsToClimber)
-            .withSlot1(climberConfigsAtClimber)
+            .withSlot0(ClimberConstants.kClimberPID0.getSlot0Configs())
+            .withSlot1(ClimberConstants.kClimberPID1.getSlot1Configs())
             .withMotorOutput(
                 climberOutputConfigsFront.withInverted(ClimberConstants.kClimberFrontInvert))
             .withFeedback(feedbackConfigs);
     backConfigs =
         new TalonFXConfiguration()
-            .withSlot0(climberConfigsToClimber)
-            .withSlot1(climberConfigsAtClimber)
+            .withSlot0(ClimberConstants.kClimberPID0.getSlot0Configs())
+            .withSlot1(ClimberConstants.kClimberPID1.getSlot1Configs())
             .withMotorOutput(
                 climberOutputConfigsBack.withInverted(ClimberConstants.kClimberBackInvert))
             .withFeedback(feedbackConfigs.withSensorToMechanismRatio(ClimberConstants.kGearRatio));
@@ -123,7 +107,6 @@ public class Climber extends SubsystemBase {
     // For simulation
     // simulates the entire simulation, not just one arm
     if (Robot.isSimulation()) {
-
       simClimberGearbox = DCMotor.getKrakenX60(ClimberConstants.KClimberMotorsCount);
       climberSimNormal =
           new SingleJointedArmSim(
@@ -142,7 +125,7 @@ public class Climber extends SubsystemBase {
               simClimberGearbox,
               ClimberConstants.kGearRatio,
               Math.pow(ClimberConstants.kClimberArmLength.in(Meters), 2)
-                  * DrivetrainConstants.ROBOT_MASS_KG,
+                  * DrivetrainConstants.ROBOT_MASS.in(Kilograms),
               ClimberConstants.kClimberArmLength.in(Meters),
               ClimberConstants.kClimberArmMinAngle.in(Radians),
               ClimberConstants.kClimberArmMaxAngle.in(Radians),
@@ -172,7 +155,7 @@ public class Climber extends SubsystemBase {
                   climberTargetAngle.in(Degrees),
                   10,
                   new Color8Bit(255, 255, 0)));
-      SmartDashboard.putData("Climber/Climb Mech", climbMech);
+      SmartDashboard.putData("Mech2Ds/Climb Mech", climbMech);
     }
   }
 
@@ -231,7 +214,7 @@ public class Climber extends SubsystemBase {
               climberTargetAngle = position;
               climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
               climberMotorBack.setControl(new PositionVoltage(position).withSlot(slot));
-              SmartDashboard.putNumber("Climber/Climber Position Setpoint", position.in(Degrees));
+              Logger.recordOutput("Climber/Climber Position Setpoint", position.in(Degrees));
             }));
   }
 
@@ -279,24 +262,6 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public void toggleClimb() {
-    if (Robot.isSimulation()) {
-      toggleClimbingSim();
-    } else {
-      // Implement real robot behavior for toggling climb state
-      if (isClimbingStateSim) {
-        climberMotorFront.getConfigurator().apply(frontConfigs.withSlot0(climberConfigsToClimber));
-        climberMotorBack.getConfigurator().apply(backConfigs.withSlot0(climberConfigsToClimber));
-        isClimbingStateSim = false;
-      } else {
-        climberMotorFront.getConfigurator().apply(frontConfigs.withSlot1(climberConfigsAtClimber));
-        climberMotorBack.getConfigurator().apply(backConfigs.withSlot1(climberConfigsAtClimber));
-        isClimbingStateSim = true;
-      }
-      SmartDashboard.putBoolean("Climbing", isClimbingStateSim);
-    }
-  }
-
   private void toggleClimbingSim() {
     if (isClimbingStateSim) {
       climberSimNormal.setState(
@@ -307,24 +272,24 @@ public class Climber extends SubsystemBase {
           climberSimNormal.getAngleRads(), climberSimNormal.getVelocityRadPerSec());
       isClimbingStateSim = true;
     }
-    SmartDashboard.putBoolean("Climber/Climbing", isClimbingStateSim);
+    Logger.recordOutput("Climber/Climbing", isClimbingStateSim);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber(
-        "Climber/Motor Voltage Front", climberMotorFront.getMotorVoltage().getValue().in(Volts));
-    SmartDashboard.putNumber(
-        "Climber/Motor Voltage Back", climberMotorBack.getMotorVoltage().getValue().in(Volts));
-    SmartDashboard.putNumber(
-        "Climber/Climber Position Front", climberMotorFront.getPosition().getValue().in(Degrees));
-    SmartDashboard.putNumber(
-        "Climber/Climber Position Back", climberMotorBack.getPosition().getValue().in(Degrees));
-    SmartDashboard.putNumber(
-        "Climber/Absolute Encoder Front", Rotations.of(1 - climberFrontEncoder.get()).in(Degrees));
-    SmartDashboard.putNumber(
-        "Climber/Absolute Encoder Back", Rotations.of(climberBackEncoder.get()).in(Degrees));
+    Logger.recordOutput(
+        "Climber/Front/Motor Voltage", climberMotorFront.getMotorVoltage().getValue().in(Volts));
+    Logger.recordOutput(
+        "Climber/Front/Climber Position", climberMotorFront.getPosition().getValue().in(Degrees));
+    Logger.recordOutput(
+        "Climber/Front/Absolute Encoder", Rotations.of(1 - climberFrontEncoder.get()).in(Degrees));
+    Logger.recordOutput(
+        "Climber/Back/Motor Voltage", climberMotorBack.getMotorVoltage().getValue().in(Volts));
+    Logger.recordOutput(
+        "Climber/Back/Climber Position", climberMotorBack.getPosition().getValue().in(Degrees));
+    Logger.recordOutput(
+        "Climber/Back/Absolute Encoder", Rotations.of(climberBackEncoder.get()).in(Degrees));
   }
 
   @Override
@@ -347,16 +312,15 @@ public class Climber extends SubsystemBase {
             .plus(Degrees.of(180))
             .in(Degrees));
 
-    SmartDashboard.putNumber(
-        "Climber/Climber Angle", Radians.of(simulator.getAngleRads()).in(Degrees));
-    SmartDashboard.putBoolean("Climber/Climbing", isClimbingStateSim);
+    Logger.recordOutput("Climber/Climber Angle", Radians.of(simulator.getAngleRads()).in(Degrees));
+    Logger.recordOutput("Climber/Climbing", isClimbingStateSim);
     if (climberMotorFront.getPosition().getValue().gt(ClimberConstants.kClimberAtCageSetpoint)) {
       if (simulator == climberSimNormal) {
-        toggleClimb();
+        toggleClimbingSim();
       }
     } else {
       if (simulator == climberSimLifting) {
-        toggleClimb();
+        toggleClimbingSim();
       }
     }
   }

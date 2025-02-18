@@ -1,0 +1,30 @@
+{
+    "name": "HowdyBot",
+    "sourceUrl": "",
+    "disableSimplification": false,
+    "rotations": { "axis":"y", "degrees": 0},
+    "position": [0, 0, 0],
+    "cameras": [],
+    "components": [
+        {
+          "zeroedRotations": { "axis": "z", "degrees": 0},
+          "zeroedPosition": [0, 0, 0]
+        },
+        {
+          "zeroedRotations": { "axis": "z", "degrees": 0},
+          "zeroedPosition": [0, 0, 0]
+        },
+        {
+          "zeroedRotations": { "axis": "z", "degrees": 0},
+          "zeroedPosition": [0, 0, 0]
+        },
+        {
+          "zeroedRotations": { "axis": "z", "degrees": 0},
+          "zeroedPosition": [0, 0, 0]
+        },
+        {
+          "zeroedRotations": { "axis": "z", "degrees": 0},
+          "zeroedPosition": [0, 0, 0]
+        }
+      ]
+}
