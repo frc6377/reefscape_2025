@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -61,6 +62,11 @@ public class Elevator extends SubsystemBase {
   private DutyCycleEncoderSim simGear3;
   private DutyCycleEncoderSim simGear11;
   private final SysIdRoutine m_sysIdElevator;
+
+  private Distance tuneOffset = Inches.zero();
+  private Distance L2TuneOffset = Inches.zero();
+  private Distance L3TuneOffset = Inches.zero();
+  private Distance L4TuneOffset = Inches.zero();
 
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
@@ -122,7 +128,7 @@ public class Elevator extends SubsystemBase {
             new SysIdRoutine.Config(
                 Volts.of(0.5).div(Seconds.of(1)), // Use default ramp rate (1 V/s)
                 Volts.of(1), // Reduce dynamic step voltage to 4 to prevent brownout
-                Seconds.of(8), // Use default timeout (10 s)
+                Seconds.of(5), // Use default timeout (10 s)
                 (state) -> {
                   SignalLogger.writeString("Elevator/SysIdState", state.toString());
                   Logger.recordOutput("Elevator/SysID State", state.toString());
@@ -202,6 +208,31 @@ public class Elevator extends SubsystemBase {
     return Meters.of(elevatorMech.getLength());
   }
 
+  private void disableSoftLimits() {
+    elevatorMotor1
+        .getConfigurator()
+        .apply(
+            new SoftwareLimitSwitchConfigs()
+                .withForwardSoftLimitEnable(false)
+                .withReverseSoftLimitEnable(false));
+  }
+
+  private Distance getL2Setpoint() {
+    return ElevatorConstants.kL2Height.plus(tuneOffset).plus(L2TuneOffset);
+  }
+
+  private Distance getL3Setpoint() {
+    return ElevatorConstants.kL2Height.plus(tuneOffset).plus(L3TuneOffset);
+  }
+
+  private Distance getL4Setpoint() {
+    return ElevatorConstants.kL2Height.plus(tuneOffset).plus(L4TuneOffset);
+  }
+
+  private void enableSoftLimits() {
+    elevatorMotor1.getConfigurator().apply(elvSoftLimit);
+  }
+
   public Command elevatorUpOrDown(Supplier<Double> upPower) {
     return runEnd(
         () -> {
@@ -220,21 +251,13 @@ public class Elevator extends SubsystemBase {
         });
   }
 
-  private void disableSoftLimits() {
-    elevatorMotor1
-        .getConfigurator()
-        .apply(
-            new SoftwareLimitSwitchConfigs()
-                .withForwardSoftLimitEnable(false)
-                .withReverseSoftLimitEnable(false));
-  }
-
-  private void enableSoftLimits() {
-    elevatorMotor1.getConfigurator().apply(elvSoftLimit);
-  }
-
   public Command limitHit() {
-    return runOnce(this::disableSoftLimits)
+    return runOnce(
+            () -> {
+              disableSoftLimits();
+              Logger.recordOutput("Elevator/Setpoint (Inches)", 0);
+              Logger.recordOutput("Elevator/Setpoint Rotations", 0);
+            })
         .andThen(setElvPercent(-0.1).until(elvLimitSwitch::get))
         .andThen(zeroMotorEncoder())
         .andThen(runOnce(this::enableSoftLimits))
@@ -272,15 +295,26 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command L2() {
-    return changeElevation(ElevatorConstants.kL2Height);
+    return changeElevation(getL2Setpoint());
   }
 
   public Command L3() {
-    return changeElevation(ElevatorConstants.kL3Height);
+    return changeElevation(getL3Setpoint());
   }
 
   public Command L4() {
-    return changeElevation(ElevatorConstants.kL4Height);
+    return changeElevation(getL4Setpoint());
+  }
+
+  public Command tuneSetpoints(
+      Supplier<Double> offset, Supplier<Double> L2, Supplier<Double> L3, Supplier<Double> L4) {
+    return Commands.runOnce(
+        () -> {
+          tuneOffset = Inches.of(offset.get() * 10);
+          L2TuneOffset = Inches.of(L2.get() * 10);
+          L3TuneOffset = Inches.of(L3.get() * 10);
+          L4TuneOffset = Inches.of(L4.get() * 10);
+        });
   }
 
   @Override
@@ -295,7 +329,7 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput(
         "Elevator/Motor1/Velocity", elevatorMotor1.getVelocity().getValue().in(DegreesPerSecond));
     Logger.recordOutput(
-        "Elevator/Motor1/Rotation (Degrees)", elevatorMotor1.getPosition().getValue().in(Degrees));
+        "Elevator/Motor1/Position (Degrees)", elevatorMotor1.getPosition().getValue().in(Degrees));
     Logger.recordOutput(
         "Elevator/Motor1/Temp (Fahrenheit)",
         elevatorMotor1.getDeviceTemp().getValue().in(Fahrenheit));
@@ -310,7 +344,7 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput(
         "Elevator/Motor2/Velocity", elevatorMotor2.getVelocity().getValue().in(DegreesPerSecond));
     Logger.recordOutput(
-        "Elevator/Motor2/Rotation (Degrees)", elevatorMotor2.getPosition().getValue().in(Degrees));
+        "Elevator/Motor2/Position (Degrees)", elevatorMotor2.getPosition().getValue().in(Degrees));
     Logger.recordOutput(
         "Elevator/Motor2/Temp (Fahrenheit)",
         elevatorMotor2.getDeviceTemp().getValue().in(Fahrenheit));

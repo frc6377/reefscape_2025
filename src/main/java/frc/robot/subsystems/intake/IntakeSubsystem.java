@@ -36,6 +36,7 @@ import static frc.robot.Constants.SensorIDs.kSensor4ID;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -206,7 +207,11 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   protected void goToPivotPosition(Angle setpoint) {
-    pivotMotor.setControl(new MotionMagicExpoTorqueCurrentFOC(setpoint));
+    if (Robot.isSimulation()) {
+      pivotMotor.setControl(new MotionMagicExpoVoltage(setpoint));
+    } else {
+      pivotMotor.setControl(new MotionMagicExpoTorqueCurrentFOC(setpoint));
+    }
     pivotSetpoint = setpoint;
   }
 

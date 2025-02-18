@@ -15,12 +15,12 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -149,6 +149,14 @@ public class RobotContainer {
         break;
     }
 
+    // Register Named Commands
+    NamedCommands.registerCommand("ElvL0", elevator.L0());
+    NamedCommands.registerCommand("ElvL2", elevator.L2());
+    NamedCommands.registerCommand("ElvL3", elevator.L3());
+    NamedCommands.registerCommand("ElvL4", elevator.L4());
+    NamedCommands.registerCommand("Intake", intake.floorIntake());
+    NamedCommands.registerCommand("Score", coralScorer.scoreCommand());
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -187,8 +195,6 @@ public class RobotContainer {
         "Elevator SysID (Dynamic Forward)", elevator.sysIdDynamic(Direction.kForward));
     autoChooser.addOption(
         "Elevator SysID (Dynamic Reverse)", elevator.sysIdDynamic(Direction.kReverse));
-    autoChooser.addOption(
-        "Drive Velocity Test", DriveCommands.RunVelocity(drive, MetersPerSecond.of(2), 5));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -304,6 +310,17 @@ public class RobotContainer {
             .onFalse(drive.setPoseScored(Constants.kPoleLetters[i + 6], j));
       }
     }
+
+    // Button to update Setpoints of the elevator based on the Stream Deck nobs
+    OI.getButton(OI.StreamDeck.streamDeckButtons[1][0])
+        .onTrue(
+            elevator.tuneSetpoints(
+                OI.getAxisSupplier(OI.StreamDeck.Nob1),
+                OI.getAxisSupplier(OI.StreamDeck.Nob2),
+                OI.getAxisSupplier(OI.StreamDeck.Nob3),
+                OI.getAxisSupplier(OI.StreamDeck.Nob4)));
+
+    OI.getAxisSupplier(OI.StreamDeck.Nob1);
 
     // Temp Keyboard Buttons for sim with no controller
     if (usingKeyboard) {

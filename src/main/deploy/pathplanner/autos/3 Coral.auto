@@ -13,13 +13,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - F"
+            "pathName": "StartR - E"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL0"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "F - Source"
+            "pathName": "E - Source"
           }
         },
         {
@@ -32,6 +38,12 @@
           "type": "path",
           "data": {
             "pathName": "Score D"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL0"
           }
         },
         {
@@ -53,39 +65,9 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "C - Source"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score B"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "B - Source"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score E"
+            "name": "ElvL0"
           }
         }
       ]
