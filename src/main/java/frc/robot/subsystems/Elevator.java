@@ -13,6 +13,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.ChassisReference;
@@ -24,6 +25,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
@@ -120,9 +122,12 @@ public class Elevator extends SubsystemBase {
             new SysIdRoutine.Config(
                 Volts.of(0.5).div(Seconds.of(1)), // Use default ramp rate (1 V/s)
                 Volts.of(1), // Reduce dynamic step voltage to 4 to prevent brownout
-                Seconds.of(3), // Use default timeout (10 s)
-                (state) -> SignalLogger.writeString("Elevator/SysIdState", state.toString())),
-            new SysIdRoutine.Mechanism((volts) -> setElvCurrentFOC(volts.in(Volts)), null, this));
+                Seconds.of(8), // Use default timeout (10 s)
+                (state) -> {
+                  SignalLogger.writeString("Elevator/SysIdState", state.toString());
+                  Logger.recordOutput("Elevator/SysID State", state.toString());
+                }),
+            new SysIdRoutine.Mechanism((volts) -> setElvVoltage(volts), null, this));
 
     // Simulation
     if (Robot.isSimulation()) {
@@ -159,6 +164,10 @@ public class Elevator extends SubsystemBase {
 
   public void setElvCurrentFOC(double amps) {
     elevatorMotor1.setControl(new TorqueCurrentFOC(amps));
+  }
+
+  public void setElvVoltage(Voltage voltage) {
+    elevatorMotor1.setControl(new VoltageOut(voltage));
   }
 
   public static Distance rotationsToHeight(Angle rotations) {
@@ -282,6 +291,10 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput(
         "Elevator/Motor1/Voltage (Volts)", elevatorMotor1.getMotorVoltage().getValue().in(Volts));
     Logger.recordOutput(
+        "Elevator/Motor1/Torque Current", elevatorMotor1.getTorqueCurrent().getValue().in(Amps));
+    Logger.recordOutput(
+        "Elevator/Motor1/Velocity", elevatorMotor1.getVelocity().getValue().in(DegreesPerSecond));
+    Logger.recordOutput(
         "Elevator/Motor1/Rotation (Degrees)", elevatorMotor1.getPosition().getValue().in(Degrees));
     Logger.recordOutput(
         "Elevator/Motor1/Temp (Fahrenheit)",
@@ -292,6 +305,10 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Elevator/Motor2/Percent Out", elevatorMotor2.get());
     Logger.recordOutput(
         "Elevator/Motor2/Voltage (Volts)", elevatorMotor2.getMotorVoltage().getValue().in(Volts));
+    Logger.recordOutput(
+        "Elevator/Motor2/Torque Current", elevatorMotor2.getTorqueCurrent().getValue().in(Amps));
+    Logger.recordOutput(
+        "Elevator/Motor2/Velocity", elevatorMotor2.getVelocity().getValue().in(DegreesPerSecond));
     Logger.recordOutput(
         "Elevator/Motor2/Rotation (Degrees)", elevatorMotor2.getPosition().getValue().in(Degrees));
     Logger.recordOutput(
