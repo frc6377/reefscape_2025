@@ -1,7 +1,10 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
-import static frc.robot.Constants.SensorIDs.*;
+import static frc.robot.Constants.SensorIDs.kSensor2ID;
+import static frc.robot.Constants.SensorIDs.kSensor3ID;
+import static frc.robot.Constants.SensorIDs.kSensor4ID;
+import static frc.robot.Constants.SensorIDs.kSensor5ID;
 
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -18,6 +21,9 @@ public class Sensors {
       new TOFSensorSimple(kSensor3ID, Inches.of(2.5), TOFType.LASER_CAN);
   private TOFSensorSimple sensor4 =
       new TOFSensorSimple(kSensor4ID, Inches.of(2.5), TOFType.LASER_CAN);
+  private TOFSensorSimple sensor5 =
+      new TOFSensorSimple(
+          kSensor5ID, Inches.of(2.5), TOFType.LASER_CAN); // Parallel sensor for ball presence
 
   public CoralEnum simState = CoralEnum.NO_CORAL;
 
@@ -31,6 +37,8 @@ public class Sensors {
         return sensor3;
       case kSensor4ID:
         return sensor4;
+      case kSensor5ID:
+        return sensor5;
       default:
         return null;
     }
@@ -44,6 +52,8 @@ public class Sensors {
         return sensor3.getDistance();
       case kSensor4ID:
         return sensor4.getDistance();
+      case kSensor5ID:
+        return sensor5.getDistance();
       default:
         return Inches.zero();
     }
@@ -57,6 +67,8 @@ public class Sensors {
         return sensor3.getBeamBroke();
       case kSensor4ID:
         return sensor4.getBeamBroke();
+      case kSensor5ID:
+        return sensor5.getBeamBroke();
       default:
         return false;
     }
@@ -70,6 +82,8 @@ public class Sensors {
         return sensor3.getBeamBrokenTrigger();
       case kSensor4ID:
         return sensor4.getBeamBrokenTrigger();
+      case kSensor5ID:
+        return sensor5.getBeamBrokenTrigger();
       default:
         return new Trigger(null);
     }
@@ -79,6 +93,11 @@ public class Sensors {
   public CoralEnum getSensorState() {
     if (Robot.isSimulation()) {
       return simState;
+    }
+
+    // If parallel sensor (sensor5) doesn't detect anything, there's no coral
+    if (!sensor5.getBeamBroke()) {
+      return CoralEnum.NO_CORAL;
     }
 
     int state = sensor2.getBeamBroke() ? 1 : 0;
