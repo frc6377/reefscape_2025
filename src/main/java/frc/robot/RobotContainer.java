@@ -232,8 +232,8 @@ public class RobotContainer {
 
     OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
     OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
-    OI.getTrigger(OI.Operator.RBumper).onTrue(algeaScorer.goUp());
-    OI.getTrigger(OI.Operator.LBumper).onTrue(algeaScorer.goDown());
+    OI.getButton(OI.Operator.RBumper).whileTrue(algeaScorer.goUp());
+    OI.getButton(OI.Operator.LBumper).whileTrue(algeaScorer.goDown());
     OI.getTrigger(OI.Operator.A).onTrue(algeaScorer.stowAlgea());
     OI.getTrigger(OI.Operator.B).onTrue(algeaScorer.removeAlgea());
     OI.getButton(OI.Operator.Start).onTrue(climber.zero());

@@ -213,7 +213,7 @@ public final class Constants {
     public static final double kAlgeaP = 1.0;
     public static final double kAlgeaI = 0.0;
     public static final double kAlgeaD = 0.0;
-    public static final double kAlgeaPercent = .2;
+    public static final double kAlgeaPercent = .5;
     public static final int kAlegeaGearRatio = 80;
     public static final Angle algeaStowed = Degrees.of(0);
     public static final Angle algeaRemove = Degrees.of(90);

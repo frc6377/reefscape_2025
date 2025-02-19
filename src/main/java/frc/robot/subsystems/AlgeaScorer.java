@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.revrobotics.sim.SparkMaxSim;
@@ -81,6 +83,7 @@ public class AlgeaScorer extends SubsystemBase {
   public Command goUp() {
     return startEnd(
         () -> {
+          System.out.println("up");
           algeaMotor.set(AlgeaScorerConstants.kAlgeaPercent);
         },
         () -> algeaMotor.set(0));
@@ -89,6 +92,7 @@ public class AlgeaScorer extends SubsystemBase {
   public Command goDown() {
     return startEnd(
         () -> {
+          System.out.println("down");
           algeaMotor.set(-AlgeaScorerConstants.kAlgeaPercent);
         },
         () -> algeaMotor.set(0));
@@ -138,6 +142,10 @@ public class AlgeaScorer extends SubsystemBase {
     algeaSim.setInputVoltage(algeaMotor.getBusVoltage());
     algeaSim.update(Robot.defaultPeriodSecs);
     simAlgeaMotor.setBusVoltage(RobotController.getBatteryVoltage());
+    simAlgeaMotor.iterate(
+        RadiansPerSecond.of(algeaSim.getVelocityRadPerSec()).in(RPM),
+        RobotController.getBatteryVoltage(),
+        Robot.defaultPeriodSecs);
     simAngle = simAlgeaMotor.getPosition();
 
     algeaMech.setAngle(simAngle);
