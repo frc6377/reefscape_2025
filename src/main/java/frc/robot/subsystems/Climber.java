@@ -12,6 +12,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -62,6 +63,8 @@ public class Climber extends SubsystemBase {
   private Servo frontClimberServo;
   private Servo backClimberServo;
 
+  private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
+
   // for simulation
   private DCMotor simClimberGearbox;
   private SingleJointedArmSim climberSimNormal;
@@ -75,6 +78,10 @@ public class Climber extends SubsystemBase {
   private boolean isClimbingStateSim;
 
   public Climber() {
+    currentLimit.StatorCurrentLimit = 90;
+    currentLimit.SupplyCurrentLimit = 70;
+    currentLimit.StatorCurrentLimitEnable = true;
+    currentLimit.SupplyCurrentLimitEnable = true;
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
     climberFrontEncoder =
         new DutyCycleEncoder(DIOConstants.kClimberFrontEncoderID, 1, Degrees.of(20).in(Rotations));
@@ -91,6 +98,7 @@ public class Climber extends SubsystemBase {
     // Set the configs
     climberOutputConfigsFront = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
     climberOutputConfigsBack = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
+    
     frontConfigs =
         new TalonFXConfiguration()
             .withSlot0(climberConfigsToClimber)
@@ -105,6 +113,9 @@ public class Climber extends SubsystemBase {
             .withMotorOutput(
                 climberOutputConfigsBack.withInverted(ClimberConstants.kClimberBackInvert))
             .withFeedback(feedbackConfigs.withSensorToMechanismRatio(ClimberConstants.kGearRatio));
+
+    frontConfigs.CurrentLimits = currentLimit;
+    backConfigs.CurrentLimits = currentLimit;
     climberMotorFront.getConfigurator().apply(frontConfigs);
     climberMotorBack.getConfigurator().apply(backConfigs);
     climberMotorFront.setPosition(climberTargetAngle.in(Rotations));
@@ -115,6 +126,7 @@ public class Climber extends SubsystemBase {
     climberOrchestra.loadMusic("music/jeopardymusic.chrp");
     climberMotorFront.setPosition(ClimberConstants.kClimberAtCageSetpoint.in(Rotations));
     climberMotorBack.setPosition(ClimberConstants.kClimberAtCageSetpoint.in(Rotations));
+
     // For simulation
     // simulates the entire simulation, not just one arm
     if (Robot.isSimulation()) {
@@ -334,10 +346,10 @@ public class Climber extends SubsystemBase {
   }
 
   private Command emergencyUndo() {
-    return runOnce(() -> climberMotorFront.setPosition(ClimberConstants.kClimberEmergencyUndoAngle))
+    return runOnce(() -> runClimber(ClimberConstants.kClimberEmergencyUndoAngle, 0))
+        .until(isClimberAtPosition(ClimberConstants.kClimberEmergencyUndoAngle))
         .andThen(() -> disengageServo())
-        .andThen(() -> climberMotorBack.setPosition(ClimberConstants.kClimberEmergencyUndoAngle))
-        .andThen(() -> disengageServo());
+        .andThen(() -> climberMotorBack.setPosition(ClimberConstants.kClimberEmergencyUndoAngle));
   }
 
   @Override
