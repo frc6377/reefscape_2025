@@ -70,6 +70,10 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
     turnTalon = new TalonFX(constants.SteerMotorId, TunerConstants.DrivetrainConstants.CANBusName);
     cancoder = new CANcoder(constants.EncoderId, TunerConstants.DrivetrainConstants.CANBusName);
 
+    voltageRequest.EnableFOC = true;
+    positionVoltageRequest.EnableFOC = true;
+    velocityVoltageRequest.EnableFOC = true;
+
     // Configure drive motor
     var driveConfig = constants.DriveMotorInitialConfigs;
     driveConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;

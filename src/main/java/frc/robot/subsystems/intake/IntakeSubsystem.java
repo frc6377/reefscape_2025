@@ -35,8 +35,8 @@ import static frc.robot.Constants.SensorIDs.kSensor4ID;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -199,19 +199,21 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   protected void setConveyerMotor(double speed) {
-    conveyorMotor.set(speed);
+    DutyCycleOut dutyCycleOut = new DutyCycleOut(speed);
+    dutyCycleOut.EnableFOC = true;
+    conveyorMotor.setControl(dutyCycleOut);
   }
 
   protected void setIntakeMotor(double speed) {
-    intakeMotor.set(speed);
+    DutyCycleOut dutyCycleOut = new DutyCycleOut(speed);
+    dutyCycleOut.EnableFOC = true;
+    intakeMotor.setControl(dutyCycleOut);
   }
 
   protected void goToPivotPosition(Angle setpoint) {
-    if (Robot.isSimulation()) {
-      pivotMotor.setControl(new MotionMagicExpoVoltage(setpoint));
-    } else {
-      pivotMotor.setControl(new MotionMagicExpoTorqueCurrentFOC(setpoint));
-    }
+    MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(setpoint);
+    motionMagicVoltage.EnableFOC = true;
+    pivotMotor.setControl(motionMagicVoltage);
     pivotSetpoint = setpoint;
   }
 
@@ -267,7 +269,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(
         () -> {
           goToPivotPosition(kPivotExtendAngle);
-          intakeMotor.set(kIntakeSpeed);
+          setIntakeMotor(kIntakeSpeed);
         },
         () -> {});
   }
@@ -275,14 +277,14 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command floorOuttake() {
     return startEnd(() -> goToPivotPosition(kPivotExtendAngle), () -> {})
         .until(pivotAtSetpoint(kPivotExtendAngle))
-        .andThen(() -> intakeMotor.set(kOuttakeSpeed));
+        .andThen(() -> setIntakeMotor(kOuttakeSpeed));
   }
 
   public Command humanPlayerIntake() {
     return startEnd(
         () -> {
           goToPivotPosition(kcoralStation);
-          intakeMotor.set(kIntakeSpeed);
+          setIntakeMotor(kIntakeSpeed);
         },
         () -> {});
   }
@@ -291,7 +293,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(
         () -> {
           goToPivotPosition(kAlgae);
-          intakeMotor.set(-kIntakeSpeed);
+          setIntakeMotor(-kIntakeSpeed);
         },
         () -> {});
   }
@@ -309,7 +311,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(
         () -> {
           goToPivotPosition(kAlgae);
-          intakeMotor.set(kIntakeSpeed);
+          setIntakeMotor(kIntakeSpeed);
         },
         () -> {});
   }
@@ -317,7 +319,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command l1ScoreModeA() {
     return startEnd(() -> goToPivotPosition(kPivotL1Score), () -> {})
         .until(pivotAtSetpoint(kPivotL1Score))
-        .andThen(() -> intakeMotor.set(kOuttakeSpeed))
+        .andThen(() -> setIntakeMotor(kOuttakeSpeed))
         .finallyDo(() -> goToPivotPosition(kPivotRetractAngle));
   }
 
@@ -325,8 +327,8 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(
         () -> {
           goToPivotPosition(kPivotRetractAngle);
-          intakeMotor.set(kIntakeSpeed / 5);
-          conveyorMotor.set(-kConveyorSpeed);
+          setIntakeMotor(kIntakeSpeed / 5);
+          setConveyerMotor(-kConveyorSpeed);
         },
         () -> {});
   }

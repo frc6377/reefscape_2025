@@ -11,7 +11,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -139,7 +139,7 @@ public class Elevator extends SubsystemBase {
         new SysIdRoutine(
             new SysIdRoutine.Config(
                 Volts.of(1).div(Seconds.of(1)), // Use default ramp rate (1 V/s)
-                Volts.of(1), // Reduce dynamic step voltage to 4 to prevent brownout
+                Volts.of(20), // Reduce dynamic step voltage to 4 to prevent brownout
                 Seconds.of(10), // Use default timeout (10 s)
                 (state) -> {
                   SignalLogger.writeString("Elevator/SysIdState", state.toString());
@@ -176,8 +176,8 @@ public class Elevator extends SubsystemBase {
     elvSimPose2 = DrivetrainConstants.kElvStage2Pose;
     Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", elvSimPose1);
     Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", elvSimPose2);
-    Logger.recordOutput("Elevator/Setpoint", 0);
-    Logger.recordOutput("Elevator/Setpoint Rotations", 0);
+    Logger.recordOutput("Elevator/Setpoint", 0.0);
+    Logger.recordOutput("Elevator/Setpoint Rotations", 0.0);
   }
 
   public void setElvCurrentFOC(double amps) {
@@ -234,11 +234,11 @@ public class Elevator extends SubsystemBase {
   }
 
   private Distance getL3Setpoint() {
-    return ElevatorConstants.kL2Height.plus(tuneOffset).plus(L3TuneOffset);
+    return ElevatorConstants.kL3Height.plus(tuneOffset).plus(L3TuneOffset);
   }
 
   private Distance getL4Setpoint() {
-    return ElevatorConstants.kL2Height.plus(tuneOffset).plus(L4TuneOffset);
+    return ElevatorConstants.kL4Height.plus(tuneOffset).plus(L4TuneOffset);
   }
 
   private void enableSoftLimits() {
@@ -267,8 +267,6 @@ public class Elevator extends SubsystemBase {
     return runOnce(
             () -> {
               disableSoftLimits();
-              Logger.recordOutput("Elevator/Setpoint (Inches)", 0);
-              Logger.recordOutput("Elevator/Setpoint Rotations", 0);
             })
         .andThen(setElvPercent(-0.1).until(elvLimitSwitch::get))
         .andThen(zeroMotorEncoder())
@@ -293,18 +291,20 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command sysIdQuasistaticDown(SysIdRoutine.Direction direction) {
-    return m_sysIdElevator.quasistatic(direction);
+    return m_sysIdElevatorDown.quasistatic(direction);
   }
 
   public Command sysIdDynamicDown(SysIdRoutine.Direction direction) {
-    return m_sysIdElevator.dynamic(direction);
+    return m_sysIdElevatorDown.dynamic(direction);
   }
 
   public Command changeElevation(Distance heightLevel) {
     return runOnce(
         () -> {
           Angle adjustedSetpoint = heightToRotations(heightLevel);
-          elevatorMotor1.setControl(new MotionMagicExpoTorqueCurrentFOC(adjustedSetpoint));
+          MotionMagicVoltage control = new MotionMagicVoltage(adjustedSetpoint);
+          control.EnableFOC = true;
+          elevatorMotor1.setControl(control);
           Logger.recordOutput("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
           Logger.recordOutput("Elevator/Setpoint Rotations", adjustedSetpoint.in(Rotations));
         });

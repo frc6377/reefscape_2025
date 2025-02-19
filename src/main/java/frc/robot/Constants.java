@@ -206,10 +206,10 @@ public final class Constants {
     public static final HowdyPID kElevatorPID = new HowdyPID();
 
     static {
-      kElevatorPID.setKP(30);
-      kElevatorPID.setKI(0);
-      kElevatorPID.setKD(0);
-      kElevatorPID.setKS(4);
+      kElevatorPID.setKP(2);
+      kElevatorPID.setKI(0.04);
+      kElevatorPID.setKD(0.02);
+      kElevatorPID.setKS(0.45);
       kElevatorPID.setStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
     }
 
