@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+// import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.drive.*;
@@ -70,6 +71,7 @@ public class RobotContainer {
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
   private final IntakeSubsystem intake = new IntakeSubsystem(sensors);
+//   private final Climber climber = new Climber();
 
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
@@ -193,14 +195,20 @@ public class RobotContainer {
     //     .whileTrue(climber.runRaw(Volts.of(-3)));
     // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
     //     .onTrue(climber.toggleJeopardy());
-    // OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
-    // OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
-    // OI.getButton(OI.Operator.Start).onTrue(climber.zero());
   }
 
   private void configureButtonBindings() {
     // Temp Keyboard Buttons for sim
     if (usingKeyboard) {}
+
+    // Climber Buttons
+    // OI.getTrigger(OI.Operator.RTrigger)
+    //     .and(OI.getButton(OI.Operator.LBumper))
+    //     .whileTrue(climber.climb());
+    // OI.getTrigger(OI.Operator.LTrigger)
+    //     .and(OI.getButton(OI.Operator.LBumper))
+    //     .whileTrue(climber.retract());
+    // OI.getButton(OI.Operator.Start).onTrue(climber.zero());
 
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
