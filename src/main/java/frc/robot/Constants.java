@@ -152,6 +152,7 @@ public final class Constants {
     public static final Angle kcoralStation = Degrees.of(101);
     public static final Angle kl1 = Degrees.of(75.5);
     public static final Angle kalgae = Degrees.of(55);
+    public static final Angle kClimbingAngle = Degrees.of(75.5);
     public static final Angle kPivotTolerance = Degrees.of(5);
 
     public static final Current kHoldPower = Amps.of(40);
