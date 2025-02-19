@@ -14,7 +14,6 @@ import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -29,13 +28,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.AlgeaScorerConstants;
-import frc.robot.Constants.DIOConstants;
 import frc.robot.Robot;
 
 public class AlgeaScorer extends SubsystemBase {
   private SingleJointedArmSim algeaSim;
   private SparkMax algeaMotor;
-  private DutyCycleEncoder algeaEncoder;
   private SparkMaxSim simAlgeaMotor;
   private double simAngle;
 
@@ -53,8 +50,7 @@ public class AlgeaScorer extends SubsystemBase {
 
   public AlgeaScorer() {
     algeaMotor = new SparkMax(Constants.CANIDs.kAlgeaMotor, MotorType.kBrushless);
-    algeaEncoder =
-        new DutyCycleEncoder(DIOConstants.kAlgeaEncoderID, 1, AlgeaScorerConstants.algeaZero);
+    algeaMotor.getAlternateEncoder();
     algeaMotor.configure(
         new SparkMaxConfig().apply(algeaCfg),
         ResetMode.kNoResetSafeParameters,
