@@ -329,7 +329,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command floorOuttake() {
     return startEnd(() -> goToPivotPosition(kPivotExtendAngle), () -> {})
         .until(pivotAtSetpoint(kPivotExtendAngle))
-        .andThen(() -> intakeMotor.set(kOuttakeSpeed));
+        .andThen(() -> intakeMotor.set(kOuttakeSpeed), this);
   }
 
   public Command humanPlayerIntake() {
@@ -389,12 +389,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command Idle() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kPivotRetractAngle);
-          setIntakeMotor(0);
-          setConveyerMotor(0);
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kPivotRetractAngle);
+              setIntakeMotor(0);
+              setConveyerMotor(0);
+            },
+            () -> {})
+        .withName("Idle");
   }
 
   private boolean checkSimIntake(double expectedSpeed) {
