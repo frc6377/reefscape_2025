@@ -36,6 +36,7 @@ import static frc.robot.Constants.IntakeConstants.kl1;
 import static frc.robot.Constants.SensorIDs.kSensor2ID;
 import static frc.robot.Constants.SensorIDs.kSensor3ID;
 import static frc.robot.Constants.SensorIDs.kSensor4ID;
+import static frc.robot.Constants.SensorIDs.kSensor5ID;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -430,9 +431,10 @@ public class IntakeSubsystem extends SubsystemBase {
     // States
     Logger.recordOutput("Intake/States/Intake State", intakeState.toString());
     Logger.recordOutput("Intake/States/Coral State", coralState.toString());
+    Logger.recordOutput("Intake/States/Has Algae Ball", sensors.getSensorBool(kSensor5ID));
 
     // Log TOF Sensors
-    for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID}) {
+    for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID, kSensor5ID}) {
       Logger.recordOutput(
           "Intake/TOFSensors/" + i + " Dist (Inches)", sensors.getSensorDist(i).in(Inches));
       Logger.recordOutput("Intake/TOFSensors/" + i + " bool", sensors.getSensorBool(i));
