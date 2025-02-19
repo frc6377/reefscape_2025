@@ -112,6 +112,7 @@ public final class Constants {
     public static final Angle kClimberAtCageSetpoint2 = Degrees.of(10).plus(kClimberOffsetAngle);
     public static final Angle kClimberSensorTolerance = Degrees.of(2.5);
     public static final Angle kExpectedStartAngle = Degrees.of(90);
+    public static final Angle kClimberEmergencyUndoAngle = Degrees.of(-45);
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
 

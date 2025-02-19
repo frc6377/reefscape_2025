@@ -113,6 +113,8 @@ public class Climber extends SubsystemBase {
     climberOrchestra.addInstrument(climberMotorFront, 2);
     climberOrchestra.addInstrument(climberMotorBack, 6);
     climberOrchestra.loadMusic("music/jeopardymusic.chrp");
+    climberMotorFront.setPosition(ClimberConstants.kClimberAtCageSetpoint.in(Rotations));
+    climberMotorBack.setPosition(ClimberConstants.kClimberAtCageSetpoint.in(Rotations));
     // For simulation
     // simulates the entire simulation, not just one arm
     if (Robot.isSimulation()) {
@@ -329,6 +331,11 @@ public class Climber extends SubsystemBase {
       isClimbingStateSim = true;
     }
     Logger.recordOutput("Climber/Climbing", isClimbingStateSim);
+  }
+
+  private Command emergencyUndo() {
+    return runOnce(() -> climberMotorFront.setPosition(ClimberConstants.kClimberEmergencyUndoAngle))
+        .andThen(() -> climberMotorBack.setPosition(ClimberConstants.kClimberEmergencyUndoAngle));
   }
 
   @Override
