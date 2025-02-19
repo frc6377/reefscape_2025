@@ -20,7 +20,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.littletonrobotics.junction.Logger;
 
 @SuppressWarnings({"rawtypes"})
@@ -60,10 +59,6 @@ public class Module {
     int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together
     odometryPositions = new SwerveModulePosition[sampleCount];
     for (int i = 0; i < sampleCount; i++) {
-      if (i == 0) {
-        SmartDashboard.putNumber(
-            "Swerve Module 0 rotation (rads)", inputs.odometryDrivePositionsRad[i]);
-      }
       double positionMeters = inputs.odometryDrivePositionsRad[i] * constants.WheelRadius;
       Rotation2d angle = inputs.odometryTurnPositions[i];
       odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
