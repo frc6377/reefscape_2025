@@ -202,10 +202,10 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void seedEncoder() {
-    if(throughBoreEncoder.get() < 0.5) {
+    if (throughBoreEncoder.get() < 0.5) {
       pivotMotor.setPosition(throughBoreEncoder.get());
-    } else{
-    pivotMotor.setPosition(throughBoreEncoder.get() - 1);
+    } else {
+      pivotMotor.setPosition(throughBoreEncoder.get() - 1);
     }
   }
 
