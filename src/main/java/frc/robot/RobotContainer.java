@@ -35,7 +35,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.AlgeaScorer;
+import frc.robot.subsystems.AlgeaRemover;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
@@ -70,7 +70,7 @@ public class RobotContainer {
 
   // Subsystems
   private final Climber climber = new Climber();
-  private final AlgeaScorer algeaScorer = new AlgeaScorer();
+  private final AlgeaRemover algeaRemover = new AlgeaRemover();
   private final Drive drive;
   private final Vision vision;
   private final Elevator elevator = new Elevator();
@@ -232,10 +232,10 @@ public class RobotContainer {
 
     OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
     OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
-    OI.getButton(OI.Operator.RBumper).whileTrue(algeaScorer.goUp());
-    OI.getButton(OI.Operator.LBumper).whileTrue(algeaScorer.goDown());
-    OI.getTrigger(OI.Operator.A).onTrue(algeaScorer.stowAlgea());
-    OI.getTrigger(OI.Operator.B).onTrue(algeaScorer.removeAlgea());
+    OI.getTrigger(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
+    OI.getTrigger(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
+    OI.getTrigger(OI.Operator.A).onTrue(algeaRemover.stowAlgea());
+    OI.getTrigger(OI.Operator.B).onTrue(algeaRemover.removeAlgea());
     OI.getButton(OI.Operator.Start).onTrue(climber.zero());
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).whileTrue(intake.l1ScoreModeB());

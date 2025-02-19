@@ -29,10 +29,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.AlgeaScorerConstants;
+import frc.robot.Constants.AlgeaRemoverConstants;
 import frc.robot.Robot;
 
-public class AlgeaScorer extends SubsystemBase {
+public class AlgeaRemover extends SubsystemBase {
   private SingleJointedArmSim algeaSim;
   private SparkMax algeaMotor;
   private SparkMaxSim simAlgeaMotor;
@@ -46,37 +46,37 @@ public class AlgeaScorer extends SubsystemBase {
       new ClosedLoopConfig()
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
           .pid(
-              AlgeaScorerConstants.kAlgeaP,
-              AlgeaScorerConstants.kAlgeaI,
-              AlgeaScorerConstants.kAlgeaD);
+              AlgeaRemoverConstants.kAlgeaP,
+              AlgeaRemoverConstants.kAlgeaI,
+              AlgeaRemoverConstants.kAlgeaD);
 
-  public AlgeaScorer() {
+  public AlgeaRemover() {
     algeaMotor = new SparkMax(Constants.CANIDs.kAlgeaMotor, MotorType.kBrushless);
-    algeaMotor.getAlternateEncoder();
     algeaMotor.configure(
         new SparkMaxConfig().apply(algeaCfg),
         ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
     if (Robot.isSimulation()) {
-      simAlgeaMotor = new SparkMaxSim(algeaMotor, Constants.AlgeaScorerConstants.kAlgeaGearbox);
+      simAlgeaMotor = new SparkMaxSim(algeaMotor, AlgeaRemoverConstants.kAlgeaGearbox);
       algeaSim =
           new SingleJointedArmSim(
-              AlgeaScorerConstants.kAlgeaGearbox,
-              AlgeaScorerConstants.kAlegeaGearRatio,
-              30, // Update with real value
-              AlgeaScorerConstants.algeaArmLength.in(Meters),
-              0,
-              Math.PI * .75,
+              AlgeaRemoverConstants.kAlgeaGearbox,
+              AlgeaRemoverConstants.kAlegeaGearRatio,
+              SingleJointedArmSim.estimateMOI(
+                  AlgeaRemoverConstants.algeaArmLength.in(Meters), .5), // Update with real value
+              AlgeaRemoverConstants.algeaArmLength.in(Meters),
+              -Math.PI / 2,
+              Math.PI / 4,
               true,
-              0);
+              -Math.PI / 2);
       algeaMech =
-          mech.getRoot("root", 1, 0)
+          mech.getRoot("root", 1, 1)
               .append(
                   new MechanismLigament2d(
-                      "Algea Mech [0]", 1, 0, 10, new Color8Bit(Color.kDarkViolet)));
+                      "Algea Mech [0]", 1, -90, 10, new Color8Bit(Color.kDarkViolet)));
     }
     if (widget == null) {
-      widget = Shuffleboard.getTab(getName()).add("Algea Score", mech);
+      widget = Shuffleboard.getTab(getName()).add("Algea Remover", mech);
     }
   }
 
@@ -84,7 +84,7 @@ public class AlgeaScorer extends SubsystemBase {
     return startEnd(
         () -> {
           System.out.println("up");
-          algeaMotor.set(AlgeaScorerConstants.kAlgeaPercent);
+          algeaMotor.set(AlgeaRemoverConstants.kAlgeaPercent);
         },
         () -> algeaMotor.set(0));
   }
@@ -93,7 +93,7 @@ public class AlgeaScorer extends SubsystemBase {
     return startEnd(
         () -> {
           System.out.println("down");
-          algeaMotor.set(-AlgeaScorerConstants.kAlgeaPercent);
+          algeaMotor.set(-AlgeaRemoverConstants.kAlgeaPercent);
         },
         () -> algeaMotor.set(0));
   }
@@ -101,7 +101,7 @@ public class AlgeaScorer extends SubsystemBase {
   public Command zeroAlgeaEncoder() {
     return Commands.runOnce(
         () -> {
-          algeaMotor.getEncoder().setPosition(0);
+          algeaMotor.getAlternateEncoder().setPosition(0);
         });
   }
 
@@ -111,24 +111,24 @@ public class AlgeaScorer extends SubsystemBase {
           algeaMotor
               .getClosedLoopController()
               .setReference(
-                  angle.in(Rotations) * AlgeaScorerConstants.kAlegeaGearRatio,
+                  angle.in(Rotations) * AlgeaRemoverConstants.kAlegeaGearRatio,
                   ControlType.kPosition);
 
           SmartDashboard.putNumber(
               "Algea/Setpoint (Rotations)",
-              angle.in(Rotations) * AlgeaScorerConstants.kAlegeaGearRatio);
+              angle.in(Rotations) * AlgeaRemoverConstants.kAlegeaGearRatio);
           SmartDashboard.putNumber(
               "Algea/Setpoint (Degrees)",
-              angle.in(Degrees) * AlgeaScorerConstants.kAlegeaGearRatio);
+              angle.in(Degrees) * AlgeaRemoverConstants.kAlegeaGearRatio);
         });
   }
 
   public Command stowAlgea() {
-    return changeAngle(AlgeaScorerConstants.algeaStowed);
+    return changeAngle(AlgeaRemoverConstants.algeaStowed);
   }
 
   public Command removeAlgea() {
-    return changeAngle(AlgeaScorerConstants.algeaRemove);
+    return changeAngle(AlgeaRemoverConstants.algeaRemove);
   }
 
   @Override
@@ -143,7 +143,8 @@ public class AlgeaScorer extends SubsystemBase {
     algeaSim.update(Robot.defaultPeriodSecs);
     simAlgeaMotor.setBusVoltage(RobotController.getBatteryVoltage());
     simAlgeaMotor.iterate(
-        RadiansPerSecond.of(algeaSim.getVelocityRadPerSec()).in(RPM),
+        RadiansPerSecond.of(algeaSim.getVelocityRadPerSec()).in(RPM)
+            * AlgeaRemoverConstants.kAlegeaGearRatio,
         RobotController.getBatteryVoltage(),
         Robot.defaultPeriodSecs);
     simAngle = simAlgeaMotor.getPosition();

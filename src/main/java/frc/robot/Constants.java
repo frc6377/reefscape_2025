@@ -208,8 +208,8 @@ public final class Constants {
         RotationsPerSecondPerSecond.per(Second).of(MMAcc.in(RotationsPerSecondPerSecond)).times(10);
   }
 
-  // Algea scorer Constants
-  public static class AlgeaScorerConstants {
+  // Algea Remover Constants
+  public static class AlgeaRemoverConstants {
     public static final double kAlgeaP = 1.0;
     public static final double kAlgeaI = 0.0;
     public static final double kAlgeaD = 0.0;
