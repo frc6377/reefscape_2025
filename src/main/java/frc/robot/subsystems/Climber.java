@@ -335,7 +335,9 @@ public class Climber extends SubsystemBase {
 
   private Command emergencyUndo() {
     return runOnce(() -> climberMotorFront.setPosition(ClimberConstants.kClimberEmergencyUndoAngle))
-        .andThen(() -> climberMotorBack.setPosition(ClimberConstants.kClimberEmergencyUndoAngle));
+        .andThen(() -> disengageServo())
+        .andThen(() -> climberMotorBack.setPosition(ClimberConstants.kClimberEmergencyUndoAngle))
+        .andThen(() -> disengageServo());
   }
 
   @Override
