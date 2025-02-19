@@ -215,7 +215,7 @@ public class RobotContainer {
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
     intake
         .intakeHasUnalignedCoralTrigger()
-        .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> elevatorNotL1).asProxy());
+        .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> elevatorNotL1));
 
     intake
         .intakeHasCoralTrigger()
@@ -226,7 +226,8 @@ public class RobotContainer {
                 .until(
                     () ->
                         sensors.getSensorState() == CoralEnum.NO_CORAL
-                            || coralScorer.hasCoral().getAsBoolean()));
+                            || coralScorer.hasCoral().getAsBoolean())
+                .andThen(coralScorer.alignCommand()));
 
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
     OI.getButton(OI.Operator.Y)

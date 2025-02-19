@@ -70,6 +70,12 @@ public class CoralScorer extends SubsystemBase {
     return runOnce(() -> scorerMotor.stopMotor());
   }
 
+  public Command alignCommand() {
+    return intakeCommand()
+        .until(hasCoral().negate())
+        .andThen(reverseCommand().until(hasCoral()).withTimeout(2));
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
