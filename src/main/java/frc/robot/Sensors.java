@@ -1,16 +1,16 @@
 package frc.robot;
 
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-
 import static edu.wpi.first.units.Units.Inches;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.IntakeConstants.CoralEnum;
 import static frc.robot.Constants.SensorIDs.kSensor2ID;
 import static frc.robot.Constants.SensorIDs.kSensor3ID;
 import static frc.robot.Constants.SensorIDs.kSensor4ID;
 import static frc.robot.Constants.SensorIDs.kSensor5ID;
+
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.IntakeConstants.CoralEnum;
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 import utilities.TOFSensorSimple;
 import utilities.TOFSensorSimple.TOFType;
 
@@ -22,7 +22,8 @@ public class Sensors {
   private TOFSensorSimple sensor4 =
       new TOFSensorSimple(kSensor4ID, Inches.of(2.5), TOFType.LASER_CAN);
   private TOFSensorSimple sensor5 =
-      new TOFSensorSimple(kSensor5ID, Inches.of(2.5), TOFType.LASER_CAN); // Parallel sensor for ball presence
+      new TOFSensorSimple(
+          kSensor5ID, Inches.of(2.5), TOFType.LASER_CAN); // Parallel sensor for ball presence
 
   public CoralEnum simState = CoralEnum.NO_CORAL;
 
