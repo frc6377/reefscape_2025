@@ -63,6 +63,9 @@ public class Climber extends SubsystemBase {
   private Servo frontClimberServo;
   private Servo backClimberServo;
 
+  private boolean isFrontServoEngaged = false;
+  private boolean isBackServoEngaged = false;
+
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
 
   // for simulation
@@ -98,7 +101,7 @@ public class Climber extends SubsystemBase {
     // Set the configs
     climberOutputConfigsFront = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
     climberOutputConfigsBack = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
-    
+
     frontConfigs =
         new TalonFXConfiguration()
             .withSlot0(climberConfigsToClimber)
@@ -280,21 +283,17 @@ public class Climber extends SubsystemBase {
   // Not entirely confident in the implementation of engageServo and disengageServo
 
   public Command engageServo() {
-    return runEnd(
-        () -> {
-          setServoAngle(frontClimberServo, ClimberConstants.kServoEngageAngle);
-          setServoAngle(backClimberServo, ClimberConstants.kServoEngageAngle);
-        },
-        () -> {});
+    return runOnce(
+        () ->
+            setServoAngle(frontClimberServo, ClimberConstants.kServoEngageAngle)
+                .andThen(setServoAngle(backClimberServo, ClimberConstants.kServoEngageAngle)));
   }
 
   public Command disengageServo() {
-    return runEnd(
-        () -> {
-          setServoAngle(frontClimberServo, ClimberConstants.kServoDisengageAngle);
-          setServoAngle(backClimberServo, ClimberConstants.kServoDisengageAngle);
-        },
-        () -> {});
+    return runOnce(
+        () ->
+            setServoAngle(frontClimberServo, ClimberConstants.kServoDisengageAngle)
+                .andThen(setServoAngle(backClimberServo, ClimberConstants.kServoDisengageAngle)));
   }
 
   public Command retract() {
