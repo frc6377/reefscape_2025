@@ -71,13 +71,16 @@ public class RobotContainer {
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
   private final IntakeSubsystem intake = new IntakeSubsystem(sensors);
-//   private final Climber climber = new Climber();
+  //   private final Climber climber = new Climber();
 
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose;
+
+  // Trigger Variable
+  private final Trigger coralOuttakeButton = OI.getButton(OI.Driver.RBumper);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -223,10 +226,12 @@ public class RobotContainer {
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
     intake
         .intakeHasUnalignedCoralTrigger()
-        .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> elevatorNotL1).asProxy());
+        .and(coralOuttakeButton.negate())
+        .onTrue(new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton));
 
     intake
         .intakeHasCoralTrigger()
+        .and(coralOuttakeButton.negate())
         .onTrue(
             intake
                 .conveyerInCommand()
