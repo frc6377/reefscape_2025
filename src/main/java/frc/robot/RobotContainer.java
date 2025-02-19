@@ -231,6 +231,7 @@ public class RobotContainer {
 
     intake
         .intakeHasCoralTrigger()
+        .and(() -> elevatorNotL1)
         .and(coralOuttakeButton.negate())
         .onTrue(
             intake
@@ -241,7 +242,7 @@ public class RobotContainer {
                         sensors.getSensorState() == CoralEnum.NO_CORAL
                             || coralScorer.hasCoral().getAsBoolean()));
 
-    OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
+    coralOuttakeButton.whileTrue(intake.floorOuttake());
     OI.getButton(OI.Operator.Y)
         .onTrue(
             Commands.runOnce(
