@@ -17,6 +17,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import au.grapplerobotics.CanBridge;
 import com.ctre.phoenix6.SignalLogger;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -142,6 +143,7 @@ public class Robot extends LoggedRobot {
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
+      if (Robot.isSimulation()) robotContainer.givePreLoad();
       autonomousCommand.schedule();
       robotContainer.startAuto();
     }
@@ -149,7 +151,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    Logger.recordOutput("Odometry/Current Auto Path", PathPlannerAuto.currentPathName);
+  }
 
   /** This function is called once when teleop is enabled. */
   @Override

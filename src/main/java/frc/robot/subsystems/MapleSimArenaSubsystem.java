@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -78,14 +79,10 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
           },
         };
     Logger.recordOutput("FieldSimulation/Source Area", newPoses);
-
-    // Temp until we have real climb code
-    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", DrivetrainConstants.kClimber1Pose);
-    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", DrivetrainConstants.kClimber2Pose);
   }
 
-  public void setRobotHasCoral(boolean newRobotHasCoral) {
-    robotHasCoral = newRobotHasCoral;
+  public Pose3d getRobotCoralPose() {
+    return robotCoralPose;
   }
 
   public void updateRobotCoralPose(Distance elevatorHeight) {
@@ -117,6 +114,10 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     return robotHasCoral;
   }
 
+  public void setRobotHasCoral(boolean newRobotHasCoral) {
+    robotHasCoral = newRobotHasCoral;
+  }
+
   public Boolean isInArea(Pose2d[] area, Pose2d robotPose) {
     double x = robotPose.getX();
     double y = robotPose.getY();
@@ -127,6 +128,10 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     return minX <= x && x <= maxX && minY <= y && y <= maxY;
   }
 
+  public Distance getPoseDistance(Translation3d pose1, Translation3d pose2) {
+    return Meters.of(pose1.getDistance(pose2));
+  }
+
   public Pose3d getClosestScorePose() {
     Pose3d[] scorePoseList =
         DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Blue)
@@ -134,18 +139,20 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
             : SimulationConstants.kRedCoralScorePoses;
 
     Pose3d closestScorePose = null;
-    double closestDistance = SimulationConstants.kScoreDistance.in(Meters);
+    double closestDistance = Double.MAX_VALUE;
     for (Pose3d scorePose : scorePoseList) {
       double currentDistance =
           robotCoralPose.getTranslation().getDistance(scorePose.getTranslation());
-      if (currentDistance < SimulationConstants.kScoreDistance.in(Meters)
-          && currentDistance < closestDistance
+      if (currentDistance <= SimulationConstants.kScoreDistance.in(Meters)
+          && currentDistance <= closestDistance
           && !scoredCoralPoses.contains(scorePose)) {
         closestDistance = currentDistance;
         closestScorePose = scorePose;
       }
     }
 
+    Logger.recordOutput(
+        "FieldSimulation/Robot Coral Score Dist (Inches)", Meters.of(closestDistance).in(Inches));
     return closestScorePose;
   }
 
@@ -153,24 +160,32 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     return new Trigger(() -> closestScorePose != null);
   }
 
+  public void resetScoredPoses() {
+    scoredCoralPoses.clear();
+  }
+
   public Command scoreCoral() {
-    return Commands.runOnce(
-        () -> {
-          if (robotHasCoral) {
-            if (closestScorePose != null) {
-              scoredCoralPoses.add(closestScorePose);
-              robotHasCoral = false;
-            }
-          }
-        });
+    return Commands.run(
+            () -> {
+              if (getRobotHasCoral()) {
+                Pose3d closestScorePose = getClosestScorePose();
+                Logger.recordOutput("FieldSimulation/closetScorePose", closestScorePose);
+                if (closestScorePose != null) {
+                  scoredCoralPoses.add(closestScorePose);
+                  setRobotHasCoral(false);
+                }
+              }
+            })
+        .withName("scoreCoral");
   }
 
   public Command resetSimFeild() {
     return Commands.runOnce(
-        () -> {
-          SimulatedArena.getInstance().resetFieldForAuto();
-          scoredCoralPoses = new ArrayList<Pose3d>() {};
-        });
+            () -> {
+              resetScoredPoses();
+              SimulatedArena.getInstance().resetFieldForAuto();
+            })
+        .withName("resetSimFeild");
   }
 
   @Override
@@ -213,12 +228,18 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
     Logger.recordOutput(
         "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
-    Logger.recordOutput("FieldSimulation/Robot Game Piece Pose", robotCoralPose);
+    Logger.recordOutput("FieldSimulation/Robot Game Piece Pose", getRobotCoralPose());
+    Logger.recordOutput("FieldSimulation/Robot Has Coral", getRobotHasCoral());
+
     if (closestScorePose != null) {
       Logger.recordOutput(
           "FieldSimulation/Closest Score Pose", new Pose3d[] {robotCoralPose, closestScorePose});
     } else {
       Logger.recordOutput("FieldSimulation/Closest Score Pose", new Pose3d[] {new Pose3d()});
     }
+
+    Logger.recordOutput(
+        "FieldSimulation",
+        this.getCurrentCommand() == null ? "none" : this.getCurrentCommand().getName());
   }
 }

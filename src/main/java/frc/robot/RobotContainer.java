@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.FeildConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.OI.Driver;
@@ -64,7 +63,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 @SuppressWarnings("unused")
 public class RobotContainer {
   // Change the raw boolean to true to pick keyboard during simulation
-  private final boolean usingKeyboard = false && Robot.isSimulation();
+  private final boolean usingKeyboard = true && Robot.isSimulation();
 
   private EventLoop testEventLoop = new EventLoop();
 
@@ -150,12 +149,21 @@ public class RobotContainer {
     }
 
     // Register Named Commands
-    NamedCommands.registerCommand("ElvL0", elevator.L0());
-    NamedCommands.registerCommand("ElvL2", elevator.L2());
-    NamedCommands.registerCommand("ElvL3", elevator.L3());
-    NamedCommands.registerCommand("ElvL4", elevator.L4());
-    NamedCommands.registerCommand("Intake", intake.floorIntake());
-    NamedCommands.registerCommand("Score", coralScorer.scoreCommand());
+    NamedCommands.registerCommand(
+        "ElvL0", elevator.L0().until(elevator.elevatorAtSetpoint().debounce(0.5)));
+    NamedCommands.registerCommand(
+        "ElvL2", elevator.L2().until(elevator.elevatorAtSetpoint().debounce(0.5)));
+    NamedCommands.registerCommand(
+        "ElvL3", elevator.L3().until(elevator.elevatorAtSetpoint().debounce(0.5)));
+    NamedCommands.registerCommand(
+        "ElvL4", elevator.L4().until(elevator.elevatorAtSetpoint().debounce(0.5)));
+    NamedCommands.registerCommand(
+        "Intake",
+        elevator
+            .L0()
+            .until(elevator.elevatorAtSetpoint().debounce(0.5))
+            .andThen(intakeAutoCommand()));
+    NamedCommands.registerCommand("Score", scorerAutoCommand());
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -187,14 +195,6 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId Turning (Dynamic Reverse)",
         drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Elevator SysID (Quasistatic Forward)", elevator.sysIdQuasistatic(Direction.kForward));
-    autoChooser.addOption(
-        "Elevator SysID (Quasistatic Reverse)", elevator.sysIdQuasistaticDown(Direction.kReverse));
-    autoChooser.addOption(
-        "Elevator SysID (Dynamic Forward)", elevator.sysIdDynamic(Direction.kForward));
-    autoChooser.addOption(
-        "Elevator SysID (Dynamic Reverse)", elevator.sysIdDynamicDown(Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -232,6 +232,7 @@ public class RobotContainer {
     OI.getTrigger(OI.Driver.RTrigger).and(() -> !intakeAlgeaMode).whileTrue(intake.floorIntake());
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
+
     intake
         .intakeHasUnalignedCoralTrigger()
         .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> elevatorNotL1).asProxy());
@@ -239,13 +240,20 @@ public class RobotContainer {
     intake
         .intakeHasCoralTrigger()
         .onTrue(
-            intake
-                .conveyerInCommand()
-                .alongWith(coralScorer.intakeCommand())
-                .until(
-                    () ->
-                        sensors.getSensorState() == CoralEnum.NO_CORAL
-                            || coralScorer.hasCoral().getAsBoolean()));
+            Robot.isReal()
+                ? intake
+                    .conveyerInCommand()
+                    .alongWith(coralScorer.intakeCommand())
+                    .until(
+                        () ->
+                            sensors.getSensorState() == CoralEnum.NO_CORAL
+                                || coralScorer.hasCoral().getAsBoolean())
+                : Commands.runOnce(
+                    () -> {
+                      if (!mapleSimArenaSubsystem.getRobotHasCoral()
+                          && intake.intakeHasCoralTrigger().getAsBoolean())
+                        mapleSimArenaSubsystem.setRobotHasCoral(true);
+                    }));
 
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
     OI.getButton(OI.Operator.Y)
@@ -354,6 +362,28 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
+  public Command intakeAutoCommand() {
+    if (Robot.isSimulation()) {
+      return intake.floorIntake().onlyWhile(() -> !mapleSimArenaSubsystem.getRobotHasCoral());
+    } else {
+      return intake.floorIntake().until(intake.intakeHasCoralTrigger());
+    }
+  }
+
+  public Command scorerAutoCommand() {
+    if (Robot.isSimulation()) {
+      return Commands.runOnce(() -> intake.removePieceFromIntakeSim())
+          .andThen(mapleSimArenaSubsystem.scoreCoral())
+          .until(() -> !mapleSimArenaSubsystem.getRobotHasCoral());
+    } else {
+      return coralScorer.scoreCommand().until(coralScorer.hasCoral().negate());
+    }
+  }
+
+  public void givePreLoad() {
+    intake.addGamePieceToIntakeSim();
+  }
+
   public void startAuto() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
@@ -368,14 +398,11 @@ public class RobotContainer {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
     driveSimulation.setSimulationWorldPose(driveSimDefualtPose);
-    mapleSimArenaSubsystem.resetSimFeild();
+    mapleSimArenaSubsystem.resetSimFeild().initialize();
   }
 
   public void displaySimFieldToAdvantageScope() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
-
-    if (!mapleSimArenaSubsystem.getRobotHasCoral() && intake.GetPieceFromIntake())
-      mapleSimArenaSubsystem.setRobotHasCoral(true);
     mapleSimArenaSubsystem.updateRobotCoralPose(elevator.getElevatorHeight());
   }
 }

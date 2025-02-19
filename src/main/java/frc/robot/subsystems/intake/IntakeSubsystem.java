@@ -56,7 +56,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CANIDs;
@@ -221,6 +220,14 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotMotor.setPosition(throughBoreEncoder.get());
   }
 
+  public void removePieceFromIntakeSim() {
+    intakeSim.obtainGamePieceFromIntake();
+  }
+
+  public void addGamePieceToIntakeSim() {
+    intakeSim.addGamePieceToIntake();
+  }
+
   public Angle getPivotAngle() {
     if (Robot.isSimulation()) return Radians.of(pivotSim.getAngleRads());
     return pivotMotor.getPosition().getValue();
@@ -236,6 +243,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Trigger intakeHasCoralTrigger() {
+    if (Robot.isSimulation()) return new Trigger(() -> intakeSim.getGamePiecesAmount() > 0);
     return new Trigger(
         () -> sensors.getSensorState() != CoralEnum.NO_CORAL && atSetpoint(kPivotRetractAngle));
   }
@@ -243,104 +251,119 @@ public class IntakeSubsystem extends SubsystemBase {
   // Belt Commands
   public Command conveyerInCommand() {
     return runEnd(
-        () -> {
-          setConveyerMotor(-kConveyorSpeed);
-          setIntakeMotor(kIntakeHandoffSpeed);
-        },
-        () -> {
-          setConveyerMotor(0);
-          setIntakeMotor(0);
-        });
+            () -> {
+              setConveyerMotor(-kConveyorSpeed);
+              setIntakeMotor(kIntakeHandoffSpeed);
+            },
+            () -> {
+              setConveyerMotor(0);
+              setIntakeMotor(0);
+            })
+        .withName("conveyerInCommand");
   }
 
   public Command conveyerOutCommand() {
     return runEnd(
-        () -> {
-          setConveyerMotor(kConveyorSpeed);
-          setIntakeMotor(kIntakeHandoffSpeed);
-        },
-        () -> {
-          setConveyerMotor(0);
-          setIntakeMotor(0);
-        });
+            () -> {
+              setConveyerMotor(kConveyorSpeed);
+              setIntakeMotor(kIntakeHandoffSpeed);
+            },
+            () -> {
+              setConveyerMotor(0);
+              setIntakeMotor(0);
+            })
+        .withName("conveyerOutCommand");
   }
 
   public Command floorIntake() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kPivotExtendAngle);
-          setIntakeMotor(kIntakeSpeed);
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kPivotExtendAngle);
+              setIntakeMotor(kIntakeSpeed);
+              if (Robot.isSimulation()) intakeSim.startIntake();
+            },
+            () -> {
+              goToPivotPosition(kPivotRetractAngle);
+            })
+        .withName("floorIntake");
   }
 
   public Command floorOuttake() {
     return startEnd(() -> goToPivotPosition(kPivotExtendAngle), () -> {})
         .until(pivotAtSetpoint(kPivotExtendAngle))
-        .andThen(() -> setIntakeMotor(kOuttakeSpeed));
+        .andThen(() -> setIntakeMotor(kOuttakeSpeed))
+        .withName("floorOuttake");
   }
 
   public Command humanPlayerIntake() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kcoralStation);
-          setIntakeMotor(kIntakeSpeed);
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kcoralStation);
+              setIntakeMotor(kIntakeSpeed);
+            },
+            () -> {})
+        .withName("humanPlayerIntake");
   }
 
   public Command algaeIntake() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kAlgae);
-          setIntakeMotor(-kIntakeSpeed);
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kAlgae);
+              setIntakeMotor(-kIntakeSpeed);
+            },
+            () -> {})
+        .withName("algaeIntake");
   }
 
   public Command algaeHold() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kAlgae);
-          intakeMotor.setControl(new TorqueCurrentFOC(kHoldPower));
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kAlgae);
+              intakeMotor.setControl(new TorqueCurrentFOC(kHoldPower));
+            },
+            () -> {})
+        .withName("algeaHold");
   }
 
   public Command algaeOuttake() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kAlgae);
-          setIntakeMotor(kIntakeSpeed);
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kAlgae);
+              setIntakeMotor(kIntakeSpeed);
+            },
+            () -> {})
+        .withName("algaeOuttake");
   }
 
   public Command l1ScoreModeA() {
     return startEnd(() -> goToPivotPosition(kPivotL1Score), () -> {})
         .until(pivotAtSetpoint(kPivotL1Score))
         .andThen(() -> setIntakeMotor(kOuttakeSpeed))
-        .finallyDo(() -> goToPivotPosition(kPivotRetractAngle));
+        .finallyDo(() -> goToPivotPosition(kPivotRetractAngle))
+        .withName("L1ScoreModeA");
   }
 
   public Command l1ScoreModeB() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kPivotRetractAngle);
-          setIntakeMotor(kIntakeSpeed / 5);
-          setConveyerMotor(-kConveyorSpeed);
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kPivotRetractAngle);
+              setIntakeMotor(kIntakeSpeed / 5);
+              setConveyerMotor(-kConveyorSpeed);
+            },
+            () -> {})
+        .withName("L1ScoreModeB");
   }
 
   public Command Idle() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kPivotRetractAngle);
-          setIntakeMotor(0);
-          setConveyerMotor(0);
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kPivotRetractAngle);
+              setIntakeMotor(0);
+              setConveyerMotor(0);
+              if (Robot.isSimulation()) intakeSim.stopIntake();
+            },
+            () -> {})
+        .withName("IDLE");
   }
 
   private boolean checkSimIntake(double expectedSpeed) {
@@ -413,148 +436,148 @@ public class IntakeSubsystem extends SubsystemBase {
 
     coralState = sensors.getSensorState();
 
-    switch (intakeState) {
-      case IDLE:
-        sensors.setSimState(CoralEnum.NO_CORAL);
+    // switch (intakeState) {
+    //   case IDLE:
+    //     sensors.setSimState(CoralEnum.NO_CORAL);
 
-        if (atSetpoint(kPivotExtendAngle) && checkSimIntake(kIntakeSpeed)) {
-          t1.start();
-        } else {
-          t1.stop();
-        }
+    //     if (atSetpoint(kPivotExtendAngle) && checkSimIntake(kIntakeSpeed)) {
+    //       t1.start();
+    //     } else {
+    //       t1.stop();
+    //     }
 
-        if (t1.hasElapsed(0.5)) {
-          intakeState = IntakeState.FLOOR_INTAKE;
-          t1.stop();
-          t1.reset();
-        }
+    //     if (t1.hasElapsed(0.5)) {
+    //       intakeState = IntakeState.FLOOR_INTAKE;
+    //       t1.stop();
+    //       t1.reset();
+    //     }
 
-        if (atSetpoint(kcoralStation) && checkSimIntake(kIntakeSpeed)) {
-          t2.start();
-        } else {
-          t2.stop();
-        }
+    //     if (atSetpoint(kcoralStation) && checkSimIntake(kIntakeSpeed)) {
+    //       t2.start();
+    //     } else {
+    //       t2.stop();
+    //     }
 
-        if (t2.hasElapsed(0.5)) {
-          intakeState = IntakeState.HP_CORAL_INTAKE;
-          t2.stop();
-          t2.reset();
-        }
+    //     if (t2.hasElapsed(0.5)) {
+    //       intakeState = IntakeState.HP_CORAL_INTAKE;
+    //       t2.stop();
+    //       t2.reset();
+    //     }
 
-        if (atSetpoint(kAlgae) && checkSimIntake(-kIntakeSpeed)) {
-          t3.start();
-        } else {
-          t3.stop();
-        }
+    //     if (atSetpoint(kAlgae) && checkSimIntake(-kIntakeSpeed)) {
+    //       t3.start();
+    //     } else {
+    //       t3.stop();
+    //     }
 
-        if (t3.hasElapsed(0.5)) {
-          intakeState = IntakeState.ALGAE_INTAKE;
-          t3.stop();
-          t3.reset();
-        }
-        break;
-      case FLOOR_INTAKE:
-        if (Math.random() <= 0.33) {
-          sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
-        } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
-          sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
-        } else {
-          sensors.setSimState(CoralEnum.CORAL_ALIGNED);
-        }
-        intakeState = IntakeState.LOCATE_CORAL;
-        break;
-      case FLOOR_OUTTAKE:
-        break;
-      case HP_CORAL_INTAKE:
-        if (Math.random() <= 0.33) {
-          sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
-        } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
-          sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
-        } else {
-          sensors.setSimState(CoralEnum.CORAL_ALIGNED);
-        }
-        intakeState = IntakeState.LOCATE_CORAL;
-        break;
-      case ALGAE_INTAKE:
-        Commands.waitSeconds(0.5);
-        intakeState = IntakeState.ALGAE_HOLD;
-        break;
-      case ALGAE_HOLD:
-        Commands.waitSeconds(0.5);
-        intakeState = IntakeState.ALGAE_OUTTAKE;
-        break;
-      case ALGAE_OUTTAKE:
-        Commands.waitSeconds(0.5);
-        if (intakeMotor.get() > 0) {
-          intakeState = IntakeState.IDLE;
-        }
-        break;
-      case LOCATE_CORAL:
-        if (coralState == CoralEnum.CORAL_TOO_CLOSE) {
-          if (atSetpoint(kcoralStation) // coral station
-              && checkSimIntake(kIntakeSpeed)
-              && checkSimConveyor(kConveyorSpeed)) {
-            t4.start();
-          }
-        } else if (coralState == CoralEnum.CORAL_TOO_FAR) {
-          if (atSetpoint(kPivotRetractAngle)
-              && checkSimIntake(kIntakeSpeed)
-              && checkSimConveyor(-kConveyorSpeed)) {
-            t4.start();
-          }
-        } else if (coralState == CoralEnum.CORAL_ALIGNED) {
-          t4.start();
-        } else if (coralState == CoralEnum.NO_CORAL) {
-          t4.stop();
-          System.out.println("Compbot is haunted");
-        }
+    //     if (t3.hasElapsed(0.5)) {
+    //       intakeState = IntakeState.ALGAE_INTAKE;
+    //       t3.stop();
+    //       t3.reset();
+    //     }
+    //     break;
+    //   case FLOOR_INTAKE:
+    //     if (Math.random() <= 0.33) {
+    //       sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
+    //     } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
+    //       sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
+    //     } else {
+    //       sensors.setSimState(CoralEnum.CORAL_ALIGNED);
+    //     }
+    //     intakeState = IntakeState.LOCATE_CORAL;
+    //     break;
+    //   case FLOOR_OUTTAKE:
+    //     break;
+    //   case HP_CORAL_INTAKE:
+    //     if (Math.random() <= 0.33) {
+    //       sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
+    //     } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
+    //       sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
+    //     } else {
+    //       sensors.setSimState(CoralEnum.CORAL_ALIGNED);
+    //     }
+    //     intakeState = IntakeState.LOCATE_CORAL;
+    //     break;
+    //   case ALGAE_INTAKE:
+    //     Commands.waitSeconds(0.5);
+    //     intakeState = IntakeState.ALGAE_HOLD;
+    //     break;
+    //   case ALGAE_HOLD:
+    //     Commands.waitSeconds(0.5);
+    //     intakeState = IntakeState.ALGAE_OUTTAKE;
+    //     break;
+    //   case ALGAE_OUTTAKE:
+    //     Commands.waitSeconds(0.5);
+    //     if (intakeMotor.get() > 0) {
+    //       intakeState = IntakeState.IDLE;
+    //     }
+    //     break;
+    //   case LOCATE_CORAL:
+    //     if (coralState == CoralEnum.CORAL_TOO_CLOSE) {
+    //       if (atSetpoint(kcoralStation) // coral station
+    //           && checkSimIntake(kIntakeSpeed)
+    //           && checkSimConveyor(kConveyorSpeed)) {
+    //         t4.start();
+    //       }
+    //     } else if (coralState == CoralEnum.CORAL_TOO_FAR) {
+    //       if (atSetpoint(kPivotRetractAngle)
+    //           && checkSimIntake(kIntakeSpeed)
+    //           && checkSimConveyor(-kConveyorSpeed)) {
+    //         t4.start();
+    //       }
+    //     } else if (coralState == CoralEnum.CORAL_ALIGNED) {
+    //       t4.start();
+    //     } else if (coralState == CoralEnum.NO_CORAL) {
+    //       t4.stop();
+    //       System.out.println("Compbot is haunted");
+    //     }
 
-        if (t4.hasElapsed(1)) {
-          sensors.setSimState(CoralEnum.CORAL_ALIGNED);
-          intakeState = IntakeState.PASS_CORAL_TO_SCORER;
-          t4.stop();
-          t4.reset();
-        }
+    //     if (t4.hasElapsed(1)) {
+    //       sensors.setSimState(CoralEnum.CORAL_ALIGNED);
+    //       intakeState = IntakeState.PASS_CORAL_TO_SCORER;
+    //       t4.stop();
+    //       t4.reset();
+    //     }
 
-        if (atSetpoint(kPivotRetractAngle)
-            && checkSimIntake(0)
-            && checkSimConveyor(-kConveyorSpeed)) {
-          sensors.setSimState(CoralEnum.CORAL_ALIGNED);
-          intakeState = IntakeState.HOLD_CORAL;
-        }
-        break;
-      case HOLD_CORAL:
-        intakeState = IntakeState.PASS_CORAL_TO_SCORER;
-        break;
-      case PASS_CORAL_TO_SCORER:
-        if (elevatorNotL1) {
-          intakeState =
-              IntakeState.L1_SCORE; // FIXME: Change to elevator score state if we have one
-        } else {
-          intakeState = IntakeState.L1_SCORE;
-        }
-        break;
-      case L1_SCORE:
-        if (atSetpoint(kPivotRetractAngle)
-            && checkSimIntake(kIntakeSpeed)
-            && checkSimConveyor(-kConveyorSpeed)) {
-          t5.start();
-        } else {
-          t5.stop();
-        }
+    //     if (atSetpoint(kPivotRetractAngle)
+    //         && checkSimIntake(0)
+    //         && checkSimConveyor(-kConveyorSpeed)) {
+    //       sensors.setSimState(CoralEnum.CORAL_ALIGNED);
+    //       intakeState = IntakeState.HOLD_CORAL;
+    //     }
+    //     break;
+    //   case HOLD_CORAL:
+    //     intakeState = IntakeState.PASS_CORAL_TO_SCORER;
+    //     break;
+    //   case PASS_CORAL_TO_SCORER:
+    //     if (elevatorNotL1) {
+    //       intakeState =
+    //           IntakeState.L1_SCORE; // FIXME: Change to elevator score state if we have one
+    //     } else {
+    //       intakeState = IntakeState.L1_SCORE;
+    //     }
+    //     break;
+    //   case L1_SCORE:
+    //     if (atSetpoint(kPivotRetractAngle)
+    //         && checkSimIntake(kIntakeSpeed)
+    //         && checkSimConveyor(-kConveyorSpeed)) {
+    //       t5.start();
+    //     } else {
+    //       t5.stop();
+    //     }
 
-        if (t5.hasElapsed(0.5)) {
-          intakeState = IntakeState.IDLE;
-          sensors.setSimState(CoralEnum.NO_CORAL);
-          t5.stop();
-          t5.reset();
-        }
+    //     if (t5.hasElapsed(0.5)) {
+    //       intakeState = IntakeState.IDLE;
+    //       sensors.setSimState(CoralEnum.NO_CORAL);
+    //       t5.stop();
+    //       t5.reset();
+    //     }
 
-        break;
-      case L1_SCORE_MODE_A:
-        break;
-      case L1_SCORE_MODE_B:
-        break;
-    }
+    //     break;
+    //   case L1_SCORE_MODE_A:
+    //     break;
+    //   case L1_SCORE_MODE_B:
+    //     break;
+    // }
   }
 }

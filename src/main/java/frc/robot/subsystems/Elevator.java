@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
@@ -62,7 +63,6 @@ public class Elevator extends SubsystemBase {
   private DutyCycleEncoderSim simGear3;
   private DutyCycleEncoderSim simGear11;
   private final SysIdRoutine m_sysIdElevator;
-  private final SysIdRoutine m_sysIdElevatorDown;
 
   private Distance tuneOffset = Inches.zero();
   private Distance L2TuneOffset = Inches.zero();
@@ -85,10 +85,13 @@ public class Elevator extends SubsystemBase {
           .withReverseSoftLimitThreshold(
               heightToRotations(Constants.ElevatorConstants.kBottomLimit));
   public static final Slot0Configs loopCfg = kElevatorPID.getSlot0Configs();
-  private ElevatorSim m_elevatorSim;
 
   private Pose3d elvSimPose1;
   private Pose3d elvSimPose2;
+
+  private Distance currentSetpoint = Meter.zero();
+
+  private ElevatorSim m_elevatorSim;
 
   public Elevator() {
     // TODO: set up for canivore (Do we still need this? -Jackson)
@@ -135,17 +138,6 @@ public class Elevator extends SubsystemBase {
                   Logger.recordOutput("Elevator/SysID State", state.toString());
                 }),
             new SysIdRoutine.Mechanism((volts) -> setElvCurrentFOC(volts.in(Volts)), null, this));
-    m_sysIdElevatorDown =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                Volts.of(1).div(Seconds.of(1)), // Use default ramp rate (1 V/s)
-                Volts.of(20), // Reduce dynamic step voltage to 4 to prevent brownout
-                Seconds.of(10), // Use default timeout (10 s)
-                (state) -> {
-                  SignalLogger.writeString("Elevator/SysIdState", state.toString());
-                  Logger.recordOutput("Elevator/SysID State", state.toString());
-                }),
-            new SysIdRoutine.Mechanism((volts) -> setElvCurrentFOC(volts.in(Volts)), null, this));
 
     // Simulation
     if (Robot.isSimulation()) {
@@ -157,7 +149,7 @@ public class Elevator extends SubsystemBase {
       m_elevatorSim =
           new ElevatorSim(
               kElevatorGearbox,
-              kElevatorGearing * 2,
+              kElevatorGearing,
               kCarriageMass.in(Kilograms),
               kElevatorDrumRadius.in(Meters),
               kMinElevatorHeight.in(Meters),
@@ -218,6 +210,10 @@ public class Elevator extends SubsystemBase {
 
   public Distance getElevatorMechHeight() {
     return Meters.of(elevatorMech.getLength());
+  }
+
+  public Trigger elevatorAtSetpoint() {
+    return new Trigger(() -> getElevatorHeight().isNear(currentSetpoint, kSetpointTolerance));
   }
 
   private void disableSoftLimits() {
@@ -290,14 +286,6 @@ public class Elevator extends SubsystemBase {
     return m_sysIdElevator.dynamic(direction);
   }
 
-  public Command sysIdQuasistaticDown(SysIdRoutine.Direction direction) {
-    return m_sysIdElevatorDown.quasistatic(direction);
-  }
-
-  public Command sysIdDynamicDown(SysIdRoutine.Direction direction) {
-    return m_sysIdElevatorDown.dynamic(direction);
-  }
-
   public Command changeElevation(Distance heightLevel) {
     return runOnce(
         () -> {
@@ -305,8 +293,9 @@ public class Elevator extends SubsystemBase {
           MotionMagicVoltage control = new MotionMagicVoltage(adjustedSetpoint);
           control.EnableFOC = true;
           elevatorMotor1.setControl(control);
+          currentSetpoint = heightLevel;
           Logger.recordOutput("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
-          Logger.recordOutput("Elevator/Setpoint Rotations", adjustedSetpoint.in(Rotations));
+          Logger.recordOutput("Elevator/Setpoint (Rotations)", adjustedSetpoint.in(Rotations));
         });
   }
 
@@ -374,6 +363,12 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
     Logger.recordOutput("Elevator/CRT", ChineseRemander().in(Rotations));
     Logger.recordOutput("Elevator/limit switch state", elvLimitSwitch.get());
+
+    if (this.getCurrentCommand() != null) {
+      Logger.recordOutput("Elevator/Current Command", this.getCurrentCommand().getName());
+    } else {
+      Logger.recordOutput("Elevator/Current Command", "No Command");
+    }
 
     Distance elvHeight = getElevatorHeight();
     elvSimPose1 =

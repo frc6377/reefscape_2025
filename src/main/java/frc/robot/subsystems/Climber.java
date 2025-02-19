@@ -157,6 +157,10 @@ public class Climber extends SubsystemBase {
                   new Color8Bit(255, 255, 0)));
       SmartDashboard.putData("Mech2Ds/Climb Mech", climbMech);
     }
+
+    // Temp until we have real climb code
+    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", DrivetrainConstants.kClimber1Pose);
+    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", DrivetrainConstants.kClimber2Pose);
   }
 
   public Command playJeopardy() {

@@ -216,6 +216,8 @@ public final class Constants {
     public static final HowdyMM kElevatorMM =
         new HowdyMM(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(500));
 
+    public static final Distance kSetpointTolerance = Inches.of(1);
+
     // Mech Constants
     public static final Distance kElevatorDrumRadius = Inches.of(0.375);
     public static final Distance kElevatorDrumCircumference =
@@ -347,7 +349,7 @@ public final class Constants {
   }
 
   public final class SimulationConstants {
-    public static final Distance kScoreDistance = Inch.of(8.5);
+    public static final Distance kScoreDistance = Inch.of(15);
 
     public static final Pose2d[][] kSourceAreas =
         new Pose2d[][] {
