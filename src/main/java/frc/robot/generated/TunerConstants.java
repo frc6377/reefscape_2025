@@ -22,44 +22,44 @@ public class TunerConstants {
   // The steer motor uses any SwerveModule.SteerRequestType control request with the
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
   private static final Slot0Configs steerGains =
-      Robot.isReal()
-          ? new Slot0Configs()
-              .withKP(56.01025)
-              .withKD(7.183375)
-              .withKS(0.2372166667)
-              .withKV(2.601175)
-              .withKA(0.5710925)
-              .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
-          : new Slot0Configs()
-              .withKP(40.20925)
-              .withKD(3.593975)
-              .withKS(0.131719)
-              .withKV(2.73735)
-              .withKA(0.25078)
-              .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+      //   Robot.isReal()
+      //       ? new Slot0Configs()
+      //           .withKP(56.01025)
+      //           .withKD(7.183375)
+      //           .withKS(0.2372166667)
+      //           .withKV(2.601175)
+      //           .withKA(0.5710925)
+      //           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
+      new Slot0Configs()
+          .withKP(40.20925)
+          .withKD(3.593975)
+          .withKS(0.131719)
+          .withKV(2.73735)
+          .withKA(0.25078)
+          .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
   private static final Slot0Configs driveGains =
-      Robot.isReal()
-          ? new Slot0Configs()
-              .withKP(1.9509)
-              .withKS(1.443125)
-              .withKV(0.7279025)
-              .withKA(2.429225)
-              .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
-          : new Slot0Configs()
-              .withKP(0.9700425)
-              .withKS(0.2314325)
-              .withKV(0.7373975)
-              .withKA(0.048431)
-              .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+      //   Robot.isReal()
+      //       ? new Slot0Configs()
+      //           .withKP(1.9509)
+      //           .withKS(1.443125)
+      //           .withKV(0.7279025)
+      //           .withKA(2.429225)
+      //           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
+      new Slot0Configs()
+          .withKP(0.9700425)
+          .withKS(0.2314325)
+          .withKV(0.7373975)
+          .withKA(0.048431)
+          .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
   // The closed-loop output type to use for the steer motors;
   private static final ClosedLoopOutputType kSteerClosedLoopOutput =
-      Robot.isReal() ? ClosedLoopOutputType.TorqueCurrentFOC : ClosedLoopOutputType.Voltage;
+      Robot.isReal() ? ClosedLoopOutputType.Voltage : ClosedLoopOutputType.Voltage;
   // The closed-loop output type to use for the drive motors;
   private static final ClosedLoopOutputType kDriveClosedLoopOutput =
-      Robot.isReal() ? ClosedLoopOutputType.TorqueCurrentFOC : ClosedLoopOutputType.Voltage;
+      Robot.isReal() ? ClosedLoopOutputType.Voltage : ClosedLoopOutputType.Voltage;
 
   // The type of motor used for the drive motor
   private static final DriveMotorArrangement kDriveMotorType =

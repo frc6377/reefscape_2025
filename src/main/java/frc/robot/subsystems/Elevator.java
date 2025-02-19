@@ -62,6 +62,7 @@ public class Elevator extends SubsystemBase {
   private DutyCycleEncoderSim simGear3;
   private DutyCycleEncoderSim simGear11;
   private final SysIdRoutine m_sysIdElevator;
+  private final SysIdRoutine m_sysIdElevatorDown;
 
   private Distance tuneOffset = Inches.zero();
   private Distance L2TuneOffset = Inches.zero();
@@ -126,14 +127,25 @@ public class Elevator extends SubsystemBase {
     m_sysIdElevator =
         new SysIdRoutine(
             new SysIdRoutine.Config(
-                Volts.of(0.5).div(Seconds.of(1)), // Use default ramp rate (1 V/s)
-                Volts.of(1), // Reduce dynamic step voltage to 4 to prevent brownout
-                Seconds.of(5), // Use default timeout (10 s)
+                Volts.of(5).div(Seconds.of(1)), // Use default ramp rate (1 V/s)
+                Volts.of(40), // Reduce dynamic step voltage to 4 to prevent brownout
+                Seconds.of(10), // Use default timeout (10 s)
                 (state) -> {
                   SignalLogger.writeString("Elevator/SysIdState", state.toString());
                   Logger.recordOutput("Elevator/SysID State", state.toString());
                 }),
-            new SysIdRoutine.Mechanism((volts) -> setElvVoltage(volts), null, this));
+            new SysIdRoutine.Mechanism((volts) -> setElvCurrentFOC(volts.in(Volts)), null, this));
+    m_sysIdElevatorDown =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                Volts.of(1).div(Seconds.of(1)), // Use default ramp rate (1 V/s)
+                Volts.of(1), // Reduce dynamic step voltage to 4 to prevent brownout
+                Seconds.of(10), // Use default timeout (10 s)
+                (state) -> {
+                  SignalLogger.writeString("Elevator/SysIdState", state.toString());
+                  Logger.recordOutput("Elevator/SysID State", state.toString());
+                }),
+            new SysIdRoutine.Mechanism((volts) -> setElvCurrentFOC(volts.in(Volts)), null, this));
 
     // Simulation
     if (Robot.isSimulation()) {
@@ -277,6 +289,14 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdElevator.dynamic(direction);
+  }
+
+  public Command sysIdQuasistaticDown(SysIdRoutine.Direction direction) {
+    return m_sysIdElevator.quasistatic(direction);
+  }
+
+  public Command sysIdDynamicDown(SysIdRoutine.Direction direction) {
     return m_sysIdElevator.dynamic(direction);
   }
 
