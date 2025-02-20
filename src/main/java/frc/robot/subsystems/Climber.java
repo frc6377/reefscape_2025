@@ -283,26 +283,29 @@ public class Climber extends SubsystemBase {
   // Not entirely confident in the implementation of engageServo and disengageServo
 
   public Command engageServo() {
-    return runOnce(
-        () ->
-            setServoAngle(frontClimberServo, ClimberConstants.kServoEngageAngle)
-                .andThen(setServoAngle(backClimberServo, ClimberConstants.kServoEngageAngle)));
+    return runEnd(
+        () -> {
+          setServoAngle(frontClimberServo, ClimberConstants.kServoEngageAngle.in(Rotations));
+          setServoAngle(backClimberServo, ClimberConstants.kServoEngageAngle.in(Rotations));
+        },
+        () -> {});
   }
 
   public Command disengageServo() {
-    return runOnce(
-        () ->
-            setServoAngle(frontClimberServo, ClimberConstants.kServoDisengageAngle)
-                .andThen(setServoAngle(backClimberServo, ClimberConstants.kServoDisengageAngle)));
+    return runEnd(
+        () -> {
+          setServoAngle(frontClimberServo, ClimberConstants.kServoEngageAngle.in(Rotations));
+          setServoAngle(backClimberServo, ClimberConstants.kServoEngageAngle.in(Rotations));
+        },
+        () -> {});
   }
 
   public Command retract() {
-    return runOnce(() -> disengageServo())
+    return runClimber(ClimberConstants.kClimberEmergencyUndoAngle, 0)
+        .until(isClimberAtPosition(ClimberConstants.kClimberEmergencyUndoAngle))
+        .andThen(disengageServo())
         .andThen(Commands.waitSeconds(1))
-        .andThen(runClimber(ClimberConstants.kClimberRetractedSetpoint, 0))
-        .andThen(
-            Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberRetractedSetpoint)))
-        .andThen(runOnce(() -> engageServo()));
+        .andThen(runClimber(ClimberConstants.kClimberRetractedSetpoint, 0));
   }
 
   private SingleJointedArmSim getSimulator() {
@@ -344,8 +347,11 @@ public class Climber extends SubsystemBase {
     Logger.recordOutput("Climber/Climbing", isClimbingStateSim);
   }
 
+  /*
+   * Keeping this here for reference
+   */
   private Command emergencyUndo() {
-    return runOnce(() -> runClimber(ClimberConstants.kClimberEmergencyUndoAngle, 0))
+    return runClimber(ClimberConstants.kClimberEmergencyUndoAngle, 0)
         .until(isClimberAtPosition(ClimberConstants.kClimberEmergencyUndoAngle))
         .andThen(() -> disengageServo())
         .andThen(() -> climberMotorBack.setPosition(ClimberConstants.kClimberEmergencyUndoAngle));

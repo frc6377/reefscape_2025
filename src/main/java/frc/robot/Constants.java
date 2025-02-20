@@ -1,6 +1,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
@@ -112,7 +113,8 @@ public final class Constants {
     public static final Angle kClimberAtCageSetpoint2 = Degrees.of(10).plus(kClimberOffsetAngle);
     public static final Angle kClimberSensorTolerance = Degrees.of(2.5);
     public static final Angle kExpectedStartAngle = Degrees.of(90);
-    public static final Angle kClimberEmergencyUndoAngle = Degrees.of(-45);
+    public static final Angle kClimberEmergencyUndoAngle =
+        Degrees.of(-45).plus(kClimberOffsetAngle);
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
 
@@ -123,8 +125,8 @@ public final class Constants {
     public static final Angle kClimberArmMinAngle = Degrees.of(-30).plus(kClimberOffsetAngle);
     public static final Angle kClimberArmMaxAngle = Degrees.of(250).plus(kClimberOffsetAngle);
 
-    public static final double kServoEngageAngle = 200;
-    public static final double kServoDisengageAngle = 90;
+    public static final Angle kServoEngageAngle = Degrees.of(200);
+    public static final Angle kServoDisengageAngle = Degree.of(90);
   }
 
   // Scorer Constants
