@@ -7,19 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - E"
+            "pathName": "StartR - F"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "E - Source"
+            "pathName": "F - Source"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "Score D"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         },
         {
@@ -35,6 +47,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "C - Source"
@@ -43,13 +61,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score D"
+            "pathName": "Score B"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "D - Source"
+            "pathName": "B - Source"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score E"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL0"
           }
         }
       ]
