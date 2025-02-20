@@ -81,8 +81,8 @@ public class Climber extends SubsystemBase {
   private boolean isClimbingStateSim;
 
   public Climber() {
-    currentLimit.StatorCurrentLimit = 90;
-    currentLimit.SupplyCurrentLimit = 70;
+    currentLimit.StatorCurrentLimit = 5.0;
+    currentLimit.SupplyCurrentLimit = 5.0;
     currentLimit.StatorCurrentLimitEnable = true;
     currentLimit.SupplyCurrentLimitEnable = true;
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
@@ -261,6 +261,8 @@ public class Climber extends SubsystemBase {
   }
 
   public Command climb() {
+    currentLimit.SupplyCurrentLimit = 30;
+    currentLimit.StatorCurrentLimit = 30;
     return Commands.sequence(
         runClimber(ClimberConstants.kClimberAtCageSetpoint, 0),
         Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberAtCageSetpoint)),
