@@ -162,8 +162,8 @@ public class IntakeSubsystem extends SubsystemBase {
               kGearing,
               kMOI.in(KilogramSquareMeters),
               kLength.in(Meters),
-              kPivotExtendAngle.minus(Degrees.of(90)).in(Radians),
-              kPivotRetractAngle.plus(Degrees.of(90)).in(Radians),
+              kPivotExtendAngle.minus(Degrees.of(150)).in(Radians),
+              kPivotRetractAngle.plus(Degrees.of(150)).in(Radians),
               false,
               kPivotRetractAngle.in(Radians));
       pivotArmMech =
@@ -405,13 +405,14 @@ public class IntakeSubsystem extends SubsystemBase {
     Logger.recordOutput("Intake/States/Coral State", coralState.toString());
 
     // Pose 3D of Intake
+    Angle currentAngle = getPivotAngle().times(-1);
+    Angle constantAngle = DrivetrainConstants.kIntakeStartPose.getRotation().getMeasureY();
+    Angle combinedAngle = currentAngle.plus(constantAngle);
     Logger.recordOutput(
         "Odometry/Mech Poses/Intake Pose",
         new Pose3d(
             DrivetrainConstants.kIntakeStartPose.getTranslation(),
-            DrivetrainConstants.kIntakeStartPose
-                .getRotation()
-                .plus(new Rotation3d(0, -getPivotAngle().in(Radians), 0))));
+            new Rotation3d(0, combinedAngle.in(Radians), 0)));
 
     // Log TOF Sensors
     for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID}) {

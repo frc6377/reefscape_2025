@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.360303832517342,
-        "y": 1.116308343612883
+        "x": 1.2752523136941343,
+        "y": 1.028930868157006
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.6772554818133285,
-        "y": 4.536182783084992
+        "x": 3.592203962990121,
+        "y": 4.448805307629115
       },
       "isLocked": false,
       "linkedName": "Right Coral Station Mid"
@@ -50,7 +50,7 @@
     },
     {
       "name": "ElvL4",
-      "waypointRelativePos": 0.75,
+      "waypointRelativePos": 0.30748288977723287,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
