@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
@@ -24,6 +25,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Servo;
@@ -82,9 +84,7 @@ public class Climber extends SubsystemBase {
 
   public Climber() {
     currentLimit.StatorCurrentLimit = 5.0;
-    currentLimit.SupplyCurrentLimit = 5.0;
     currentLimit.StatorCurrentLimitEnable = true;
-    currentLimit.SupplyCurrentLimitEnable = true;
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
     climberFrontEncoder =
         new DutyCycleEncoder(DIOConstants.kClimberFrontEncoderID, 1, Degrees.of(20).in(Rotations));
@@ -258,17 +258,13 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public Command setCurrentLimit() {
-    return runOnce(
-        () -> {
-          climberMotorFront.getConfigurator().apply(currentLimit);
-          climberMotorBack.getConfigurator().apply(currentLimit);
-        });
+  public void setCurrentLimit(Current current) {
+      climberMotorFront.getConfigurator().apply(currentLimit.withStatorCurrentLimit(current));
+      climberMotorBack.getConfigurator().apply(currentLimit.withStatorCurrentLimit(current));
   }
 
   public Command climb() {
     return Commands.sequence(
-        setCurrentLimit(),
         runClimber(ClimberConstants.kClimberAtCageSetpoint, 0),
         Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberAtCageSetpoint)),
         runClimber(ClimberConstants.kClimberExtendedSetpoint, 1));
@@ -292,21 +288,23 @@ public class Climber extends SubsystemBase {
   public Command engageServo() {
     return runOnce(
         () -> {
-          setServoAngle(frontClimberServo, ClimberConstants.kServoEngageAngle.in(Rotations));
-          setServoAngle(backClimberServo, ClimberConstants.kServoEngageAngle.in(Rotations));
+          setServoAngle(frontClimberServo, ClimberConstants.kFrontServoEngageAngle.in(Rotations));
+          setServoAngle(backClimberServo, ClimberConstants.kFrontServoEngageAngle.in(Rotations));
           isFrontServoEngaged = true;
           isBackServoEngaged = true;
+          setCurrentLimit(Amps.of(70));
         });
-  }
-
-  public Command disengageServo() {
-    return runOnce(
+      }
+      
+    public Command disengageServo() {
+      return runOnce(
         () -> {
-          setServoAngle(frontClimberServo, ClimberConstants.kServoDisengageAngle.in(Rotations));
-          setServoAngle(backClimberServo, ClimberConstants.kServoDisengageAngle.in(Rotations));
+          setServoAngle(frontClimberServo, ClimberConstants.kFrontServoDisengageAngle.in(Rotations));
+          setServoAngle(backClimberServo, ClimberConstants.kFrontServoDisengageAngle.in(Rotations));
           isFrontServoEngaged = false;
           isBackServoEngaged = false;
-        });
+          setCurrentLimit(Amps.of(5));
+      });
   }
 
   public Command retract() {
