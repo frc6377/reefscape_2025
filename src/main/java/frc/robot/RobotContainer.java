@@ -86,8 +86,13 @@ public class RobotContainer {
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose = new Pose2d(2, 2, new Rotation2d());
 
-  // Trigger Variable
+  // Trigger Variables
   private final Trigger coralOuttakeButton = OI.getButton(OI.Driver.RBumper);
+  private final Trigger coralHandoffCompleteTrigger =
+      new Trigger(
+          () ->
+              sensors.getSensorState() == CoralEnum.NO_CORAL
+                  || coralScorer.hasCoral().getAsBoolean());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -166,14 +171,14 @@ public class RobotContainer {
             elevator.L0(),
             waitForElevator(),
             intakeAutoCommand(),
-            Commands.waitUntil(coralHandoffCompleteTrigger())));
+            Commands.waitUntil(coralHandoffCompleteTrigger)));
     NamedCommands.registerCommand(
         "Intake Floor",
         new SequentialCommandGroup(
             elevator.L0(),
             waitForElevator(),
             intakeFloorAutoCommand(),
-            Commands.waitUntil(coralHandoffCompleteTrigger())));
+            Commands.waitUntil(coralHandoffCompleteTrigger)));
     NamedCommands.registerCommand("Score", scorerAutoCommand());
 
     // Set up auto routines
@@ -275,7 +280,7 @@ public class RobotContainer {
         .and(coralOuttakeButton.negate())
         .onTrue(
             Robot.isReal()
-                ? intake.conveyerInCommand().until(coralHandoffCompleteTrigger())
+                ? intake.conveyerInCommand().until(coralHandoffCompleteTrigger)
                 : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
 
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
@@ -390,13 +395,6 @@ public class RobotContainer {
       // Scorer
       OI.getButton(OI.Keyboard.Period).whileTrue(coralScorer.scoreCommand());
     }
-  }
-
-  public Trigger coralHandoffCompleteTrigger() {
-    return new Trigger(
-        () ->
-            sensors.getSensorState() == CoralEnum.NO_CORAL
-                || coralScorer.hasCoral().getAsBoolean());
   }
 
   /**
