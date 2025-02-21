@@ -11,7 +11,7 @@ import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
@@ -128,8 +128,11 @@ public final class Constants {
 
   // Scorer Constants
   public static class CoralScorerConstants {
-    public static final Current kScoreAMPs = Amps.of(1.5);
-    public static final Current kIntakeAMPs = Amps.of(1);
+    public static final double kIntakeSpeed = -0.4;
+    public static final double kScoreSpeed = -0.5;
+
+    public static final Current kScoreAMPs = Amps.of(-20);
+    public static final Current kIntakeAMPs = Amps.of(-20);
 
     public static final HowdyPID CoralScorerPID = new HowdyPID();
 
@@ -198,7 +201,7 @@ public final class Constants {
 
   // Elevator Constants
   public static class ElevatorConstants {
-    public static final Distance kL0Height = Inches.of(0);
+    public static final Distance kL0Height = Inches.of(0.5);
     public static final Distance kL2Height = Inches.of(16.62);
     public static final Distance kL3Height = Inches.of(30.9);
     public static final Distance kL4Height = Inches.of(55);
@@ -258,7 +261,21 @@ public final class Constants {
     public static final double WHEEL_COF = 1.2;
 
     public static final PathConstraints PATH_CONSTRAINTS =
-        new PathConstraints(4.4, 4.4, Degrees.of(630).in(Radians), Degrees.of(630).in(Radians));
+        new PathConstraints(
+            4.3,
+            4.3,
+            DegreesPerSecond.of(630).in(RadiansPerSecond),
+            DegreesPerSecond.of(630).in(RadiansPerSecond));
+
+    // Constants from DriveCommands
+    public static final double ANGLE_KP = 5;
+    public static final double ANGLE_KD = 0.01;
+    public static final double ANGLE_MAX_VELOCITY = 8.0;
+    public static final double ANGLE_MAX_ACCELERATION = 20.0;
+    public static final double FF_START_DELAY = 2.0; // Secs
+    public static final double FF_RAMP_RATE = 0.1; // Volts/Sec
+    public static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
+    public static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
     // Scoring Poses for PathFinder
     public static final HashMap<String, Pose2d> SCORE_POSES =
@@ -349,7 +366,7 @@ public final class Constants {
   }
 
   public final class SimulationConstants {
-    public static final Distance kScoreDistance = Inch.of(15);
+    public static final Distance kScoreDistance = Inch.of(13);
 
     public static final Pose2d[][] kSourceAreas =
         new Pose2d[][] {

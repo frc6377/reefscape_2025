@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
+import frc.robot.Constants.CoralScorerConstants;
 import org.littletonrobotics.junction.Logger;
 import utilities.TOFSensorSimple;
 import utilities.TOFSensorSimple.TOFType;
@@ -34,11 +35,14 @@ public class CoralScorer extends SubsystemBase {
   public CoralScorer() {
     scorerMotor = new TalonFX(CANIDs.kScorerMotor, Constants.RIOName);
     scoreMotorConfig = new TalonFXConfiguration();
+    scoreMotorConfig.Slot0 = CoralScorerConstants.CoralScorerPID.getSlot0Configs();
     scoreMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     scoreMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    scoreMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+    scoreMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
     scorerMotor.getConfigurator().apply(scoreMotorConfig);
 
-    TOFSensor = new TOFSensorSimple(kScorerSensorID, Inches.of(2.5), TOFType.LASER_CAN);
+    TOFSensor = new TOFSensorSimple(kScorerSensorID, Inches.of(1.5), TOFType.LASER_CAN);
   }
 
   public Trigger hasCoral() {
@@ -49,22 +53,26 @@ public class CoralScorer extends SubsystemBase {
     scorerMotor.stopMotor();
   }
 
+  public void setScoreMotor(double percent) {
+    scorerMotor.set(percent);
+  }
+
   public void setMotorCurrent(Current current) {
     scorerMotor.setControl(torqueCurrentFOC.withOutput(current));
   }
 
   // Made a command to spin clockwise
   public Command scoreCommand() {
-    return startEnd(() -> setMotorCurrent(kScoreAMPs), () -> stopMotor());
+    return startEnd(() -> setScoreMotor(kScoreSpeed), () -> stopMotor());
   }
 
   public Command intakeCommand() {
-    return startEnd(() -> setMotorCurrent(kIntakeAMPs), () -> stopMotor());
+    return startEnd(() -> setScoreMotor(CoralScorerConstants.kIntakeSpeed), () -> stopMotor());
   }
 
   // Made a command to spin counter clockwise
   public Command reverseCommand() {
-    return startEnd(() -> setMotorCurrent(kIntakeAMPs.times(-1)), () -> stopMotor());
+    return startEnd(() -> setScoreMotor(-kScoreSpeed), () -> stopMotor());
   }
 
   public Command stopCommand() {

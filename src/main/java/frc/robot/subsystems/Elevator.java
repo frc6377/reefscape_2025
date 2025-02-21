@@ -364,6 +364,10 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Elevator/CRT", ChineseRemander().in(Rotations));
     Logger.recordOutput("Elevator/limit switch state", elvLimitSwitch.get());
 
+    Logger.recordOutput("Elevator/Setpoints/L2", getL2Setpoint());
+    Logger.recordOutput("Elevator/Setpoints/L3", getL3Setpoint());
+    Logger.recordOutput("Elevator/Setpoints/L4", getL4Setpoint());
+
     if (this.getCurrentCommand() != null) {
       Logger.recordOutput("Elevator/Current Command", this.getCurrentCommand().getName());
     } else {

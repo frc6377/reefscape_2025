@@ -15,6 +15,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
@@ -48,7 +49,6 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import java.util.Set;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -195,6 +195,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId Turning (Dynamic Reverse)",
         drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive Velocity Test", DriveCommands.RunVelocity(drive, MetersPerSecond.of(2), 5));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -293,15 +295,19 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> OI.getAxisSupplier(OI.Driver.LeftY).get(),
-            () -> OI.getAxisSupplier(OI.Driver.LeftX).get(),
-            () ->
-                OI.getButton(Driver.RSB).getAsBoolean()
-                    ? 0.0
-                    : OI.getAxisSupplier(OI.Driver.RightX).get()));
+            OI.getAxisSupplier(OI.Driver.LeftY),
+            OI.getAxisSupplier(OI.Driver.LeftX),
+            OI.getButton(Driver.RSB).getAsBoolean()
+                ? () -> 0.0
+                : OI.getAxisSupplier(OI.Driver.RightX)));
     OI.getButton(OI.Driver.Back).onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
     OI.getButton(OI.Driver.RSB)
-        .whileTrue(DriveCommands.GoToPose(() -> drive.getClosestScorePose(), Set.of(drive)));
+        .whileTrue(
+            DriveCommands.AlignToReef(
+                drive,
+                OI.getAxisSupplier(Driver.LeftY),
+                OI.getAxisSupplier(Driver.LeftX),
+                drive.getAlignRotation()));
 
     /* This is for creating the button mappings for logging what coral have been scored
      * The Driverstation has a hard limit of 32 buttons so we use 2 different vjoy controllers
@@ -320,15 +326,13 @@ public class RobotContainer {
     }
 
     // Button to update Setpoints of the elevator based on the Stream Deck nobs
-    OI.getButton(OI.StreamDeck.streamDeckButtons[1][0])
+    OI.getButton(OI.StreamDeck.streamDeckButtons[1][16])
         .onTrue(
             elevator.tuneSetpoints(
                 OI.getAxisSupplier(OI.StreamDeck.Nob1),
                 OI.getAxisSupplier(OI.StreamDeck.Nob2),
                 OI.getAxisSupplier(OI.StreamDeck.Nob3),
                 OI.getAxisSupplier(OI.StreamDeck.Nob4)));
-
-    OI.getAxisSupplier(OI.StreamDeck.Nob1);
 
     // Temp Keyboard Buttons for sim with no controller
     if (usingKeyboard) {
@@ -339,7 +343,15 @@ public class RobotContainer {
               () -> OI.getAxisSupplier(OI.Keyboard.AD).get(),
               () -> OI.getAxisSupplier(OI.Keyboard.WS).get(),
               () -> OI.getAxisSupplier(OI.Keyboard.ArrowLR).get()));
+      OI.getButton(OI.Keyboard.M)
+          .whileTrue(
+              DriveCommands.AlignToReef(
+                  drive,
+                  OI.getAxisSupplier(OI.Keyboard.AD),
+                  OI.getAxisSupplier(OI.Keyboard.WS),
+                  drive.getAlignRotation()));
 
+      // Intake
       OI.getButton(OI.Keyboard.ForwardSlash).whileTrue(intake.floorIntake());
 
       // Elevator Buttons
@@ -399,6 +411,7 @@ public class RobotContainer {
 
     driveSimulation.setSimulationWorldPose(driveSimDefualtPose);
     mapleSimArenaSubsystem.resetSimFeild().initialize();
+    intake.resetSim();
   }
 
   public void displaySimFieldToAdvantageScope() {

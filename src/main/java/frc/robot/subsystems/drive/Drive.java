@@ -60,6 +60,7 @@ import frc.robot.util.LocalADStarAK;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
@@ -180,7 +181,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                 Volts.of(0.25).per(Second),
                 null,
                 null,
-                (state) -> SignalLogger.writeString("SwerveDrive/state", state.toString())),
+                (state) -> {
+                  SignalLogger.writeString("SwerveDrive/state", state.toString());
+                  Logger.recordOutput("Odometry/SysID Mode/Drive SysID", state.toString());
+                }),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
     sysIdTurning =
@@ -189,7 +193,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                 null,
                 null,
                 null,
-                (state) -> SignalLogger.writeString("SwerveTurn/state", state.toString())),
+                (state) -> {
+                  SignalLogger.writeString("SwerveTurn/state", state.toString());
+                  Logger.recordOutput("Odometry/SysID Mode/Turn SysID", state.toString());
+                }),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterizationTurning(voltage.in(Volts)), null, this));
 
@@ -426,7 +433,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     }
   }
 
-  @AutoLogOutput(key = "Odometry/Closest Score Pose")
+  public Supplier<Rotation2d> getAlignRotation() {
+    return () -> getClosestScorePose().getRotation();
+  }
+
   public Pose2d getClosestScorePose() {
     Pose2d closest_pose = new Pose2d();
     double closest_pose_dist = Double.MAX_VALUE;
@@ -441,19 +451,18 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         closest_pose = currentPose;
       }
     }
+    Logger.recordOutput("Odometry/Closest Score Pose", closest_pose);
     return closest_pose;
   }
 
-  @AutoLogOutput(key = "Odometry/Closest Source Pose")
   public Pose2d getClosestSoursePose() {
     double dist1 = getPose().getTranslation().getDistance(SOURSE_POSES[0].getTranslation());
     double dist2 = getPose().getTranslation().getDistance(SOURSE_POSES[1].getTranslation());
 
-    if (dist1 < dist2) {
-      return SOURSE_POSES[0];
-    } else {
-      return SOURSE_POSES[1];
-    }
+    Pose2d closestSource = dist1 < dist2 ? SOURSE_POSES[0] : SOURSE_POSES[1];
+
+    Logger.recordOutput("Odometry/Closest Source Pose", closestSource);
+    return closestSource;
   }
 
   /** Returns the current odometry rotation. */

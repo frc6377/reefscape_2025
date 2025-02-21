@@ -69,6 +69,7 @@ import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 
+@SuppressWarnings("unused")
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
   private TalonFX intakeMotor;
@@ -226,6 +227,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void addGamePieceToIntakeSim() {
     intakeSim.addGamePieceToIntake();
+  }
+
+  public void resetSim() {
+    pivotSim.setState(kPivotRetractAngle.in(Radians), RadiansPerSecond.zero().in(RadiansPerSecond));
   }
 
   public Angle getPivotAngle() {
@@ -436,6 +441,9 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotArmMech.setAngle(Radians.of(pivotSim.getAngleRads()).in(Degrees));
 
     coralState = sensors.getSensorState();
+
+    Logger.recordOutput(
+        "Intake/Pivot/Sim/Pivot Sim Angle", Radians.of(pivotSim.getAngleRads()).in(Degrees));
 
     // switch (intakeState) {
     //   case IDLE:
