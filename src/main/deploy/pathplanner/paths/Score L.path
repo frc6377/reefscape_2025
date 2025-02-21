@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2268810618367783,
-        "y": 7.0454388591046735
+        "x": 1.2456343910549479,
+        "y": 7.074343420759858
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8467875072326598,
-        "y": 6.570563805337066
+        "x": 1.9783819939585792,
+        "y": 6.409365073420492
       },
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 3.6840874124088416,
-        "y": 5.078344762105488
+        "x": 3.6673596680524114,
+        "y": 5.062078274140935
       },
       "prevControl": {
-        "x": 2.834470150283039,
-        "y": 5.761142912606942
+        "x": 3.0207584826565865,
+        "y": 5.723564370999957
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,24 +31,47 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    },
+    {
+      "name": "ElvL4",
+      "waypointRelativePos": 0.75,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ElvL4"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxVelocity": 4.4,
+    "maxAcceleration": 6.25,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 2979.381,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": 29.999999999999996
   },
   "reversed": false,
   "folder": "Source - Score",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -54.0
+    "rotation": 126.0
   },
   "useDefaultConstraints": true
 }
