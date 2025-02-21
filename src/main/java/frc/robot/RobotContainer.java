@@ -81,6 +81,9 @@ public class RobotContainer {
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose;
 
+  // Trigger Variable
+  private final Trigger coralOuttakeButton = OI.getButton(OI.Driver.RBumper);
+
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -214,6 +217,15 @@ public class RobotContainer {
     // Temp Keyboard Buttons for sim
     if (usingKeyboard) {}
 
+    // Climber Buttons
+    // OI.getTrigger(OI.Operator.RTrigger)
+    //     .and(OI.getButton(OI.Operator.LBumper))
+    //     .whileTrue(climber.climb());
+    // OI.getTrigger(OI.Operator.LTrigger)
+    //     .and(OI.getButton(OI.Operator.LBumper))
+    //     .whileTrue(climber.retract());
+    // OI.getButton(OI.Operator.Start).onTrue(climber.zero());
+
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
     OI.getPOVButton(OI.Driver.DPAD_LEFT).onTrue(elevator.L2());
@@ -227,10 +239,12 @@ public class RobotContainer {
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
     intake
         .intakeHasUnalignedCoralTrigger()
-        .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> elevatorNotL1).asProxy());
+        .and(coralOuttakeButton.negate())
+        .onTrue(new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton));
 
     intake
         .intakeHasCoralTrigger()
+        .and(coralOuttakeButton.negate())
         .onTrue(
             intake
                 .conveyerInCommand()
