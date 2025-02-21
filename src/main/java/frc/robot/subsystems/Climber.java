@@ -200,6 +200,19 @@ public class Climber extends SubsystemBase {
         });
   }
 
+  public void seedEncoder() {
+    if (climberFrontEncoder.get() < 0.5) {
+      climberMotorFront.setPosition(climberFrontEncoder.get());
+    } else {
+      climberMotorFront.setPosition(climberFrontEncoder.get() - 1);
+    }
+    if (climberBackEncoder.get() < 0.5) {
+      climberMotorBack.setPosition(climberBackEncoder.get());
+    } else {
+      climberMotorBack.setPosition(climberBackEncoder.get() - 1);
+    }
+  }
+
   public Command runRaw(Voltage voltage) {
     return startEnd(
         () -> {
