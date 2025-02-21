@@ -280,7 +280,10 @@ public class RobotContainer {
         .and(coralOuttakeButton.negate())
         .onTrue(
             Robot.isReal()
-                ? intake.conveyerInCommand().until(coralHandoffCompleteTrigger)
+                ? intake
+                    .conveyerInCommand()
+                    .alongWith(coralScorer.intakeCommand())
+                    .until(coralHandoffCompleteTrigger)
                 : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
 
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
