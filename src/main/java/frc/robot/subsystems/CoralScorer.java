@@ -38,8 +38,6 @@ public class CoralScorer extends SubsystemBase {
     scoreMotorConfig.Slot0 = CoralScorerConstants.CoralScorerPID.getSlot0Configs();
     scoreMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     scoreMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
-    scoreMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-    scoreMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
     scorerMotor.getConfigurator().apply(scoreMotorConfig);
 
     TOFSensor = new TOFSensorSimple(kScorerSensorID, Inches.of(1.5), TOFType.LASER_CAN);

@@ -21,16 +21,16 @@ public class LocateCoral extends Command {
 
   private Supplier<CoralEnum> state;
   private IntakeSubsystem intakeSubsystem;
-  private BooleanSupplier elevatorNotL1; // TODO: Repurpose
+  private BooleanSupplier override_button;
 
   /** Creates a new LocateCoral. */
   public LocateCoral(
-      Supplier<CoralEnum> state, IntakeSubsystem subsystem, BooleanSupplier elevatorNotL1) {
+      Supplier<CoralEnum> state, IntakeSubsystem subsystem, BooleanSupplier override_button) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
     this.state = state;
     this.intakeSubsystem = subsystem;
-    this.elevatorNotL1 = elevatorNotL1;
+    this.override_button = override_button;
   }
 
   // Called when the command is initially scheduled.
@@ -76,8 +76,9 @@ public class LocateCoral extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (state.get() == CoralEnum.NO_CORAL || state.get() == CoralEnum.CORAL_ALIGNED)
-        && intakeSubsystem.atSetpoint(kPivotRetractAngle);
+    return ((state.get() == CoralEnum.NO_CORAL || state.get() == CoralEnum.CORAL_ALIGNED)
+            && intakeSubsystem.atSetpoint(kPivotRetractAngle))
+        || override_button.getAsBoolean();
   }
 
   @Override

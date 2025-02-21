@@ -37,6 +37,7 @@ import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+// import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
@@ -75,12 +76,16 @@ public class RobotContainer {
   private final CoralScorer coralScorer = new CoralScorer();
   private static final Sensors sensors = new Sensors();
   private final IntakeSubsystem intake;
+  //   private final Climber climber = new Climber();
 
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose = new Pose2d(2, 2, new Rotation2d());
+
+  // Trigger Variable
+  private final Trigger coralOuttakeButton = OI.getButton(OI.Driver.RBumper);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -214,6 +219,16 @@ public class RobotContainer {
   private void configureTestButtonBindsing() {
     testTrig(OI.getPOVButton(OI.Driver.DPAD_UP))
         .whileTrue(elevator.setElvPercent(OI.getAxisSupplier(OI.Driver.RightY).get()));
+    // testTrig(OI.getPOVButton(OI.Driver.DPAD_RIGHT)).whileTrue(intake.intakeCommand());
+    // testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
+    // testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
+    // testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
+    //     .whileTrue(climber.runRaw(Volts.of(3)));
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
+    //     .whileTrue(climber.runRaw(Volts.of(-3)));
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
+    //     .onTrue(climber.toggleJeopardy());
   }
 
   private void configureButtonBindings() {
@@ -222,6 +237,15 @@ public class RobotContainer {
             () -> {
               SignalLogger.stop();
             }));
+
+    // Climber Buttons
+    // OI.getTrigger(OI.Operator.RTrigger)
+    //     .and(OI.getButton(OI.Operator.LBumper))
+    //     .whileTrue(climber.climb());
+    // OI.getTrigger(OI.Operator.LTrigger)
+    //     .and(OI.getButton(OI.Operator.LBumper))
+    //     .whileTrue(climber.retract());
+    // OI.getButton(OI.Operator.Start).onTrue(climber.zero());
 
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
