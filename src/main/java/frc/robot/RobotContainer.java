@@ -24,6 +24,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -32,7 +33,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-// import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.AlgeaRemover;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.drive.*;
@@ -63,9 +65,10 @@ public class RobotContainer {
   // Change the raw boolean to true to pick keyboard during simulation
   private final boolean usingKeyboard = false && Robot.isSimulation();
 
-  private static final Sensors sensors = new Sensors();
-
   // Subsystems
+  private final Climber climber = new Climber();
+  private final AlgeaRemover algeaRemover = new AlgeaRemover();
+  private static final Sensors sensors = new Sensors();
   private final Drive drive;
   private final Vision vision;
   private final Elevator elevator = new Elevator();
@@ -256,6 +259,25 @@ public class RobotContainer {
                   intakeAlgeaMode = !intakeAlgeaMode;
                   Logger.recordOutput("Intake/Algea Mode", intakeAlgeaMode);
                 }));
+    intake.setDefaultCommand(intake.Idle());
+
+    OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
+    OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
+    OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
+    OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
+    OI.getButton(OI.Operator.A).onTrue(algeaRemover.stowAlgea());
+    OI.getButton(OI.Operator.B).onTrue(algeaRemover.removeAlgea());
+    OI.getButton(OI.Operator.Start).onTrue(climber.zero());
+    OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
+    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).whileTrue(intake.l1ScoreModeB());
+    OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
+    OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
+    OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
+    SmartDashboard.putData(elevator.limitHit());
+
+    // Intake Buttons
+    // OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.floorIntake());
+    // OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
 
     OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
     intake.setDefaultCommand(intake.Idle());

@@ -1,19 +1,6 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Feet;
-import static edu.wpi.first.units.Units.Hertz;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
-import static edu.wpi.first.units.Units.Kilograms;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -22,14 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.AngularAccelerationUnit;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Mass;
-import edu.wpi.first.units.measure.MomentOfInertia;
-import edu.wpi.first.units.measure.Velocity;
+import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.subsystems.Elevator;
@@ -66,10 +46,12 @@ public final class Constants {
     public static final int kIntakeMotor = 13;
     public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
+    public static final int kAlgeaMotor = 18;
   }
 
   public static class DIOConstants {
-    public static final int kthroughBoreEncoderID = 1;
+    public static final int kthroughBoreEncoderID = 10;
+    public static final int kAlgeaEncoderID = 15;
     public static final int kClimberFrontEncoderID = 5;
     public static final int kClimberBackEncoderID = 6;
     public static final int gear11ID = 13;
@@ -237,6 +219,21 @@ public final class Constants {
     public static final AngularAcceleration MMAcc = MMVel.times(Hertz.of(5));
     public static final Velocity<AngularAccelerationUnit> MMJerk =
         RotationsPerSecondPerSecond.per(Second).of(MMAcc.in(RotationsPerSecondPerSecond)).times(10);
+  }
+
+  // Algea Remover Constants
+  public static class AlgeaRemoverConstants {
+    public static final double kAlgeaP = 0.7;
+    public static final double kAlgeaI = 0.0;
+    public static final double kAlgeaD = 0.0;
+    public static final double kAlgeaPercent = .2;
+    public static final int kAlegeaGearRatio = 80;
+    public static final Angle algeaStowed = Degrees.of(-90);
+    public static final Angle algeaRemove = Degrees.of(0);
+    public static final double algeaZero = 0.0; // update with actual value
+    public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
+    public static final Distance algeaArmLength = Inches.of(19);
+    public static final Angle kAlgeaStartingAngle = Rotations.of(-.25);
   }
 
   /**
