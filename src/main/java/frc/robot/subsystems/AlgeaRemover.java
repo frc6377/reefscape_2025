@@ -100,7 +100,7 @@ public class AlgeaRemover extends SubsystemBase {
   public Command zeroAlgeaEncoder() {
     return Commands.runOnce(
         () -> {
-          algeaMotor.getAlternateEncoder().setPosition(0);
+          algeaMotor.getEncoder().setPosition(algeaMotor.getAlternateEncoder().getPosition());
         });
   }
 
