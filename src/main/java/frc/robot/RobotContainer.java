@@ -232,10 +232,10 @@ public class RobotContainer {
 
     OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
     OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
-    OI.getTrigger(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
-    OI.getTrigger(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
-    OI.getTrigger(OI.Operator.A).onTrue(algeaRemover.stowAlgea());
-    OI.getTrigger(OI.Operator.B).onTrue(algeaRemover.removeAlgea());
+    OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
+    OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
+    OI.getButton(OI.Operator.A).onTrue(algeaRemover.stowAlgea());
+    OI.getButton(OI.Operator.B).onTrue(algeaRemover.removeAlgea());
     OI.getButton(OI.Operator.Start).onTrue(climber.zero());
     OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
     OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).whileTrue(intake.l1ScoreModeB());

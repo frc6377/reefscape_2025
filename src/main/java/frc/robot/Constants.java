@@ -210,13 +210,13 @@ public final class Constants {
 
   // Algea Remover Constants
   public static class AlgeaRemoverConstants {
-    public static final double kAlgeaP = 1.0;
+    public static final double kAlgeaP = 0.7;
     public static final double kAlgeaI = 0.0;
     public static final double kAlgeaD = 0.0;
-    public static final double kAlgeaPercent = .5;
+    public static final double kAlgeaPercent = .2;
     public static final int kAlegeaGearRatio = 80;
-    public static final Angle algeaStowed = Degrees.of(0);
-    public static final Angle algeaRemove = Degrees.of(90);
+    public static final Angle algeaStowed = Degrees.of(-90);
+    public static final Angle algeaRemove = Degrees.of(0);
     public static final double algeaZero = 0.0; // update with actual value
     public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
     public static final Distance algeaArmLength = Inches.of(19);

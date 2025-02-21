@@ -36,7 +36,7 @@ public class AlgeaRemover extends SubsystemBase {
   private SingleJointedArmSim algeaSim;
   private SparkMax algeaMotor;
   private SparkMaxSim simAlgeaMotor;
-  private double simAngle;
+  private Angle simAngle;
 
   private Mechanism2d mech = new Mechanism2d(2, 2);
   private ComplexWidget widget;
@@ -69,11 +69,12 @@ public class AlgeaRemover extends SubsystemBase {
               Math.PI / 4,
               true,
               -Math.PI / 2);
+      simAlgeaMotor.setPosition(-.25 * AlgeaRemoverConstants.kAlegeaGearRatio);
       algeaMech =
           mech.getRoot("root", 1, 1)
               .append(
                   new MechanismLigament2d(
-                      "Algea Mech [0]", 1, -90, 10, new Color8Bit(Color.kDarkViolet)));
+                      "Algea Mech [0]", 1, 0, 10, new Color8Bit(Color.kDarkViolet)));
     }
     if (widget == null) {
       widget = Shuffleboard.getTab(getName()).add("Algea Remover", mech);
@@ -83,7 +84,6 @@ public class AlgeaRemover extends SubsystemBase {
   public Command goUp() {
     return startEnd(
         () -> {
-          System.out.println("up");
           algeaMotor.set(AlgeaRemoverConstants.kAlgeaPercent);
         },
         () -> algeaMotor.set(0));
@@ -92,7 +92,6 @@ public class AlgeaRemover extends SubsystemBase {
   public Command goDown() {
     return startEnd(
         () -> {
-          System.out.println("down");
           algeaMotor.set(-AlgeaRemoverConstants.kAlgeaPercent);
         },
         () -> algeaMotor.set(0));
@@ -139,17 +138,16 @@ public class AlgeaRemover extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    algeaSim.setInputVoltage(algeaMotor.getBusVoltage());
+    algeaSim.setInputVoltage(algeaMotor.getBusVoltage() * algeaMotor.getAppliedOutput());
     algeaSim.update(Robot.defaultPeriodSecs);
-    simAlgeaMotor.setBusVoltage(RobotController.getBatteryVoltage());
     simAlgeaMotor.iterate(
         RadiansPerSecond.of(algeaSim.getVelocityRadPerSec()).in(RPM)
             * AlgeaRemoverConstants.kAlegeaGearRatio,
         RobotController.getBatteryVoltage(),
         Robot.defaultPeriodSecs);
-    simAngle = simAlgeaMotor.getPosition();
+    simAngle = Rotations.of(simAlgeaMotor.getPosition() / AlgeaRemoverConstants.kAlegeaGearRatio);
 
-    algeaMech.setAngle(simAngle);
-    SmartDashboard.putNumber("Algea/Sim Angle", simAngle);
+    algeaMech.setAngle(simAngle.in(Degrees));
+    SmartDashboard.putNumber("Algea/Sim Angle", simAngle.in(Degrees));
   }
 }
