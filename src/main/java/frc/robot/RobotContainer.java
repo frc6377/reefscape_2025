@@ -16,6 +16,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.FeildConstants;
@@ -154,30 +156,25 @@ public class RobotContainer {
     }
 
     // Register Named Commands
-    NamedCommands.registerCommand(
-        "ElvL0",
-        elevator.L0().andThen(Commands.waitUntil(elevator.elevatorAtSetpoint().debounce(0.5))));
-    NamedCommands.registerCommand(
-        "ElvL2",
-        elevator.L2().andThen(Commands.waitUntil(elevator.elevatorAtSetpoint().debounce(0.5))));
-    NamedCommands.registerCommand(
-        "ElvL3",
-        elevator.L3().andThen(Commands.waitUntil(elevator.elevatorAtSetpoint().debounce(0.5))));
-    NamedCommands.registerCommand(
-        "ElvL4",
-        elevator.L4().andThen(Commands.waitUntil(elevator.elevatorAtSetpoint().debounce(0.5))));
+    NamedCommands.registerCommand("ElvL0", elevator.L0().andThen(waitForElevator()));
+    NamedCommands.registerCommand("ElvL2", elevator.L2().andThen(waitForElevator()));
+    NamedCommands.registerCommand("ElvL3", elevator.L3().andThen(waitForElevator()));
+    NamedCommands.registerCommand("ElvL4", elevator.L4().andThen(waitForElevator()));
     NamedCommands.registerCommand(
         "Intake",
-        elevator
-            .L0()
-            .until(elevator.elevatorAtSetpoint().debounce(0.5))
-            .andThen(intakeAutoCommand().asProxy())
-            .andThen(
-                Commands.waitUntil(
-                    () ->
-                        sensors.getSensorState() == CoralEnum.NO_CORAL
-                            || coralScorer.hasCoral().getAsBoolean())));
-    NamedCommands.registerCommand("Score", scorerAutoCommand().asProxy());
+        new SequentialCommandGroup(
+            elevator.L0(),
+            waitForElevator(),
+            intakeAutoCommand(),
+            Commands.waitUntil(coralHandoffCompleteTrigger())));
+    NamedCommands.registerCommand(
+        "Intake Floor",
+        new SequentialCommandGroup(
+            elevator.L0(),
+            waitForElevator(),
+            intakeFloorAutoCommand(),
+            Commands.waitUntil(coralHandoffCompleteTrigger())));
+    NamedCommands.registerCommand("Score", scorerAutoCommand());
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -276,21 +273,11 @@ public class RobotContainer {
 
     intake
         .intakeHasCoralTrigger()
+        .and(coralOuttakeButton.negate())
         .onTrue(
             Robot.isReal()
-                ? intake
-                    .conveyerInCommand()
-                    .alongWith(coralScorer.intakeCommand())
-                    .until(
-                        () ->
-                            sensors.getSensorState() == CoralEnum.NO_CORAL
-                                || coralScorer.hasCoral().getAsBoolean())
-                : Commands.runOnce(
-                    () -> {
-                      if (!mapleSimArenaSubsystem.getRobotHasCoral()
-                          && intake.intakeHasCoralTrigger().getAsBoolean())
-                        mapleSimArenaSubsystem.setRobotHasCoral(true);
-                    }));
+                ? intake.conveyerInCommand().until(coralHandoffCompleteTrigger())
+                : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
 
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
     OI.getButton(OI.Operator.Y)
@@ -366,7 +353,7 @@ public class RobotContainer {
             elevator
                 .tuneSetpoints(
                     OI.getAxisSupplier(OI.StreamDeck.Nob1),
-                    () -> DriverStation.getStickAxis(2, 1),
+                    () -> DriverStation.getStickAxis(2, 1), // TODO: Figure Out Axis Bug
                     OI.getAxisSupplier(OI.StreamDeck.Nob3),
                     OI.getAxisSupplier(OI.StreamDeck.Nob4))
                 .ignoringDisable(true));
@@ -402,6 +389,13 @@ public class RobotContainer {
     }
   }
 
+  public Trigger coralHandoffCompleteTrigger() {
+    return new Trigger(
+        () ->
+            sensors.getSensorState() == CoralEnum.NO_CORAL
+                || coralScorer.hasCoral().getAsBoolean());
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -411,11 +405,30 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
+  public Command waitForElevator() {
+    return Commands.waitUntil(elevator.elevatorAtSetpoint());
+  }
+
   public Command intakeAutoCommand() {
     if (Robot.isSimulation()) {
-      return intake.floorIntake().onlyWhile(() -> !mapleSimArenaSubsystem.getRobotHasCoral());
+      return intake
+          .humanPlayerIntake()
+          .until(intake.pivotAtSetpoint(kPivotCoralStationAngle))
+          .andThen(() -> intake.addGamePieceToIntakeSim())
+          .asProxy();
     } else {
-      return intake.floorIntake().until(intake.intakeHasCoralTrigger());
+      return intake.humanPlayerIntake().until(intake.intakeHasCoralTrigger()).asProxy();
+    }
+  }
+
+  public Command intakeFloorAutoCommand() {
+    if (Robot.isSimulation()) {
+      return intake
+          .floorIntake()
+          .onlyWhile(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
+          .asProxy();
+    } else {
+      return intake.floorIntake().until(intake.intakeHasCoralTrigger()).asProxy();
     }
   }
 
@@ -423,9 +436,10 @@ public class RobotContainer {
     if (Robot.isSimulation()) {
       return Commands.runOnce(() -> intake.removePieceFromIntakeSim())
           .andThen(mapleSimArenaSubsystem.scoreCoral())
-          .until(() -> !mapleSimArenaSubsystem.getRobotHasCoral());
+          .until(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
+          .asProxy();
     } else {
-      return coralScorer.scoreCommand().until(coralScorer.hasCoral().negate());
+      return coralScorer.scoreCommand().until(coralScorer.hasCoral().negate()).asProxy();
     }
   }
 

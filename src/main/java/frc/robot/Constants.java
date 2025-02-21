@@ -167,11 +167,11 @@ public final class Constants {
     // Pivot Arm Setpoints
     public static final Angle armZero = Degrees.of(83.05);
     public static final Angle kPivotRetractAngle = Degrees.of(128);
-    public static final Angle kPivotOuttakePose = Degrees.of(87);
+    public static final Angle kPivotOuttakeAngle = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
-    public static final Angle kcoralStation = Degrees.of(101);
+    public static final Angle kPivotCoralStationAngle = Degrees.of(101);
     public static final Angle kPivotL1Score = Degrees.of(75.5);
-    public static final Angle kAlgae = Degrees.of(55);
+    public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
     public static final Angle kPivotTolerance = Degrees.of(5);
 
     public static final HowdyPID kPivotArmPID = new HowdyPID();
@@ -402,11 +402,6 @@ public final class Constants {
             new Pose2d(Feet.of(57.5), Feet.of(26.5), new Rotation2d())
           },
         };
-
-    // Feild Dimentions
-    public static final Pose3d kBReefCent = new Pose3d(4.84505, 4.0259, 2, new Rotation3d());
-    public static final Distance kFeildWidth = Inches.of(317);
-    public static final Distance kFeildLength = Inches.of(690 + (7 / 8));
 
     // Heights
     private static final Distance kL2H = Inches.of(31.1843);

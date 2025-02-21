@@ -4,7 +4,15 @@
     "disableSimplification": false,
     "rotations": { "axis":"y", "degrees": 0},
     "position": [0, 0, 0],
-    "cameras": [],
+    "cameras": [
+      {
+        "name" : "LimeLight-ElvCam",
+        "rotations": [{"axis": "y", "degrees": 5.42}, {"axis": "z", "degrees": 180}],
+        "position": [-0.1745234, -0.236474, 1.014984],
+        "resolution": [640, 480],
+        "fov": 80
+      }
+    ],
     "components": [
         {
           "zeroedRotations": { "axis": "z", "degrees": 0},

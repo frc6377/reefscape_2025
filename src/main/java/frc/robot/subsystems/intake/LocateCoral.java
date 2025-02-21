@@ -5,8 +5,8 @@
 package frc.robot.subsystems.intake;
 
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
+import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
-import static frc.robot.Constants.IntakeConstants.kcoralStation;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
@@ -36,7 +36,7 @@ public class LocateCoral extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intakeSubsystem.goToPivotPosition(kcoralStation);
+    intakeSubsystem.goToPivotPosition(kPivotCoralStationAngle);
     Logger.recordOutput("Locate Coral Running", true);
   }
 

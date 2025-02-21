@@ -3,6 +3,7 @@
   "robotLength": 0.8763,
   "holonomicMode": true,
   "pathFolders": [
+    "Flow",
     "Score - Source",
     "Source - Score",
     "Start - Score",

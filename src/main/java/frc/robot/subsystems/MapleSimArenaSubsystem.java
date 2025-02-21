@@ -44,6 +44,12 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     this.swerveDriveSimulation = swerveDriveSimulation;
 
     logSourceAreas(SimulationConstants.kSourceAreas);
+
+    isSpawnCoralReady();
+  }
+
+  public Trigger isSpawnCoralReady() {
+    return new Trigger(() -> false);
   }
 
   public void logSourceAreas(Pose2d[][] area) {
@@ -164,6 +170,15 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     scoredCoralPoses.clear();
   }
 
+  public void addCoralToStation(Pose2d[] area) {
+    SimulatedArena.getInstance()
+        .addGamePiece(
+            new ReefscapeCoralOnField(
+                new Pose2d(
+                    area[0].getTranslation().interpolate(area[1].getTranslation(), 0.5),
+                    new Rotation2d())));
+  }
+
   public Command scoreCoral() {
     return Commands.run(
             () -> {
@@ -197,7 +212,8 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
       Pose2d[] currentSourse = SimulationConstants.kSourceAreas[i];
 
       // Check if there is a coral at the source area
-      if (isInArea(currentSourse, swerveDriveSimulation.getSimulatedDriveTrainPose())) {
+      if (isInArea(currentSourse, swerveDriveSimulation.getSimulatedDriveTrainPose())
+          && !robotHasCoral) {
         boolean isCoralAtSource = false;
         for (Pose3d coralPose : SimulatedArena.getInstance().getGamePiecesArrayByType("Coral")) {
           if (isInArea(currentSourse, coralPose.toPose2d())) {
@@ -207,15 +223,8 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
         }
 
         // Add coral to the source area if there is none
-        if (!isCoralAtSource) {
-          SimulatedArena.getInstance()
-              .addGamePiece(
-                  new ReefscapeCoralOnField(
-                      new Pose2d(
-                          currentSourse[0]
-                              .getTranslation()
-                              .interpolate(currentSourse[1].getTranslation(), 0.5),
-                          new Rotation2d())));
+        if (!isCoralAtSource && !robotHasCoral) {
+          addCoralToStation(currentSourse);
         }
       }
     }

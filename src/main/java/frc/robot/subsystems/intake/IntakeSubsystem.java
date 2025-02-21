@@ -14,7 +14,6 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.armZero;
-import static frc.robot.Constants.IntakeConstants.kAlgae;
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
 import static frc.robot.Constants.IntakeConstants.kGearing;
 import static frc.robot.Constants.IntakeConstants.kHoldPower;
@@ -23,12 +22,13 @@ import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
 import static frc.robot.Constants.IntakeConstants.kLength;
 import static frc.robot.Constants.IntakeConstants.kMOI;
 import static frc.robot.Constants.IntakeConstants.kOuttakeSpeed;
+import static frc.robot.Constants.IntakeConstants.kPivotAlgaeIntakeAngle;
+import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotExtendAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotL1Score;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
 import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
-import static frc.robot.Constants.IntakeConstants.kcoralStation;
 import static frc.robot.Constants.SensorIDs.kSensor2ID;
 import static frc.robot.Constants.SensorIDs.kSensor3ID;
 import static frc.robot.Constants.SensorIDs.kSensor4ID;
@@ -308,8 +308,9 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command humanPlayerIntake() {
     return startEnd(
             () -> {
-              goToPivotPosition(kcoralStation);
+              goToPivotPosition(kPivotCoralStationAngle);
               setIntakeMotor(kIntakeSpeed);
+              if (Robot.isSimulation()) intakeSim.startIntake();
             },
             () -> {})
         .withName("humanPlayerIntake");
@@ -318,7 +319,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command algaeIntake() {
     return startEnd(
             () -> {
-              goToPivotPosition(kAlgae);
+              goToPivotPosition(kPivotAlgaeIntakeAngle);
               setIntakeMotor(-kIntakeSpeed);
             },
             () -> {})
@@ -328,7 +329,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command algaeHold() {
     return startEnd(
             () -> {
-              goToPivotPosition(kAlgae);
+              goToPivotPosition(kPivotAlgaeIntakeAngle);
               intakeMotor.setControl(new TorqueCurrentFOC(kHoldPower));
             },
             () -> {})
@@ -338,7 +339,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command algaeOuttake() {
     return startEnd(
             () -> {
-              goToPivotPosition(kAlgae);
+              goToPivotPosition(kPivotAlgaeIntakeAngle);
               setIntakeMotor(kIntakeSpeed);
             },
             () -> {})
@@ -467,7 +468,7 @@ public class IntakeSubsystem extends SubsystemBase {
             t1.reset();
           }
 
-          if (atSetpoint(kcoralStation) && checkSimIntake(kIntakeSpeed)) {
+          if (atSetpoint(kPivotCoralStationAngle) && checkSimIntake(kIntakeSpeed)) {
             t2.start();
           } else {
             t2.stop();
@@ -479,7 +480,7 @@ public class IntakeSubsystem extends SubsystemBase {
             t2.reset();
           }
 
-          if (atSetpoint(kAlgae) && checkSimIntake(-kIntakeSpeed)) {
+          if (atSetpoint(kPivotAlgaeIntakeAngle) && checkSimIntake(-kIntakeSpeed)) {
             t3.start();
           } else {
             t3.stop();
@@ -529,7 +530,7 @@ public class IntakeSubsystem extends SubsystemBase {
           break;
         case LOCATE_CORAL:
           if (coralState == CoralEnum.CORAL_TOO_CLOSE) {
-            if (atSetpoint(kcoralStation) // coral station
+            if (atSetpoint(kPivotCoralStationAngle) // coral station
                 && checkSimIntake(kIntakeSpeed)
                 && checkSimConveyor(kConveyorSpeed)) {
               t4.start();

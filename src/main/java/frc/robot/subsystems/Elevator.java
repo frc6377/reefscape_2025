@@ -213,7 +213,8 @@ public class Elevator extends SubsystemBase {
   }
 
   public Trigger elevatorAtSetpoint() {
-    return new Trigger(() -> getElevatorHeight().isNear(currentSetpoint, kSetpointTolerance));
+    return new Trigger(() -> getElevatorHeight().isNear(currentSetpoint, kSetpointTolerance))
+        .debounce(0.5);
   }
 
   private void disableSoftLimits() {
