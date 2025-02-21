@@ -121,8 +121,6 @@ public class Climber extends SubsystemBase {
     backConfigs.CurrentLimits = currentLimit;
     climberMotorFront.getConfigurator().apply(frontConfigs);
     climberMotorBack.getConfigurator().apply(backConfigs);
-    climberMotorFront.setPosition(climberTargetAngle.in(Rotations));
-    climberMotorBack.setPosition(climberTargetAngle.in(Rotations));
     climberOrchestra = new Orchestra();
     climberOrchestra.addInstrument(climberMotorFront, 2);
     climberOrchestra.addInstrument(climberMotorBack, 6);
@@ -260,10 +258,17 @@ public class Climber extends SubsystemBase {
     }
   }
 
+  public Command setCurrentLimit() {
+    return runOnce(
+        () -> {
+          climberMotorFront.getConfigurator().apply(currentLimit);
+          climberMotorBack.getConfigurator().apply(currentLimit);
+        });
+  }
+
   public Command climb() {
-    currentLimit.SupplyCurrentLimit = 30;
-    currentLimit.StatorCurrentLimit = 30;
     return Commands.sequence(
+        setCurrentLimit(),
         runClimber(ClimberConstants.kClimberAtCageSetpoint, 0),
         Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberAtCageSetpoint)),
         runClimber(ClimberConstants.kClimberExtendedSetpoint, 1));
@@ -285,21 +290,23 @@ public class Climber extends SubsystemBase {
   // Not entirely confident in the implementation of engageServo and disengageServo
 
   public Command engageServo() {
-    return runEnd(
+    return runOnce(
         () -> {
           setServoAngle(frontClimberServo, ClimberConstants.kServoEngageAngle.in(Rotations));
           setServoAngle(backClimberServo, ClimberConstants.kServoEngageAngle.in(Rotations));
-        },
-        () -> {});
+          isFrontServoEngaged = true;
+          isBackServoEngaged = true;
+        });
   }
 
   public Command disengageServo() {
-    return runEnd(
+    return runOnce(
         () -> {
           setServoAngle(frontClimberServo, ClimberConstants.kServoEngageAngle.in(Rotations));
           setServoAngle(backClimberServo, ClimberConstants.kServoEngageAngle.in(Rotations));
-        },
-        () -> {});
+          isFrontServoEngaged = true;
+          isBackServoEngaged = true;
+        });
   }
 
   public Command retract() {
@@ -347,16 +354,6 @@ public class Climber extends SubsystemBase {
       isClimbingStateSim = true;
     }
     Logger.recordOutput("Climber/Climbing", isClimbingStateSim);
-  }
-
-  /*
-   * Keeping this here for reference
-   */
-  private Command emergencyUndo() {
-    return runClimber(ClimberConstants.kClimberEmergencyUndoAngle, 0)
-        .until(isClimberAtPosition(ClimberConstants.kClimberEmergencyUndoAngle))
-        .andThen(() -> disengageServo())
-        .andThen(() -> climberMotorBack.setPosition(ClimberConstants.kClimberEmergencyUndoAngle));
   }
 
   @Override

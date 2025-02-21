@@ -314,7 +314,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command movePivot(Angle angle) {
-    return startEnd(() -> goToPivotPosition(angle), () -> {});
+    return runOnce(() -> goToPivotPosition(angle));
   }
 
   public Command floorIntake() {
