@@ -261,11 +261,8 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command limitHit() {
-    return runOnce(
-            () -> {
-              disableSoftLimits();
-            })
-        .andThen(setElvPercent(-0.1).until(elvLimitSwitch::get))
+    return runOnce(this::disableSoftLimits)
+        .andThen(setElvPercent(-0.2).until(elvLimitSwitch::get))
         .andThen(zeroMotorEncoder())
         .andThen(runOnce(this::enableSoftLimits))
         .withName("Elevator Zero");

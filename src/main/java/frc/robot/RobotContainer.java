@@ -267,9 +267,8 @@ public class RobotContainer {
 
     intake
         .intakeHasUnalignedCoralTrigger()
-        .onTrue(
-            new LocateCoral(sensors::getSensorState, intake, OI.getButton(OI.Driver.RBumper))
-                .asProxy());
+        .and(coralOuttakeButton.negate())
+        .onTrue(new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton));
 
     intake
         .intakeHasCoralTrigger()
@@ -342,8 +341,12 @@ public class RobotContainer {
             .onTrue(drive.setPoseScored(Constants.kPoleLetters[i], j))
             .onFalse(drive.setPoseScored(Constants.kPoleLetters[i], j));
         OI.getButton(OI.StreamDeck.streamDeckButtons[1][i * rows + j])
-            .onTrue(drive.setPoseScored(Constants.kPoleLetters[i + 6], j))
-            .onFalse(drive.setPoseScored(Constants.kPoleLetters[i + 6], j));
+            .onTrue(
+                drive.setPoseScored(
+                    Constants.kPoleLetters[i + Constants.kPoleLetters.length / 2], j))
+            .onFalse(
+                drive.setPoseScored(
+                    Constants.kPoleLetters[i + Constants.kPoleLetters.length / 2], j));
       }
     }
 
@@ -364,9 +367,9 @@ public class RobotContainer {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
               drive,
-              () -> OI.getAxisSupplier(OI.Keyboard.AD).get(),
-              () -> OI.getAxisSupplier(OI.Keyboard.WS).get(),
-              () -> OI.getAxisSupplier(OI.Keyboard.ArrowLR).get()));
+              OI.getAxisSupplier(OI.Keyboard.AD),
+              OI.getAxisSupplier(OI.Keyboard.WS),
+              OI.getAxisSupplier(OI.Keyboard.ArrowLR)));
       OI.getButton(OI.Keyboard.M)
           .whileTrue(
               DriveCommands.AlignToReef(

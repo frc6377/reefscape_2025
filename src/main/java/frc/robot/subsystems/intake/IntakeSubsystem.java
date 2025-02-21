@@ -349,8 +349,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command l1ScoreModeA() {
     return startEnd(() -> goToPivotPosition(kPivotL1Score), () -> {})
         .until(pivotAtSetpoint(kPivotL1Score))
-        .andThen(() -> setIntakeMotor(kOuttakeSpeed))
-        .finallyDo(() -> goToPivotPosition(kPivotRetractAngle))
+        .andThen(Commands.startEnd(() -> setIntakeMotor(kOuttakeSpeed), () -> {}))
         .withName("L1ScoreModeA");
   }
 
