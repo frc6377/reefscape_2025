@@ -392,9 +392,9 @@ public class Climber extends SubsystemBase {
     Logger.recordOutput(
         "Climber/Back/Absolute Encoder", Rotations.of(climberBackEncoder.get()).in(Degrees));
     Logger.recordOutput(
-        "Climber/Front/Motor Current", climberMotorFront.getStatorCurrent().getValueAsDouble());
+        "Climber/Front/Motor Current", climberMotorFront.getStatorCurrent().getValue().in(Amps));
     Logger.recordOutput(
-        "Climber/Back/Motor Current", climberMotorBack.getStatorCurrent().getValueAsDouble());
+        "Climber/Back/Motor Current", climberMotorBack.getStatorCurrent().getValue().in(Amps));
   }
 
   @Override
