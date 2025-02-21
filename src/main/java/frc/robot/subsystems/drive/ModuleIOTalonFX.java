@@ -23,6 +23,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.generated.TunerConstants;
+import org.littletonrobotics.junction.Logger;
 
 public abstract class ModuleIOTalonFX implements ModuleIO {
   protected final SwerveModuleConstants<
@@ -69,6 +70,10 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
     driveTalon = new TalonFX(constants.DriveMotorId, TunerConstants.DrivetrainConstants.CANBusName);
     turnTalon = new TalonFX(constants.SteerMotorId, TunerConstants.DrivetrainConstants.CANBusName);
     cancoder = new CANcoder(constants.EncoderId, TunerConstants.DrivetrainConstants.CANBusName);
+
+    voltageRequest.EnableFOC = true;
+    positionVoltageRequest.EnableFOC = true;
+    velocityVoltageRequest.EnableFOC = true;
 
     // Configure drive motor
     var driveConfig = constants.DriveMotorInitialConfigs;
@@ -160,10 +165,8 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
 
     // Update drive inputs
     inputs.driveConnected = driveConnectedDebounce.calculate(driveStatus.isOK());
-    inputs.drivePositionRad =
-        Units.rotationsToRadians(drivePosition.getValueAsDouble()) / constants.DriveMotorGearRatio;
-    inputs.driveVelocityRadPerSec =
-        Units.rotationsToRadians(driveVelocity.getValueAsDouble()) / constants.DriveMotorGearRatio;
+    inputs.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble());
+    inputs.driveVelocityRadPerSec = Units.rotationsToRadians(driveVelocity.getValueAsDouble());
     inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     inputs.driveCurrentAmps = driveCurrent.getValueAsDouble();
 
@@ -174,6 +177,16 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
     inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble());
     inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
     inputs.turnCurrentAmps = turnCurrent.getValueAsDouble();
+
+    Logger.recordOutput(
+        "SysID Values/" + turnTalon.getDeviceID() + "/Velocity",
+        cancoder.getVelocity().getValueAsDouble());
+    Logger.recordOutput(
+        "SysID Values/" + turnTalon.getDeviceID() + "/Position",
+        cancoder.getPosition().getValueAsDouble());
+    Logger.recordOutput(
+        "SysID Values/" + turnTalon.getDeviceID() + "/MotorVoltage",
+        turnTalon.getMotorVoltage().getValueAsDouble());
   }
 
   @Override
@@ -197,7 +210,7 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
   @Override
   public void setDriveVelocity(double wheelVelocityRadPerSec) {
     double motorVelocityRotPerSec =
-        Units.radiansToRotations(wheelVelocityRadPerSec) * constants.DriveMotorGearRatio;
+        Units.radiansToRotations(wheelVelocityRadPerSec); // * constants.DriveMotorGearRatio;
     driveTalon.setControl(
         switch (constants.DriveMotorClosedLoopOutput) {
           case Voltage -> velocityVoltageRequest.withVelocity(motorVelocityRotPerSec);

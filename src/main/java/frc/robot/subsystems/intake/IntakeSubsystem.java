@@ -21,32 +21,29 @@ import static frc.robot.Constants.IntakeConstants.kIntakeHandoffSpeed;
 import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
 import static frc.robot.Constants.IntakeConstants.kLength;
 import static frc.robot.Constants.IntakeConstants.kMOI;
-import static frc.robot.Constants.IntakeConstants.kMotionMagicAcceleration;
-import static frc.robot.Constants.IntakeConstants.kMotionMagicCruiseVelocity;
-import static frc.robot.Constants.IntakeConstants.kMotionMagicJerk;
 import static frc.robot.Constants.IntakeConstants.kOuttakeSpeed;
+import static frc.robot.Constants.IntakeConstants.kPivotAlgaeIntakeAngle;
+import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotExtendAngle;
+import static frc.robot.Constants.IntakeConstants.kPivotL1Score;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotSpeed;
 import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
 import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
-import static frc.robot.Constants.IntakeConstants.kalgae;
-import static frc.robot.Constants.IntakeConstants.kcoralStation;
-import static frc.robot.Constants.IntakeConstants.kl1;
 import static frc.robot.Constants.SensorIDs.kSensor2ID;
 import static frc.robot.Constants.SensorIDs.kSensor3ID;
 import static frc.robot.Constants.SensorIDs.kSensor4ID;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -64,13 +61,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.Robot;
 import frc.robot.Sensors;
+import org.ironmaple.simulation.IntakeSimulation;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
-import utilities.DebugEntry;
 
+@SuppressWarnings("unused")
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
   private TalonFX intakeMotor;
@@ -109,9 +109,6 @@ public class IntakeSubsystem extends SubsystemBase {
   private IntakeState intakeState = IntakeState.IDLE;
   private CoralEnum coralState = CoralEnum.NO_CORAL;
 
-  private DebugEntry<Double> pivotOutput;
-  private DebugEntry<String> currentCommand;
-
   private Sensors sensors;
 
   private boolean elevatorNotL1 = false;
@@ -124,8 +121,9 @@ public class IntakeSubsystem extends SubsystemBase {
   private Timer t5 = new Timer();
 
   private SingleJointedArmSim pivotSim;
+  private IntakeSimulation intakeSim;
 
-  public IntakeSubsystem(Sensors sensors) {
+  public IntakeSubsystem(Sensors sensors, SwerveDriveSimulation driveSim) {
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
     conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);
@@ -137,7 +135,6 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     intakeMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
     intakeMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
-    intakeMotorConfig.Slot0 = new Slot0Configs().withKP(10).withKI(0).withKD(0);
     intakeMotor.getConfigurator().apply(intakeMotorConfig);
 
     conveyorMotorConfig = new TalonFXConfiguration();
@@ -148,20 +145,13 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     pivotMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     pivotMotorConfig.Slot0 = IntakeConstants.kPivotArmPID.getSlot0Configs();
+    pivotMotorConfig.MotionMagic = IntakeConstants.kPivotArmMM.getMotionMagicConfigs();
     pivotMotorConfig.Feedback =
         new FeedbackConfigs()
             .withRotorToSensorRatio(1)
             .withSensorToMechanismRatio(kSensorToMechanism);
-    pivotMotorConfig.MotionMagic =
-        new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(kMotionMagicCruiseVelocity)
-            .withMotionMagicAcceleration(kMotionMagicAcceleration)
-            .withMotionMagicJerk(kMotionMagicJerk);
 
     pivotMotor.getConfigurator().apply(pivotMotorConfig);
-
-    pivotOutput = new DebugEntry<Double>(0.0, "Pivot Output", this);
-    currentCommand = new DebugEntry<String>("none", "Pivot Command", this);
 
     pivotMotor.setPosition(throughBoreEncoder.get());
 
@@ -174,19 +164,32 @@ public class IntakeSubsystem extends SubsystemBase {
               kGearing,
               kMOI.in(KilogramSquareMeters),
               kLength.in(Meters),
-              kPivotExtendAngle.minus(Degrees.of(90)).in(Radians),
-              kPivotRetractAngle.plus(Degrees.of(90)).in(Radians),
+              kPivotExtendAngle.minus(Degrees.of(150)).in(Radians),
+              kPivotRetractAngle.plus(Degrees.of(150)).in(Radians),
               false,
               kPivotRetractAngle.in(Radians));
       pivotArmMech =
           mech.getRoot("Root", 1, 0)
               .append(
                   new MechanismLigament2d("Pivot Mech", 1, 90, 10, new Color8Bit(Color.kPurple)));
-      SmartDashboard.putData("Mech2Ds/Intake Pivot Mech", mech);
+      SmartDashboard.putData("Intake/Pivot Arm", mech);
+
+      intakeSim =
+          IntakeSimulation.OverTheBumperIntake(
+              "Coral",
+              driveSim,
+              IntakeConstants.kIntakeWidth,
+              IntakeConstants.kIntakeExtension,
+              IntakeSimulation.IntakeSide.FRONT,
+              IntakeConstants.kIntakeCapacity);
     }
   }
 
   public void elevatorMode() {}
+
+  public boolean GetPieceFromIntake() {
+    return intakeSim.obtainGamePieceFromIntake();
+  }
 
   public Sensors getSensors() {
     return sensors;
@@ -196,20 +199,22 @@ public class IntakeSubsystem extends SubsystemBase {
     return pivotMotor.getPosition().getValue().isNear(setpoint, kPivotTolerance);
   }
 
-  protected void setPivotMotor(double speed) {
-    pivotMotor.set(speed);
-  }
-
   protected void setConveyerMotor(double speed) {
-    conveyorMotor.set(speed);
+    DutyCycleOut dutyCycleOut = new DutyCycleOut(speed);
+    dutyCycleOut.EnableFOC = true;
+    conveyorMotor.setControl(dutyCycleOut);
   }
 
   protected void setIntakeMotor(double speed) {
-    intakeMotor.set(speed);
+    DutyCycleOut dutyCycleOut = new DutyCycleOut(speed);
+    dutyCycleOut.EnableFOC = true;
+    intakeMotor.setControl(dutyCycleOut);
   }
 
   protected void goToPivotPosition(Angle setpoint) {
-    pivotMotor.setControl(new MotionMagicVoltage(setpoint));
+    MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(setpoint);
+    motionMagicVoltage.EnableFOC = true;
+    pivotMotor.setControl(motionMagicVoltage);
     pivotSetpoint = setpoint;
   }
 
@@ -221,7 +226,20 @@ public class IntakeSubsystem extends SubsystemBase {
     }
   }
 
-  public Angle getPivotPosition() {
+  public void removePieceFromIntakeSim() {
+    intakeSim.obtainGamePieceFromIntake();
+  }
+
+  public void addGamePieceToIntakeSim() {
+    intakeSim.addGamePieceToIntake();
+  }
+
+  public void resetSim() {
+    pivotSim.setState(kPivotRetractAngle.in(Radians), RadiansPerSecond.zero().in(RadiansPerSecond));
+  }
+
+  public Angle getPivotAngle() {
+    if (Robot.isSimulation()) return Radians.of(pivotSim.getAngleRads());
     return pivotMotor.getPosition().getValue();
   }
 
@@ -235,6 +253,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Trigger intakeHasCoralTrigger() {
+    if (Robot.isSimulation()) return new Trigger(() -> intakeSim.getGamePiecesAmount() > 0);
     return new Trigger(
         () -> sensors.getSensorState() != CoralEnum.NO_CORAL && atSetpoint(kPivotRetractAngle));
   }
@@ -242,159 +261,119 @@ public class IntakeSubsystem extends SubsystemBase {
   // Belt Commands
   public Command conveyerInCommand() {
     return runEnd(
-        () -> {
-          setConveyerMotor(-kConveyorSpeed);
-          setIntakeMotor(kIntakeHandoffSpeed);
-        },
-        () -> {
-          setConveyerMotor(0);
-          setIntakeMotor(0);
-        });
+            () -> {
+              setConveyerMotor(-kConveyorSpeed);
+              setIntakeMotor(kIntakeHandoffSpeed);
+            },
+            () -> {
+              setConveyerMotor(0);
+              setIntakeMotor(0);
+            })
+        .withName("conveyerInCommand");
   }
 
   public Command conveyerOutCommand() {
     return runEnd(
-        () -> {
-          setConveyerMotor(kConveyorSpeed);
-          setIntakeMotor(kIntakeHandoffSpeed);
-        },
-        () -> {
-          setConveyerMotor(0);
-          setIntakeMotor(0);
-        });
-  }
-
-  // Made a command to spin clockwise
-  public Command intakeCommand() {
-    return startEnd(() -> setIntakeMotor(kIntakeSpeed), () -> setIntakeMotor(0));
-  }
-
-  // Made a command to spin counter clockwise
-  public Command outtakeCommand() {
-    return startEnd(() -> setIntakeMotor(-kIntakeSpeed), () -> setIntakeMotor(0));
-  }
-
-  /** Pivots down when user presses button */
-  public Command pivotDownCommand() {
-    return startEnd(() -> setPivotMotor(-kPivotSpeed), () -> setPivotMotor(0));
-  }
-
-  /** Pivots up when user presses button */
-  public Command pivotUpCommand() {
-    return startEnd(() -> setPivotMotor(kPivotSpeed), () -> setPivotMotor(0));
-  }
-
-  /** Pushes game piece from conveyor into birdhouse */
-  public Command conveyorFeed() {
-    return startEnd(() -> setConveyerMotor(-kConveyorSpeed), () -> setConveyerMotor(0));
-  }
-
-  public Command conveyorEject() {
-    return startEnd(() -> setConveyerMotor(kConveyorSpeed), () -> setConveyerMotor(0));
-  }
-
-  public Command intakeAndConveyorCommandSafe() {
-    return runEnd(
-        () -> {
-          setConveyerMotor(-kConveyorSpeed);
-          setIntakeMotor(kIntakeSpeed);
-        },
-        () -> {
-          setConveyerMotor(0);
-          setIntakeMotor(0);
-        });
-  }
-
-  public Command intakeAndConveyorCommandScoreL1() {
-    return runEnd(
-        () -> {
-          setConveyerMotor(kConveyorSpeed);
-          setIntakeMotor(kIntakeSpeed);
-        },
-        () -> {
-          setConveyerMotor(0);
-          setIntakeMotor(0);
-        });
+            () -> {
+              setConveyerMotor(kConveyorSpeed);
+              setIntakeMotor(kIntakeHandoffSpeed);
+            },
+            () -> {
+              setConveyerMotor(0);
+              setIntakeMotor(0);
+            })
+        .withName("conveyerOutCommand");
   }
 
   public Command floorIntake() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kPivotExtendAngle);
-          intakeMotor.set(kIntakeSpeed);
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kPivotExtendAngle);
+              setIntakeMotor(kIntakeSpeed);
+              if (Robot.isSimulation()) intakeSim.startIntake();
+            },
+            () -> {
+              goToPivotPosition(kPivotRetractAngle);
+            })
+        .withName("floorIntake");
   }
 
   public Command floorOuttake() {
     return startEnd(() -> goToPivotPosition(kPivotExtendAngle), () -> {})
         .until(pivotAtSetpoint(kPivotExtendAngle))
-        .andThen(() -> intakeMotor.set(kOuttakeSpeed));
+        .andThen(() -> setIntakeMotor(kOuttakeSpeed))
+        .withName("floorOuttake");
   }
 
   public Command humanPlayerIntake() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kcoralStation);
-          intakeMotor.set(kIntakeSpeed);
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kPivotCoralStationAngle);
+              setIntakeMotor(kIntakeSpeed);
+              if (Robot.isSimulation()) intakeSim.startIntake();
+            },
+            () -> {})
+        .withName("humanPlayerIntake");
   }
 
   public Command algaeIntake() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kalgae);
-          intakeMotor.set(-kIntakeSpeed);
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kPivotAlgaeIntakeAngle);
+              setIntakeMotor(-kIntakeSpeed);
+            },
+            () -> {})
+        .withName("algaeIntake");
   }
 
   public Command algaeHold() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kalgae);
-          intakeMotor.setControl(new TorqueCurrentFOC(kHoldPower));
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kPivotAlgaeIntakeAngle);
+              intakeMotor.setControl(new TorqueCurrentFOC(kHoldPower));
+            },
+            () -> {})
+        .withName("algeaHold");
   }
 
   public Command algaeOuttake() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kalgae);
-          intakeMotor.set(kIntakeSpeed);
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kPivotAlgaeIntakeAngle);
+              setIntakeMotor(kIntakeSpeed);
+            },
+            () -> {})
+        .withName("algaeOuttake");
   }
 
   public Command l1ScoreModeA() {
-    return startEnd(
-        () -> {
-          goToPivotPosition(kl1);
-          intakeMotor.set(-kIntakeSpeed);
-        },
-        () -> {});
+    return startEnd(() -> goToPivotPosition(kPivotL1Score), () -> {})
+        .until(pivotAtSetpoint(kPivotL1Score))
+        .andThen(Commands.startEnd(() -> setIntakeMotor(kOuttakeSpeed), () -> {}))
+        .withName("L1ScoreModeA");
   }
 
   public Command l1ScoreModeB() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kPivotRetractAngle);
-          intakeMotor.set(kIntakeSpeed / 5);
-          conveyorMotor.set(-kConveyorSpeed);
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kPivotRetractAngle);
+              setIntakeMotor(kIntakeSpeed / 5);
+              setConveyerMotor(-kConveyorSpeed);
+            },
+            () -> {})
+        .withName("L1ScoreModeB");
   }
 
   public Command Idle() {
     return startEnd(
-        () -> {
-          goToPivotPosition(kPivotRetractAngle);
-          setIntakeMotor(0);
-          setConveyerMotor(0);
-        },
-        () -> {});
+            () -> {
+              goToPivotPosition(kPivotRetractAngle);
+              setIntakeMotor(0);
+              setConveyerMotor(0);
+              if (Robot.isSimulation()) intakeSim.stopIntake();
+            },
+            () -> {})
+        .withName("IDLE");
   }
 
   private boolean checkSimIntake(double expectedSpeed) {
@@ -435,6 +414,16 @@ public class IntakeSubsystem extends SubsystemBase {
     Logger.recordOutput("Intake/States/Intake State", intakeState.toString());
     Logger.recordOutput("Intake/States/Coral State", coralState.toString());
 
+    // Pose 3D of Intake
+    Angle currentAngle = getPivotAngle().times(-1);
+    Angle constantAngle = DrivetrainConstants.kIntakeStartPose.getRotation().getMeasureY();
+    Angle combinedAngle = currentAngle.plus(constantAngle);
+    Logger.recordOutput(
+        "Odometry/Mech Poses/Intake Pose",
+        new Pose3d(
+            DrivetrainConstants.kIntakeStartPose.getTranslation(),
+            new Rotation3d(0, combinedAngle.in(Radians), 0)));
+
     // Log TOF Sensors
     for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID}) {
       Logger.recordOutput(
@@ -442,12 +431,9 @@ public class IntakeSubsystem extends SubsystemBase {
       Logger.recordOutput("Intake/TOFSensors/" + i + " bool", sensors.getSensorBool(i));
     }
 
-    pivotOutput.log(pivotMotor.get());
-    if (this.getCurrentCommand() != null) {
-      currentCommand.log(this.getCurrentCommand().getName());
-    } else {
-      currentCommand.log("none");
-    }
+    String currentCommand =
+        this.getCurrentCommand() != null ? this.getCurrentCommand().getName() : "None";
+    Logger.recordOutput("Intake/Current Command", currentCommand);
   }
 
   public void simulationPeriodic() {
@@ -461,144 +447,153 @@ public class IntakeSubsystem extends SubsystemBase {
 
     coralState = sensors.getSensorState();
 
-    switch (intakeState) {
-      case IDLE:
-        sensors.setSimState(CoralEnum.NO_CORAL);
+    Logger.recordOutput(
+        "Intake/Pivot/Sim/Pivot Sim Angle", Radians.of(pivotSim.getAngleRads()).in(Degrees));
 
-        if (atSetpoint(kPivotExtendAngle) && checkSimIntake(kIntakeSpeed)) {
-          t1.start();
-        } else {
-          t1.stop();
-        }
+    if (IntakeConstants.kEnableStateMachineSim) {
+      switch (intakeState) {
+        case IDLE:
+          sensors.setSimState(CoralEnum.NO_CORAL);
 
-        if (t1.hasElapsed(0.5)) {
-          intakeState = IntakeState.FLOOR_INTAKE;
-          t1.stop();
-          t1.reset();
-        }
-
-        if (atSetpoint(kcoralStation) && checkSimIntake(kIntakeSpeed)) {
-          t2.start();
-        } else {
-          t2.stop();
-        }
-
-        if (t2.hasElapsed(0.5)) {
-          intakeState = IntakeState.HP_CORAL_INTAKE;
-          t2.stop();
-          t2.reset();
-        }
-
-        if (atSetpoint(kalgae) && checkSimIntake(-kIntakeSpeed)) {
-          t3.start();
-        } else {
-          t3.stop();
-        }
-
-        if (t3.hasElapsed(0.5)) {
-          intakeState = IntakeState.ALGAE_INTAKE;
-          t3.stop();
-          t3.reset();
-        }
-        break;
-      case FLOOR_INTAKE:
-        if (Math.random() <= 0.33) {
-          sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
-        } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
-          sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
-        } else {
-          sensors.setSimState(CoralEnum.CORAL_ALIGNED);
-        }
-        intakeState = IntakeState.LOCATE_CORAL;
-        break;
-      case FLOOR_OUTTAKE:
-        break;
-      case HP_CORAL_INTAKE:
-        if (Math.random() <= 0.33) {
-          sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
-        } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
-          sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
-        } else {
-          sensors.setSimState(CoralEnum.CORAL_ALIGNED);
-        }
-        intakeState = IntakeState.LOCATE_CORAL;
-        break;
-      case ALGAE_INTAKE:
-        Commands.waitSeconds(0.5);
-        intakeState = IntakeState.ALGAE_HOLD;
-        break;
-      case ALGAE_HOLD:
-        Commands.waitSeconds(0.5);
-        intakeState = IntakeState.ALGAE_OUTTAKE;
-        break;
-      case ALGAE_OUTTAKE:
-        Commands.waitSeconds(0.5);
-        if (intakeMotor.get() > 0) {
-          intakeState = IntakeState.IDLE;
-        }
-        break;
-      case LOCATE_CORAL:
-        if (coralState == CoralEnum.CORAL_TOO_CLOSE) {
-          if (atSetpoint(kcoralStation) // coral station
-              && checkSimIntake(kIntakeSpeed)
-              && checkSimConveyor(kConveyorSpeed)) {
-            t4.start();
+          if (atSetpoint(kPivotExtendAngle) && checkSimIntake(kIntakeSpeed)) {
+            t1.start();
+          } else {
+            t1.stop();
           }
-        } else if (coralState == CoralEnum.CORAL_TOO_FAR) {
+
+          if (t1.hasElapsed(0.5)) {
+            intakeState = IntakeState.FLOOR_INTAKE;
+            t1.stop();
+            t1.reset();
+          }
+
+          if (atSetpoint(kPivotCoralStationAngle) && checkSimIntake(kIntakeSpeed)) {
+            t2.start();
+          } else {
+            t2.stop();
+          }
+
+          if (t2.hasElapsed(0.5)) {
+            intakeState = IntakeState.HP_CORAL_INTAKE;
+            t2.stop();
+            t2.reset();
+          }
+
+          if (atSetpoint(kPivotAlgaeIntakeAngle) && checkSimIntake(-kIntakeSpeed)) {
+            t3.start();
+          } else {
+            t3.stop();
+          }
+
+          if (t3.hasElapsed(0.5)) {
+            intakeState = IntakeState.ALGAE_INTAKE;
+            t3.stop();
+            t3.reset();
+          }
+          break;
+        case FLOOR_INTAKE:
+          if (Math.random() <= 0.33) {
+            sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
+          } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
+            sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
+          } else {
+            sensors.setSimState(CoralEnum.CORAL_ALIGNED);
+          }
+          intakeState = IntakeState.LOCATE_CORAL;
+          break;
+        case FLOOR_OUTTAKE:
+          break;
+        case HP_CORAL_INTAKE:
+          if (Math.random() <= 0.33) {
+            sensors.setSimState(CoralEnum.CORAL_TOO_CLOSE);
+          } else if (Math.random() >= 0.33 && Math.random() <= 0.66) {
+            sensors.setSimState(CoralEnum.CORAL_TOO_FAR);
+          } else {
+            sensors.setSimState(CoralEnum.CORAL_ALIGNED);
+          }
+          intakeState = IntakeState.LOCATE_CORAL;
+          break;
+        case ALGAE_INTAKE:
+          Commands.waitSeconds(0.5);
+          intakeState = IntakeState.ALGAE_HOLD;
+          break;
+        case ALGAE_HOLD:
+          Commands.waitSeconds(0.5);
+          intakeState = IntakeState.ALGAE_OUTTAKE;
+          break;
+        case ALGAE_OUTTAKE:
+          Commands.waitSeconds(0.5);
+          if (intakeMotor.get() > 0) {
+            intakeState = IntakeState.IDLE;
+          }
+          break;
+        case LOCATE_CORAL:
+          if (coralState == CoralEnum.CORAL_TOO_CLOSE) {
+            if (atSetpoint(kPivotCoralStationAngle) // coral station
+                && checkSimIntake(kIntakeSpeed)
+                && checkSimConveyor(kConveyorSpeed)) {
+              t4.start();
+            }
+          } else if (coralState == CoralEnum.CORAL_TOO_FAR) {
+            if (atSetpoint(kPivotRetractAngle)
+                && checkSimIntake(kIntakeSpeed)
+                && checkSimConveyor(-kConveyorSpeed)) {
+              t4.start();
+            }
+          } else if (coralState == CoralEnum.CORAL_ALIGNED) {
+            t4.start();
+          } else if (coralState == CoralEnum.NO_CORAL) {
+            t4.stop();
+            System.out.println("Compbot is haunted");
+          }
+
+          if (t4.hasElapsed(1)) {
+            sensors.setSimState(CoralEnum.CORAL_ALIGNED);
+            intakeState = IntakeState.PASS_CORAL_TO_SCORER;
+            t4.stop();
+            t4.reset();
+          }
+
+          if (atSetpoint(kPivotRetractAngle)
+              && checkSimIntake(0)
+              && checkSimConveyor(-kConveyorSpeed)) {
+            sensors.setSimState(CoralEnum.CORAL_ALIGNED);
+            intakeState = IntakeState.HOLD_CORAL;
+          }
+          break;
+        case HOLD_CORAL:
+          intakeState = IntakeState.PASS_CORAL_TO_SCORER;
+          break;
+        case PASS_CORAL_TO_SCORER:
+          if (elevatorNotL1) {
+            intakeState =
+                IntakeState.L1_SCORE; // FIXME: Change to elevator score state if we have one
+          } else {
+            intakeState = IntakeState.L1_SCORE;
+          }
+          break;
+        case L1_SCORE:
           if (atSetpoint(kPivotRetractAngle)
               && checkSimIntake(kIntakeSpeed)
               && checkSimConveyor(-kConveyorSpeed)) {
-            t4.start();
+            t5.start();
+          } else {
+            t5.stop();
           }
-        } else if (coralState == CoralEnum.CORAL_ALIGNED) {
-          t4.start();
-        } else if (coralState == CoralEnum.NO_CORAL) {
-          t4.stop();
-          System.out.println("Compbot is haunted");
-        }
 
-        if (t4.hasElapsed(1)) {
-          sensors.setSimState(CoralEnum.CORAL_ALIGNED);
-          intakeState = IntakeState.PASS_CORAL_TO_SCORER;
-          t4.stop();
-          t4.reset();
-        }
+          if (t5.hasElapsed(0.5)) {
+            intakeState = IntakeState.IDLE;
+            sensors.setSimState(CoralEnum.NO_CORAL);
+            t5.stop();
+            t5.reset();
+          }
 
-        if (atSetpoint(kPivotRetractAngle)
-            && checkSimIntake(0)
-            && checkSimConveyor(-kConveyorSpeed)) {
-          sensors.setSimState(CoralEnum.CORAL_ALIGNED);
-          intakeState = IntakeState.HOLD_CORAL;
-        }
-        break;
-      case HOLD_CORAL:
-        intakeState = IntakeState.PASS_CORAL_TO_SCORER;
-        break;
-      case PASS_CORAL_TO_SCORER:
-        if (elevatorNotL1) {
-          intakeState =
-              IntakeState.L1_SCORE; // FIXME: Change to elevator score state if we have one
-        } else {
-          intakeState = IntakeState.L1_SCORE;
-        }
-        break;
-      case L1_SCORE:
-        if (atSetpoint(kPivotRetractAngle)
-            && checkSimIntake(kIntakeSpeed)
-            && checkSimConveyor(-kConveyorSpeed)) {
-          t5.start();
-        } else {
-          t5.stop();
-        }
-
-        if (t5.hasElapsed(0.5)) {
-          intakeState = IntakeState.IDLE;
-          sensors.setSimState(CoralEnum.NO_CORAL);
-          t5.stop();
-          t5.reset();
-        }
-
-        break;
+          break;
+        case L1_SCORE_MODE_A:
+          break;
+        case L1_SCORE_MODE_B:
+          break;
+      }
     }
   }
 }

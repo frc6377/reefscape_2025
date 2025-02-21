@@ -17,13 +17,16 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import au.grapplerobotics.CanBridge;
 import com.ctre.phoenix6.SignalLogger;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.vision.VisionConstants;
 import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -41,6 +44,8 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   public static final Time period = Seconds.of(Robot.defaultPeriodSecs);
   public static final boolean isCompetition = false;
+
+  public Alliance robotAlliance;
 
   private Command autonomousCommand;
   private RobotContainer robotContainer;
@@ -115,10 +120,15 @@ public class Robot extends LoggedRobot {
     // finished or interrupted commands, and running subsystem periodic() methods.
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
-    CommandScheduler.getInstance().run();
+    Logger.recordOutput("Alliance Color Real?", DriverStation.getAlliance().isPresent());
     Logger.recordOutput(
-        "Allience Color", DriverStation.getAlliance().equals(Alliance.Red) ? "RED" : "BLUE");
-    Logger.recordOutput("Allience Color", DriverStation.getRawAllianceStation());
+        "Elv Camera Pose",
+        new Pose3d(
+            VisionConstants.robotToCamera0.getMeasureX(),
+            VisionConstants.robotToCamera0.getMeasureY(),
+            VisionConstants.robotToCamera0.getMeasureZ(),
+            VisionConstants.robotToCamera0.getRotation()));
+    CommandScheduler.getInstance().run();
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
@@ -142,13 +152,17 @@ public class Robot extends LoggedRobot {
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
+      if (Robot.isSimulation()) robotContainer.givePreLoad();
       autonomousCommand.schedule();
+      robotContainer.startAuto();
     }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    Logger.recordOutput("Odometry/Current Auto Path", PathPlannerAuto.currentPathName);
+  }
 
   /** This function is called once when teleop is enabled. */
   @Override
@@ -187,7 +201,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    SimulatedArena.getInstance().resetFieldForAuto();
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override

@@ -14,6 +14,8 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.Constants.DrivetrainConstants.SCORE_POSES;
+import static frc.robot.Constants.DrivetrainConstants.SOURSE_POSES;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
@@ -45,16 +47,20 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.FeildConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.LocalADStarAK;
+import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
@@ -68,7 +74,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   public static final double DRIVE_BASE_RADIUS =
       Math.max(
           Math.max(
-              Math.hypot(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontRight.LocationY),
+              Math.hypot(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
               Math.hypot(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY)),
           Math.max(
               Math.hypot(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
@@ -77,27 +83,26 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   // PathPlanner config constants
   private static final RobotConfig PP_CONFIG =
       new RobotConfig(
-          DrivetrainConstants.ROBOT_MASS_KG,
-          DrivetrainConstants.ROBOT_MOI,
+          DrivetrainConstants.ROBOT_MASS.in(Kilograms),
+          DrivetrainConstants.ROBOT_MOI.in(KilogramSquareMeters),
           new ModuleConfig(
               TunerConstants.FrontLeft.WheelRadius,
               TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
               DrivetrainConstants.WHEEL_COF,
-              DCMotor.getKrakenX60Foc(1)
-                  .withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
+              DCMotor.getKrakenX60(1).withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
               TunerConstants.FrontLeft.SlipCurrent,
               1),
           getModuleTranslations());
 
   public static final DriveTrainSimulationConfig mapleSimConfig =
       DriveTrainSimulationConfig.Default()
-          .withRobotMass(Kilograms.of(DrivetrainConstants.ROBOT_MASS_KG))
+          .withRobotMass(DrivetrainConstants.ROBOT_MASS)
           .withCustomModuleTranslations(getModuleTranslations())
           .withGyro(COTS.ofPigeon2())
           .withSwerveModule(
               new SwerveModuleSimulationConfig(
                   DCMotor.getKrakenX60(1),
-                  DCMotor.getFalcon500(1),
+                  DCMotor.getKrakenX60(1),
                   TunerConstants.FrontLeft.DriveMotorGearRatio,
                   TunerConstants.FrontLeft.SteerMotorGearRatio,
                   Volts.of(TunerConstants.FrontLeft.DriveFrictionVoltage),
@@ -111,6 +116,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
+  private final SysIdRoutine sysIdTurning;
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
@@ -125,6 +131,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
       };
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+
+  private HashMap<String, boolean[]> scoredPoses = new HashMap<String, boolean[]>();
 
   public Drive(
       GyroIO gyroIO,
@@ -150,11 +158,11 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         this::setPose,
         this::getChassisSpeeds,
         this::runVelocity,
-        new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+        new PPHolonomicDriveController(new PIDConstants(20, 0.0, 1), new PIDConstants(20, 0.0, 1)),
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
+
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {
@@ -170,12 +178,30 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     sysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
+                Volts.of(0.25).per(Second),
                 null,
                 null,
-                null,
-                (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
+                (state) -> {
+                  SignalLogger.writeString("SwerveDrive/state", state.toString());
+                  Logger.recordOutput("Odometry/SysID Mode/Drive SysID", state.toString());
+                }),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+    sysIdTurning =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null,
+                (state) -> {
+                  SignalLogger.writeString("SwerveTurn/state", state.toString());
+                  Logger.recordOutput("Odometry/SysID Mode/Turn SysID", state.toString());
+                }),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> runCharacterizationTurning(voltage.in(Volts)), null, this));
+
+    // Logging scored Coral
+    for (String pole : Constants.kPoleLetters) scoredPoses.put(pole, new boolean[3]);
   }
 
   @Override
@@ -236,6 +262,12 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    int nameIndex = 0;
+    for (boolean[] boolList : scoredPoses.values()) {
+      Logger.recordOutput("ScoredPoses/Pole " + Constants.kPoleLetters[nameIndex], boolList);
+      nameIndex++;
+    }
   }
 
   /**
@@ -269,6 +301,12 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     }
   }
 
+  public void runCharacterizationTurning(double output) {
+    for (int i = 0; i < 4; i++) {
+      modules[i].runCharacterizationTurning(output);
+    }
+  }
+
   /** Stops the drive. */
   public void stop() {
     runVelocity(new ChassisSpeeds());
@@ -289,22 +327,38 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(6)).withTimeout(3).andThen(sysId.quasistatic(direction));
+    return run(() -> runCharacterization(6)).withTimeout(0).andThen(sysId.quasistatic(direction));
   }
 
-  /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> {
-          new SysIdRoutine.Config(
-              null, // Use default ramp rate (1 V/s)
-              Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
-              null, // Use default timeout (10 s)
-              // Log state with Phoenix SignalLogger class
-              (state) -> SignalLogger.writeString("state", state.toString()));
-          runCharacterization(6);
-        })
-        .withTimeout(5)
-        .andThen(sysId.dynamic(direction));
+    return run(() -> runCharacterization(6))
+        .withTimeout(0)
+        .andThen(sysId.dynamic(direction).withTimeout(3));
+  }
+
+  public Command sysIdQuasistaticTurning(SysIdRoutine.Direction direction) {
+    return run(() -> runCharacterization(6))
+        .withTimeout(0)
+        .andThen(sysIdTurning.quasistatic(direction).withTimeout(20));
+  }
+
+  public Command sysIdDynamicTurning(SysIdRoutine.Direction direction) {
+    return run(() -> runCharacterization(6))
+        .withTimeout(0)
+        .andThen(sysIdTurning.dynamic(direction).withTimeout(20));
+  }
+
+  public Command setPoseScored(String pole, int levelIndex) {
+    return Commands.runOnce(
+        () -> {
+          boolean[] newList = scoredPoses.get(pole);
+          newList[levelIndex] = !newList[levelIndex];
+          scoredPoses.replace(pole, newList);
+        });
+  }
+
+  public boolean isPoseScored(String pole, int levelIndex) {
+    return scoredPoses.get(pole)[levelIndex];
   }
 
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
@@ -354,6 +408,61 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
+  }
+
+  public Pose2d getAllianceAdjustedPose(String poleLetter) {
+    Pose2d originalPose = SCORE_POSES.get(poleLetter);
+
+    if (originalPose == null) {
+      return null;
+    }
+
+    if (Constants.kAllianceColor.equals(Alliance.Red)) {
+      Translation2d flippedTranslation =
+          originalPose
+              .getTranslation()
+              .rotateAround(
+                  new Translation2d(
+                      FeildConstants.kFieldLength.div(2), FeildConstants.kFieldWidth.div(2)),
+                  new Rotation2d(Degrees.of(180)));
+
+      return new Pose2d(
+          flippedTranslation, originalPose.getRotation().rotateBy(new Rotation2d(Degrees.of(180))));
+    } else {
+      return originalPose;
+    }
+  }
+
+  public Supplier<Rotation2d> getAlignRotation() {
+    return () -> getClosestScorePose().getRotation();
+  }
+
+  public Pose2d getClosestScorePose() {
+    Pose2d closest_pose = new Pose2d();
+    double closest_pose_dist = Double.MAX_VALUE;
+
+    // Find the closest pose
+    Pose2d robotPose = getPose();
+    for (String PoleLetter : Constants.kPoleLetters) {
+      Pose2d currentPose = getAllianceAdjustedPose(PoleLetter);
+      double current_dist = robotPose.getTranslation().getDistance(currentPose.getTranslation());
+      if (current_dist < closest_pose_dist) {
+        closest_pose_dist = current_dist;
+        closest_pose = currentPose;
+      }
+    }
+    Logger.recordOutput("Odometry/Closest Score Pose", closest_pose);
+    return closest_pose;
+  }
+
+  public Pose2d getClosestSoursePose() {
+    double dist1 = getPose().getTranslation().getDistance(SOURSE_POSES[0].getTranslation());
+    double dist2 = getPose().getTranslation().getDistance(SOURSE_POSES[1].getTranslation());
+
+    Pose2d closestSource = dist1 < dist2 ? SOURSE_POSES[0] : SOURSE_POSES[1];
+
+    Logger.recordOutput("Odometry/Closest Source Pose", closestSource);
+    return closestSource;
   }
 
   /** Returns the current odometry rotation. */
