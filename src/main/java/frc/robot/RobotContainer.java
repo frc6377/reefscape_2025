@@ -201,7 +201,7 @@ public class RobotContainer {
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
         .whileTrue(climber.runRaw(Volts.of(-3)));
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.A))
-        .onTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
+        .toggleOnTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Z) : OI.getTrigger(OI.Driver.Y))
         .onTrue(climber.climb());
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.X) : OI.getTrigger(OI.Driver.X))

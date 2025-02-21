@@ -302,10 +302,10 @@ public class Climber extends SubsystemBase {
   public Command disengageServo() {
     return runOnce(
         () -> {
-          setServoAngle(frontClimberServo, ClimberConstants.kServoEngageAngle.in(Rotations));
-          setServoAngle(backClimberServo, ClimberConstants.kServoEngageAngle.in(Rotations));
-          isFrontServoEngaged = true;
-          isBackServoEngaged = true;
+          setServoAngle(frontClimberServo, ClimberConstants.kServoDisengageAngle.in(Rotations));
+          setServoAngle(backClimberServo, ClimberConstants.kServoDisengageAngle.in(Rotations));
+          isFrontServoEngaged = false;
+          isBackServoEngaged = false;
         });
   }
 
