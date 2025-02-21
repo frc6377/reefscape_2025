@@ -230,7 +230,7 @@ public class Climber extends SubsystemBase {
         });
   }
 
-  private Command runClimber(Angle position, int slot) {
+  public Command runClimber(Angle position, int slot) {
     return Commands.sequence(
         stopJeopardy(),
         runOnce(
@@ -313,7 +313,9 @@ public class Climber extends SubsystemBase {
         .until(isClimberAtPosition(ClimberConstants.kClimberEmergencyUndoAngle))
         .andThen(disengageServo())
         .andThen(Commands.waitSeconds(1))
-        .andThen(runClimber(ClimberConstants.kClimberRetractedSetpoint, 0));
+        .andThen(runClimber(ClimberConstants.kClimberRetractedSetpoint, 0))
+        .andThen(engageServo())
+        .andThen(Commands.waitSeconds(1));
   }
 
   private SingleJointedArmSim getSimulator() {
@@ -370,8 +372,10 @@ public class Climber extends SubsystemBase {
         "Climber/Back/Climber Position", climberMotorBack.getPosition().getValue().in(Degrees));
     Logger.recordOutput(
         "Climber/Back/Absolute Encoder", Rotations.of(climberBackEncoder.get()).in(Degrees));
-    Logger.recordOutput("Climber/Front/Motor Current", climberMotorFront.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput("Climber/Back/Motor Current", climberMotorBack.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput(
+        "Climber/Front/Motor Current", climberMotorFront.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput(
+        "Climber/Back/Motor Current", climberMotorBack.getStatorCurrent().getValueAsDouble());
   }
 
   @Override
