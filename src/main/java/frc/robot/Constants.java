@@ -156,6 +156,8 @@ public final class Constants {
 
   // Intake Constants
   public static class IntakeConstants {
+    public static final boolean kEnableStateMachineSim = false;
+
     public static final double kIntakeSpeed = -1;
     public static final double kOuttakeSpeed = 0.2;
     public static final double kIntakeHandoffSpeed = -0.75;
