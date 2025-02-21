@@ -259,8 +259,8 @@ public class Climber extends SubsystemBase {
   }
 
   public void setCurrentLimit(Current current) {
-      climberMotorFront.getConfigurator().apply(currentLimit.withStatorCurrentLimit(current));
-      climberMotorBack.getConfigurator().apply(currentLimit.withStatorCurrentLimit(current));
+    climberMotorFront.getConfigurator().apply(currentLimit.withStatorCurrentLimit(current));
+    climberMotorBack.getConfigurator().apply(currentLimit.withStatorCurrentLimit(current));
   }
 
   public Command climb() {
@@ -294,17 +294,18 @@ public class Climber extends SubsystemBase {
           isBackServoEngaged = true;
           setCurrentLimit(Amps.of(70));
         });
-      }
-      
-    public Command disengageServo() {
-      return runOnce(
+  }
+
+  public Command disengageServo() {
+    return runOnce(
         () -> {
-          setServoAngle(frontClimberServo, ClimberConstants.kFrontServoDisengageAngle.in(Rotations));
+          setServoAngle(
+              frontClimberServo, ClimberConstants.kFrontServoDisengageAngle.in(Rotations));
           setServoAngle(backClimberServo, ClimberConstants.kFrontServoDisengageAngle.in(Rotations));
           isFrontServoEngaged = false;
           isBackServoEngaged = false;
           setCurrentLimit(Amps.of(5));
-      });
+        });
   }
 
   public Command retract() {
