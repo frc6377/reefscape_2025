@@ -216,7 +216,7 @@ public final class Constants {
 
   // Elevator Constants
   public static class ElevatorConstants {
-    public static final Distance kL0Height = Inches.of(0.5);
+    public static final Distance kL0Height = Inches.of(0);
     public static final Distance kL2Height = Inches.of(16.62);
     public static final Distance kL3Height = Inches.of(30.9);
     public static final Distance kL4Height = Inches.of(55);

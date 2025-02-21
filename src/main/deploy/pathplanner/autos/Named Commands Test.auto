@@ -13,18 +13,6 @@
         {
           "type": "named",
           "data": {
-            "name": "ElvL2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "ElvL4"
           }
         },
@@ -37,7 +25,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "Test Autos",
   "choreoAuto": false
 }

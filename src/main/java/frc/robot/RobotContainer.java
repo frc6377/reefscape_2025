@@ -155,20 +155,29 @@ public class RobotContainer {
 
     // Register Named Commands
     NamedCommands.registerCommand(
-        "ElvL0", elevator.L0().until(elevator.elevatorAtSetpoint().debounce(0.5)));
+        "ElvL0",
+        elevator.L0().andThen(Commands.waitUntil(elevator.elevatorAtSetpoint().debounce(0.5))));
     NamedCommands.registerCommand(
-        "ElvL2", elevator.L2().until(elevator.elevatorAtSetpoint().debounce(0.5)));
+        "ElvL2",
+        elevator.L2().andThen(Commands.waitUntil(elevator.elevatorAtSetpoint().debounce(0.5))));
     NamedCommands.registerCommand(
-        "ElvL3", elevator.L3().until(elevator.elevatorAtSetpoint().debounce(0.5)));
+        "ElvL3",
+        elevator.L3().andThen(Commands.waitUntil(elevator.elevatorAtSetpoint().debounce(0.5))));
     NamedCommands.registerCommand(
-        "ElvL4", elevator.L4().until(elevator.elevatorAtSetpoint().debounce(0.5)));
+        "ElvL4",
+        elevator.L4().andThen(Commands.waitUntil(elevator.elevatorAtSetpoint().debounce(0.5))));
     NamedCommands.registerCommand(
         "Intake",
         elevator
             .L0()
             .until(elevator.elevatorAtSetpoint().debounce(0.5))
-            .andThen(intakeAutoCommand()));
-    NamedCommands.registerCommand("Score", scorerAutoCommand());
+            .andThen(intakeAutoCommand().asProxy())
+            .andThen(
+                Commands.waitUntil(
+                    () ->
+                        sensors.getSensorState() == CoralEnum.NO_CORAL
+                            || coralScorer.hasCoral().getAsBoolean())));
+    NamedCommands.registerCommand("Score", scorerAutoCommand().asProxy());
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -261,7 +270,9 @@ public class RobotContainer {
 
     intake
         .intakeHasUnalignedCoralTrigger()
-        .onTrue(new LocateCoral(sensors::getSensorState, intake, () -> elevatorNotL1).asProxy());
+        .onTrue(
+            new LocateCoral(sensors::getSensorState, intake, OI.getButton(OI.Driver.RBumper))
+                .asProxy());
 
     intake
         .intakeHasCoralTrigger()
@@ -350,13 +361,15 @@ public class RobotContainer {
     }
 
     // Button to update Setpoints of the elevator based on the Stream Deck nobs
-    OI.getButton(OI.StreamDeck.streamDeckButtons[1][16])
+    OI.getButton(OI.StreamDeck.streamDeckButtons[1][31])
         .onTrue(
-            elevator.tuneSetpoints(
-                OI.getAxisSupplier(OI.StreamDeck.Nob1),
-                OI.getAxisSupplier(OI.StreamDeck.Nob2),
-                OI.getAxisSupplier(OI.StreamDeck.Nob3),
-                OI.getAxisSupplier(OI.StreamDeck.Nob4)));
+            elevator
+                .tuneSetpoints(
+                    OI.getAxisSupplier(OI.StreamDeck.Nob1),
+                    () -> DriverStation.getStickAxis(2, 1),
+                    OI.getAxisSupplier(OI.StreamDeck.Nob3),
+                    OI.getAxisSupplier(OI.StreamDeck.Nob4))
+                .ignoringDisable(true));
 
     // Temp Keyboard Buttons for sim with no controller
     if (usingKeyboard) {

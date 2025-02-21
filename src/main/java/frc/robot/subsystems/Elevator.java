@@ -318,12 +318,13 @@ public class Elevator extends SubsystemBase {
   public Command tuneSetpoints(
       Supplier<Double> offset, Supplier<Double> L2, Supplier<Double> L3, Supplier<Double> L4) {
     return Commands.runOnce(
-        () -> {
-          tuneOffset = Inches.of(offset.get() * 10);
-          L2TuneOffset = Inches.of(L2.get() * 10);
-          L3TuneOffset = Inches.of(L3.get() * 10);
-          L4TuneOffset = Inches.of(L4.get() * 10);
-        });
+            () -> {
+              tuneOffset = Inches.of(offset.get() * 10);
+              L2TuneOffset = Inches.of(L2.get() * 10);
+              L3TuneOffset = Inches.of(L3.get() * 10);
+              L4TuneOffset = Inches.of(L4.get() * 10);
+            })
+        .alongWith(Commands.print(L2.get().toString()));
   }
 
   @Override
@@ -364,9 +365,9 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Elevator/CRT", ChineseRemander().in(Rotations));
     Logger.recordOutput("Elevator/limit switch state", elvLimitSwitch.get());
 
-    Logger.recordOutput("Elevator/Setpoints/L2", getL2Setpoint());
-    Logger.recordOutput("Elevator/Setpoints/L3", getL3Setpoint());
-    Logger.recordOutput("Elevator/Setpoints/L4", getL4Setpoint());
+    Logger.recordOutput("Elevator/Setpoints/L2", getL2Setpoint().in(Inches));
+    Logger.recordOutput("Elevator/Setpoints/L3", getL3Setpoint().in(Inches));
+    Logger.recordOutput("Elevator/Setpoints/L4", getL4Setpoint().in(Inches));
 
     if (this.getCurrentCommand() != null) {
       Logger.recordOutput("Elevator/Current Command", this.getCurrentCommand().getName());
