@@ -12,15 +12,20 @@ import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
@@ -32,19 +37,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Robot;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
-import utilities.TunableNumber;
 
-@SuppressWarnings("unused")
 public class Elevator extends SubsystemBase {
   private TalonFX elevatorMotor1;
   private TalonFXSimState simElvMotor1;
@@ -59,68 +64,51 @@ public class Elevator extends SubsystemBase {
   private DutyCycleEncoderSim simGear11;
   private final SysIdRoutine m_sysIdElevator;
 
-  private final VoltageOut m_voltReq;
+  private Distance tuneOffset = Inches.zero();
+  private Distance L2TuneOffset = Inches.zero();
+  private Distance L3TuneOffset = Inches.zero();
+  private Distance L4TuneOffset = Inches.zero();
+
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
       new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
   private static Mechanism2d mech = new Mechanism2d(2, 2);
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
-  private MotionMagicConfigs elvMotionMagic =
-      new MotionMagicConfigs()
-          .withMotionMagicCruiseVelocity(MMVel)
-          .withMotionMagicAcceleration(MMAcc)
-          .withMotionMagicJerk(MMJerk);
+  private MotionMagicConfigs elvMotionMagic = ElevatorConstants.kElevatorMM.getMotionMagicConfigs();
 
   public static final SoftwareLimitSwitchConfigs elvSoftLimit =
       new SoftwareLimitSwitchConfigs()
           .withForwardSoftLimitEnable(true)
-          .withForwardSoftLimitThreshold(heightToRotations(Constants.ElevatorConstants.kTopLimit))
+          .withForwardSoftLimitThreshold(heightToRotations(ElevatorConstants.kTopLimit))
           .withReverseSoftLimitEnable(true)
           .withReverseSoftLimitThreshold(
               heightToRotations(Constants.ElevatorConstants.kBottomLimit));
   public static final Slot0Configs loopCfg = kElevatorPID.getSlot0Configs();
+
+  private Pose3d elvSimPose1;
+  private Pose3d elvSimPose2;
+
+  private Distance currentSetpoint = Meter.zero();
+
   private ElevatorSim m_elevatorSim;
-  private TunableNumber tunableP;
-  private TunableNumber tunableI;
-  private TunableNumber tunableD;
-  private Consumer<Double> consumerP;
-  private Consumer<Double> consumerI;
-  private Consumer<Double> consumerD;
-  private TunableNumber tunableMMVel;
-  private TunableNumber tunableMMAcc;
-  private TunableNumber tunableMMJerk;
-  private Consumer<Double> consumerMMVel;
-  private Consumer<Double> consumerMMAcc;
-  private Consumer<Double> consumerMMJerk;
 
   public Elevator() {
+    // TODO: set up for canivore (Do we still need this? -Jackson)
+    elevatorMotor1 = new TalonFX(CANIDs.kElevatorMotor1, Constants.RIOName);
+    elevatorMotor2 = new TalonFX(CANIDs.kElevatorMotor2, Constants.RIOName);
+
     currentLimit.StatorCurrentLimit = 90;
     currentLimit.SupplyCurrentLimit = 70;
-    m_voltReq = new VoltageOut(0.0);
     currentLimit.SupplyCurrentLowerLimit = 40;
     currentLimit.SupplyCurrentLowerTime = 1;
     currentLimit.StatorCurrentLimitEnable = true;
     currentLimit.SupplyCurrentLimitEnable = true;
-    m_sysIdElevator =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                Volts.of(0.5).div(Seconds.of(1)), // Use default ramp rate (1 V/s)
-                Volts.of(1), // Reduce dynamic step voltage to 4 to prevent brownout
-                Seconds.of(3), // Use default timeout (10 s)
-                (state) -> SignalLogger.writeString("Elevator/SysIdState", state.toString())),
-            new SysIdRoutine.Mechanism(
-                (volts) -> elevatorMotor1.setControl(m_voltReq.withOutput(volts.in(Volts))),
-                null,
-                this));
-    gear3 = new DutyCycleEncoder(DIOConstants.gear3ID, 1.0, ElevatorConstants.gear3Offset);
-    gear11 = new DutyCycleEncoder(DIOConstants.gear11ID, 1.0, ElevatorConstants.gear11Offset);
-    elevatorMotor1 = new TalonFX(CANIDs.kElevatorMotor1, Constants.RIOName);
-    elevatorMotor2 = new TalonFX(CANIDs.kElevatorMotor2, Constants.RIOName);
 
     elevatorConfig1 = new TalonFXConfiguration();
     elevatorConfig1.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
-    elevatorConfig1.Slot0 = loopCfg;
+    elevatorConfig1.Slot0 = ElevatorConstants.kElevatorPID.getSlot0Configs();
+    ElevatorConstants.kElevatorPID.createTunableNumbers("Elevator PID", this);
     elevatorConfig1.SoftwareLimitSwitch = elvSoftLimit;
     elevatorConfig1.CurrentLimits = currentLimit;
     elevatorConfig1.MotorOutput = invertMotor;
@@ -134,47 +122,22 @@ public class Elevator extends SubsystemBase {
     elevatorMotor2.getConfigurator().apply(elevatorConfig2);
     elevatorMotor2.setControl(new Follower(CANIDs.kElevatorMotor1, true));
 
-    elvLimitSwitch = new DigitalInput(Constants.ElevatorConstants.elvLimitID);
-    // new Trigger(elvLimitSwitch::get).onTrue(zeroMotorEncoder());
+    elvLimitSwitch = new DigitalInput(DIOConstants.elvLimitID);
 
-    // Motion Magic Tunable Numbers
-    // MM Velocity
-    consumerMMVel =
-        newMMVel -> {
-          elvMotionMagic.MotionMagicCruiseVelocity = newMMVel;
-          elevatorMotor1.getConfigurator().apply(elvMotionMagic);
-        };
-    tunableMMVel =
-        new TunableNumber(
-            "Tunable Number MMVel",
-            (Constants.ElevatorConstants.MMVel).in(RotationsPerSecond),
-            consumerMMVel,
-            this);
-    // MM Acceleration
-    consumerMMAcc =
-        newMMAcc -> {
-          elvMotionMagic.MotionMagicAcceleration = newMMAcc;
-          elevatorMotor1.getConfigurator().apply(elvMotionMagic);
-        };
-    tunableMMAcc =
-        new TunableNumber(
-            "Tunable Number MMAccel",
-            (Constants.ElevatorConstants.MMAcc).in(RotationsPerSecondPerSecond),
-            consumerMMAcc,
-            this);
-    // MM Jerk (Jerk = Meters per second per second per second)
-    consumerMMJerk =
-        newMMJerk -> {
-          elvMotionMagic.MotionMagicJerk = newMMJerk;
-          elevatorMotor1.getConfigurator().apply(elvMotionMagic);
-        };
-    ;
-    tunableMMJerk =
-        new TunableNumber(
-            "Tunable Number MMJerk",
-            (Constants.ElevatorConstants.MMJerk).in(RotationsPerSecondPerSecond.per(Second)),
-            consumerMMJerk,
-            this);
+    gear3 = new DutyCycleEncoder(DIOConstants.gear3ID, 1.0, ElevatorConstants.gear3Offset);
+    gear11 = new DutyCycleEncoder(DIOConstants.gear11ID, 1.0, ElevatorConstants.gear11Offset);
+
+    m_sysIdElevator =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                Volts.of(5).div(Seconds.of(1)), // Use default ramp rate (1 V/s)
+                Volts.of(40), // Reduce dynamic step voltage to 4 to prevent brownout
+                Seconds.of(10), // Use default timeout (10 s)
+                (state) -> {
+                  SignalLogger.writeString("Elevator/SysIdState", state.toString());
+                  Logger.recordOutput("Elevator/SysID State", state.toString());
+                }),
+            new SysIdRoutine.Mechanism((volts) -> setElvCurrentFOC(volts.in(Volts)), null, this));
 
     // Simulation
     if (Robot.isSimulation()) {
@@ -201,22 +164,31 @@ public class Elevator extends SubsystemBase {
       SmartDashboard.putData("Mech2Ds/Elevator Mech", mech);
     }
 
-    Logger.recordOutput("Elevator/Setpoint", 0);
-    Logger.recordOutput("Elevator/Setpoint Rotations", 0);
+    elvSimPose1 = DrivetrainConstants.kElvStage1Pose;
+    elvSimPose2 = DrivetrainConstants.kElvStage2Pose;
+    Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", elvSimPose1);
+    Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", elvSimPose2);
+    Logger.recordOutput("Elevator/Setpoint", 0.0);
+    Logger.recordOutput("Elevator/Setpoint Rotations", 0.0);
+  }
+
+  public void setElvCurrentFOC(double amps) {
+    elevatorMotor1.setControl(new TorqueCurrentFOC(amps));
+  }
+
+  public void setElvVoltage(Voltage voltage) {
+    elevatorMotor1.setControl(new VoltageOut(voltage));
   }
 
   public static Distance rotationsToHeight(Angle rotations) {
     return ElevatorConstants.kElevatorDrumCircumference
-        .times(rotations.in(Rotations) * ElevatorConstants.kCarageFactor)
+        .times(rotations.in(Rotations))
         .div(kElevatorGearing);
   }
 
   // height = C * rot * 2/75 -> rot = height * 75/2C
   public static Angle heightToRotations(Distance height) {
-    return height
-        .times(kElevatorGearing)
-        .div(kElevatorDrumCircumference.times(kCarageFactor))
-        .times(Rotations.one());
+    return height.times(kElevatorGearing).div(kElevatorDrumCircumference).times(Rotations.one());
   }
 
   public Angle ChineseRemander() {
@@ -229,13 +201,45 @@ public class Elevator extends SubsystemBase {
 
   public static AngularVelocity heightToRotations(LinearVelocity vel) {
     // rot/s = (G)/(C*2/vel)
-    return Rotations.one()
-        .times(kElevatorGearing)
-        .div((kElevatorDrumCircumference.times(kCarageFactor)).div(vel));
+    return Rotations.one().times(kElevatorGearing).div((kElevatorDrumCircumference).div(vel));
   }
 
   public Distance getElevatorHeight() {
     return rotationsToHeight(elevatorMotor1.getPosition().getValue());
+  }
+
+  public Distance getElevatorMechHeight() {
+    return Meters.of(elevatorMech.getLength());
+  }
+
+  public Trigger elevatorAtSetpoint() {
+    return new Trigger(() -> getElevatorHeight().isNear(currentSetpoint, kSetpointTolerance))
+        .debounce(0.5);
+  }
+
+  private void disableSoftLimits() {
+    elevatorMotor1
+        .getConfigurator()
+        .apply(
+            new SoftwareLimitSwitchConfigs()
+                .withForwardSoftLimitEnable(false)
+                .withReverseSoftLimitEnable(false));
+  }
+
+  private Distance getL2Setpoint() {
+    return ElevatorConstants.kL2Height.plus(tuneOffset).plus(L2TuneOffset);
+  }
+
+  private Distance getL3Setpoint() {
+    return ElevatorConstants.kL3Height.plus(tuneOffset).plus(L3TuneOffset);
+  }
+
+  private Distance getL4Setpoint() {
+    return ElevatorConstants.kL4Height.plus(tuneOffset).plus(L4TuneOffset);
+  }
+
+  private void enableSoftLimits() {
+    elevatorMotor1.getConfigurator().apply(elvSoftLimit);
   }
 
   public Command elevatorUpOrDown(Supplier<Double> upPower) {
@@ -256,24 +260,12 @@ public class Elevator extends SubsystemBase {
         });
   }
 
-  private void disableSoftLimits() {
-    elevatorMotor1
-        .getConfigurator()
-        .apply(
-            new SoftwareLimitSwitchConfigs()
-                .withForwardSoftLimitEnable(false)
-                .withReverseSoftLimitEnable(false));
-  }
-
-  private void enableSoftLimits() {
-    elevatorMotor1.getConfigurator().apply(elvSoftLimit);
-  }
-
   public Command limitHit() {
     return runOnce(this::disableSoftLimits)
-        .andThen(setElvPercent(-0.1).until(elvLimitSwitch::get))
+        .andThen(setElvPercent(-0.2).until(elvLimitSwitch::get))
         .andThen(zeroMotorEncoder())
-        .andThen(runOnce(this::enableSoftLimits));
+        .andThen(runOnce(this::enableSoftLimits))
+        .withName("Elevator Zero");
   }
 
   public Command zeroMotorEncoder() {
@@ -296,35 +288,56 @@ public class Elevator extends SubsystemBase {
     return runOnce(
         () -> {
           Angle adjustedSetpoint = heightToRotations(heightLevel);
-          elevatorMotor1.setControl(new MotionMagicVoltage(adjustedSetpoint));
+          MotionMagicVoltage control = new MotionMagicVoltage(adjustedSetpoint);
+          control.EnableFOC = true;
+          elevatorMotor1.setControl(control);
+          currentSetpoint = heightLevel;
           Logger.recordOutput("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
-          Logger.recordOutput("Elevator/Setpoint Rotations", adjustedSetpoint.in(Rotations));
+          Logger.recordOutput("Elevator/Setpoint (Rotations)", adjustedSetpoint.in(Rotations));
         });
   }
 
   public Command L0() {
-    return changeElevation(Constants.ElevatorConstants.kL0Height);
+    return changeElevation(ElevatorConstants.kL0Height);
   }
 
   public Command L2() {
-    return changeElevation(Constants.ElevatorConstants.kL2Height);
+    return changeElevation(getL2Setpoint());
   }
 
   public Command L3() {
-    return changeElevation(Constants.ElevatorConstants.kL3Height);
+    return changeElevation(getL3Setpoint());
   }
 
   public Command L4() {
-    return changeElevation(Constants.ElevatorConstants.kL4Height);
+    return changeElevation(getL4Setpoint());
+  }
+
+  public Command tuneSetpoints(
+      Supplier<Double> offset, Supplier<Double> L2, Supplier<Double> L3, Supplier<Double> L4) {
+    return Commands.runOnce(
+            () -> {
+              tuneOffset = Inches.of(offset.get() * 10);
+              L2TuneOffset = Inches.of(L2.get() * 10);
+              L3TuneOffset = Inches.of(L3.get() * 10);
+              L4TuneOffset = Inches.of(L4.get() * 10);
+            })
+        .alongWith(Commands.print(L2.get().toString()));
   }
 
   @Override
   public void periodic() {
+    Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", elvSimPose1);
+    Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", elvSimPose2);
     Logger.recordOutput("Elevator/Motor1/Percent Out", elevatorMotor1.get());
     Logger.recordOutput(
         "Elevator/Motor1/Voltage (Volts)", elevatorMotor1.getMotorVoltage().getValue().in(Volts));
     Logger.recordOutput(
-        "Elevator/Motor1/Rotation (Degrees)", elevatorMotor1.getPosition().getValue().in(Degrees));
+        "Elevator/Motor1/Torque Current", elevatorMotor1.getTorqueCurrent().getValue().in(Amps));
+    Logger.recordOutput(
+        "Elevator/Motor1/Velocity", elevatorMotor1.getVelocity().getValue().in(DegreesPerSecond));
+    Logger.recordOutput(
+        "Elevator/Motor1/Position (Degrees)", elevatorMotor1.getPosition().getValue().in(Degrees));
     Logger.recordOutput(
         "Elevator/Motor1/Temp (Fahrenheit)",
         elevatorMotor1.getDeviceTemp().getValue().in(Fahrenheit));
@@ -335,7 +348,11 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput(
         "Elevator/Motor2/Voltage (Volts)", elevatorMotor2.getMotorVoltage().getValue().in(Volts));
     Logger.recordOutput(
-        "Elevator/Motor2/Rotation (Degrees)", elevatorMotor2.getPosition().getValue().in(Degrees));
+        "Elevator/Motor2/Torque Current", elevatorMotor2.getTorqueCurrent().getValue().in(Amps));
+    Logger.recordOutput(
+        "Elevator/Motor2/Velocity", elevatorMotor2.getVelocity().getValue().in(DegreesPerSecond));
+    Logger.recordOutput(
+        "Elevator/Motor2/Position (Degrees)", elevatorMotor2.getPosition().getValue().in(Degrees));
     Logger.recordOutput(
         "Elevator/Motor2/Temp (Fahrenheit)",
         elevatorMotor2.getDeviceTemp().getValue().in(Fahrenheit));
@@ -345,6 +362,32 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
     Logger.recordOutput("Elevator/CRT", ChineseRemander().in(Rotations));
     Logger.recordOutput("Elevator/limit switch state", elvLimitSwitch.get());
+
+    Logger.recordOutput("Elevator/Setpoints/L2", getL2Setpoint().in(Inches));
+    Logger.recordOutput("Elevator/Setpoints/L3", getL3Setpoint().in(Inches));
+    Logger.recordOutput("Elevator/Setpoints/L4", getL4Setpoint().in(Inches));
+
+    if (this.getCurrentCommand() != null) {
+      Logger.recordOutput("Elevator/Current Command", this.getCurrentCommand().getName());
+    } else {
+      Logger.recordOutput("Elevator/Current Command", "No Command");
+    }
+
+    Distance elvHeight = getElevatorHeight();
+    elvSimPose1 =
+        new Pose3d(
+            new Translation3d(
+                elvSimPose1.getMeasureX(),
+                elvSimPose1.getMeasureY(),
+                DrivetrainConstants.kElvStage1Pose.getMeasureZ().plus(elvHeight.div(2))),
+            new Rotation3d());
+    elvSimPose2 =
+        new Pose3d(
+            new Translation3d(
+                elvSimPose2.getMeasureX(),
+                elvSimPose2.getMeasureY(),
+                DrivetrainConstants.kElvStage2Pose.getMeasureZ().plus(elvHeight)),
+            new Rotation3d());
   }
 
   @Override
@@ -359,7 +402,7 @@ public class Elevator extends SubsystemBase {
     simGear3.set((heightToRotations(simDist).in(Rotations) / gear1Toothing) % 1);
     simGear11.set((heightToRotations(simDist).in(Rotations) / gear2Toothing) % 1);
 
-    elevatorMech.setLength(0.1 + (simDist.in(Meters)));
+    elevatorMech.setLength(simDist.in(Meters));
 
     Logger.recordOutput("Elevator/Sim Length", simDist.in(Inches));
     Logger.recordOutput("Elevator/Sim velocity", simVel.in(InchesPerSecond));

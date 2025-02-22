@@ -16,8 +16,6 @@ import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -94,8 +92,6 @@ public class Climber extends SubsystemBase {
     climberMotorFront = new TalonFX(CANIDs.kClimberMotorFront);
     climberMotorBack = new TalonFX(CANIDs.kClimberMotorBack);
     feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.kGearRatio);
-    climberConfigsToClimber = ClimberConstants.kClimberPID0.getSlot0Configs();
-    climberConfigsAtClimber = ClimberConstants.kClimberPID1.getSlot1Configs();
 
     // Boolean to check if the climber is climbing of if it is just idle
     isClimbingStateSim = false;
@@ -105,15 +101,15 @@ public class Climber extends SubsystemBase {
 
     frontConfigs =
         new TalonFXConfiguration()
-            .withSlot0(climberConfigsToClimber)
-            .withSlot1(climberConfigsAtClimber)
+            .withSlot0(ClimberConstants.kClimberPID0.getSlot0Configs())
+            .withSlot1(ClimberConstants.kClimberPID1.getSlot1Configs())
             .withMotorOutput(
                 climberOutputConfigsFront.withInverted(ClimberConstants.kClimberFrontInvert))
             .withFeedback(feedbackConfigs);
     backConfigs =
         new TalonFXConfiguration()
-            .withSlot0(climberConfigsToClimber)
-            .withSlot1(climberConfigsAtClimber)
+            .withSlot0(ClimberConstants.kClimberPID0.getSlot0Configs())
+            .withSlot1(ClimberConstants.kClimberPID1.getSlot1Configs())
             .withMotorOutput(
                 climberOutputConfigsBack.withInverted(ClimberConstants.kClimberBackInvert))
             .withFeedback(feedbackConfigs.withSensorToMechanismRatio(ClimberConstants.kGearRatio));
@@ -155,7 +151,7 @@ public class Climber extends SubsystemBase {
               simClimberGearbox,
               ClimberConstants.kGearRatio,
               Math.pow(ClimberConstants.kClimberArmLength.in(Meters), 2)
-                  * DrivetrainConstants.ROBOT_MASS_KG,
+                  * DrivetrainConstants.ROBOT_MASS.in(Kilograms),
               ClimberConstants.kClimberArmLength.in(Meters),
               ClimberConstants.kClimberArmMinAngle.in(Radians),
               ClimberConstants.kClimberArmMaxAngle.in(Radians),
@@ -187,6 +183,10 @@ public class Climber extends SubsystemBase {
                   new Color8Bit(255, 255, 0)));
       SmartDashboard.putData("Mech2Ds/Climb Mech", climbMech);
     }
+
+    // Temp until we have real climb code
+    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", DrivetrainConstants.kClimber1Pose);
+    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", DrivetrainConstants.kClimber2Pose);
   }
 
   public Command playJeopardy() {
@@ -345,24 +345,6 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public void toggleClimb() {
-    if (Robot.isSimulation()) {
-      toggleClimbingSim();
-    } else {
-      // Implement real robot behavior for toggling climb state
-      if (isClimbingStateSim) {
-        climberMotorFront.getConfigurator().apply(frontConfigs.withSlot0(climberConfigsToClimber));
-        climberMotorBack.getConfigurator().apply(backConfigs.withSlot0(climberConfigsToClimber));
-        isClimbingStateSim = false;
-      } else {
-        climberMotorFront.getConfigurator().apply(frontConfigs.withSlot1(climberConfigsAtClimber));
-        climberMotorBack.getConfigurator().apply(backConfigs.withSlot1(climberConfigsAtClimber));
-        isClimbingStateSim = true;
-      }
-      Logger.recordOutput("Climbing", isClimbingStateSim);
-    }
-  }
-
   private void toggleClimbingSim() {
     if (isClimbingStateSim) {
       climberSimNormal.setState(
@@ -421,11 +403,11 @@ public class Climber extends SubsystemBase {
     Logger.recordOutput("Climber/Climbing", isClimbingStateSim);
     if (climberMotorFront.getPosition().getValue().gt(ClimberConstants.kClimberAtCageSetpoint)) {
       if (simulator == climberSimNormal) {
-        toggleClimb();
+        toggleClimbingSim();
       }
     } else {
       if (simulator == climberSimLifting) {
-        toggleClimb();
+        toggleClimbingSim();
       }
     }
   }
