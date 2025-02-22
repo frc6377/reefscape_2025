@@ -81,12 +81,12 @@ public class LocateCoral extends Command {
         || override_button.getAsBoolean();
   }
 
-  @Override
-  public InterruptionBehavior getInterruptionBehavior() {
-    if (state.get() == CoralEnum.CORAL_TOO_CLOSE) {
-      return InterruptionBehavior.kCancelIncoming;
-    } else {
-      return InterruptionBehavior.kCancelSelf;
-    }
-  }
+  // @Override
+  // public InterruptionBehavior getInterruptionBehavior() {
+  //   if (state.get() == CoralEnum.CORAL_TOO_CLOSE) {
+  //     return InterruptionBehavior.kCancelIncoming;
+  //   } else {
+  //     return InterruptionBehavior.kCancelSelf;
+  //   }
+  // }
 }

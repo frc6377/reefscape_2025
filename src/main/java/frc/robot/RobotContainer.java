@@ -82,6 +82,7 @@ public class RobotContainer {
 
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
+  private boolean coralStationMode = false;
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose = new Pose2d(2, 2, new Rotation2d());
@@ -266,14 +267,37 @@ public class RobotContainer {
     OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
 
     // Intake Buttons
-    OI.getTrigger(OI.Driver.RTrigger).and(() -> !intakeAlgeaMode).whileTrue(intake.floorIntake());
+    OI.getTrigger(OI.Driver.RTrigger)
+        .and(() -> !intakeAlgeaMode)
+        .and(() -> !coralStationMode)
+        .whileTrue(intake.floorIntake());
+    OI.getTrigger(OI.Driver.RTrigger)
+        .and(() -> !intakeAlgeaMode)
+        .and(() -> coralStationMode)
+        .whileTrue(intake.humanPlayerIntake());
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
+
+    // Outtake Buttons
+    OI.getButton(OI.Driver.A).whileTrue(intake.l1ScoreModeB()); // Temporary
+    OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
 
     intake
         .intakeHasUnalignedCoralTrigger()
         .and(coralOuttakeButton.negate())
-        .onTrue(new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton));
+        .onTrue(new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton))
+        .andThen(
+          intake
+          .intakeHasCoralTrigger()
+          .and(coralOuttakeButton.negate())
+          .onTrue(
+              Robot.isReal()
+                  ? intake
+                      .conveyerInCommand()
+                      .alongWith(coralScorer.intakeCommand())
+                      .until(coralHandoffCompleteTrigger)
+                  : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)))
+        );
 
     intake
         .intakeHasCoralTrigger()
@@ -286,7 +310,6 @@ public class RobotContainer {
                     .until(coralHandoffCompleteTrigger)
                 : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
 
-    OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
     OI.getButton(OI.Operator.Y)
         .onTrue(
             Commands.runOnce(
@@ -301,8 +324,13 @@ public class RobotContainer {
                   intakeAlgeaMode = !intakeAlgeaMode;
                   Logger.recordOutput("Intake/Algea Mode", intakeAlgeaMode);
                 }));
-
-    OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
+    OI.getButton(OI.Operator.B)
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  coralStationMode = !coralStationMode;
+                  Logger.recordOutput("Intake/Coral Station Mode", coralStationMode);
+                }));
     intake.setDefaultCommand(intake.Idle());
 
     // Scorer Buttons
