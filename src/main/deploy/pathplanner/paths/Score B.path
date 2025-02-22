@@ -3,57 +3,75 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.255966963421563,
-        "y": 0.9550863896519501
+        "x": 1.225398490344323,
+        "y": 0.9680916092635675
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7899853165304893,
-        "y": 1.911183202461284
+        "x": 1.4672457256377003,
+        "y": 1.3760707374170151
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Right Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 3.171967470336712,
-        "y": 3.859960556501591
+        "x": 3.1844346735739295,
+        "y": 3.8284492724085264
       },
       "prevControl": {
-        "x": 3.0515137203650147,
-        "y": 3.640892315723162
+        "x": 3.0584326593630475,
+        "y": 3.612524534560357
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Reef B"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.8011592741935483,
-      "rotationDegrees": 0.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    },
+    {
+      "name": "ElvL4",
+      "waypointRelativePos": 0.30748288977723287,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ElvL4"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxVelocity": 4.4,
+    "maxAcceleration": 6.25,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 2979.381,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "reversed": false,
   "folder": "Source - Score",
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": 54.0
+    "rotation": -126.0
   },
   "useDefaultConstraints": true
 }
