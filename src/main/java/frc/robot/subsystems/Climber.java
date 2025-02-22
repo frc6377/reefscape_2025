@@ -58,14 +58,11 @@ public class Climber extends SubsystemBase {
   private TalonFXConfiguration frontConfigs;
   private TalonFXConfiguration backConfigs;
   private Angle climberTargetAngle;
-  private Slot0Configs climberConfigsToClimber;
-  private Slot1Configs climberConfigsAtClimber;
   private Servo frontClimberServo;
   private Servo backClimberServo;
 
   private boolean isFrontServoEngaged = false;
   private boolean isBackServoEngaged = false;
-  
 
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
 
@@ -125,10 +122,8 @@ public class Climber extends SubsystemBase {
     climberMotorFront.setPosition(ClimberConstants.kClimberAtCageSetpoint.in(Rotations));
     climberMotorBack.setPosition(ClimberConstants.kClimberAtCageSetpoint.in(Rotations));
 
-    Logger.recordOutput(
-      "Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
-    Logger.recordOutput(
-      "Climber/Front/isBackServoEngaged", isBackServoEngaged);
+    Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
+    Logger.recordOutput("Climber/Front/isBackServoEngaged", isBackServoEngaged);
 
     // For simulation
     // simulates the entire simulation, not just one arm
@@ -310,11 +305,8 @@ public class Climber extends SubsystemBase {
           isFrontServoEngaged = true;
           isBackServoEngaged = true;
           setCurrentLimit(Amps.of(70));
-          Logger.recordOutput(
-            "Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
-          Logger.recordOutput(
-            "Climber/Front/isBackServoEngaged", isBackServoEngaged);
-            
+          Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
+          Logger.recordOutput("Climber/Front/isBackServoEngaged", isBackServoEngaged);
         });
   }
 
@@ -330,10 +322,8 @@ public class Climber extends SubsystemBase {
           isFrontServoEngaged = false;
           isBackServoEngaged = false;
           setCurrentLimit(Amps.of(5));
-          Logger.recordOutput(
-            "Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
-          Logger.recordOutput(
-            "Climber/Front/isBackServoEngaged", isBackServoEngaged);
+          Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
+          Logger.recordOutput("Climber/Front/isBackServoEngaged", isBackServoEngaged);
         });
   }
 
