@@ -277,6 +277,7 @@ public class RobotContainer {
 
     intake
         .intakeHasCoralTrigger()
+        .and(() -> elevatorNotL1)
         .and(coralOuttakeButton.negate())
         .onTrue(
             Robot.isReal()
@@ -286,7 +287,7 @@ public class RobotContainer {
                     .until(coralHandoffCompleteTrigger)
                 : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
 
-    OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
+    coralOuttakeButton.whileTrue(intake.floorOuttake());
     OI.getButton(OI.Operator.Y)
         .onTrue(
             Commands.runOnce(
