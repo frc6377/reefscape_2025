@@ -89,15 +89,14 @@ public class Sensors {
     }
   }
 
+  public Trigger getAlgaeSensor() {
+    return sensor5.getBeamBrokenTrigger();
+  }
+
   @AutoLogOutput(key = "Intake/States/Sensor State Enum")
   public CoralEnum getSensorState() {
     if (Robot.isSimulation()) {
       return simState;
-    }
-
-    // If parallel sensor (sensor5) doesn't detect anything, there's no coral
-    if (!sensor5.getBeamBroke()) {
-      return CoralEnum.NO_CORAL;
     }
 
     int state = sensor2.getBeamBroke() ? 1 : 0;
