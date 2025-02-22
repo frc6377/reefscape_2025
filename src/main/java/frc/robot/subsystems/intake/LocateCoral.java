@@ -51,7 +51,7 @@ public class LocateCoral extends Command {
       case CORAL_TOO_FAR:
         intakeSubsystem.setIntakeMotor(IntakeConstants.kIntakeSpeed / 5);
         intakeSubsystem.setConveyerMotor(-kConveyorSpeed);
-        // intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
+        intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
         break;
       case IN_ELEVATOR:
       case NO_CORAL:
@@ -83,7 +83,7 @@ public class LocateCoral extends Command {
 
   @Override
   public InterruptionBehavior getInterruptionBehavior() {
-    if (state.get() == CoralEnum.CORAL_TOO_CLOSE || state.get() == CoralEnum.CORAL_TOO_FAR) {
+    if (state.get() == CoralEnum.CORAL_TOO_CLOSE) {
       return InterruptionBehavior.kCancelIncoming;
     } else {
       return InterruptionBehavior.kCancelSelf;
