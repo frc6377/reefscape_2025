@@ -231,7 +231,7 @@ public class Climber extends SubsystemBase {
         });
   }
 
-  public Command runClimber(Angle position, int slot) {
+  private Command runClimber(Angle position, int slot) {
     return Commands.sequence(
         stopJeopardy(),
         runOnce(
@@ -290,8 +290,8 @@ public class Climber extends SubsystemBase {
     return runClimber(ClimberConstants.kClimberExtendedSetpoint, 1);
   }
 
-  private Command setServoAngle(Servo servo, double angle) {
-    return runOnce(() -> servo.setAngle(angle));
+  private void setServoAngle(Servo servo, double angle) {
+    servo.setAngle(angle);
   }
 
   public Command engageServo() {

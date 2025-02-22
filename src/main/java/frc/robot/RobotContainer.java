@@ -35,7 +35,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.FeildConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
@@ -242,8 +241,7 @@ public class RobotContainer {
 
     testTrig(OI.getButton(OI.Driver.LBumper)).onTrue(climber.engageServo());
     testTrig(OI.getButton(OI.Driver.RBumper)).onTrue(climber.disengageServo());
-    testTrig(OI.getButton(OI.Driver.B))
-        .onTrue(climber.runClimber(ClimberConstants.kClimberAtCageSetpoint, 0));
+    testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendToCage());
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
         .whileTrue(climber.runRaw(Volts.of(3)));
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
