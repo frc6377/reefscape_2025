@@ -5,8 +5,8 @@
 package frc.robot.subsystems.intake;
 
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
+import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
-import static frc.robot.Constants.IntakeConstants.kcoralStation;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
@@ -21,22 +21,22 @@ public class LocateCoral extends Command {
 
   private Supplier<CoralEnum> state;
   private IntakeSubsystem intakeSubsystem;
-  private BooleanSupplier elevatorNotL1; // TODO: Repurpose
+  private BooleanSupplier override_button;
 
   /** Creates a new LocateCoral. */
   public LocateCoral(
-      Supplier<CoralEnum> state, IntakeSubsystem subsystem, BooleanSupplier elevatorNotL1) {
+      Supplier<CoralEnum> state, IntakeSubsystem subsystem, BooleanSupplier override_button) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
     this.state = state;
     this.intakeSubsystem = subsystem;
-    this.elevatorNotL1 = elevatorNotL1;
+    this.override_button = override_button;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intakeSubsystem.goToPivotPosition(kcoralStation);
+    intakeSubsystem.goToPivotPosition(kPivotCoralStationAngle);
     Logger.recordOutput("Locate Coral Running", true);
   }
 
@@ -76,8 +76,9 @@ public class LocateCoral extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (state.get() == CoralEnum.NO_CORAL || state.get() == CoralEnum.CORAL_ALIGNED)
-        && intakeSubsystem.atSetpoint(kPivotRetractAngle);
+    return ((state.get() == CoralEnum.NO_CORAL || state.get() == CoralEnum.CORAL_ALIGNED)
+            && intakeSubsystem.atSetpoint(kPivotRetractAngle))
+        || override_button.getAsBoolean();
   }
 
   @Override
