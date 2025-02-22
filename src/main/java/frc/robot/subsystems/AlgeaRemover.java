@@ -20,7 +20,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -35,6 +34,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.AlgeaRemoverConstants;
 import frc.robot.Constants.DIOConstants;
 import frc.robot.Robot;
+import org.littletonrobotics.junction.Logger;
 
 public class AlgeaRemover extends SubsystemBase {
   private SingleJointedArmSim algeaSim;
@@ -45,7 +45,6 @@ public class AlgeaRemover extends SubsystemBase {
   private DutyCycleEncoder algeaEncoder;
 
   private Mechanism2d mech = new Mechanism2d(2, 2);
-  private ComplexWidget widget;
   private MechanismLigament2d algeaMech;
 
   public static final ClosedLoopConfig algeaCfg =
@@ -87,9 +86,7 @@ public class AlgeaRemover extends SubsystemBase {
               .append(
                   new MechanismLigament2d(
                       "Algea Mech [0]", 1, 0, 10, new Color8Bit(Color.kDarkViolet)));
-    }
-    if (widget == null) {
-      widget = Shuffleboard.getTab(getName()).add("Algea Remover", mech);
+      SmartDashboard.putData("Mech2Ds/algea remover mech", mech);
     }
   }
 
@@ -110,7 +107,7 @@ public class AlgeaRemover extends SubsystemBase {
   }
 
   public void seedEncoder() {
-    algeaMotor.getEncoder().setPosition(algeaMotor.getAlternateEncoder().getPosition());
+    algeaMotor.getEncoder().setPosition(algeaEncoder.get());
   }
 
   public Command zeroAlgeaEncoder() {
@@ -130,16 +127,16 @@ public class AlgeaRemover extends SubsystemBase {
                   angle.in(Rotations) * AlgeaRemoverConstants.kAlegeaGearRatio,
                   ControlType.kPosition);
 
-          SmartDashboard.putNumber(
+          Logger.recordOutput(
               "Algea/Setpoint (Rotations)",
               angle.in(Rotations) * AlgeaRemoverConstants.kAlegeaGearRatio);
-          SmartDashboard.putNumber(
+          Logger.recordOutput(
               "Algea/Setpoint (Degrees)",
               angle.in(Degrees) * AlgeaRemoverConstants.kAlegeaGearRatio);
         });
   }
 
-  public Trigger algeaAngleAccurate() {
+  public Trigger algeaArmAtSetpoint() {
     return new Trigger(
             () ->
                 Rotations.of(algeaEncoder.get())
@@ -147,7 +144,7 @@ public class AlgeaRemover extends SubsystemBase {
         .debounce(.5);
   }
 
-  public Command stowAlgea() {
+  public Command stowAlgeaArm() {
     return changeAngle(AlgeaRemoverConstants.algeaStowed);
   }
 
@@ -157,8 +154,8 @@ public class AlgeaRemover extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Algea/Motor Rotations", algeaEncoder.get());
-    SmartDashboard.putNumber("Algea/Motor Percent", algeaMotor.get());
+    Logger.recordOutput("Algea/Motor Rotations", algeaEncoder.get());
+    Logger.recordOutput("Algea/Motor Percent", algeaMotor.get());
   }
 
   @Override
@@ -173,6 +170,6 @@ public class AlgeaRemover extends SubsystemBase {
     simAngle = Rotations.of(simAlgeaMotor.getPosition() / AlgeaRemoverConstants.kAlegeaGearRatio);
 
     algeaMech.setAngle(simAngle.in(Degrees));
-    SmartDashboard.putNumber("Algea/Sim Angle", simAngle.in(Degrees));
+    Logger.recordOutput("Algea/Sim Angle", simAngle.in(Degrees));
   }
 }

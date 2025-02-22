@@ -310,19 +310,9 @@ public class RobotContainer {
     OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
     OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
     OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
-    OI.getButton(OI.Operator.A).onTrue(algeaRemover.stowAlgea());
+    OI.getButton(OI.Operator.A).onTrue(algeaRemover.stowAlgeaArm());
     OI.getButton(OI.Operator.B).onTrue(algeaRemover.removeAlgea());
     OI.getButton(OI.Operator.Start).onTrue(climber.zero());
-    OI.getButton(usingKeyboard ? OI.Keyboard.Z : OI.Driver.X).onTrue(elevator.L0());
-    OI.getButton(usingKeyboard ? OI.Keyboard.M : OI.Driver.Back).whileTrue(intake.l1ScoreModeB());
-    OI.getButton(usingKeyboard ? OI.Keyboard.X : OI.Driver.A).onTrue(elevator.L2());
-    OI.getButton(usingKeyboard ? OI.Keyboard.C : OI.Driver.B).onTrue(elevator.L3());
-    OI.getButton(usingKeyboard ? OI.Keyboard.V : OI.Driver.Y).onTrue(elevator.L4());
-    SmartDashboard.putData(elevator.limitHit());
-
-    // Intake Buttons
-    // OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.floorIntake());
-    // OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
 
     OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
     intake.setDefaultCommand(intake.Idle());
@@ -468,7 +458,7 @@ public class RobotContainer {
   public Command algeaRemoverAutoCommand() {
     return algeaRemover
         .removeAlgea()
-        .until(algeaRemover.algeaAngleAccurate())
+        .until(algeaRemover.algeaArmAtSetpoint())
         .andThen(algeaRemover.goUp())
         .asProxy();
   }
@@ -483,22 +473,10 @@ public class RobotContainer {
     driveSimulation.setSimulationWorldPose(drive.getPose());
   }
 
-  public void seedIntakeEncoder() {
-    intake.seedEncoder();
-  }
-
-  public void seedAlgeaEncoder() {
-    algeaRemover.seedEncoder();
-  }
-
-  public void seedClimberEncoder() {
-    climber.seedEncoder();
-  }
-
   public void seedEncoders() {
-    seedIntakeEncoder();
-    seedAlgeaEncoder();
-    seedClimberEncoder();
+    intake.seedEncoder();
+    algeaRemover.seedEncoder();
+    climber.seedEncoder();
   }
 
   public void resetSimulationField() {
