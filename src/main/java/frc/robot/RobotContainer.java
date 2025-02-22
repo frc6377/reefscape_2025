@@ -308,6 +308,7 @@ public class RobotContainer {
         .intakeHasCoralTrigger()
         .and(() -> elevatorNotL1)
         .and(coralOuttakeButton.negate())
+        .and(() -> elevatorNotL1)
         .onTrue(
             Robot.isReal()
                 ? intake
