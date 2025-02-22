@@ -180,6 +180,21 @@ public class RobotContainer {
             intakeFloorAutoCommand(),
             Commands.waitUntil(coralHandoffCompleteTrigger)));
     NamedCommands.registerCommand("Score", scorerAutoCommand());
+    NamedCommands.registerCommand(
+        "Intake L1",
+        new SequentialCommandGroup(
+            Commands.runOnce(() -> elevatorNotL1 = false),
+            elevator.L0(),
+            waitForElevator(),
+            intakeAutoCommand(),
+            Commands.waitUntil(intake.intakeHasCoralTrigger())));
+    NamedCommands.registerCommand(
+        "L1 Score",
+        new SequentialCommandGroup(
+            Commands.waitUntil(intake.intakeHasCoralTrigger()),
+            intake.l1ScoreModeB().asProxy(),
+            Commands.waitUntil(() -> sensors.getSensorState() == CoralEnum.NO_CORAL),
+            Commands.runOnce(() -> elevatorNotL1 = true)));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
