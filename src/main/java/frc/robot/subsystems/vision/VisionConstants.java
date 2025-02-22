@@ -27,7 +27,7 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
   // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "limelight-ElvCam";
+  public static String camera0Name = "limelight-elvcam";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)

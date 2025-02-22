@@ -412,7 +412,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // States
     Logger.recordOutput("Intake/States/Intake State", intakeState.toString());
-    Logger.recordOutput("Intake/States/Coral State", coralState.toString());
+
+    Logger.recordOutput("Intake/Intake Has Coral Trigger", intakeHasCoralTrigger());
+    Logger.recordOutput(
+        "Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoralTrigger());
 
     // Pose 3D of Intake
     Angle currentAngle = getPivotAngle().times(-1);
