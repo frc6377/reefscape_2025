@@ -267,7 +267,8 @@ public final class Constants {
     public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
     public static final Distance algeaArmLength = Inches.of(19);
     public static final Angle kAlgeaStartingAngle = Rotations.of(-.25);
-    public static final Angle encoderOffset = Rotations.of(0); //update with actual offset
+    public static final Angle encoderOffset = Rotations.of(0); // update with actual offset
+    public static final Angle ksetpointTolerance = Degrees.of(10);
   }
 
   public final class DrivetrainConstants {

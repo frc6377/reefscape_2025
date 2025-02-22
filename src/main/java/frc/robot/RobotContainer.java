@@ -465,6 +465,14 @@ public class RobotContainer {
     }
   }
 
+  public Command algeaRemoverAutoCommand() {
+    return algeaRemover
+        .removeAlgea()
+        .until(algeaRemover.algeaAngleAccurate())
+        .andThen(algeaRemover.goUp())
+        .asProxy();
+  }
+
   public void givePreLoad() {
     intake.addGamePieceToIntakeSim();
   }

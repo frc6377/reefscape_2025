@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.AlgeaRemoverConstants;
 import frc.robot.Constants.DIOConstants;
@@ -40,6 +41,7 @@ public class AlgeaRemover extends SubsystemBase {
   private SparkMax algeaMotor;
   private SparkMaxSim simAlgeaMotor;
   private Angle simAngle;
+  private Angle algeaSetpoint;
   private DutyCycleEncoder algeaEncoder;
 
   private Mechanism2d mech = new Mechanism2d(2, 2);
@@ -60,7 +62,9 @@ public class AlgeaRemover extends SubsystemBase {
         new SparkMaxConfig().apply(algeaCfg),
         ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
-    algeaEncoder = new DutyCycleEncoder(DIOConstants.kAlgeaEncoderID, 1, AlgeaRemoverConstants.encoderOffset.in(Rotations));
+    algeaEncoder =
+        new DutyCycleEncoder(
+            DIOConstants.kAlgeaEncoderID, 1, AlgeaRemoverConstants.encoderOffset.in(Rotations));
     algeaMotor.getEncoder().setPosition(algeaEncoder.get());
     if (Robot.isSimulation()) {
       simAlgeaMotor = new SparkMaxSim(algeaMotor, AlgeaRemoverConstants.kAlgeaGearbox);
@@ -115,6 +119,7 @@ public class AlgeaRemover extends SubsystemBase {
   public Command changeAngle(Angle angle) {
     return runOnce(
         () -> {
+          algeaSetpoint = angle;
           algeaMotor
               .getClosedLoopController()
               .setReference(
@@ -128,6 +133,14 @@ public class AlgeaRemover extends SubsystemBase {
               "Algea/Setpoint (Degrees)",
               angle.in(Degrees) * AlgeaRemoverConstants.kAlegeaGearRatio);
         });
+  }
+
+  public Trigger algeaAngleAccurate() {
+    return new Trigger(
+            () ->
+                Rotations.of(algeaEncoder.get())
+                    .isNear(algeaSetpoint, AlgeaRemoverConstants.ksetpointTolerance))
+        .debounce(.5);
   }
 
   public Command stowAlgea() {
