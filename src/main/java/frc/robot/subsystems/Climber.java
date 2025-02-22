@@ -277,6 +277,7 @@ public class Climber extends SubsystemBase {
         .andThen(disengageServo())
         .andThen(Commands.waitSeconds(1))
         .andThen(runClimber(ClimberConstants.kClimberRetractedSetpoint, 0))
+        .until(isClimberAtPosition(ClimberConstants.kClimberRetractedSetpoint))
         .andThen(engageServo())
         .andThen(Commands.waitSeconds(1));
   }
