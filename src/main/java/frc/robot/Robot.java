@@ -128,9 +128,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     robotContainer.resetSimulationField();
-    robotContainer.seedIntakeEncoder();
-    robotContainer.seedAlgeaEncoder();
-    robotContainer.seedClimberEncoder();
+    robotContainer.seedEncoders();
   }
 
   /** This function is called periodically when disabled. */
