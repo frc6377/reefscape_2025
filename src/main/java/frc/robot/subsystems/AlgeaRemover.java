@@ -19,7 +19,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -154,6 +153,7 @@ public class AlgeaRemover extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Logger.recordOutput("Algea/Motor Relative Rotations", algeaMotor.getEncoder().getPosition());
     Logger.recordOutput("Algea/Motor Rotations", algeaEncoder.get());
     Logger.recordOutput("Algea/Motor Percent", algeaMotor.get());
   }
