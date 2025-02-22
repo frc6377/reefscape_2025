@@ -285,6 +285,10 @@ public class IntakeSubsystem extends SubsystemBase {
         .withName("conveyerOutCommand");
   }
 
+  public Command movePivot(Angle angle) {
+    return startEnd(() -> goToPivotPosition(angle), () -> {});
+  }
+
   public Command floorIntake() {
     return startEnd(
             () -> {
