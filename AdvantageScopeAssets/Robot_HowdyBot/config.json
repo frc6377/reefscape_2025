@@ -11,6 +11,13 @@
         "position": [-0.1745234, -0.236474, 1.014984],
         "resolution": [640, 480],
         "fov": 80
+      },
+      {
+        "name" : "LimeLight-LowCam",
+        "rotations": [{"axis": "y", "degrees": -23}, {"axis": "z", "degrees": -90}],
+        "position": [0.2159, -0.3248406, 0.2436368],
+        "resolution": [640, 480],
+        "fov": 80
       }
     ],
     "components": [
