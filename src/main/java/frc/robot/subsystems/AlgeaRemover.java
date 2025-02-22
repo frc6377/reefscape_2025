@@ -17,6 +17,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -31,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.AlgeaRemoverConstants;
+import frc.robot.Constants.DIOConstants;
 import frc.robot.Robot;
 
 public class AlgeaRemover extends SubsystemBase {
@@ -38,6 +40,7 @@ public class AlgeaRemover extends SubsystemBase {
   private SparkMax algeaMotor;
   private SparkMaxSim simAlgeaMotor;
   private Angle simAngle;
+  private DutyCycleEncoder algeaEncoder;
 
   private Mechanism2d mech = new Mechanism2d(2, 2);
   private ComplexWidget widget;
@@ -57,6 +60,8 @@ public class AlgeaRemover extends SubsystemBase {
         new SparkMaxConfig().apply(algeaCfg),
         ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
+    algeaEncoder = new DutyCycleEncoder(DIOConstants.kAlgeaEncoderID, 1, AlgeaRemoverConstants.encoderOffset.in(Rotations));
+    algeaMotor.getEncoder().setPosition(algeaEncoder.get());
     if (Robot.isSimulation()) {
       simAlgeaMotor = new SparkMaxSim(algeaMotor, AlgeaRemoverConstants.kAlgeaGearbox);
       algeaSim =
@@ -103,7 +108,7 @@ public class AlgeaRemover extends SubsystemBase {
   public Command zeroAlgeaEncoder() {
     return Commands.runOnce(
         () -> {
-          algeaMotor.getEncoder().setPosition(algeaMotor.getAlternateEncoder().getPosition());
+          algeaMotor.getEncoder().setPosition(algeaEncoder.get());
         });
   }
 
@@ -135,7 +140,7 @@ public class AlgeaRemover extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Algea/Motor Rotation", algeaMotor.getEncoder().getPosition());
+    SmartDashboard.putNumber("Algea/Motor Rotations", algeaEncoder.get());
     SmartDashboard.putNumber("Algea/Motor Percent", algeaMotor.get());
   }
 

@@ -69,7 +69,7 @@ public final class Constants {
   }
 
   public static class DIOConstants {
-    public static final int kthroughBoreEncoderID = 10;
+    public static final int kthroughBoreEncoderID = 1;
     public static final int kAlgeaEncoderID = 15;
     public static final int kClimberFrontEncoderID = 5;
     public static final int kClimberBackEncoderID = 6;
@@ -267,6 +267,7 @@ public final class Constants {
     public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
     public static final Distance algeaArmLength = Inches.of(19);
     public static final Angle kAlgeaStartingAngle = Rotations.of(-.25);
+    public static final Angle encoderOffset = Rotations.of(0); //update with actual offset
   }
 
   public final class DrivetrainConstants {
