@@ -487,6 +487,20 @@ public class RobotContainer {
     intake.seedEncoder();
   }
 
+  public void seedAlgeaEncoder() {
+    algeaRemover.seedEncoder();
+  }
+
+  public void seedClimberEncoder() {
+    climber.seedEncoder();
+  }
+
+  public void seedEncoders() {
+    seedIntakeEncoder();
+    seedAlgeaEncoder();
+    seedClimberEncoder();
+  }
+
   public void resetSimulationField() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 

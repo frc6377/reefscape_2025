@@ -191,11 +191,25 @@ public class Climber extends SubsystemBase {
   public Command zero() {
     return runOnce(
         () -> {
-          climberMotorFront.setPosition(
-              1.0 - climberFrontEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations));
-          climberMotorBack.setPosition(
-              climberBackEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations));
+          seedEncoder();
         });
+  }
+
+  public void seedEncoder() {
+    if (1 - climberFrontEncoder.get() < 0.5) {
+      climberMotorFront.setPosition(
+          1 - climberFrontEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations));
+    } else {
+      climberMotorFront.setPosition(
+          -climberFrontEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations));
+    }
+    if (climberBackEncoder.get() < 0.5) {
+      climberMotorBack.setPosition(
+          climberBackEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations));
+    } else {
+      climberMotorBack.setPosition(
+          climberBackEncoder.get() - 1 + ClimberConstants.kClimberOffsetAngle.in(Rotations));
+    }
   }
 
   public Command runRaw(Voltage voltage) {
