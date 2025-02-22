@@ -1,6 +1,5 @@
 package frc.robot;
 
-
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -12,13 +11,9 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.AngularAccelerationUnit;
 import edu.wpi.first.units.measure.*;
-import edu.wpi.first.wpilibj.RobotBase;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import java.util.HashMap;
 import utilities.HowdyMM;
@@ -259,7 +254,6 @@ public final class Constants {
     public static final Distance kMaxElevatorHeight = Inches.of(72);
   }
 
-
   // Algea Remover Constants
   public static class AlgeaRemoverConstants {
     public static final double kAlgeaP = 0.7;
@@ -280,7 +274,6 @@ public final class Constants {
     public static final Mass ROBOT_MASS = Pounds.of(75.5);
     public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(49.5459894327);
     public static final double WHEEL_COF = 1.2;
-
 
     public static final PathConstraints PATH_CONSTRAINTS =
         new PathConstraints(

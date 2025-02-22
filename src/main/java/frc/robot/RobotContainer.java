@@ -80,7 +80,6 @@ public class RobotContainer {
   private MapleSimArenaSubsystem mapleSimArenaSubsystem;
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
-  private static final Sensors sensors = new Sensors();
   private final IntakeSubsystem intake;
   //   private final Climber climber = new Climber();
 
