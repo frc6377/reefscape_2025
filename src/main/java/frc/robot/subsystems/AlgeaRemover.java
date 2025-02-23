@@ -110,10 +110,17 @@ public class AlgeaRemover extends SubsystemBase {
   }
 
   public Command zeroAlgeaEncoder() {
-    return Commands.runOnce(
-        () -> {
-          algeaMotor.getEncoder().setPosition(algeaEncoder.get());
-        });
+    if (algeaEncoder.get() < .5) {
+      return Commands.runOnce(
+          () -> {
+            algeaMotor.getEncoder().setPosition(algeaEncoder.get());
+          });
+    } else {
+      return Commands.runOnce(
+          () -> {
+            algeaMotor.getEncoder().setPosition(algeaEncoder.get() - 1);
+          });
+    }
   }
 
   public Command changeAngle(Angle angle) {
