@@ -284,13 +284,9 @@ public class RobotContainer {
 
     intake
         .intakeHasUnalignedCoralTrigger()
-        .and(coralOuttakeButton.negate())
-        .onTrue(new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton))
+        //.and(coralOuttakeButton.negate())
+        .onTrue(new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton)
         .andThen(
-          intake
-          .intakeHasCoralTrigger()
-          .and(coralOuttakeButton.negate())
-          .onTrue(
               Robot.isReal()
                   ? intake
                       .conveyerInCommand()
@@ -298,17 +294,6 @@ public class RobotContainer {
                       .until(coralHandoffCompleteTrigger)
                   : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)))
         );
-
-    intake
-        .intakeHasCoralTrigger()
-        .and(coralOuttakeButton.negate())
-        .onTrue(
-            Robot.isReal()
-                ? intake
-                    .conveyerInCommand()
-                    .alongWith(coralScorer.intakeCommand())
-                    .until(coralHandoffCompleteTrigger)
-                : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
 
     OI.getButton(OI.Operator.Y)
         .onTrue(
