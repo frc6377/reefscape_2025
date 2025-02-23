@@ -50,6 +50,14 @@ import utilities.HowdyPID;
 // GNU General Public License for more details.
 
 public final class Constants {
+  // Robot
+  public static CurrentRobot kCurrentRobot = CurrentRobot.SIREN2;
+
+  public static enum CurrentRobot {
+    SIREN,
+    SIREN2
+  }
+
   // Robot Mode
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = Robot.isReal() ? Mode.REAL : simMode;
