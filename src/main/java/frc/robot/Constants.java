@@ -51,7 +51,7 @@ import utilities.HowdyPID;
 
 public final class Constants {
   // Robot
-  public static CurrentRobot kCurrentRobot = CurrentRobot.SIREN2;
+  public static final CurrentRobot kCurrentRobot = CurrentRobot.SIREN2;
 
   public static enum CurrentRobot {
     SIREN,

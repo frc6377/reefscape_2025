@@ -31,12 +31,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.CurrentRobot;
 import frc.robot.Constants.FeildConstants;
 import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.generated.TunerConstants2;
 // import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
 import frc.robot.subsystems.drive.*;
@@ -59,7 +57,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 @SuppressWarnings("unused")
 public class RobotContainer {
   // Change the raw boolean to true to pick keyboard during simulation
-  private final boolean usingKeyboard = true && Robot.isSimulation();
+  private final boolean usingKeyboard = false && Robot.isSimulation();
 
   private EventLoop testEventLoop = new EventLoop();
 
@@ -71,10 +69,10 @@ public class RobotContainer {
   // private final CoralScorer coralScorer = new CoralScorer();
   // private static final Sensors sensors = new Sensors();
   // private final IntakeSubsystem intake;
-  //   private final Climber climber = new Climber();
+  // private final Climber climber = new Climber();
 
-  private boolean elevatorNotL1 = true;
-  private boolean intakeAlgeaMode = false;
+  // private boolean elevatorNotL1 = true;
+  // private boolean intakeAlgeaMode = false;
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose = new Pose2d(2, 2, new Rotation2d());
@@ -94,25 +92,13 @@ public class RobotContainer {
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
-        // Real robot, instantiate hardware IO implementations'
-
-        if (Constants.kCurrentRobot == CurrentRobot.SIREN) {
-          drive =
-              new Drive(
-                  new GyroIOPigeon2(),
-                  new ModuleIOTalonFXReal(TunerConstants.FrontLeft),
-                  new ModuleIOTalonFXReal(TunerConstants.FrontRight),
-                  new ModuleIOTalonFXReal(TunerConstants.BackLeft),
-                  new ModuleIOTalonFXReal(TunerConstants.BackRight));
-        } else {
-          drive =
-              new Drive(
-                  new GyroIOPigeon2(),
-                  new ModuleIOTalonFXReal(TunerConstants2.FrontLeft),
-                  new ModuleIOTalonFXReal(TunerConstants2.FrontRight),
-                  new ModuleIOTalonFXReal(TunerConstants2.BackLeft),
-                  new ModuleIOTalonFXReal(TunerConstants2.BackRight));
-        }
+        drive =
+            new Drive(
+                new GyroIOPigeon2(),
+                new ModuleIOTalonFXReal(TunerConstants.FrontLeft),
+                new ModuleIOTalonFXReal(TunerConstants.FrontRight),
+                new ModuleIOTalonFXReal(TunerConstants.BackLeft),
+                new ModuleIOTalonFXReal(TunerConstants.BackRight));
         this.vision =
             new Vision(
                 drive, new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation));

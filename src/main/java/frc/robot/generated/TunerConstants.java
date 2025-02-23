@@ -1,6 +1,8 @@
 package frc.robot.generated;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.Constants.CurrentRobot.*;
+import static frc.robot.Constants.kCurrentRobot;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.*;
@@ -21,13 +23,21 @@ public class TunerConstants {
   // The steer motor uses any SwerveModule.SteerRequestType control request with the
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
   private static final Slot0Configs steerGains =
-      new Slot0Configs()
-          .withKP(40.20925)
-          .withKD(3.593975)
-          .withKS(0.131719)
-          .withKV(2.73735)
-          .withKA(0.25078)
-          .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+      kCurrentRobot == SIREN
+          ? new Slot0Configs()
+              .withKP(40.20925)
+              .withKD(3.593975)
+              .withKS(0.131719)
+              .withKV(2.73735)
+              .withKA(0.25078)
+              .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
+          : new Slot0Configs()
+              .withKP(69.19266667)
+              .withKD(6.8076)
+              .withKS(0.1133343333)
+              .withKV(2.612)
+              .withKA(0.3286233333)
+              .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
   private static final Slot0Configs driveGains =
@@ -136,8 +146,10 @@ public class TunerConstants {
   // Front Left
   private static final int kFrontLeftDriveMotorId = 1;
   private static final int kFrontLeftSteerMotorId = 2;
-  private static final int kFrontLeftEncoderId = 1;
-  private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.42138671875);
+  private static final int kFrontLeftEncoderId = kCurrentRobot == SIREN ? 1 : 4;
+  private static final Angle kFrontLeftEncoderOffset =
+      kCurrentRobot == SIREN ? Rotations.of(-0.42138671875) : Rotations.of(0.448730);
+  ;
   private static final boolean kFrontLeftSteerMotorInverted = false;
   private static final boolean kFrontLeftEncoderInverted = false;
 
@@ -147,8 +159,9 @@ public class TunerConstants {
   // Front Right
   private static final int kFrontRightDriveMotorId = 3;
   private static final int kFrontRightSteerMotorId = 4;
-  private static final int kFrontRightEncoderId = 2;
-  private static final Angle kFrontRightEncoderOffset = Rotations.of(0.074462890625);
+  private static final int kFrontRightEncoderId = kCurrentRobot == SIREN ? 2 : 1;
+  private static final Angle kFrontRightEncoderOffset =
+      kCurrentRobot == SIREN ? Rotations.of(0.074462890625) : Rotations.of(0.210693);
   private static final boolean kFrontRightSteerMotorInverted = true;
   private static final boolean kFrontRightEncoderInverted = false;
 
@@ -158,8 +171,9 @@ public class TunerConstants {
   // Back Left
   private static final int kBackLeftDriveMotorId = 5;
   private static final int kBackLeftSteerMotorId = 6;
-  private static final int kBackLeftEncoderId = 3;
-  private static final Angle kBackLeftEncoderOffset = Rotations.of(-0.059326171875 + 0.5);
+  private static final int kBackLeftEncoderId = kCurrentRobot == SIREN ? 3 : 3;
+  private static final Angle kBackLeftEncoderOffset =
+      kCurrentRobot == SIREN ? Rotations.of(-0.059326171875 + 0.5) : Rotations.of(0.171631 + 0.5);
   private static final boolean kBackLeftSteerMotorInverted = true;
   private static final boolean kBackLeftEncoderInverted = false;
 
@@ -169,8 +183,9 @@ public class TunerConstants {
   // Back Right
   private static final int kBackRightDriveMotorId = 7;
   private static final int kBackRightSteerMotorId = 8;
-  private static final int kBackRightEncoderId = 4;
-  private static final Angle kBackRightEncoderOffset = Rotations.of(-0.473876953125);
+  private static final int kBackRightEncoderId = kCurrentRobot == SIREN ? 4 : 2;
+  private static final Angle kBackRightEncoderOffset =
+      kCurrentRobot == SIREN ? Rotations.of(-0.473876953125) : Rotations.of(-0.354736);
   private static final boolean kBackRightSteerMotorInverted = true;
   private static final boolean kBackRightEncoderInverted = false;
 

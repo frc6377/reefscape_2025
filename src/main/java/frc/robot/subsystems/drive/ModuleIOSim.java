@@ -29,8 +29,8 @@ import org.ironmaple.simulation.motorsims.SimulatedMotorController;
  * constants from Phoenix. Simulation is always based on voltage control.
  */
 public class ModuleIOSim implements ModuleIO {
-  private static final Slot0Configs driveMotorGains = TunerConstants.FrontLeft.DriveMotorGains;
-  private static final Slot0Configs steerMotorGains = TunerConstants.FrontLeft.SteerMotorGains;
+  private static Slot0Configs driveMotorGains = TunerConstants.FrontLeft.DriveMotorGains;
+  private static Slot0Configs steerMotorGains = TunerConstants.FrontLeft.SteerMotorGains;
 
   // TunerConstants doesn't support separate sim constants, so they are declared locally
   private static final double DRIVE_KS = driveMotorGains.kS;
@@ -52,6 +52,9 @@ public class ModuleIOSim implements ModuleIO {
   private double turnAppliedVolts = 0.0;
 
   public ModuleIOSim(SwerveModuleSimulation moduleSimulation) {
+    driveMotorGains = TunerConstants.FrontLeft.DriveMotorGains;
+    steerMotorGains = TunerConstants.FrontLeft.SteerMotorGains;
+
     this.moduleSimulation = moduleSimulation;
     this.driveMotor =
         moduleSimulation
