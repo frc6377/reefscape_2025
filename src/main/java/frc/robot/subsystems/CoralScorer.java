@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.CoralScorerConstants;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import utilities.TOFSensorSimple;
 import utilities.TOFSensorSimple.TOFType;
@@ -77,10 +78,23 @@ public class CoralScorer extends SubsystemBase {
     return runOnce(() -> scorerMotor.stopMotor());
   }
 
+  public Command runScorer(Supplier<Double> percent) {
+    return runEnd(
+        () -> {
+          scorerMotor.set(Math.abs(percent.get()) * kScoreSpeed);
+          System.out.println("Percent:" + percent.get());
+        },
+        () -> {
+          scorerMotor.stopMotor();
+          System.out.println("Trigger is Detected");
+        });
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Logger.recordOutput("CoralScorer/Motor Output", scorerMotor.get());
+    Logger.recordOutput(
+        "CoralScorer/Motor Output", scorerMotor.getMotorVoltage().getValueAsDouble() / 3.0);
     Logger.recordOutput(
         "CoralScorer/Motor Velocity (RPS)", scorerMotor.getVelocity().getValueAsDouble());
     Logger.recordOutput("CoralScorer/Sensor Distance (Inches)", TOFSensor.getDistance().in(Inches));
