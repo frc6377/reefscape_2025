@@ -1,19 +1,6 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Feet;
-import static edu.wpi.first.units.Units.Inch;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
-import static edu.wpi.first.units.Units.Kilograms;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -24,11 +11,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Mass;
-import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -82,10 +65,14 @@ public final class Constants {
     public static final int kIntakeMotor = 13;
     public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
+    public static final int kAlgeaMotor = 18;
+    public static final int kFrontClimberServoID = 100;
+    public static final int kBackClimberServoID = 100;
   }
 
   public static class DIOConstants {
     public static final int kthroughBoreEncoderID = 1;
+    public static final int kAlgeaEncoderID = 15;
     public static final int kClimberFrontEncoderID = 5;
     public static final int kClimberBackEncoderID = 6;
     public static final int gear11ID = 13;
@@ -125,10 +112,9 @@ public final class Constants {
     public static final Angle kClimberExtendedSetpoint = Degrees.of(225).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(190).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
-    public static final Angle kClimberExtendedSetpoint2 = Degrees.of(-10).plus(kClimberOffsetAngle);
-    public static final Angle kClimberAtCageSetpoint2 = Degrees.of(10).plus(kClimberOffsetAngle);
     public static final Angle kClimberSensorTolerance = Degrees.of(2.5);
-    public static final Angle kExpectedStartAngle = Degrees.of(90);
+    public static final Angle kClimberEmergencyUndoAngle =
+        Degrees.of(-45).plus(kClimberOffsetAngle);
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
 
@@ -138,6 +124,11 @@ public final class Constants {
     public static final Mass kClimberMass = Pounds.of(0.5);
     public static final Angle kClimberArmMinAngle = Degrees.of(-30).plus(kClimberOffsetAngle);
     public static final Angle kClimberArmMaxAngle = Degrees.of(250).plus(kClimberOffsetAngle);
+
+    public static final Angle kFrontServoEngageAngle = Degrees.of(200);
+    public static final Angle kBackServoEngageAngle = Degrees.of(-200);
+    public static final Angle kFrontServoDisengageAngle = Degree.of(90);
+    public static final Angle kBackServoDisengageAngle = Degree.of(-90);
   }
 
   // Scorer Constants
@@ -173,6 +164,8 @@ public final class Constants {
     public static final Angle kPivotCoralStationAngle = Degrees.of(101);
     public static final Angle kPivotL1Score = Degrees.of(75.5);
     public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
+    public static final Angle kClimbingAngle = Degrees.of(75.5);
+
     public static final Angle kPivotTolerance = Degrees.of(5);
 
     public static final HowdyPID kPivotArmPID = new HowdyPID();
@@ -268,6 +261,23 @@ public final class Constants {
     public static final Mass kCarriageMass = Pounds.of(4.75);
     public static final Distance kMinElevatorHeight = Inches.zero();
     public static final Distance kMaxElevatorHeight = Inches.of(72);
+  }
+
+  // Algea Remover Constants
+  public static class AlgeaRemoverConstants {
+    public static final double kAlgeaP = 0.7;
+    public static final double kAlgeaI = 0.0;
+    public static final double kAlgeaD = 0.0;
+    public static final double kAlgeaPercent = .2;
+    public static final int kAlegeaGearRatio = 80;
+    public static final Angle algeaStowed = Degrees.of(-90);
+    public static final Angle algeaRemove = Degrees.of(0);
+    public static final double algeaZero = 0.0; // update with actual value
+    public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
+    public static final Distance algeaArmLength = Inches.of(19);
+    public static final Angle kAlgeaStartingAngle = Rotations.of(-.25);
+    public static final Angle encoderOffset = Rotations.of(0); // update with actual offset
+    public static final Angle ksetpointTolerance = Degrees.of(10);
   }
 
   public final class DrivetrainConstants {

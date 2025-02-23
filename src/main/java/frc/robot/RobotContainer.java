@@ -16,6 +16,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
@@ -35,11 +36,13 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.FeildConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-// import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.AlgeaRemover;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
@@ -71,14 +74,15 @@ public class RobotContainer {
   private EventLoop testEventLoop = new EventLoop();
 
   // Subsystems
+  private final Climber climber = new Climber();
+  private final AlgeaRemover algeaRemover = new AlgeaRemover();
+  private static final Sensors sensors = new Sensors();
   private final Drive drive;
   private final Vision vision;
   private MapleSimArenaSubsystem mapleSimArenaSubsystem;
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
-  private static final Sensors sensors = new Sensors();
   private final IntakeSubsystem intake;
-  //   private final Climber climber = new Climber();
 
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
@@ -180,6 +184,21 @@ public class RobotContainer {
             intakeFloorAutoCommand(),
             Commands.waitUntil(coralHandoffCompleteTrigger)));
     NamedCommands.registerCommand("Score", scorerAutoCommand());
+    NamedCommands.registerCommand(
+        "Intake L1",
+        new SequentialCommandGroup(
+            Commands.runOnce(() -> elevatorNotL1 = false),
+            elevator.L0(),
+            waitForElevator(),
+            intakeAutoCommand(),
+            Commands.waitUntil(intake.intakeHasCoralTrigger())));
+    NamedCommands.registerCommand(
+        "L1 Score",
+        new SequentialCommandGroup(
+            Commands.waitUntil(intake.intakeHasCoralTrigger()),
+            intake.l1ScoreModeB().asProxy(),
+            Commands.waitUntil(() -> sensors.getSensorState() == CoralEnum.NO_CORAL),
+            Commands.runOnce(() -> elevatorNotL1 = true)));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -234,12 +253,24 @@ public class RobotContainer {
     // testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
     // testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
     // testTrig(OI.getButton(OI.Driver.LBumper)).whileTrue(intake.conveyorFeed());
-    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
-    //     .whileTrue(climber.runRaw(Volts.of(3)));
-    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
-    //     .whileTrue(climber.runRaw(Volts.of(-3)));
-    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
-    //     .onTrue(climber.toggleJeopardy());
+    // testTrig(OI.getButton(OI.Driver.X)).whileTrue(intake.extendPivotCommand());
+    // testTrig(OI.getButton(OI.Driver.Y)).whileTrue(intake.retractPivotCommand());
+
+    testTrig(OI.getButton(OI.Driver.LBumper)).onTrue(climber.engageServo());
+    testTrig(OI.getButton(OI.Driver.RBumper)).onTrue(climber.disengageServo());
+    testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendToCage());
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
+        .whileTrue(climber.runRaw(Volts.of(3)));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
+        .whileTrue(climber.runRaw(Volts.of(-3)));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.A))
+        .toggleOnTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Z) : OI.getTrigger(OI.Driver.Y))
+        .onTrue(climber.climb());
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.X) : OI.getTrigger(OI.Driver.X))
+        .onTrue(climber.retract());
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
+        .onTrue(climber.toggleJeopardy());
   }
 
   private void configureButtonBindings() {
@@ -278,6 +309,7 @@ public class RobotContainer {
         .intakeHasCoralTrigger()
         .and(() -> elevatorNotL1)
         .and(coralOuttakeButton.negate())
+        .and(() -> elevatorNotL1)
         .onTrue(
             Robot.isReal()
                 ? intake
@@ -301,6 +333,15 @@ public class RobotContainer {
                   intakeAlgeaMode = !intakeAlgeaMode;
                   Logger.recordOutput("Intake/Algea Mode", intakeAlgeaMode);
                 }));
+    intake.setDefaultCommand(intake.Idle());
+
+    // OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
+    // OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
+    OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
+    OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
+    OI.getButton(OI.Operator.A).onTrue(algeaRemover.stowAlgeaArm());
+    OI.getButton(OI.Operator.B).onTrue(algeaRemover.removeAlgea());
+    // OI.getButton(OI.Operator.Start).onTrue(climber.zero());
 
     OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
     intake.setDefaultCommand(intake.Idle());
@@ -443,6 +484,14 @@ public class RobotContainer {
     }
   }
 
+  public Command algeaRemoverAutoCommand() {
+    return algeaRemover
+        .removeAlgea()
+        .until(algeaRemover.algeaArmAtSetpoint())
+        .andThen(algeaRemover.goUp())
+        .asProxy();
+  }
+
   public void givePreLoad() {
     intake.addGamePieceToIntakeSim();
   }
@@ -453,8 +502,10 @@ public class RobotContainer {
     driveSimulation.setSimulationWorldPose(drive.getPose());
   }
 
-  public void seedIntakeEncoder() {
+  public void seedEncoders() {
     intake.seedEncoder();
+    algeaRemover.seedEncoder();
+    climber.seedEncoder();
   }
 
   public void resetSimulationField() {

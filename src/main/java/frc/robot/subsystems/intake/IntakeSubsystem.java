@@ -286,6 +286,10 @@ public class IntakeSubsystem extends SubsystemBase {
         .withName("conveyerOutCommand");
   }
 
+  public Command movePivot(Angle angle) {
+    return startEnd(() -> goToPivotPosition(angle), () -> {});
+  }
+
   public Command floorIntake() {
     return startEnd(
             () -> {
@@ -413,8 +417,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // States
     Logger.recordOutput("Intake/States/Intake State", intakeState.toString());
-    Logger.recordOutput("Intake/States/Coral State", coralState.toString());
-    Logger.recordOutput("Intake/States/Has Algae Ball", sensors.getSensorBool(kSensor5ID));
+    Logger.recordOutput("Intake/Intake Has Coral Trigger", intakeHasCoralTrigger());
+    Logger.recordOutput("Intake/States/Has Coral", sensors.getSensorBool(kSensor5ID));
+    Logger.recordOutput(
+        "Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoralTrigger());
 
     // Pose 3D of Intake
     Angle currentAngle = getPivotAngle().times(-1);
