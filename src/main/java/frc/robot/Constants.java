@@ -154,6 +154,7 @@ public final class Constants {
     public static final double kIntakeHandoffSpeed = -0.75;
     public static final double kConveyorSpeed = 0.45;
     public static final double kPivotSpeed = 0.2;
+    public static final double kHoldSpeed = kIntakeSpeed / 5;
 
     // Pivot Arm Setpoints
     public static final Angle armZero = Degrees.of(83.05);
