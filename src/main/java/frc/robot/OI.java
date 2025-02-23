@@ -29,7 +29,8 @@ public class OI extends OI_Utils {
         new Control(
             XboxController.Axis.kLeftTrigger, "The robot scores the coral.", controller, 0.5);
     public static final Control LScoreTrigger =
-        new Control(XboxController.Axis.kLeftTrigger, "The robot scores the coral.", controller, 0.1);
+        new Control(
+            XboxController.Axis.kLeftTrigger, "The robot scores the coral.", controller, 0.1);
 
     public static final Control RTrigger =
         new Control(XboxController.Axis.kRightTrigger, "The robot intakes.", controller, 0.5);

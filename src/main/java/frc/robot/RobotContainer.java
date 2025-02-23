@@ -299,12 +299,10 @@ public class RobotContainer {
 
     // Intake Buttons
     OI.getTrigger(OI.Driver.RTrigger)
-        .and(() -> !intakeAlgeaMode)
-        .and(() -> !coralStationMode)
+        .and(() -> !intakeAlgeaMode && !coralStationMode)
         .whileTrue(intake.floorIntake());
     OI.getTrigger(OI.Driver.RTrigger)
-        .and(() -> !intakeAlgeaMode)
-        .and(() -> coralStationMode)
+        .and(() -> !intakeAlgeaMode && coralStationMode)
         .whileTrue(intake.humanPlayerIntake());
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
