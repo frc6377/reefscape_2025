@@ -82,11 +82,9 @@ public class CoralScorer extends SubsystemBase {
     return runEnd(
         () -> {
           scorerMotor.set(Math.abs(percent.get()) * kScoreSpeed);
-          System.out.println("Percent:" + percent.get());
         },
         () -> {
           scorerMotor.stopMotor();
-          System.out.println("Trigger is Detected");
         });
   }
 
