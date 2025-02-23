@@ -83,7 +83,6 @@ public class RobotContainer {
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
   private final IntakeSubsystem intake;
-  private final Climber climber = new Climber();
 
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
