@@ -52,6 +52,7 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -89,6 +90,7 @@ public class RobotContainer {
 
   // Trigger Variables
   private final Trigger coralOuttakeButton = OI.getButton(OI.Driver.RBumper);
+  Supplier<Double> percent = OI.getAxisSupplier(OI.Driver.LeftTriggerAxis);
   private final Trigger coralHandoffCompleteTrigger =
       new Trigger(
           () ->
@@ -284,16 +286,16 @@ public class RobotContainer {
 
     intake
         .intakeHasUnalignedCoralTrigger()
-        //.and(coralOuttakeButton.negate())
-        .onTrue(new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton)
-        .andThen(
-              Robot.isReal()
-                  ? intake
-                      .conveyerInCommand()
-                      .alongWith(coralScorer.intakeCommand())
-                      .until(coralHandoffCompleteTrigger)
-                  : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)))
-        );
+        // .and(coralOuttakeButton.negate())
+        .onTrue(
+            new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton)
+                .andThen(
+                    Robot.isReal()
+                        ? intake
+                            .conveyerInCommand()
+                            .alongWith(coralScorer.intakeCommand())
+                            .until(coralHandoffCompleteTrigger)
+                        : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true))));
 
     OI.getButton(OI.Operator.Y)
         .onTrue(
@@ -319,9 +321,9 @@ public class RobotContainer {
     intake.setDefaultCommand(intake.Idle());
 
     // Scorer Buttons
-    OI.getTrigger(OI.Driver.LTrigger)
+    OI.getTrigger(OI.Driver.LScoreTrigger)
         .and(() -> !intakeAlgeaMode)
-        .whileTrue(coralScorer.scoreCommand());
+        .whileTrue(coralScorer.runScorer(OI.getAxisSupplier(OI.Driver.LeftTriggerAxis)));
     OI.getTrigger(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
     OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
 
