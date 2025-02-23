@@ -313,25 +313,26 @@ public class RobotContainer {
     OI.getButton(OI.Driver.A).whileTrue(intake.l1ScoreModeB()); // Temporary
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
 
-    intake
-        .intakeHasUnalignedCoralTrigger()
-        .and(coralOuttakeButton.negate())
-        .onTrue(new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton));
+    // Combined trigger for handling coral alignment and handoff
+    Trigger hasCoralToAlign =
+        intake
+            .intakeHasUnalignedCoralTrigger()
+            .or(intake.intakeHasCoralTrigger().and(() -> elevatorNotL1));
 
-    intake
-        .intakeHasCoralTrigger()
-        .and(() -> elevatorNotL1)
+    hasCoralToAlign
         .and(coralOuttakeButton.negate())
-        .and(() -> elevatorNotL1)
-        .onTrue(
+        .whileTrue(
             new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton)
                 .andThen(
-                    Robot.isReal()
-                        ? intake
-                            .conveyerInCommand()
-                            .alongWith(coralScorer.intakeCommand())
-                            .until(coralHandoffCompleteTrigger)
-                        : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true))));
+                    Commands.waitUntil(intake.intakeHasCoralTrigger().and(() -> elevatorNotL1))
+                        .andThen(
+                            Robot.isReal()
+                                ? intake
+                                    .conveyerInCommand()
+                                    .alongWith(coralScorer.intakeCommand())
+                                    .until(coralHandoffCompleteTrigger)
+                                : Commands.runOnce(
+                                    () -> mapleSimArenaSubsystem.setRobotHasCoral(true)))));
 
     coralOuttakeButton.whileTrue(intake.floorOuttake());
     OI.getButton(OI.Operator.Y)
