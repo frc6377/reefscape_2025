@@ -328,6 +328,8 @@ public class IntakeSubsystem extends SubsystemBase {
               setIntakeMotor(-kIntakeSpeed);
             },
             () -> {})
+        .until(() -> sensors.getSensorBool(kSensor5ID))
+        .andThen(algaeHold())
         .withName("algaeIntake");
   }
 
@@ -338,7 +340,7 @@ public class IntakeSubsystem extends SubsystemBase {
               intakeMotor.setControl(new TorqueCurrentFOC(kHoldPower));
             },
             () -> {})
-        .withName("algeaHold");
+        .withName("algaeHold");
   }
 
   public Command algaeOuttake() {
@@ -417,8 +419,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // States
     Logger.recordOutput("Intake/States/Intake State", intakeState.toString());
+    Logger.recordOutput("Intake/States/Coral State", coralState.toString());
     Logger.recordOutput("Intake/Intake Has Coral Trigger", intakeHasCoralTrigger());
-    Logger.recordOutput("Intake/States/Has Coral", sensors.getSensorBool(kSensor5ID));
     Logger.recordOutput(
         "Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoralTrigger());
 
@@ -522,8 +524,9 @@ public class IntakeSubsystem extends SubsystemBase {
           intakeState = IntakeState.LOCATE_CORAL;
           break;
         case ALGAE_INTAKE:
-          Commands.waitSeconds(0.5);
-          intakeState = IntakeState.ALGAE_HOLD;
+          if (sensors.getSensorBool(kSensor5ID)) {
+            intakeState = IntakeState.ALGAE_HOLD;
+          }
           break;
         case ALGAE_HOLD:
           Commands.waitSeconds(0.5);
