@@ -17,6 +17,7 @@ import static frc.robot.Constants.IntakeConstants.armZero;
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
 import static frc.robot.Constants.IntakeConstants.kGearing;
 import static frc.robot.Constants.IntakeConstants.kHoldPower;
+import static frc.robot.Constants.IntakeConstants.kHoldSpeed;
 import static frc.robot.Constants.IntakeConstants.kIntakeHandoffSpeed;
 import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
 import static frc.robot.Constants.IntakeConstants.kLength;
@@ -357,7 +358,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(
             () -> {
               goToPivotPosition(kPivotRetractAngle);
-              setIntakeMotor(kIntakeSpeed / 5);
+              setIntakeMotor(kHoldSpeed);
               setConveyerMotor(-kConveyorSpeed);
             },
             () -> {})

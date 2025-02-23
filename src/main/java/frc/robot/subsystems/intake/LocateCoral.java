@@ -37,7 +37,7 @@ public class LocateCoral extends Command {
   @Override
   public void initialize() {
     intakeSubsystem.goToPivotPosition(kPivotCoralStationAngle);
-    intakeSubsystem.setIntakeMotor(IntakeConstants.kIntakeSpeed / 5);
+    intakeSubsystem.setIntakeMotor(IntakeConstants.kHoldSpeed);
     Logger.recordOutput("Locate Coral Running", true);
   }
 
