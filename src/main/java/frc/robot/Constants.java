@@ -85,6 +85,7 @@ public final class Constants {
     public static final int kSensor2ID = 2;
     public static final int kSensor3ID = 3;
     public static final int kSensor4ID = 4;
+    public static final int kSensor5ID = 5; // Parallel sensor for ball presence detection
     public static final int kScorerSensorID = 1;
   }
 

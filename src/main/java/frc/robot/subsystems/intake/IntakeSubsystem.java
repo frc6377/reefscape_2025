@@ -32,6 +32,7 @@ import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
 import static frc.robot.Constants.SensorIDs.kSensor2ID;
 import static frc.robot.Constants.SensorIDs.kSensor3ID;
 import static frc.robot.Constants.SensorIDs.kSensor4ID;
+import static frc.robot.Constants.SensorIDs.kSensor5ID;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -327,6 +328,8 @@ public class IntakeSubsystem extends SubsystemBase {
               setIntakeMotor(-kIntakeSpeed);
             },
             () -> {})
+        .until(() -> sensors.getSensorBool(kSensor5ID))
+        .andThen(algaeHold())
         .withName("algaeIntake");
   }
 
@@ -337,7 +340,7 @@ public class IntakeSubsystem extends SubsystemBase {
               intakeMotor.setControl(new TorqueCurrentFOC(kHoldPower));
             },
             () -> {})
-        .withName("algeaHold");
+        .withName("algaeHold");
   }
 
   public Command algaeOuttake() {
@@ -416,7 +419,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // States
     Logger.recordOutput("Intake/States/Intake State", intakeState.toString());
-
+    Logger.recordOutput("Intake/States/Coral State", coralState.toString());
     Logger.recordOutput("Intake/Intake Has Coral Trigger", intakeHasCoralTrigger());
     Logger.recordOutput(
         "Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoralTrigger());
@@ -432,7 +435,7 @@ public class IntakeSubsystem extends SubsystemBase {
             new Rotation3d(0, combinedAngle.in(Radians), 0)));
 
     // Log TOF Sensors
-    for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID}) {
+    for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID, kSensor5ID}) {
       Logger.recordOutput(
           "Intake/TOFSensors/" + i + " Dist (Inches)", sensors.getSensorDist(i).in(Inches));
       Logger.recordOutput("Intake/TOFSensors/" + i + " bool", sensors.getSensorBool(i));
@@ -521,8 +524,9 @@ public class IntakeSubsystem extends SubsystemBase {
           intakeState = IntakeState.LOCATE_CORAL;
           break;
         case ALGAE_INTAKE:
-          Commands.waitSeconds(0.5);
-          intakeState = IntakeState.ALGAE_HOLD;
+          if (sensors.getSensorBool(kSensor5ID)) {
+            intakeState = IntakeState.ALGAE_HOLD;
+          }
           break;
         case ALGAE_HOLD:
           Commands.waitSeconds(0.5);
