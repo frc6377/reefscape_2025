@@ -41,6 +41,7 @@ import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.AlgeaRemover;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
@@ -73,14 +74,15 @@ public class RobotContainer {
   private EventLoop testEventLoop = new EventLoop();
 
   // Subsystems
+  private final Climber climber = new Climber();
+  private final AlgeaRemover algeaRemover = new AlgeaRemover();
+  private static final Sensors sensors = new Sensors();
   private final Drive drive;
   private final Vision vision;
   private MapleSimArenaSubsystem mapleSimArenaSubsystem;
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
-  private static final Sensors sensors = new Sensors();
   private final IntakeSubsystem intake;
-  private final Climber climber = new Climber();
 
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
@@ -332,6 +334,15 @@ public class RobotContainer {
                   intakeAlgeaMode = !intakeAlgeaMode;
                   Logger.recordOutput("Intake/Algea Mode", intakeAlgeaMode);
                 }));
+    intake.setDefaultCommand(intake.Idle());
+
+    // OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
+    // OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
+    OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
+    OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
+    OI.getButton(OI.Operator.A).onTrue(algeaRemover.stowAlgeaArm());
+    OI.getButton(OI.Operator.B).onTrue(algeaRemover.removeAlgea());
+    // OI.getButton(OI.Operator.Start).onTrue(climber.zero());
 
     OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
     intake.setDefaultCommand(intake.Idle());
@@ -474,6 +485,14 @@ public class RobotContainer {
     }
   }
 
+  public Command algeaRemoverAutoCommand() {
+    return algeaRemover
+        .removeAlgea()
+        .until(algeaRemover.algeaArmAtSetpoint())
+        .andThen(algeaRemover.goUp())
+        .asProxy();
+  }
+
   public void givePreLoad() {
     intake.addGamePieceToIntakeSim();
   }
@@ -484,8 +503,10 @@ public class RobotContainer {
     driveSimulation.setSimulationWorldPose(drive.getPose());
   }
 
-  public void seedIntakeEncoder() {
+  public void seedEncoders() {
     intake.seedEncoder();
+    algeaRemover.seedEncoder();
+    climber.seedEncoder();
   }
 
   public void resetSimulationField() {
