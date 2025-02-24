@@ -41,30 +41,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "K - Source"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score L"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "ElvL0"

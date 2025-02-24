@@ -287,15 +287,6 @@ public class RobotContainer {
               SignalLogger.stop();
             }));
 
-    // Climber Buttons
-    // OI.getTrigger(OI.Operator.RTrigger)
-    //     .and(OI.getButton(OI.Operator.LBumper))
-    //     .whileTrue(climber.climb());
-    // OI.getTrigger(OI.Operator.LTrigger)
-    //     .and(OI.getButton(OI.Operator.LBumper))
-    //     .whileTrue(climber.retract());
-    // OI.getButton(OI.Operator.Start).onTrue(climber.zero());
-
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
     OI.getPOVButton(OI.Driver.DPAD_LEFT).onTrue(elevator.L2());
@@ -343,6 +334,13 @@ public class RobotContainer {
                 }));
     intake.setDefaultCommand(intake.Idle());
 
+    // Scorer Buttons
+    OI.getTrigger(OI.Driver.LTrigger)
+        .and(() -> !intakeAlgeaMode)
+        .whileTrue(coralScorer.scoreCommand());
+    OI.getTrigger(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
+    OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
+
     // Algae Remover
     // OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
     // OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
@@ -353,12 +351,14 @@ public class RobotContainer {
     OI.getTrigger(OI.Operator.RTrigger)
         .whileTrue(algeaRemover.goDownCommand(OI.getAxisSupplier(OI.Operator.RTriggerAxis)));
 
-    // Scorer Buttons
-    OI.getTrigger(OI.Driver.LTrigger)
-        .and(() -> !intakeAlgeaMode)
-        .whileTrue(coralScorer.scoreCommand());
-    OI.getTrigger(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
-    OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
+    // Climber Buttons TODO: Test this
+    // OI.getTrigger(OI.Operator.Start)
+    //     .and(OI.getPOVButton(OI.Operator.DPAD_DOWN))
+    //     .whileTrue(climber.climb());
+    // OI.getTrigger(OI.Operator.Start)
+    //     .and(OI.getPOVButton(OI.Operator.DPAD_UP))
+    //     .whileTrue(climber.retract());
+    // OI.getButton(OI.Operator.Back).onTrue(climber.zero());
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
