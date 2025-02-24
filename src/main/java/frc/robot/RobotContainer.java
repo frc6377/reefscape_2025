@@ -41,7 +41,6 @@ import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.AlgeaRemover;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
@@ -70,15 +69,14 @@ public class RobotContainer {
   private EventLoop testEventLoop = new EventLoop();
 
   // Subsystems
-  private final Climber climber = new Climber();
-  private final AlgeaRemover algeaRemover = new AlgeaRemover();
-  private static final Sensors sensors = new Sensors();
   private final Drive drive;
   private final Vision vision;
   private MapleSimArenaSubsystem mapleSimArenaSubsystem;
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
+  private static final Sensors sensors = new Sensors();
   private final IntakeSubsystem intake;
+  private final Climber climber = new Climber();
 
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
@@ -308,26 +306,22 @@ public class RobotContainer {
     OI.getButton(OI.Driver.A).whileTrue(intake.l1ScoreModeB()); // Temporary
     OI.getButton(OI.Driver.RBumper).whileTrue(intake.floorOuttake());
 
-    // Combined trigger for handling coral alignment and handoff
-    Trigger hasCoralToAlign =
-        intake
-            .intakeHasUnalignedCoralTrigger()
-            .or(intake.intakeHasCoralTrigger().and(() -> elevatorNotL1));
-
-    hasCoralToAlign
+    intake
+        .intakeHasUnalignedCoralTrigger()
         .and(coralOuttakeButton.negate())
-        .whileTrue(
-            new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton)
-                .andThen(
-                    Commands.waitUntil(intake.intakeHasCoralTrigger().and(() -> elevatorNotL1))
-                        .andThen(
-                            Robot.isReal()
-                                ? intake
-                                    .conveyerInCommand()
-                                    .alongWith(coralScorer.intakeCommand())
-                                    .until(coralHandoffCompleteTrigger)
-                                : Commands.runOnce(
-                                    () -> mapleSimArenaSubsystem.setRobotHasCoral(true)))));
+        .onTrue(new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton));
+
+    intake
+        .intakeHasCoralTrigger()
+        .and(() -> elevatorNotL1)
+        .and(coralOuttakeButton.negate())
+        .onTrue(
+            Robot.isReal()
+                ? intake
+                    .conveyerInCommand()
+                    .alongWith(coralScorer.intakeCommand())
+                    .until(coralHandoffCompleteTrigger)
+                : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
 
     coralOuttakeButton.whileTrue(intake.floorOuttake());
     OI.getButton(OI.Operator.Y)
@@ -344,7 +338,6 @@ public class RobotContainer {
                   intakeAlgeaMode = !intakeAlgeaMode;
                   Logger.recordOutput("Intake/Algea Mode", intakeAlgeaMode);
                 }));
-
     OI.getButton(OI.Operator.B)
         .onTrue(
             Commands.runOnce(
@@ -352,15 +345,6 @@ public class RobotContainer {
                   coralStationMode = !coralStationMode;
                   Logger.recordOutput("Intake/Coral Station Mode", coralStationMode);
                 }));
-
-    // OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
-    // OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
-    OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
-    OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
-    OI.getButton(OI.Operator.A).onTrue(algeaRemover.stowAlgeaArm());
-    OI.getButton(OI.Operator.B).onTrue(algeaRemover.removeAlgea());
-    // OI.getButton(OI.Operator.Start).onTrue(climber.zero());
-
     intake.setDefaultCommand(intake.Idle());
 
     // Scorer Buttons
@@ -501,14 +485,6 @@ public class RobotContainer {
     }
   }
 
-  public Command algeaRemoverAutoCommand() {
-    return algeaRemover
-        .removeAlgea()
-        .until(algeaRemover.algeaArmAtSetpoint())
-        .andThen(algeaRemover.goUp())
-        .asProxy();
-  }
-
   public void givePreLoad() {
     intake.addGamePieceToIntakeSim();
   }
@@ -519,10 +495,8 @@ public class RobotContainer {
     driveSimulation.setSimulationWorldPose(drive.getPose());
   }
 
-  public void seedEncoders() {
+  public void seedIntakeEncoder() {
     intake.seedEncoder();
-    algeaRemover.seedEncoder();
-    climber.seedEncoder();
   }
 
   public void resetSimulationField() {
