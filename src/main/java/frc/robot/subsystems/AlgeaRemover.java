@@ -33,6 +33,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.AlgeaRemoverConstants;
 import frc.robot.Constants.DIOConstants;
 import frc.robot.Robot;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class AlgeaRemover extends SubsystemBase {
@@ -87,6 +88,26 @@ public class AlgeaRemover extends SubsystemBase {
                       "Algea Mech [0]", 1, 0, 10, new Color8Bit(Color.kDarkViolet)));
       SmartDashboard.putData("Mech2Ds/algea remover mech", mech);
     }
+  }
+
+  public Command goUpCommand(Supplier<Double> input) {
+    return startEnd(
+        () -> {
+          algeaMotor.set(input.get());
+        },
+        () -> {
+          algeaMotor.stopMotor();
+        });
+  }
+
+  public Command goDownCommand(Supplier<Double> input) {
+    return startEnd(
+        () -> {
+          algeaMotor.set(-input.get());
+        },
+        () -> {
+          algeaMotor.stopMotor();
+        });
   }
 
   public Command goUp() {

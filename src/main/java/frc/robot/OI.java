@@ -95,11 +95,18 @@ public class OI extends OI_Utils {
     public static final Control X = new Control(XboxController.Button.kX, null, controller);
     public static final Control Y = new Control(XboxController.Button.kY, null, controller);
 
+    // Trigger Cruve
+    public static final ControlCurve TriggerCurve = new ControlCurve(1, 0, 0, 0.1);
+
     // Bumpers & Triggers
     public static final Control LTrigger =
         new Control(XboxController.Axis.kLeftTrigger, "The robot unclimbs.", controller, 0.5);
+    public static final Control LTriggerAxis =
+        new Control(XboxController.Axis.kLeftTrigger, null, controller, TriggerCurve);
     public static final Control RTrigger =
         new Control(XboxController.Axis.kRightTrigger, "The robot climbs.", controller, 0.5);
+    public static final Control RTriggerAxis =
+        new Control(XboxController.Axis.kRightTrigger, null, controller, TriggerCurve);
     public static final Control LBumper =
         new Control(XboxController.Button.kLeftBumper, null, controller);
     public static final Control RBumper =

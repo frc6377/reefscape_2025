@@ -336,16 +336,15 @@ public class RobotContainer {
                 }));
     intake.setDefaultCommand(intake.Idle());
 
-    // OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
-    // OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
-    OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
-    OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
+    // Algae Remover
+    // OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
+    // OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
     OI.getButton(OI.Operator.A).onTrue(algeaRemover.stowAlgeaArm());
     OI.getButton(OI.Operator.B).onTrue(algeaRemover.removeAlgea());
-    // OI.getButton(OI.Operator.Start).onTrue(climber.zero());
-
-    OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
-    intake.setDefaultCommand(intake.Idle());
+    OI.getTrigger(OI.Operator.LTrigger)
+        .whileTrue(algeaRemover.goUpCommand(OI.getAxisSupplier(OI.Operator.LTriggerAxis)));
+    OI.getTrigger(OI.Operator.RTrigger)
+        .whileTrue(algeaRemover.goDownCommand(OI.getAxisSupplier(OI.Operator.RTriggerAxis)));
 
     // Scorer Buttons
     OI.getTrigger(OI.Driver.LTrigger)
