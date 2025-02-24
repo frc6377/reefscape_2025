@@ -27,7 +27,6 @@ import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -403,14 +402,15 @@ public class RobotContainer {
     }
 
     // Button to update Setpoints of the elevator based on the Stream Deck nobs
+    // TODO: Fix axis imput
     OI.getButton(OI.StreamDeck.streamDeckButtons[1][31])
         .onTrue(
             elevator
                 .tuneSetpoints(
-                    OI.getAxisSupplier(OI.StreamDeck.Nob1),
-                    () -> DriverStation.getStickAxis(2, 1), // TODO: Figure Out Axis Bug
-                    OI.getAxisSupplier(OI.StreamDeck.Nob3),
-                    OI.getAxisSupplier(OI.StreamDeck.Nob4))
+                    () -> OI.getAxisSupplier(OI.StreamDeck.Nob1).get(),
+                    () -> OI.getAxisSupplier(OI.StreamDeck.Nob2).get(),
+                    () -> OI.getAxisSupplier(OI.StreamDeck.Nob3).get(),
+                    () -> OI.getAxisSupplier(OI.StreamDeck.Nob4).get())
                 .ignoringDisable(true));
 
     // Temp Keyboard Buttons for sim with no controller
@@ -440,7 +440,10 @@ public class RobotContainer {
       OI.getButton(OI.Keyboard.V).onTrue(elevator.L4());
 
       // Scorer
-      OI.getButton(OI.Keyboard.Period).whileTrue(coralScorer.scoreCommand());
+      OI.getButton(OI.Keyboard.Period).whileTrue(mapleSimArenaSubsystem.scoreCoral());
+
+      // Reset Button
+      OI.getButton(OI.Keyboard.Comma).onTrue(Commands.runOnce(() -> resetSimulationField()));
     }
   }
 
@@ -521,8 +524,6 @@ public class RobotContainer {
     driveSimulation.setSimulationWorldPose(driveSimDefualtPose);
     mapleSimArenaSubsystem.resetSimFeild().initialize();
     intake.resetSim();
-    Logger.recordOutput(
-        "Low Camera Pose", new Pose3d(drive.getPose()).plus(VisionConstants.robotToCamera1));
   }
 
   public void displaySimFieldToAdvantageScope() {

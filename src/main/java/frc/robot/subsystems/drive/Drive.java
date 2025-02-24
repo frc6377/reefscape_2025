@@ -266,7 +266,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
     int nameIndex = 0;
     for (boolean[] boolList : scoredPoses.values()) {
-      Logger.recordOutput("ScoredPoses/Pole " + Constants.kPoleLetters[nameIndex], boolList);
+      Logger.recordOutput(
+          "Swerve/Scored Pose Buttons/Pole " + Constants.kPoleLetters[nameIndex], boolList);
       nameIndex++;
     }
   }

@@ -118,7 +118,6 @@ public class Robot extends LoggedRobot {
     // finished or interrupted commands, and running subsystem periodic() methods.
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
-    Logger.recordOutput("Alliance Color Real?", DriverStation.getAlliance().isPresent());
     CommandScheduler.getInstance().run();
 
     // Return to normal thread priority

@@ -168,8 +168,8 @@ public class Elevator extends SubsystemBase {
     elvSimPose2 = DrivetrainConstants.kElvStage2Pose;
     Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", elvSimPose1);
     Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", elvSimPose2);
-    Logger.recordOutput("Elevator/Setpoint", 0.0);
-    Logger.recordOutput("Elevator/Setpoint Rotations", 0.0);
+    Logger.recordOutput("Elevator/Elv/Setpoint (Inches)", 0.0);
+    Logger.recordOutput("Elevator/Elv/Setpoint (Rotations)", 0.0);
   }
 
   public void setElvCurrentFOC(double amps) {
@@ -224,6 +224,10 @@ public class Elevator extends SubsystemBase {
             new SoftwareLimitSwitchConfigs()
                 .withForwardSoftLimitEnable(false)
                 .withReverseSoftLimitEnable(false));
+  }
+
+  private Distance getL0Setpoint() {
+    return ElevatorConstants.kL0Height.plus(tuneOffset);
   }
 
   private Distance getL2Setpoint() {
@@ -292,13 +296,13 @@ public class Elevator extends SubsystemBase {
           control.EnableFOC = true;
           elevatorMotor1.setControl(control);
           currentSetpoint = heightLevel;
-          Logger.recordOutput("Elevator/Setpoint (Inches)", heightLevel.in(Inches));
-          Logger.recordOutput("Elevator/Setpoint (Rotations)", adjustedSetpoint.in(Rotations));
+          Logger.recordOutput("Elevator/Elv/Setpoint (Inches)", heightLevel.in(Inches));
+          Logger.recordOutput("Elevator/Elv/Setpoint (Rotations)", adjustedSetpoint.in(Rotations));
         });
   }
 
   public Command L0() {
-    return changeElevation(ElevatorConstants.kL0Height);
+    return changeElevation(getL0Setpoint());
   }
 
   public Command L2() {
@@ -359,19 +363,21 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput(
         "Elevator/Motor2/Closed Loop Output", elevatorMotor2.getClosedLoopOutput().getValue());
 
-    Logger.recordOutput("Elevator/Height (Inches)", getElevatorHeight().in(Inches));
-    Logger.recordOutput("Elevator/CRT", ChineseRemander().in(Rotations));
+    Logger.recordOutput("Elevator/Elv/Height (Inches)", getElevatorHeight().in(Inches));
+
+    Logger.recordOutput(
+        "Elevator/Chinese Remander/CRT Output (Rotations)", ChineseRemander().in(Rotations));
     Logger.recordOutput("Elevator/limit switch state", elvLimitSwitch.get());
 
+    Logger.recordOutput("Elevator/Setpoints/L0", getL0Setpoint().in(Inches));
     Logger.recordOutput("Elevator/Setpoints/L2", getL2Setpoint().in(Inches));
     Logger.recordOutput("Elevator/Setpoints/L3", getL3Setpoint().in(Inches));
     Logger.recordOutput("Elevator/Setpoints/L4", getL4Setpoint().in(Inches));
+    Logger.recordOutput("Elevator/Setpoints/Overall Offset", tuneOffset);
 
-    if (this.getCurrentCommand() != null) {
-      Logger.recordOutput("Elevator/Current Command", this.getCurrentCommand().getName());
-    } else {
-      Logger.recordOutput("Elevator/Current Command", "No Command");
-    }
+    Logger.recordOutput(
+        "Elevator/Current Command",
+        this.getCurrentCommand() != null ? this.getCurrentCommand().getName() : "None");
 
     Distance elvHeight = getElevatorHeight();
     elvSimPose1 =
@@ -404,10 +410,10 @@ public class Elevator extends SubsystemBase {
 
     elevatorMech.setLength(simDist.in(Meters));
 
-    Logger.recordOutput("Elevator/Sim Length", simDist.in(Inches));
-    Logger.recordOutput("Elevator/Sim velocity", simVel.in(InchesPerSecond));
-    Logger.recordOutput("Elevator/Sim Pose", m_elevatorSim.getPositionMeters());
-    Logger.recordOutput("Elevator/Gear3", simGear3.get());
-    Logger.recordOutput("Elevator/Gear11", simGear11.get());
+    Logger.recordOutput("Elevator/Simulation/Length", simDist.in(Inches));
+    Logger.recordOutput("Elevator/Simulation/velocity", simVel.in(InchesPerSecond));
+    Logger.recordOutput("Elevator/Simulation/Pose", m_elevatorSim.getPositionMeters());
+    Logger.recordOutput("Elevator/Chinese Remander/Gear3", simGear3.get());
+    Logger.recordOutput("Elevator/Chinese Remander/Gear11", simGear11.get());
   }
 }

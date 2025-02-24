@@ -185,13 +185,15 @@ public class AlgeaRemover extends SubsystemBase {
   @Override
   public void periodic() {
     Logger.recordOutput(
-        "Algea Remover/Motor Position Rotations", algeaMotor.getEncoder().getPosition());
-    Logger.recordOutput("Algea Remover/Encoder Position (Rotations)", algeaEncoder.get());
-    Logger.recordOutput("Algea Remover/Motor Percent", algeaMotor.get());
-    Logger.recordOutput("Algea Remover/Moter Applied Out", algeaMotor.getAppliedOutput());
+        "Algea Remover/Motor/Position (Degrees)",
+        Rotations.of(algeaMotor.getEncoder().getPosition()).in(Degrees));
     Logger.recordOutput(
-        "Algea Remover/Moter Velocity (RPM)", algeaMotor.getEncoder().getVelocity());
-    Logger.recordOutput("Algea Remover/Moter Current (Amps)", algeaMotor.getOutputCurrent());
+        "Algea Remover/Encoder Position (Degrees)", Rotations.of(algeaEncoder.get()).in(Degrees));
+    Logger.recordOutput("Algea Remover/Motor/Percent", algeaMotor.get());
+    Logger.recordOutput("Algea Remover/Motor/Applied Out", algeaMotor.getAppliedOutput());
+    Logger.recordOutput(
+        "Algea Remover/Motor/Velocity (RPM)", algeaMotor.getEncoder().getVelocity());
+    Logger.recordOutput("Algea Remover/Moter/Current (Amps)", algeaMotor.getOutputCurrent());
   }
 
   @Override
@@ -206,6 +208,6 @@ public class AlgeaRemover extends SubsystemBase {
     simAngle = Rotations.of(simAlgeaMotor.getPosition() / AlgeaRemoverConstants.kAlegeaGearRatio);
 
     algeaMech.setAngle(simAngle.in(Degrees));
-    Logger.recordOutput("Algea/Sim Angle", simAngle.in(Degrees));
+    Logger.recordOutput("Algea Remover/Sim Angle (Degrees)", simAngle.in(Degrees));
   }
 }

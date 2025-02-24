@@ -123,7 +123,7 @@ public class Climber extends SubsystemBase {
     climberMotorBack.setPosition(ClimberConstants.kClimberAtCageSetpoint.in(Rotations));
 
     Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
-    Logger.recordOutput("Climber/Front/isBackServoEngaged", isBackServoEngaged);
+    Logger.recordOutput("Climber/Back/isBackServoEngaged", isBackServoEngaged);
 
     // For simulation
     // simulates the entire simulation, not just one arm
@@ -321,7 +321,7 @@ public class Climber extends SubsystemBase {
           isBackServoEngaged = true;
           setCurrentLimit(Amps.of(70));
           Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
-          Logger.recordOutput("Climber/Front/isBackServoEngaged", isBackServoEngaged);
+          Logger.recordOutput("Climber/Back/isBackServoEngaged", isBackServoEngaged);
         });
   }
 
@@ -338,7 +338,7 @@ public class Climber extends SubsystemBase {
           isBackServoEngaged = false;
           setCurrentLimit(Amps.of(5));
           Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
-          Logger.recordOutput("Climber/Front/isBackServoEngaged", isBackServoEngaged);
+          Logger.recordOutput("Climber/Back/isBackServoEngaged", isBackServoEngaged);
         });
   }
 
@@ -367,21 +367,29 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     Logger.recordOutput(
-        "Climber/Front/Motor Voltage", climberMotorFront.getMotorVoltage().getValue().in(Volts));
+        "Climber/Front/Motor Voltage (Volts)",
+        climberMotorFront.getMotorVoltage().getValue().in(Volts));
     Logger.recordOutput(
-        "Climber/Front/Climber Position", climberMotorFront.getPosition().getValue().in(Degrees));
+        "Climber/Front/Motor Position (Degrees)",
+        climberMotorFront.getPosition().getValue().in(Degrees));
     Logger.recordOutput(
-        "Climber/Front/Absolute Encoder", Rotations.of(1 - climberFrontEncoder.get()).in(Degrees));
+        "Climber/Front/Absolute Encoder Position (Degrees)",
+        Rotations.of(1 - climberFrontEncoder.get()).in(Degrees));
     Logger.recordOutput(
-        "Climber/Back/Motor Voltage", climberMotorBack.getMotorVoltage().getValue().in(Volts));
+        "Climber/Front/Motor Current (Amps)",
+        climberMotorFront.getStatorCurrent().getValue().in(Amps));
     Logger.recordOutput(
-        "Climber/Back/Climber Position", climberMotorBack.getPosition().getValue().in(Degrees));
+        "Climber/Back/Motor Voltage (Volts)",
+        climberMotorBack.getMotorVoltage().getValue().in(Volts));
     Logger.recordOutput(
-        "Climber/Back/Absolute Encoder", Rotations.of(climberBackEncoder.get()).in(Degrees));
+        "Climber/Back/Motor Position (Degrees)",
+        climberMotorBack.getPosition().getValue().in(Degrees));
     Logger.recordOutput(
-        "Climber/Front/Motor Current", climberMotorFront.getStatorCurrent().getValue().in(Amps));
+        "Climber/Back/Absolute Encoder Position (Degrees)",
+        Rotations.of(climberBackEncoder.get()).in(Degrees));
     Logger.recordOutput(
-        "Climber/Back/Motor Current", climberMotorBack.getStatorCurrent().getValue().in(Amps));
+        "Climber/Back/Motor Current (Amps)",
+        climberMotorBack.getStatorCurrent().getValue().in(Amps));
   }
 
   @Override

@@ -179,13 +179,13 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
     inputs.turnCurrentAmps = turnCurrent.getValueAsDouble();
 
     Logger.recordOutput(
-        "SysID Values/" + turnTalon.getDeviceID() + "/Velocity",
+        "Swerve/SysID Values/" + turnTalon.getDeviceID() + "/Velocity",
         cancoder.getVelocity().getValueAsDouble());
     Logger.recordOutput(
-        "SysID Values/" + turnTalon.getDeviceID() + "/Position",
+        "Swerve/SysID Values/" + turnTalon.getDeviceID() + "/Position",
         cancoder.getPosition().getValueAsDouble());
     Logger.recordOutput(
-        "SysID Values/" + turnTalon.getDeviceID() + "/MotorVoltage",
+        "Swerve/SysID Values/" + turnTalon.getDeviceID() + "/MotorVoltage",
         turnTalon.getMotorVoltage().getValueAsDouble());
   }
 
