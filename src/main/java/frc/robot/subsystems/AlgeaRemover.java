@@ -58,15 +58,16 @@ public class AlgeaRemover extends SubsystemBase {
 
   public AlgeaRemover() {
     algeaMotor = new SparkMax(Constants.CANIDs.kAlgeaMotor, MotorType.kBrushless);
-    algaeMotorConfig.smartCurrentLimit(20);
+    algaeMotorConfig.smartCurrentLimit(60);
+    algaeMotorConfig.apply(algeaCfg);
     algeaMotor.configure(
-        new SparkMaxConfig().apply(algeaCfg),
-        ResetMode.kNoResetSafeParameters,
-        PersistMode.kNoPersistParameters);
+        algaeMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     algeaEncoder =
         new DutyCycleEncoder(
             DIOConstants.kAlgeaEncoderID, 1, AlgeaRemoverConstants.encoderOffset.in(Rotations));
-    algeaMotor.getEncoder().setPosition(algeaEncoder.get());
+    algeaMotor
+        .getEncoder()
+        .setPosition(algeaEncoder.get() * AlgeaRemoverConstants.kAlegeaGearRatio);
     if (Robot.isSimulation()) {
       simAlgeaMotor = new SparkMaxSim(algeaMotor, AlgeaRemoverConstants.kAlgeaGearbox);
       algeaSim =
@@ -93,7 +94,7 @@ public class AlgeaRemover extends SubsystemBase {
   }
 
   public Command goUpCommand(Supplier<Double> input) {
-    return startEnd(
+    return runEnd(
         () -> {
           algeaMotor.set(input.get());
         },
@@ -103,7 +104,7 @@ public class AlgeaRemover extends SubsystemBase {
   }
 
   public Command goDownCommand(Supplier<Double> input) {
-    return startEnd(
+    return runEnd(
         () -> {
           algeaMotor.set(-input.get());
         },
@@ -157,10 +158,10 @@ public class AlgeaRemover extends SubsystemBase {
                   ControlType.kPosition);
 
           Logger.recordOutput(
-              "Algea/Setpoint (Rotations)",
+              "Algea Remover/Setpoint (Rotations)",
               angle.in(Rotations) * AlgeaRemoverConstants.kAlegeaGearRatio);
           Logger.recordOutput(
-              "Algea/Setpoint (Degrees)",
+              "Algea Remover/Setpoint (Degrees)",
               angle.in(Degrees) * AlgeaRemoverConstants.kAlegeaGearRatio);
         });
   }
@@ -184,8 +185,8 @@ public class AlgeaRemover extends SubsystemBase {
   @Override
   public void periodic() {
     Logger.recordOutput(
-        "Algea Remover/Motor Relative Rotations", algeaMotor.getEncoder().getPosition());
-    Logger.recordOutput("Algea Remover/Motor Rotations", algeaEncoder.get());
+        "Algea Remover/Motor Position Rotations", algeaMotor.getEncoder().getPosition());
+    Logger.recordOutput("Algea Remover/Encoder Position (Rotations)", algeaEncoder.get());
     Logger.recordOutput("Algea Remover/Motor Percent", algeaMotor.get());
     Logger.recordOutput("Algea Remover/Moter Applied Out", algeaMotor.getAppliedOutput());
     Logger.recordOutput(

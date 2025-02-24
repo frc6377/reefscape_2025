@@ -346,8 +346,8 @@ public class RobotContainer {
     // Algae Remover
     // OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
     // OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
-    OI.getButton(OI.Operator.A).onTrue(algeaRemover.goUp());
-    OI.getButton(OI.Operator.B).onTrue(algeaRemover.goDown());
+    OI.getButton(OI.Operator.A).whileTrue(algeaRemover.removeAlgea());
+    OI.getButton(OI.Operator.B).whileTrue(algeaRemover.stowAlgeaArm());
     OI.getTrigger(OI.Operator.LTrigger)
         .whileTrue(algeaRemover.goUpCommand(OI.getAxisSupplier(OI.Operator.LTriggerAxis)));
     OI.getTrigger(OI.Operator.RTrigger)

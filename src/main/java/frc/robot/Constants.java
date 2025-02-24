@@ -266,10 +266,10 @@ public final class Constants {
     public static final double kAlgeaP = 0.7;
     public static final double kAlgeaI = 0.0;
     public static final double kAlgeaD = 0.0;
-    public static final double kAlgeaPercent = .2;
+    public static final double kAlgeaPercent = .4;
     public static final int kAlegeaGearRatio = 80;
-    public static final Angle algeaStowed = Degrees.of(-90);
-    public static final Angle algeaRemove = Degrees.of(0);
+    public static final Angle algeaStowed = Rotations.of(0.46);
+    public static final Angle algeaRemove = Rotations.of(0.1);
     public static final double algeaZero = 0.0; // update with actual value
     public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
     public static final Distance algeaArmLength = Inches.of(19);
