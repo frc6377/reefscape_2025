@@ -99,6 +99,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
           .withRobotMass(DrivetrainConstants.ROBOT_MASS)
           .withCustomModuleTranslations(getModuleTranslations())
           .withGyro(COTS.ofPigeon2())
+          .withBumperSize(Meters.of(0.876), Meters.of(0.876))
           .withSwerveModule(
               new SwerveModuleSimulationConfig(
                   DCMotor.getKrakenX60(1),
