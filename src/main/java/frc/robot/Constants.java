@@ -71,14 +71,13 @@ public final class Constants {
   }
 
   public static class DIOConstants {
+    public static final int elvLimitID = 0;
     public static final int kthroughBoreEncoderID = 1;
-    public static final int kAlgeaEncoderID = 15;
+    public static final int kAlgeaEncoderID = 2;
     public static final int kClimberFrontEncoderID = 5;
     public static final int kClimberBackEncoderID = 6;
     public static final int gear11ID = 13;
     public static final int gear3ID = 14;
-
-    public static final int elvLimitID = 0;
   }
 
   public static class SensorIDs {
@@ -156,7 +155,7 @@ public final class Constants {
     public static final double kPivotSpeed = 0.2;
 
     // Pivot Arm Setpoints
-    public static final Angle armZero = Degrees.of(83.05);
+    public static final Angle armZero = Degrees.of(83.05 - 7);
     public static final Angle kPivotRetractAngle = Degrees.of(128);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);

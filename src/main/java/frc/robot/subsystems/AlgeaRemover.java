@@ -54,9 +54,11 @@ public class AlgeaRemover extends SubsystemBase {
               AlgeaRemoverConstants.kAlgeaP,
               AlgeaRemoverConstants.kAlgeaI,
               AlgeaRemoverConstants.kAlgeaD);
+  private static final SparkMaxConfig algaeMotorConfig = new SparkMaxConfig();
 
   public AlgeaRemover() {
     algeaMotor = new SparkMax(Constants.CANIDs.kAlgeaMotor, MotorType.kBrushless);
+    algaeMotorConfig.smartCurrentLimit(20);
     algeaMotor.configure(
         new SparkMaxConfig().apply(algeaCfg),
         ResetMode.kNoResetSafeParameters,
@@ -181,9 +183,14 @@ public class AlgeaRemover extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Logger.recordOutput("Algea/Motor Relative Rotations", algeaMotor.getEncoder().getPosition());
-    Logger.recordOutput("Algea/Motor Rotations", algeaEncoder.get());
-    Logger.recordOutput("Algea/Motor Percent", algeaMotor.get());
+    Logger.recordOutput(
+        "Algea Remover/Motor Relative Rotations", algeaMotor.getEncoder().getPosition());
+    Logger.recordOutput("Algea Remover/Motor Rotations", algeaEncoder.get());
+    Logger.recordOutput("Algea Remover/Motor Percent", algeaMotor.get());
+    Logger.recordOutput("Algea Remover/Moter Applied Out", algeaMotor.getAppliedOutput());
+    Logger.recordOutput(
+        "Algea Remover/Moter Velocity (RPM)", algeaMotor.getEncoder().getVelocity());
+    Logger.recordOutput("Algea Remover/Moter Current (Amps)", algeaMotor.getOutputCurrent());
   }
 
   @Override
