@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartL - J"
+            "pathName": "StartR - E"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "J - Source"
+            "pathName": "E - Source"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score K"
+            "pathName": "Score D"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "K - Source"
+            "pathName": "D - Source"
           }
         },
         {
@@ -55,7 +55,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score L"
+            "pathName": "Score C"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C - Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score B"
           }
         },
         {

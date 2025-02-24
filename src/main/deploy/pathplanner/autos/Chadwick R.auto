@@ -65,6 +65,30 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "L - Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score A"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "ElvL0"
