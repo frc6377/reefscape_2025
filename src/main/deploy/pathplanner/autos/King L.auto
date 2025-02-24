@@ -92,6 +92,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "The Kings",
   "choreoAuto": false
 }

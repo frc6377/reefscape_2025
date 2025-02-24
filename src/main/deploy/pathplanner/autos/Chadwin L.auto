@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - F"
+            "pathName": "StartR - E"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "F - Source"
+            "pathName": "E - Source"
           }
         },
         {
@@ -53,42 +53,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "C - Source"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score B"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "B - Source"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score E"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "ElvL0"
@@ -98,6 +62,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "The Chads",
   "choreoAuto": false
 }
