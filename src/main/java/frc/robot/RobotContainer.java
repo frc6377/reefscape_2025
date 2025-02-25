@@ -310,17 +310,15 @@ public class RobotContainer {
             : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true))
                 .withName("PassToScorer");
 
-    intake
-        .intakeHasUnalignedCoralTrigger()
-        .and(coralOuttakeButton.negate())
-        .and(retrigger(locCoral))
-        .onTrue(locCoral);
+    // Isolated to preserve Interruption Behavior
+    intake.intakeHasUnalignedCoralTrigger().and(coralOuttakeButton.negate()).onTrue(locCoral);
 
     intake
         .intakeHasCoralTrigger()
         .and(() -> elevatorNotL1)
         .and(coralOuttakeButton.negate())
-        .and(retrigger(passToScorer))
+        .and(retrigger(passToScorer)) // Attempt to retrigger if interrupted
+        .and(retrigger(locCoral)) // Wait for LocateCoral to complete before starting
         .onTrue(passToScorer);
 
     coralOuttakeButton.whileTrue(intake.floorOuttake());
