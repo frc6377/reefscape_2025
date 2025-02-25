@@ -83,7 +83,7 @@ public class LocateCoral extends Command {
 
   @Override
   public InterruptionBehavior getInterruptionBehavior() {
-    if (state.get() == CoralEnum.CORAL_TOO_CLOSE || state.get() == CoralEnum.CORAL_TOO_FAR) {
+    if (state.get() == CoralEnum.CORAL_TOO_CLOSE) {
       return InterruptionBehavior.kCancelIncoming;
     } else {
       return InterruptionBehavior.kCancelSelf;

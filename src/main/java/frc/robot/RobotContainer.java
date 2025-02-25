@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -50,11 +51,6 @@ import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.vision.*;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -301,23 +297,31 @@ public class RobotContainer {
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
 
+    // Outtake Buttons
+    Command locCoral =
+        new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton)
+            .withName("LocateCoral");
+    Command passToScorer =
+        Robot.isReal()
+            ? intake
+                .conveyerInCommand()
+                .alongWith(coralScorer.intakeCommand())
+                .until(coralHandoffCompleteTrigger)
+            : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true))
+                .withName("PassToScorer");
+
     intake
         .intakeHasUnalignedCoralTrigger()
         .and(coralOuttakeButton.negate())
-        .onTrue(new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton));
+        .and(retrigger(locCoral))
+        .onTrue(locCoral);
 
     intake
         .intakeHasCoralTrigger()
         .and(() -> elevatorNotL1)
         .and(coralOuttakeButton.negate())
-        .and(() -> elevatorNotL1)
-        .onTrue(
-            Robot.isReal()
-                ? intake
-                    .conveyerInCommand()
-                    .alongWith(coralScorer.intakeCommand())
-                    .until(coralHandoffCompleteTrigger)
-                : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
+        .and(retrigger(passToScorer))
+        .onTrue(passToScorer);
 
     coralOuttakeButton.whileTrue(intake.floorOuttake());
     OI.getButton(OI.Operator.Y)
@@ -520,5 +524,10 @@ public class RobotContainer {
   public void displaySimFieldToAdvantageScope() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
     mapleSimArenaSubsystem.updateRobotCoralPose(elevator.getElevatorHeight());
+  }
+
+  private Trigger retrigger(Command cmd) {
+    return new Trigger(() -> !CommandScheduler.getInstance().isScheduled(cmd))
+        .debounce(Robot.defaultPeriodSecs);
   }
 }
