@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -297,17 +298,14 @@ public class RobotContainer {
     OI.getTrigger(OI.Driver.RTrigger).and(() -> !intakeAlgeaMode).whileTrue(intake.floorIntake());
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
-
-    intake
-        .intakeHasUnalignedCoralTrigger()
-        .and(coralOuttakeButton.negate())
-        .onTrue(new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton));
+    Command locateCoral = new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton);
+    intake.intakeHasUnalignedCoralTrigger().and(coralOuttakeButton.negate()).onTrue(locateCoral);
 
     intake
         .intakeHasCoralTrigger()
         .and(() -> elevatorNotL1)
         .and(coralOuttakeButton.negate())
-        .and(() -> elevatorNotL1)
+        .and(() -> !CommandScheduler.getInstance().isScheduled(locateCoral))
         .onTrue(
             Robot.isReal()
                 ? intake
@@ -331,6 +329,7 @@ public class RobotContainer {
                   intakeAlgeaMode = !intakeAlgeaMode;
                   Logger.recordOutput("Intake/Algea Mode", intakeAlgeaMode);
                 }));
+    OI.getButton(OI.Operator.B).whileTrue(intake.humanPlayerIntake());
     intake.setDefaultCommand(intake.Idle());
 
     // Scorer Buttons
@@ -344,12 +343,12 @@ public class RobotContainer {
     // Algae Remover
     // OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
     // OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
-    OI.getButton(OI.Operator.A).whileTrue(algeaRemover.removeAlgea());
-    OI.getButton(OI.Operator.B).whileTrue(algeaRemover.stowAlgeaArm());
-    OI.getTrigger(OI.Operator.LTrigger)
-        .whileTrue(algeaRemover.goUpCommand(OI.getAxisSupplier(OI.Operator.LTriggerAxis)));
-    OI.getTrigger(OI.Operator.RTrigger)
-        .whileTrue(algeaRemover.goDownCommand(OI.getAxisSupplier(OI.Operator.RTriggerAxis)));
+    // OI.getButton(OI.Operator.A).whileTrue(algeaRemover.removeAlgea());
+    // OI.getButton(OI.Operator.B).whileTrue(algeaRemover.stowAlgeaArm());
+    // OI.getTrigger(OI.Operator.LTrigger)
+    //     .whileTrue(algeaRemover.goUpCommand(OI.getAxisSupplier(OI.Operator.LTriggerAxis)));
+    // OI.getTrigger(OI.Operator.RTrigger)
+    //     .whileTrue(algeaRemover.goDownCommand(OI.getAxisSupplier(OI.Operator.RTriggerAxis)));
 
     // Climber Buttons TODO: Test this
     // OI.getTrigger(OI.Operator.Start)
