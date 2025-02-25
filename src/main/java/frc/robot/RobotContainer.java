@@ -71,7 +71,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 @SuppressWarnings("unused")
 public class RobotContainer {
   // Change the raw boolean to true to pick keyboard during simulation
-  private final boolean usingKeyboard = true && Robot.isSimulation();
+  private final boolean usingKeyboard = false && Robot.isSimulation();
 
   private EventLoop testEventLoop = new EventLoop();
 
@@ -315,8 +315,8 @@ public class RobotContainer {
                     .alongWith(coralScorer.intakeCommand())
                     .until(coralHandoffCompleteTrigger)
                 : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
-
     coralOuttakeButton.whileTrue(intake.floorOuttake());
+
     OI.getButton(OI.Operator.Y)
         .onTrue(
             Commands.runOnce(
@@ -336,7 +336,8 @@ public class RobotContainer {
     // Scorer Buttons
     OI.getTrigger(OI.Driver.LTrigger)
         .and(() -> !intakeAlgeaMode)
-        .whileTrue(coralScorer.scoreCommand());
+        .whileTrue(
+            Robot.isReal() ? coralScorer.scoreCommand() : mapleSimArenaSubsystem.scoreCoral());
     OI.getTrigger(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
     OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
 
@@ -376,7 +377,11 @@ public class RobotContainer {
             OI.getButton(Driver.RSB).getAsBoolean()
                 ? () -> 0.0
                 : OI.getAxisSupplier(OI.Driver.RightX)));
-    OI.getButton(OI.Driver.Back).onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+    OI.getButton(OI.Driver.Back)
+        .onTrue(
+            Robot.isReal()
+                ? Commands.runOnce(resetGyro, drive).ignoringDisable(true)
+                : Commands.runOnce(() -> resetSimulationField()));
     OI.getButton(OI.Driver.RSB)
         .whileTrue(
             DriveCommands.AlignToReef(
@@ -412,6 +417,11 @@ public class RobotContainer {
                     () -> OI.getAxisSupplier(OI.StreamDeck.Nob3).get(),
                     () -> OI.getAxisSupplier(OI.StreamDeck.Nob4).get())
                 .ignoringDisable(true));
+
+    if (Robot.isSimulation()) {
+      new Trigger(() -> mapleSimArenaSubsystem.getRobotHasCoral())
+          .onFalse(Commands.runOnce(() -> intake.removePieceFromIntakeSim()));
+    }
 
     // Temp Keyboard Buttons for sim with no controller
     if (usingKeyboard) {
