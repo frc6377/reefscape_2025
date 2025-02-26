@@ -421,342 +421,46 @@ public final class Constants {
         };
 
     // Heights
-    public static final HashMap<String, Distance> kCoralHeightMap =
-        new HashMap<String, Distance>(3);
+    public static final HashMap<String, Pose2d> kCoralHeightMap = new HashMap<String, Pose2d>(3);
 
     static {
-      kCoralHeightMap.put("L2", Inches.of(31.1843));
-      kCoralHeightMap.put("L3", Inches.of(47.0542));
-      kCoralHeightMap.put("L4", Inches.of(71.9348));
+      kCoralHeightMap.put(
+          "L2", new Pose2d(Inches.of(31.1843), Inches.zero(), new Rotation2d(Degrees.of(35))));
+      kCoralHeightMap.put(
+          "L3", new Pose2d(Inches.of(47.0542), Inches.zero(), new Rotation2d(Degrees.of(35))));
+      kCoralHeightMap.put(
+          "L4", new Pose2d(Inches.of(71.9348), Inches.zero(), new Rotation2d(Degrees.of(90))));
     }
 
-    private static final Distance kL2H = Inches.of(31.1843);
-    private static final Distance kL3H = Inches.of(47.0542);
-    private static final Distance kL4H = Inches.of(71.9348);
-
-    private static final Pose3d[] kBlueStickPoses =
-        new Pose3d[] {
-          new Pose3d(
-              Inches.of(146.303),
-              Inches.of(152.030),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(146.348),
-              Inches.of(164.968),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(156.038),
-              Inches.of(135.246),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(156.016),
-              Inches.of(181.791),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(167.220),
-              Inches.of(128.738),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(167.243),
-              Inches.of(188.221),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(186.624),
-              Inches.of(128.777),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(186.646),
-              Inches.of(188.260),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(197.850),
-              Inches.of(135.207),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(197.828),
-              Inches.of(181.752),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(207.518),
-              Inches.of(152.030),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(207.563),
-              Inches.of(164.968),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
+    public static final Pose2d[] kBlueStickPoses =
+        new Pose2d[] {
+          new Pose2d(Inches.of(146.303), Inches.of(152.030), new Rotation2d(Degrees.of(0))),
+          new Pose2d(Inches.of(146.348), Inches.of(164.968), new Rotation2d(Degrees.of(0))),
+          new Pose2d(Inches.of(156.038), Inches.of(135.246), new Rotation2d(Degrees.of(60))),
+          new Pose2d(Inches.of(156.016), Inches.of(181.791), new Rotation2d(Degrees.of(-60))),
+          new Pose2d(Inches.of(167.220), Inches.of(128.738), new Rotation2d(Degrees.of(60))),
+          new Pose2d(Inches.of(167.243), Inches.of(188.221), new Rotation2d(Degrees.of(-60))),
+          new Pose2d(Inches.of(186.624), Inches.of(128.777), new Rotation2d(Degrees.of(120))),
+          new Pose2d(Inches.of(186.646), Inches.of(188.260), new Rotation2d(Degrees.of(-120))),
+          new Pose2d(Inches.of(197.850), Inches.of(135.207), new Rotation2d(Degrees.of(120))),
+          new Pose2d(Inches.of(197.828), Inches.of(181.752), new Rotation2d(Degrees.of(-120))),
+          new Pose2d(Inches.of(207.518), Inches.of(152.030), new Rotation2d(Degrees.of(180))),
+          new Pose2d(Inches.of(207.563), Inches.of(164.968), new Rotation2d(Degrees.of(180))),
         };
-    private static final Pose3d[] kRedStickPoses =
-        new Pose3d[] {
-          new Pose3d(
-              Inches.of(483.688),
-              Inches.of(152.030),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(483.733),
-              Inches.of(164.968),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(493.423),
-              Inches.of(135.246),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(493.401),
-              Inches.of(181.791),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(504.605),
-              Inches.of(128.738),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(504.627),
-              Inches.of(188.221),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(524.008),
-              Inches.of(128.777),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(524.031),
-              Inches.of(188.260),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(535.235),
-              Inches.of(135.207),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(535.213),
-              Inches.of(181.752),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(544.903),
-              Inches.of(152.030),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
-          new Pose3d(
-              Inches.of(544.948),
-              Inches.of(164.968),
-              Inches.zero(),
-              new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.zero())),
+    public static final Pose2d[] kRedStickPoses =
+        new Pose2d[] {
+          new Pose2d(Inches.of(483.688), Inches.of(152.030), new Rotation2d(Degrees.of(0))),
+          new Pose2d(Inches.of(483.733), Inches.of(164.968), new Rotation2d(Degrees.of(0))),
+          new Pose2d(Inches.of(493.423), Inches.of(135.246), new Rotation2d(Degrees.of(60))),
+          new Pose2d(Inches.of(493.401), Inches.of(181.791), new Rotation2d(Degrees.of(-60))),
+          new Pose2d(Inches.of(504.605), Inches.of(128.738), new Rotation2d(Degrees.of(60))),
+          new Pose2d(Inches.of(504.627), Inches.of(188.221), new Rotation2d(Degrees.of(-60))),
+          new Pose2d(Inches.of(524.008), Inches.of(128.777), new Rotation2d(Degrees.of(120))),
+          new Pose2d(Inches.of(524.031), Inches.of(188.260), new Rotation2d(Degrees.of(-120))),
+          new Pose2d(Inches.of(535.235), Inches.of(135.207), new Rotation2d(Degrees.of(120))),
+          new Pose2d(Inches.of(535.213), Inches.of(181.752), new Rotation2d(Degrees.of(-120))),
+          new Pose2d(Inches.of(544.903), Inches.of(152.030), new Rotation2d(Degrees.of(180))),
+          new Pose2d(Inches.of(544.948), Inches.of(164.968), new Rotation2d(Degrees.of(180))),
         };
-
-    // X, Y Cordiantes
-    public static final HashMap<String, Pose3d[]> kPolePosesBlue = new HashMap<String, Pose3d[]>();
-
-    static {
-        for (int i = 0; i < kPoleLetters.length; i++)
-      kPolePosesBlue.put(kPoleLetters[i], new Pose3d[] {
-        new Pose3d(kBlueStickPoses[i].getMeasureX(), kBlueStickPoses[i].getMeasureY(), kCoralHeightMap["L2"], kBlueStickPoses[i].getRotation())
-      });
-    }
-
-    public static final Pose3d[] kBlueCoralScorePoses = {
-      // Level 2 (L2 - Lower Branches)
-      new Pose3d(
-          kBlueStickPoses[0].getMeasureX(),
-          kBlueStickPoses[0].getMeasureY(),
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[1].getMeasureX(),
-          kBlueStickPoses[1].getMeasureY(),
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[2].getMeasureX(),
-          kBlueStickPoses[2].getMeasureY(),
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(60))),
-      new Pose3d(
-          kBlueStickPoses[3].getMeasureX(),
-          kBlueStickPoses[3].getMeasureY(),
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(-60))),
-      new Pose3d(
-          kBlueStickPoses[4].getMeasureX(),
-          kBlueStickPoses[4].getMeasureY(),
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(60))),
-      new Pose3d(
-          kBlueStickPoses[5].getMeasureX(),
-          kBlueStickPoses[5].getMeasureY(),
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(-60))),
-      new Pose3d(
-          kBlueStickPoses[6].getMeasureX(),
-          kBlueStickPoses[6].getMeasureY(),
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(-60))),
-      new Pose3d(
-          kBlueStickPoses[7].getMeasureX(),
-          kBlueStickPoses[7].getMeasureY(),
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(60))),
-      new Pose3d(
-          kBlueStickPoses[8].getMeasureX(),
-          kBlueStickPoses[8].getMeasureY(),
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(-60))),
-      new Pose3d(
-          kBlueStickPoses[9].getMeasureX(),
-          kBlueStickPoses[9].getMeasureY(),
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(60))),
-      new Pose3d(
-          kBlueStickPoses[10].getMeasureX(),
-          kBlueStickPoses[10].getMeasureY(),
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(180))),
-      new Pose3d(
-          kBlueStickPoses[11].getMeasureX(),
-          kBlueStickPoses[11].getMeasureY(),
-          kL2H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(180))),
-
-      // Level 3 (L3 - Middle Branches)
-      new Pose3d(
-          kBlueStickPoses[0].getMeasureX(),
-          kBlueStickPoses[0].getMeasureY(),
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[1].getMeasureX(),
-          kBlueStickPoses[1].getMeasureY(),
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[2].getMeasureX(),
-          kBlueStickPoses[2].getMeasureY(),
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(60))),
-      new Pose3d(
-          kBlueStickPoses[3].getMeasureX(),
-          kBlueStickPoses[3].getMeasureY(),
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(-60))),
-      new Pose3d(
-          kBlueStickPoses[4].getMeasureX(),
-          kBlueStickPoses[4].getMeasureY(),
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(60))),
-      new Pose3d(
-          kBlueStickPoses[5].getMeasureX(),
-          kBlueStickPoses[5].getMeasureY(),
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(-60))),
-      new Pose3d(
-          kBlueStickPoses[6].getMeasureX(),
-          kBlueStickPoses[6].getMeasureY(),
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(-60))),
-      new Pose3d(
-          kBlueStickPoses[7].getMeasureX(),
-          kBlueStickPoses[7].getMeasureY(),
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(60))),
-      new Pose3d(
-          kBlueStickPoses[8].getMeasureX(),
-          kBlueStickPoses[8].getMeasureY(),
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(-60))),
-      new Pose3d(
-          kBlueStickPoses[9].getMeasureX(),
-          kBlueStickPoses[9].getMeasureY(),
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(-35), Degrees.of(60))),
-      new Pose3d(
-          kBlueStickPoses[10].getMeasureX(),
-          kBlueStickPoses[10].getMeasureY(),
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(180))),
-      new Pose3d(
-          kBlueStickPoses[11].getMeasureX(),
-          kBlueStickPoses[11].getMeasureY(),
-          kL3H,
-          new Rotation3d(Degrees.zero(), Degrees.of(35), Degrees.of(180))),
-
-      // Level 4 (L4 - Highest Branches)
-      new Pose3d(
-          kBlueStickPoses[0].getMeasureX(),
-          kBlueStickPoses[0].getMeasureY(),
-          kL4H,
-          new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[1].getMeasureX(),
-          kBlueStickPoses[1].getMeasureY(),
-          kL4H,
-          new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[2].getMeasureX(),
-          kBlueStickPoses[2].getMeasureY(),
-          kL4H,
-          new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[3].getMeasureX(),
-          kBlueStickPoses[3].getMeasureY(),
-          kL4H,
-          new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[4].getMeasureX(),
-          kBlueStickPoses[4].getMeasureY(),
-          kL4H,
-          new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[5].getMeasureX(),
-          kBlueStickPoses[5].getMeasureY(),
-          kL4H,
-          new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[6].getMeasureX(),
-          kBlueStickPoses[6].getMeasureY(),
-          kL4H,
-          new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[7].getMeasureX(),
-          kBlueStickPoses[7].getMeasureY(),
-          kL4H,
-          new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[8].getMeasureX(),
-          kBlueStickPoses[8].getMeasureY(),
-          kL4H,
-          new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[9].getMeasureX(),
-          kBlueStickPoses[9].getMeasureY(),
-          kL4H,
-          new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[10].getMeasureX(),
-          kBlueStickPoses[10].getMeasureY(),
-          kL4H,
-          new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
-      new Pose3d(
-          kBlueStickPoses[11].getMeasureX(),
-          kBlueStickPoses[11].getMeasureY(),
-          kL4H,
-          new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
-    };
   }
 }
