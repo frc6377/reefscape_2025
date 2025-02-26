@@ -263,8 +263,18 @@ public class RobotContainer {
     testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(climber.runRaw(Volts.of(3)));
     testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(climber.runRaw(Volts.of(-3)));
     testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendToCage());
-    testTrig(OI.getTrigger(OI.Driver.Y)).onTrue(climber.climb());
-    testTrig(OI.getTrigger(OI.Driver.X)).onTrue(climber.retract());
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
+        .whileTrue(climber.runRaw(Volts.of(3)));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
+        .whileTrue(climber.runRaw(Volts.of(-3)));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.A))
+        .toggleOnTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Z) : OI.getTrigger(OI.Driver.Y))
+        .onTrue(climber.climb());
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.X) : OI.getTrigger(OI.Driver.X))
+        .onTrue(climber.disengageServo());
+    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
+        .onTrue(climber.engageServo());
   }
 
   private void configureButtonBindings() {
@@ -273,6 +283,15 @@ public class RobotContainer {
             () -> {
               SignalLogger.stop();
             }));
+
+    // Climber Buttons
+    OI.getTrigger(OI.Operator.RTrigger)
+        .and(OI.getButton(OI.Operator.LBumper))
+        .whileTrue(climber.climb());
+    OI.getTrigger(OI.Operator.LTrigger)
+        .and(OI.getButton(OI.Operator.LBumper))
+        .whileTrue(climber.retract());
+    OI.getButton(OI.Operator.Start).onTrue(climber.zero());
 
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
