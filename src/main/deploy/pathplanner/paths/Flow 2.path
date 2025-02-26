@@ -106,7 +106,7 @@
   "folder": "Flow",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 150.0
+    "rotation": 59.99999999999999
   },
   "useDefaultConstraints": true
 }

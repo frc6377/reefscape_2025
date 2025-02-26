@@ -3,70 +3,64 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.225398490344323,
-        "y": 0.9680916092635675
+        "x": 5.0289136382770145,
+        "y": 2.8338432651429684
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.125960567637816,
-        "y": 1.3563198734804132
+        "x": 4.816149524779837,
+        "y": 2.7025747159479683
       },
       "isLocked": false,
-      "linkedName": "Right Coral Station Mid"
+      "linkedName": "Reef E"
     },
     {
       "anchor": {
-        "x": 4.161459835683334,
-        "y": 2.312468147620464
+        "x": 4.4418729673952155,
+        "y": 2.498113193066363
       },
       "prevControl": {
-        "x": 3.8211309094658765,
-        "y": 2.1074115780064644
+        "x": 4.861176780675956,
+        "y": 2.7129409241607556
       },
       "nextControl": {
-        "x": 4.440453772143362,
-        "y": 2.480568873554776
+        "x": 4.112855504152797,
+        "y": 2.32954311838527
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.0289136382770145,
-        "y": 2.8338432651429684
+        "x": 1.225398490344323,
+        "y": 0.9680916092635675
       },
       "prevControl": {
-        "x": 4.150897836054244,
-        "y": 2.315172766139688
+        "x": 1.5302266743432167,
+        "y": 1.188509884606654
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef E"
+      "linkedName": "Right Coral Station Mid"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0167784202755936,
+      "rotationDegrees": 119.99999999999999
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
           "name": "Intake"
-        }
-      }
-    },
-    {
-      "name": "ElvL4",
-      "waypointRelativePos": 0.75,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ElvL4"
         }
       }
     }
@@ -81,13 +75,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -126.0
   },
   "reversed": false,
-  "folder": "Source - Score",
+  "folder": "Score - Source",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": -126.0
+    "velocity": 0,
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }

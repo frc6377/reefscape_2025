@@ -7,19 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartMR - G"
+            "pathName": "StartR - E"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL0"
+            "name": "L1 Score"
           }
         }
       ]

@@ -7,7 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartL - J"
+            "pathName": "StartL - J (no Elv)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L1 Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "J - Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score K L1"
           }
         },
         {

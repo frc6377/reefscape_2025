@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.12019095218966,
-        "y": 5.7498058845195095
+        "x": 4.06919333279676,
+        "y": 5.64962730753435
       },
       "isLocked": false,
       "linkedName": "Reef J"
@@ -20,8 +20,8 @@
         "y": 7.074343420759858
       },
       "prevControl": {
-        "x": 2.7505984572882967,
-        "y": 6.275945489687184
+        "x": 2.7339291427656,
+        "y": 6.242990875650495
       },
       "nextControl": null,
       "isLocked": false,
@@ -60,7 +60,7 @@
   "folder": "Score - Source",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -29.999999999999996
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }

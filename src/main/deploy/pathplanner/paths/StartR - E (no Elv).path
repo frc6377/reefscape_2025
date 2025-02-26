@@ -3,47 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.9423237848822312,
-        "y": 5.2145802665794285
+        "x": 7.155,
+        "y": 0.49849087715277735
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.223561692584651,
-        "y": 5.876341804666255
+        "x": 6.463457545384709,
+        "y": 1.2002790432497155
       },
       "isLocked": false,
-      "linkedName": "Reef K"
+      "linkedName": "Start Right"
     },
     {
       "anchor": {
-        "x": 1.2456343910549479,
-        "y": 7.074343420759858
+        "x": 5.0289136382770145,
+        "y": 2.8338432651429684
       },
       "prevControl": {
-        "x": 1.8923678774909798,
-        "y": 6.602630139924389
+        "x": 5.419769277890509,
+        "y": 2.440407280961207
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Left Coral Station Mid"
+      "linkedName": "Reef E"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Intake"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.5,
     "maxAcceleration": 2.5,
@@ -54,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 126.0
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "Score - Source",
+  "folder": "Start - Score",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

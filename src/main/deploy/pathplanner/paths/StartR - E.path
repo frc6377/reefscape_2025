@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -150.0
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": "Start - Score",
