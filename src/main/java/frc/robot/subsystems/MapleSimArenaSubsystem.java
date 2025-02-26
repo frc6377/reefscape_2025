@@ -14,8 +14,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -139,10 +137,7 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
   }
 
   public Pose3d getClosestScorePose() {
-    Pose3d[] scorePoseList =
-        DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Blue)
-            ? SimulationConstants.kBlueCoralScorePoses
-            : SimulationConstants.kRedCoralScorePoses;
+    Pose3d[] scorePoseList = SimulationConstants.kBlueCoralScorePoses;
 
     Pose3d closestScorePose = null;
     double closestDistance = Double.MAX_VALUE;
