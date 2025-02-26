@@ -225,7 +225,7 @@ public final class Constants {
     }
 
     public static final HowdyMM kElevatorMM =
-        new HowdyMM(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(500));
+        new HowdyMM(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(250));
 
     public static final Distance kSetpointTolerance = Inches.of(1);
 

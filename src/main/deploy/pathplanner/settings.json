@@ -1,6 +1,6 @@
 {
-  "robotWidth": 0.876,
-  "robotLength": 0.8763,
+  "robotWidth": 0.889,
+  "robotLength": 0.889,
   "holonomicMode": true,
   "pathFolders": [
     "Flow",
@@ -15,8 +15,8 @@
     "The Chads",
     "The Franks"
   ],
-  "defaultMaxVel": 2.0,
-  "defaultMaxAccel": 1.0,
+  "defaultMaxVel": 3.5,
+  "defaultMaxAccel": 2.5,
   "defaultMaxAngVel": 300.0,
   "defaultMaxAngAccel": 2979.381,
   "defaultNominalVoltage": 12.0,

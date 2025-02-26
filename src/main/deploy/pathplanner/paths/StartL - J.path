@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.436042347136063,
-        "y": 6.728292251773709
+        "x": 4.225455688982677,
+        "y": 4.489707590008843
       },
       "isLocked": false,
       "linkedName": "Start Left"
@@ -20,15 +20,20 @@
         "y": 5.258719312018543
       },
       "prevControl": {
-        "x": 5.919509164636144,
-        "y": 6.4334983385387154
+        "x": 5.24914057971105,
+        "y": 5.518117182252248
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Reef J"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.14165296052631576,
+      "rotationDegrees": -29.999999999999996
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
@@ -45,8 +50,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 300.0,
     "maxAngularAcceleration": 2979.381,
     "nominalVoltage": 12.0,

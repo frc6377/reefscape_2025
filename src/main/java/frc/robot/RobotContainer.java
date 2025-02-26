@@ -18,9 +18,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
-import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
-import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -112,11 +110,9 @@ public class RobotContainer {
                 new ModuleIOTalonFXReal(TunerConstants.FrontRight),
                 new ModuleIOTalonFXReal(TunerConstants.BackLeft),
                 new ModuleIOTalonFXReal(TunerConstants.BackRight));
-        this.vision =
-            new Vision(
-                drive,
-                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+        this.vision = new Vision(drive);
+        // new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+        new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation);
         intake = new IntakeSubsystem(sensors, null);
 
         DriverStation.getAlliance();
@@ -146,8 +142,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive,
-                new VisionIOPhotonVisionSim(
-                    camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
+                // new VisionIOPhotonVisionSim(
+                //     camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
                 new VisionIOPhotonVisionSim(
                     camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
         intake = new IntakeSubsystem(sensors, driveSimulation);
@@ -168,7 +164,9 @@ public class RobotContainer {
     }
 
     // Register Named Commands
-    NamedCommands.registerCommand("ElvL0", elevator.L0().andThen(waitForElevator()));
+    NamedCommands.registerCommand(
+        "ElvL0",
+        elevator.L0().andThen(waitForElevator().withTimeout(0.5).andThen(elevator.limitHit())));
     NamedCommands.registerCommand("ElvL2", elevator.L2().andThen(waitForElevator()));
     NamedCommands.registerCommand("ElvL3", elevator.L3().andThen(waitForElevator()));
     NamedCommands.registerCommand("ElvL4", elevator.L4().andThen(waitForElevator()));
@@ -176,7 +174,7 @@ public class RobotContainer {
         "Intake",
         new SequentialCommandGroup(
             elevator.L0(),
-            waitForElevator(),
+            waitForElevator().withTimeout(0.5).andThen(elevator.limitHit()),
             intakeAutoCommand(),
             Commands.waitUntil(coralHandoffCompleteTrigger)));
     NamedCommands.registerCommand(
@@ -221,6 +219,13 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysID (All)",
+        drive
+            .sysIdQuasistaticTurning(SysIdRoutine.Direction.kForward)
+            .andThen(drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kReverse))
+            .andThen(drive.sysIdDynamicTurning(SysIdRoutine.Direction.kForward))
+            .andThen(drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse)));
     autoChooser.addOption(
         "Drive SysId Turning (Quasistatic Forward)",
         drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kForward));
