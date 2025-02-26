@@ -78,7 +78,7 @@ public final class Constants {
     public static final int gear3ID = 14;
   }
 
-  public static class PWMConstants {
+  public static class PWMIDs {
     public static final int kFrontClimberServoID = 1;
     public static final int kBackClimberServoID = 0;
   }
@@ -108,13 +108,16 @@ public final class Constants {
       kClimberPID1.setKG(1);
     }
 
+    public static final Current kClimberIdleCurrentLimit = Amps.of(20);
+    public static final Current kClimberClimbingCurrentLimit = Amps.of(70);
     public static final double kGearRatio = 126;
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
     public static final Angle kClimberExtendedSetpoint = Degrees.of(225).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(190).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
-    public static final Angle kClimberSensorTolerance = Degrees.of(5);
-    public static final Angle kClimberEmergencyUndoAngle = Degrees.of(80).plus(kClimberOffsetAngle);
+    public static final Angle kClimberSensorTolerance = Degrees.of(2.5);
+    public static final Angle kClimberServoDisengageAngle =
+        Degrees.of(225).plus(kClimberOffsetAngle);
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
 

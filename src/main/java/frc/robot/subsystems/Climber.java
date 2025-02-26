@@ -42,7 +42,7 @@ import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DIOConstants;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.Constants.PWMConstants;
+import frc.robot.Constants.PWMIDs;
 import frc.robot.Robot;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
@@ -82,8 +82,8 @@ public class Climber extends SubsystemBase {
   private boolean isClimbingStateSim;
 
   public Climber() {
-    currentLimit.StatorCurrentLimit = 20;
-    currentLimit.StatorCurrentLimitEnable = false;
+    currentLimit.StatorCurrentLimit = 120;
+    currentLimit.StatorCurrentLimitEnable = true;
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
     climberFrontEncoder =
         new DutyCycleEncoder(DIOConstants.kClimberFrontEncoderID, 1, Degrees.of(20).in(Rotations));
@@ -92,8 +92,8 @@ public class Climber extends SubsystemBase {
     climberMotorFront = new TalonFX(CANIDs.kClimberMotorFront);
     climberMotorBack = new TalonFX(CANIDs.kClimberMotorBack);
     feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.kGearRatio);
-    frontClimberServo = new Servo(PWMConstants.kFrontClimberServoID);
-    backClimberServo = new Servo(PWMConstants.kBackClimberServoID);
+    frontClimberServo = new Servo(PWMIDs.kFrontClimberServoID);
+    backClimberServo = new Servo(PWMIDs.kBackClimberServoID);
     // Boolean to check if the climber is climbing of if it is just idle
     isClimbingStateSim = false;
     // Set the configs
@@ -289,13 +289,13 @@ public class Climber extends SubsystemBase {
   }
 
   public Command climb() {
-    return Commands.sequence(extendToCage(), engageServo(), extendFully());
+    return extendToCage().andThen(engageServo()).andThen(extendFully());
   }
 
   public Command retract() {
-    return disengageServo()
-        .andThen(runClimber(ClimberConstants.kClimberEmergencyUndoAngle, 0))
-        .until(isClimberAtPosition(ClimberConstants.kClimberEmergencyUndoAngle))
+    return runClimber(ClimberConstants.kClimberServoDisengageAngle, 0)
+        .until(isClimberAtPosition(ClimberConstants.kClimberServoDisengageAngle))
+        .andThen(disengageServo())
         .andThen(Commands.waitSeconds(1))
         .andThen(runClimber(ClimberConstants.kClimberRetractedSetpoint, 0))
         .until(isClimberAtPosition(ClimberConstants.kClimberRetractedSetpoint))
@@ -326,7 +326,7 @@ public class Climber extends SubsystemBase {
                   Rotations)); // Change to back servo angle if needed
           isFrontServoEngaged = true;
           isBackServoEngaged = true;
-          setCurrentLimit(Amps.of(70));
+          setCurrentLimit(ClimberConstants.kClimberClimbingCurrentLimit);
           Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
           Logger.recordOutput("Climber/Back/isBackServoEngaged", isBackServoEngaged);
         });
@@ -343,7 +343,7 @@ public class Climber extends SubsystemBase {
                   Rotations)); // Change to back servo angle if needed
           isFrontServoEngaged = false;
           isBackServoEngaged = false;
-          setCurrentLimit(Amps.of(20));
+          setCurrentLimit(ClimberConstants.kClimberIdleCurrentLimit);
           Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
           Logger.recordOutput("Climber/Back/isBackServoEngaged", isBackServoEngaged);
         });
