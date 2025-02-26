@@ -131,7 +131,7 @@ public final class Constants {
 
   // Scorer Constants
   public static class CoralScorerConstants {
-    public static final double kIntakeSpeed = -0.4;
+    public static final double kIntakeSpeed = -0.35;
     public static final double kScoreSpeed = -0.5;
 
     public static final Current kScoreAMPs = Amps.of(-20);
@@ -281,7 +281,7 @@ public final class Constants {
 
   public final class DrivetrainConstants {
     // PathPlanner config constants
-    public static final Mass ROBOT_MASS = Pounds.of(75.5);
+    public static final Mass ROBOT_MASS = Pounds.of(96.2);
     public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(49.5459894327);
     public static final double WHEEL_COF = 1.2;
 

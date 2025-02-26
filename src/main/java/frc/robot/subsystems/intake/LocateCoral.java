@@ -47,6 +47,7 @@ public class LocateCoral extends Command {
     switch (state.get()) {
       case CORAL_TOO_CLOSE:
         intakeSubsystem.setConveyerMotor(kConveyorSpeed);
+        intakeSubsystem.goToPivotPosition(kPivotCoralStationAngle);
         break;
       case CORAL_TOO_FAR:
         intakeSubsystem.setConveyerMotor(-kConveyorSpeed);

@@ -74,7 +74,7 @@ public class OI extends OI_Utils {
     public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 1, 0.1);
     public static final ControlCurve rotationCurve = new ControlCurve(1, 0, 0.2, 0.1, true);
     public static final ControlCurve elevatorCurve = new ControlCurve(1, 0, 0, 0.1, true);
-    public static final ControlCurve scorerCurve = new ControlCurve(1, 0, 1, 0.1, true);
+    public static final ControlCurve scorerCurve = new ControlCurve(1, 0, 0, 0.1, true);
 
     // Joystick Axes
     public static final Control LeftX =

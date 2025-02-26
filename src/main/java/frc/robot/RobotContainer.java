@@ -302,6 +302,10 @@ public class RobotContainer {
     Command locateCoral = new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton);
     intake.intakeHasUnalignedCoralTrigger().and(coralOuttakeButton.negate()).onTrue(locateCoral);
 
+    OI.getButton(OI.Driver.A)
+        .whileTrue(intake.conveyerInCommand().alongWith(coralScorer.intakeCommand()));
+    // .until(coralHandoffCompleteTrigger));
+
     intake
         .intakeHasCoralTrigger()
         .and(() -> elevatorNotL1)
@@ -330,16 +334,6 @@ public class RobotContainer {
                   intakeAlgeaMode = !intakeAlgeaMode;
                   Logger.recordOutput("Intake/Algea Mode", intakeAlgeaMode);
                 }));
-
-    // OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
-    // OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
-    OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
-    OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
-    OI.getButton(OI.Operator.A).onTrue(algeaRemover.stowAlgeaArm());
-    OI.getButton(OI.Operator.B).onTrue(algeaRemover.removeAlgea());
-    // OI.getButton(OI.Operator.Start).onTrue(climber.zero());
-
-    OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
     OI.getButton(OI.Operator.B)
         .onTrue(
             Commands.runOnce(
@@ -347,6 +341,8 @@ public class RobotContainer {
                   coralStationMode = !coralStationMode;
                   Logger.recordOutput("Intake/Coral Station Mode", coralStationMode);
                 }));
+
+    OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
     intake.setDefaultCommand(intake.Idle());
 
     // Scorer Buttons
