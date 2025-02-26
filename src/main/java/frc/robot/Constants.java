@@ -66,8 +66,6 @@ public final class Constants {
     public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
     public static final int kAlgeaMotor = 18;
-    public static final int kFrontClimberServoID = 100;
-    public static final int kBackClimberServoID = 100;
   }
 
   public static class DIOConstants {
@@ -78,6 +76,11 @@ public final class Constants {
     public static final int kClimberBackEncoderID = 6;
     public static final int gear11ID = 13;
     public static final int gear3ID = 14;
+  }
+
+  public static class PWMConstants {
+    public static final int kFrontClimberServoID = 1;
+    public static final int kBackClimberServoID = 0;
   }
 
   public static class SensorIDs {
@@ -110,9 +113,8 @@ public final class Constants {
     public static final Angle kClimberExtendedSetpoint = Degrees.of(225).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(190).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
-    public static final Angle kClimberSensorTolerance = Degrees.of(2.5);
-    public static final Angle kClimberEmergencyUndoAngle =
-        Degrees.of(-45).plus(kClimberOffsetAngle);
+    public static final Angle kClimberSensorTolerance = Degrees.of(5);
+    public static final Angle kClimberEmergencyUndoAngle = Degrees.of(80).plus(kClimberOffsetAngle);
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
 
@@ -123,10 +125,10 @@ public final class Constants {
     public static final Angle kClimberArmMinAngle = Degrees.of(-30).plus(kClimberOffsetAngle);
     public static final Angle kClimberArmMaxAngle = Degrees.of(250).plus(kClimberOffsetAngle);
 
-    public static final Angle kFrontServoEngageAngle = Degrees.of(200);
-    public static final Angle kBackServoEngageAngle = Degrees.of(-200);
-    public static final Angle kFrontServoDisengageAngle = Degree.of(90);
-    public static final Angle kBackServoDisengageAngle = Degree.of(-90);
+    public static final Angle kFrontServoEngageAngle = Degrees.of(90);
+    public static final Angle kBackServoEngageAngle = Degrees.of(90);
+    public static final Angle kFrontServoDisengageAngle = Degree.of(0);
+    public static final Angle kBackServoDisengageAngle = Degree.of(0);
   }
 
   // Scorer Constants
