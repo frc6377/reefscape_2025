@@ -271,10 +271,6 @@ public class RobotContainer {
         .toggleOnTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Z) : OI.getTrigger(OI.Driver.Y))
         .onTrue(climber.climb());
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.X) : OI.getTrigger(OI.Driver.X))
-        .onTrue(climber.disengageServo());
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
-        .onTrue(climber.engageServo());
   }
 
   private void configureButtonBindings() {
