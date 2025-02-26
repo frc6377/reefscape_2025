@@ -53,11 +53,6 @@ import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.vision.*;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -89,6 +84,7 @@ public class RobotContainer {
 
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
+  private boolean coralStationMode = false;
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose = new Pose2d(2, 2, new Rotation2d());
@@ -295,7 +291,12 @@ public class RobotContainer {
     OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
 
     // Intake Buttons
-    OI.getTrigger(OI.Driver.RTrigger).and(() -> !intakeAlgeaMode).whileTrue(intake.floorIntake());
+    OI.getTrigger(OI.Driver.RTrigger)
+        .and(() -> !intakeAlgeaMode && !coralStationMode)
+        .whileTrue(intake.floorIntake());
+    OI.getTrigger(OI.Driver.RTrigger)
+        .and(() -> !intakeAlgeaMode && coralStationMode)
+        .whileTrue(intake.humanPlayerIntake());
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
     Command locateCoral = new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton);
@@ -329,14 +330,32 @@ public class RobotContainer {
                   intakeAlgeaMode = !intakeAlgeaMode;
                   Logger.recordOutput("Intake/Algea Mode", intakeAlgeaMode);
                 }));
-    OI.getButton(OI.Operator.B).whileTrue(intake.humanPlayerIntake());
+
+    // OI.getTrigger(OI.Operator.RTrigger).onTrue(climber.climb());
+    // OI.getTrigger(OI.Operator.LTrigger).onTrue(climber.retract());
+    OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
+    OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
+    OI.getButton(OI.Operator.A).onTrue(algeaRemover.stowAlgeaArm());
+    OI.getButton(OI.Operator.B).onTrue(algeaRemover.removeAlgea());
+    // OI.getButton(OI.Operator.Start).onTrue(climber.zero());
+
+    OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
+    OI.getButton(OI.Operator.B)
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  coralStationMode = !coralStationMode;
+                  Logger.recordOutput("Intake/Coral Station Mode", coralStationMode);
+                }));
     intake.setDefaultCommand(intake.Idle());
 
     // Scorer Buttons
-    OI.getTrigger(OI.Driver.LTrigger)
+    OI.getTrigger(OI.Driver.LScoreTrigger)
         .and(() -> !intakeAlgeaMode)
         .whileTrue(
-            Robot.isReal() ? coralScorer.scoreCommand() : mapleSimArenaSubsystem.scoreCoral());
+            Robot.isReal()
+                ? coralScorer.runScorer(OI.getAxisSupplier(OI.Driver.LeftTriggerAxis))
+                : mapleSimArenaSubsystem.scoreCoral());
     OI.getTrigger(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
     OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
 

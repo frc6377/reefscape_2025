@@ -37,6 +37,7 @@ public class LocateCoral extends Command {
   @Override
   public void initialize() {
     intakeSubsystem.goToPivotPosition(kPivotCoralStationAngle);
+    intakeSubsystem.setIntakeMotor(IntakeConstants.kHoldSpeed);
     Logger.recordOutput("Locate Coral Running", true);
   }
 
@@ -45,18 +46,15 @@ public class LocateCoral extends Command {
   public void execute() {
     switch (state.get()) {
       case CORAL_TOO_CLOSE:
-        intakeSubsystem.setIntakeMotor(IntakeConstants.kIntakeSpeed / 5);
         intakeSubsystem.setConveyerMotor(kConveyorSpeed);
         break;
       case CORAL_TOO_FAR:
-        intakeSubsystem.setIntakeMotor(IntakeConstants.kIntakeSpeed / 5);
         intakeSubsystem.setConveyerMotor(-kConveyorSpeed);
-        // intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
+        intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
         break;
       case IN_ELEVATOR:
       case NO_CORAL:
       case CORAL_ALIGNED:
-        intakeSubsystem.setIntakeMotor(0);
         intakeSubsystem.setConveyerMotor(0);
         intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
         break;
@@ -67,7 +65,6 @@ public class LocateCoral extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intakeSubsystem.setIntakeMotor(0);
     intakeSubsystem.setConveyerMotor(0);
     intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
     Logger.recordOutput("Locate Coral Running", false);
@@ -83,7 +80,7 @@ public class LocateCoral extends Command {
 
   @Override
   public InterruptionBehavior getInterruptionBehavior() {
-    if (state.get() == CoralEnum.CORAL_TOO_CLOSE || state.get() == CoralEnum.CORAL_TOO_FAR) {
+    if (state.get() == CoralEnum.CORAL_TOO_CLOSE) {
       return InterruptionBehavior.kCancelIncoming;
     } else {
       return InterruptionBehavior.kCancelSelf;

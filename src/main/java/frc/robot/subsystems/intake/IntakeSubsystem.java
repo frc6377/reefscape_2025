@@ -13,22 +13,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.Constants.IntakeConstants.armZero;
-import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
-import static frc.robot.Constants.IntakeConstants.kGearing;
-import static frc.robot.Constants.IntakeConstants.kHoldPower;
-import static frc.robot.Constants.IntakeConstants.kIntakeHandoffSpeed;
-import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
-import static frc.robot.Constants.IntakeConstants.kLength;
-import static frc.robot.Constants.IntakeConstants.kMOI;
-import static frc.robot.Constants.IntakeConstants.kOuttakeSpeed;
-import static frc.robot.Constants.IntakeConstants.kPivotAlgaeIntakeAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotExtendAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotL1Score;
-import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
-import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
+import static frc.robot.Constants.IntakeConstants.*;
 import static frc.robot.Constants.SensorIDs.kSensor2ID;
 import static frc.robot.Constants.SensorIDs.kSensor3ID;
 import static frc.robot.Constants.SensorIDs.kSensor4ID;
@@ -361,7 +346,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(
             () -> {
               goToPivotPosition(kPivotRetractAngle);
-              setIntakeMotor(kIntakeSpeed / 5);
+              setIntakeMotor(kHoldSpeed);
               setConveyerMotor(-kConveyorSpeed);
             },
             () -> {})
