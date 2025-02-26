@@ -3,32 +3,53 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2456343910549479,
-        "y": 7.074343420759858
+        "x": 4.964405363302277,
+        "y": 5.258719312018543
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.088543416775978,
-        "y": 6.576145024578047
+        "x": 4.537557729597233,
+        "y": 5.501717256014201
       },
       "isLocked": false,
-      "linkedName": "Left Coral Station Mid"
+      "linkedName": "Reef J L1"
     },
     {
       "anchor": {
-        "x": 3.921177810797728,
-        "y": 5.217691100311347
+        "x": 4.3419458160152145,
+        "y": 5.622779163959612
       },
       "prevControl": {
-        "x": 3.3019159917539644,
-        "y": 5.728263078514935
+        "x": 4.556925834789053,
+        "y": 5.495171987327574
+      },
+      "nextControl": {
+        "x": 4.066353882422693,
+        "y": 5.786364174087006
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.2456343910549479,
+        "y": 7.074343420759858
+      },
+      "prevControl": {
+        "x": 2.59898424674378,
+        "y": 6.183513358475481
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef K"
+      "linkedName": "Left Coral Station Mid"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -119.99999999999999
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
@@ -40,17 +61,6 @@
         "type": "named",
         "data": {
           "name": "Intake"
-        }
-      }
-    },
-    {
-      "name": "ElvL4",
-      "waypointRelativePos": 0.75,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ElvL4"
         }
       }
     }
@@ -65,13 +75,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": 126.0
   },
   "reversed": false,
-  "folder": "Source - Score",
+  "folder": "Score - Source",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 126.0
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }

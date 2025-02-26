@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.485112705366859,
-        "y": 6.836222202447541
+        "x": 6.447492386487824,
+        "y": 6.795527691918374
       },
       "isLocked": false,
       "linkedName": "Start Left"
@@ -20,12 +20,12 @@
         "y": 5.258719312018543
       },
       "prevControl": {
-        "x": 5.3403971479023085,
-        "y": 5.65479822729968
+        "x": 5.360567933767114,
+        "y": 5.667158283129231
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef J"
+      "linkedName": "Reef J L1"
     }
   ],
   "rotationTargets": [],

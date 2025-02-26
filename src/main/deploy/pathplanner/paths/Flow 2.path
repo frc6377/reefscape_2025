@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 3.7259742540968257,
-        "y": 2.960377528322649
+        "x": 3.737023566540091,
+        "y": 2.9543223594501957
       },
       "prevControl": {
-        "x": 1.2579819529673975,
-        "y": 1.8165082735390825
+        "x": 1.2690312654106628,
+        "y": 1.8104531046666292
       },
       "nextControl": null,
       "isLocked": false,
@@ -106,7 +106,7 @@
   "folder": "Flow",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 150.0
   },
   "useDefaultConstraints": true
 }

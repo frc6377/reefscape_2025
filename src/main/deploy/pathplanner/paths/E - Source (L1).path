@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.0289136382770145,
-        "y": 2.8338432651429684
+        "x": 5.0386525633160755,
+        "y": 2.8512532480831227
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.816149524779837,
-        "y": 2.7025747159479683
+        "x": 4.825888449818898,
+        "y": 2.7199846988881227
       },
       "isLocked": false,
       "linkedName": "Reef E"
@@ -81,7 +81,7 @@
   "folder": "Score - Source",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -150.0
   },
   "useDefaultConstraints": true
 }

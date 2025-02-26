@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0844157355217785,
-        "y": 5.77132067983115
+        "x": 2.0451645620584546,
+        "y": 5.694340883032295
       },
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
@@ -20,12 +20,12 @@
         "y": 5.2145802665794285
       },
       "prevControl": {
-        "x": 3.152699830797129,
-        "y": 5.801500936693308
+        "x": 3.2522790834941877,
+        "y": 5.875531373416129
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef K"
+      "linkedName": "Reef K L1"
     }
   ],
   "rotationTargets": [],
