@@ -65,7 +65,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 @SuppressWarnings("unused")
 public class RobotContainer {
   // Change the raw boolean to true to pick keyboard during simulation
-  private final boolean usingKeyboard = false && Robot.isSimulation();
+  private final boolean usingKeyboard = true && Robot.isSimulation();
 
   private EventLoop testEventLoop = new EventLoop();
 
@@ -164,40 +164,26 @@ public class RobotContainer {
     }
 
     // Register Named Commands
-    NamedCommands.registerCommand(
-        "ElvL0",
-        elevator.L0().andThen(waitForElevator().withTimeout(0.5).andThen(elevator.limitHit())));
+    NamedCommands.registerCommand("ElvL0", elv0Command());
     NamedCommands.registerCommand("ElvL2", elevator.L2().andThen(waitForElevator()));
     NamedCommands.registerCommand("ElvL3", elevator.L3().andThen(waitForElevator()));
     NamedCommands.registerCommand("ElvL4", elevator.L4().andThen(waitForElevator()));
     NamedCommands.registerCommand(
         "Intake",
         new SequentialCommandGroup(
-            elevator.L0(),
-            waitForElevator().withTimeout(0.5).andThen(elevator.limitHit()),
-            intakeAutoCommand(),
-            Commands.waitUntil(coralHandoffCompleteTrigger)));
+            elv0Command(), intakeAutoCommand(), Commands.waitUntil(coralHandoffCompleteTrigger)));
     NamedCommands.registerCommand(
         "Intake Floor",
         new SequentialCommandGroup(
-            elevator.L0(),
-            waitForElevator(),
+            elv0Command(),
             intakeFloorAutoCommand(),
             Commands.waitUntil(coralHandoffCompleteTrigger)));
     NamedCommands.registerCommand("Score", scorerAutoCommand());
     NamedCommands.registerCommand(
-        "Intake L1",
-        new SequentialCommandGroup(
-            Commands.runOnce(() -> elevatorNotL1 = false),
-            elevator.L0(),
-            waitForElevator(),
-            intakeAutoCommand(),
-            Commands.waitUntil(intake.intakeHasCoralTrigger())));
-    NamedCommands.registerCommand(
         "L1 Score",
         new SequentialCommandGroup(
             Commands.waitUntil(intake.intakeHasCoralTrigger()),
-            intake.l1ScoreModeB().asProxy(),
+            intake.l1ScoreModeA().asProxy(),
             Commands.waitUntil(() -> sensors.getSensorState() == CoralEnum.NO_CORAL),
             Commands.runOnce(() -> elevatorNotL1 = true)));
 
@@ -226,18 +212,18 @@ public class RobotContainer {
             .andThen(drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kReverse))
             .andThen(drive.sysIdDynamicTurning(SysIdRoutine.Direction.kForward))
             .andThen(drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse)));
-    autoChooser.addOption(
-        "Drive SysId Turning (Quasistatic Forward)",
-        drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId Turning (Quasistatic Reverse)",
-        drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId Turning (Dynamic Forward)",
-        drive.sysIdDynamicTurning(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId Turning (Dynamic Reverse)",
-        drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive SysId Turning (Quasistatic Forward)",
+    //     drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId Turning (Quasistatic Reverse)",
+    //     drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive SysId Turning (Dynamic Forward)",
+    //     drive.sysIdDynamicTurning(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId Turning (Dynamic Reverse)",
+    //     drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse));
     autoChooser.addOption(
         "Drive Velocity Test", DriveCommands.RunVelocity(drive, MetersPerSecond.of(2), 5));
 
@@ -346,7 +332,6 @@ public class RobotContainer {
                   coralStationMode = !coralStationMode;
                   Logger.recordOutput("Intake/Coral Station Mode", coralStationMode);
                 }));
-
     OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
     intake.setDefaultCommand(intake.Idle());
 
@@ -483,6 +468,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public Command elv0Command() {
+    return elevator.L0().andThen(waitForElevator().withTimeout(0.5).andThen(elevator.limitHit()));
   }
 
   public Command waitForElevator() {
