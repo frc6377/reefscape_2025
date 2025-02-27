@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.921177810797728,
-        "y": 5.217691100311347
+        "x": 3.991706087585551,
+        "y": 5.146026001940778
       },
       "prevControl": {
-        "x": 3.3019159917539644,
-        "y": 5.728263078514935
+        "x": 3.3724442685417872,
+        "y": 5.656597980144366
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,17 +32,6 @@
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
-    {
-      "name": "Intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Intake"
-        }
-      }
-    },
     {
       "name": "ElvL4",
       "waypointRelativePos": 0.75,
@@ -56,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.5,
-    "maxAcceleration": 2.5,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 300.0,
     "maxAngularAcceleration": 2979.381,
     "nominalVoltage": 12.0,

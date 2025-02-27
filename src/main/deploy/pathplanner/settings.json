@@ -15,8 +15,8 @@
     "The Chads",
     "The Franks"
   ],
-  "defaultMaxVel": 3.5,
-  "defaultMaxAccel": 2.5,
+  "defaultMaxVel": 4.0,
+  "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 300.0,
   "defaultMaxAngAccel": 2979.381,
   "defaultNominalVoltage": 12.0,

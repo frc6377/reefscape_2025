@@ -216,6 +216,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void addGamePieceToIntakeSim() {
+    if (Robot.isReal()) return;
     intakeSim.addGamePieceToIntake();
   }
 
