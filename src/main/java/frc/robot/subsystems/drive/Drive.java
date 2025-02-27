@@ -194,10 +194,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                 null,
                 null,
                 null,
-                (state) -> {
-                  SignalLogger.writeString("SwerveTurn/state", state.toString());
-                  Logger.recordOutput("Odometry/SysID Mode/Turn SysID", state.toString());
-                }),
+                (state) -> SignalLogger.writeString("SwerveTurn/state", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterizationTurning(voltage.in(Volts)), null, this));
 

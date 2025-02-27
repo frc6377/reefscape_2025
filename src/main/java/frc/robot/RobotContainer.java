@@ -83,6 +83,7 @@ public class RobotContainer {
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
   private boolean coralStationMode = false;
+  private Command scoreL1;
 
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose = new Pose2d(2, 2, new Rotation2d());
@@ -162,7 +163,7 @@ public class RobotContainer {
         intake = new IntakeSubsystem(sensors, null);
         break;
     }
-
+    scoreL1 = intake.l1ScoreModeA();
     // Register Named Commands
     NamedCommands.registerCommand("ElvL0", elv0Command());
     NamedCommands.registerCommand("ElvL2", elevator.L2().andThen(waitForElevator()));
@@ -182,9 +183,9 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "L1 Score",
         new SequentialCommandGroup(
+            Commands.runOnce(() -> elevatorNotL1 = false),
             Commands.waitUntil(intake.intakeHasCoralTrigger()),
-            intake.l1ScoreModeA().asProxy(),
-            Commands.waitUntil(() -> sensors.getSensorState() == CoralEnum.NO_CORAL),
+            scoreL1.asProxy().until(() -> (sensors.getSensorState() == CoralEnum.NO_CORAL)),
             Commands.runOnce(() -> elevatorNotL1 = true)));
 
     // Set up auto routines
@@ -209,21 +210,24 @@ public class RobotContainer {
         "Drive SysID (All)",
         drive
             .sysIdQuasistaticTurning(SysIdRoutine.Direction.kForward)
+            .andThen(Commands.waitSeconds(0.5))
             .andThen(drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kReverse))
+            .andThen(Commands.waitSeconds(0.5))
             .andThen(drive.sysIdDynamicTurning(SysIdRoutine.Direction.kForward))
+            .andThen(Commands.waitSeconds(0.5))
             .andThen(drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse)));
-    // autoChooser.addOption(
-    //     "Drive SysId Turning (Quasistatic Forward)",
-    //     drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kForward));
-    // autoChooser.addOption(
-    //     "Drive SysId Turning (Quasistatic Reverse)",
-    //     drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kReverse));
-    // autoChooser.addOption(
-    //     "Drive SysId Turning (Dynamic Forward)",
-    //     drive.sysIdDynamicTurning(SysIdRoutine.Direction.kForward));
-    // autoChooser.addOption(
-    //     "Drive SysId Turning (Dynamic Reverse)",
-    //     drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId Turning (Quasistatic Forward)",
+        drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId Turning (Quasistatic Reverse)",
+        drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId Turning (Dynamic Forward)",
+        drive.sysIdDynamicTurning(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId Turning (Dynamic Reverse)",
+        drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse));
     autoChooser.addOption(
         "Drive Velocity Test", DriveCommands.RunVelocity(drive, MetersPerSecond.of(2), 5));
 
@@ -290,8 +294,18 @@ public class RobotContainer {
         .whileTrue(intake.humanPlayerIntake());
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
     OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
-    Command locateCoral = new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton);
-    intake.intakeHasUnalignedCoralTrigger().and(coralOuttakeButton.negate()).onTrue(locateCoral);
+    Command locateCoral =
+        new LocateCoral(
+            sensors::getSensorState,
+            intake,
+            coralOuttakeButton.or(OI.getTrigger(OI.Driver.LTrigger)));
+
+    intake
+        .intakeHasUnalignedCoralTrigger()
+        .and(coralOuttakeButton.negate())
+        .and(OI.getTrigger(OI.Driver.LTrigger).negate())
+        .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
+        .onTrue(locateCoral);
 
     OI.getButton(OI.Driver.A)
         .whileTrue(intake.conveyerInCommand().alongWith(coralScorer.intakeCommand()));
@@ -333,11 +347,14 @@ public class RobotContainer {
                   Logger.recordOutput("Intake/Coral Station Mode", coralStationMode);
                 }));
     OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
+    OI.getTrigger(OI.Driver.LTrigger)
+        .and(() -> !elevatorNotL1 && !intakeAlgeaMode)
+        .whileTrue(scoreL1); // Temporary
     intake.setDefaultCommand(intake.Idle());
 
     // Scorer Buttons
     OI.getTrigger(OI.Driver.LScoreTrigger)
-        .and(() -> !intakeAlgeaMode)
+        .and(() -> !intakeAlgeaMode && elevatorNotL1)
         .whileTrue(
             Robot.isReal()
                 ? coralScorer.runScorer(OI.getAxisSupplier(OI.Driver.LeftTriggerAxis))
