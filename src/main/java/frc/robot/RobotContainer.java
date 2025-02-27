@@ -169,6 +169,15 @@ public class RobotContainer {
 
     // Register Named Commands
     NamedCommands.registerCommand("ElvL0", elv0Command());
+    NamedCommands.registerCommand(
+        "ElvL2 DeadLine",
+        elevator.L2().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(3)));
+    NamedCommands.registerCommand(
+        "ElvL3 DeadLine",
+        elevator.L3().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(3)));
+    NamedCommands.registerCommand(
+        "ElvL4 DeadLine",
+        elevator.L4().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(3)));
     NamedCommands.registerCommand("ElvL2", elevator.L2().andThen(waitForElevator()));
     NamedCommands.registerCommand("ElvL3", elevator.L3().andThen(waitForElevator()));
     NamedCommands.registerCommand("ElvL4", elevator.L4().andThen(waitForElevator()));

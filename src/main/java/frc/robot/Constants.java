@@ -220,7 +220,7 @@ public final class Constants {
       kElevatorPID.setKP(2);
       kElevatorPID.setKI(0.08);
       kElevatorPID.setKD(0.02);
-      kElevatorPID.setKS(0.45);
+      kElevatorPID.setKS(0.5);
       kElevatorPID.setStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
     }
 
