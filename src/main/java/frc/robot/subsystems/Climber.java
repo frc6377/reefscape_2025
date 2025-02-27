@@ -366,30 +366,33 @@ public class Climber extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Logger.recordOutput(
-        "Climber/Front/Motor Voltage (Volts)",
-        climberMotorFront.getMotorVoltage().getValue().in(Volts));
+    if (!Robot.isCompetition) {
+      Logger.recordOutput(
+          "Climber/Front/Motor Voltage (Volts)",
+          climberMotorFront.getMotorVoltage().getValue().in(Volts));
+      Logger.recordOutput(
+          "Climber/Front/Motor Current (Amps)",
+          climberMotorFront.getStatorCurrent().getValue().in(Amps));
+      Logger.recordOutput(
+          "Climber/Back/Motor Voltage (Volts)",
+          climberMotorBack.getMotorVoltage().getValue().in(Volts));
+      Logger.recordOutput(
+          "Climber/Back/Motor Current (Amps)",
+          climberMotorBack.getStatorCurrent().getValue().in(Amps));
+    }
     Logger.recordOutput(
         "Climber/Front/Motor Position (Degrees)",
         climberMotorFront.getPosition().getValue().in(Degrees));
     Logger.recordOutput(
         "Climber/Front/Absolute Encoder Position (Degrees)",
         Rotations.of(1 - climberFrontEncoder.get()).in(Degrees));
-    Logger.recordOutput(
-        "Climber/Front/Motor Current (Amps)",
-        climberMotorFront.getStatorCurrent().getValue().in(Amps));
-    Logger.recordOutput(
-        "Climber/Back/Motor Voltage (Volts)",
-        climberMotorBack.getMotorVoltage().getValue().in(Volts));
+
     Logger.recordOutput(
         "Climber/Back/Motor Position (Degrees)",
         climberMotorBack.getPosition().getValue().in(Degrees));
     Logger.recordOutput(
         "Climber/Back/Absolute Encoder Position (Degrees)",
         Rotations.of(climberBackEncoder.get()).in(Degrees));
-    Logger.recordOutput(
-        "Climber/Back/Motor Current (Amps)",
-        climberMotorBack.getStatorCurrent().getValue().in(Amps));
   }
 
   @Override
