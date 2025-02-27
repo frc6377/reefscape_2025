@@ -5,15 +5,33 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Zero Elv"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "StartL - J"
+            "pathName": "StartL - I"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L1 Score"
+            "name": "ElvL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "I - Source"
           }
         }
       ]

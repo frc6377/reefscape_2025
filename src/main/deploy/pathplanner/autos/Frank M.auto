@@ -21,6 +21,12 @@
           "data": {
             "name": "Score"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL0"
+          }
         }
       ]
     }

@@ -8,47 +8,30 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.225455688982677,
-        "y": 4.489707590008843
+        "x": 5.7810764907182435,
+        "y": 5.821698857024067
       },
       "isLocked": false,
       "linkedName": "Start Left"
     },
     {
       "anchor": {
-        "x": 4.964405363302277,
-        "y": 5.258719312018543
+        "x": 4.985904950643874,
+        "y": 5.140147439396003
       },
       "prevControl": {
-        "x": 5.24914057971105,
-        "y": 5.518117182252248
+        "x": 5.523827346916704,
+        "y": 5.956417908226258
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Reef J"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.14165296052631576,
-      "rotationDegrees": -29.999999999999996
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "ElvL4",
-      "waypointRelativePos": 0.75,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ElvL4"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.5,
     "maxAcceleration": 2.5,

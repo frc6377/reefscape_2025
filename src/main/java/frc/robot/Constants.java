@@ -218,7 +218,7 @@ public final class Constants {
 
     static {
       kElevatorPID.setKP(2);
-      kElevatorPID.setKI(0.04);
+      kElevatorPID.setKI(0.08);
       kElevatorPID.setKD(0.02);
       kElevatorPID.setKS(0.45);
       kElevatorPID.setStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
@@ -227,7 +227,7 @@ public final class Constants {
     public static final HowdyMM kElevatorMM =
         new HowdyMM(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(250));
 
-    public static final Distance kSetpointTolerance = Inches.of(1);
+    public static final Distance kSetpointTolerance = Inches.of(1.25);
 
     // Mech Constants
     public static final Distance kElevatorDrumRadius = Inches.of(0.375);

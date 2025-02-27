@@ -407,14 +407,17 @@ public class IntakeSubsystem extends SubsystemBase {
         "Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoralTrigger());
 
     // Pose 3D of Intake
-    Angle currentAngle = getPivotAngle().times(-1);
-    Angle constantAngle = DrivetrainConstants.kIntakeStartPose.getRotation().getMeasureY();
-    Angle combinedAngle = currentAngle.plus(constantAngle);
     Logger.recordOutput(
         "Odometry/Mech Poses/Intake Pose",
         new Pose3d(
             DrivetrainConstants.kIntakeStartPose.getTranslation(),
-            new Rotation3d(0, combinedAngle.in(Radians), 0)));
+            new Rotation3d(
+                0,
+                getPivotAngle()
+                    .times(-1)
+                    .plus(DrivetrainConstants.kIntakeStartPose.getRotation().getMeasureY())
+                    .in(Radians),
+                0)));
 
     // Log TOF Sensors
     for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID}) {

@@ -190,6 +190,7 @@ public class RobotContainer {
             Commands.waitUntil(intake.intakeHasCoralTrigger()),
             scoreL1.asProxy().until(isDoneScoring.debounce(3)),
             Commands.runOnce(() -> elevatorNotL1 = true)));
+    NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
