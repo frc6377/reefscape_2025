@@ -19,9 +19,11 @@ import au.grapplerobotics.CanBridge;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
+import edu.wpi.first.net.WebServer;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -51,6 +53,9 @@ public class Robot extends LoggedRobot {
   public Robot() {
     // For TOF Sensor
     CanBridge.runTCP();
+
+    // For Elastic Layouts
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
     // Record metadata
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
