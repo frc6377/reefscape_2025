@@ -261,10 +261,6 @@ public class RobotContainer {
         .toggleOnTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Z) : OI.getTrigger(OI.Driver.Y))
         .onTrue(climber.climb());
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.X) : OI.getTrigger(OI.Driver.X))
-        .onTrue(climber.retract());
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
-        .onTrue(climber.toggleJeopardy());
   }
 
   private void configureButtonBindings() {
@@ -273,6 +269,15 @@ public class RobotContainer {
             () -> {
               SignalLogger.stop();
             }));
+
+    // Climber Buttons
+    OI.getTrigger(OI.Operator.RTrigger)
+        .and(OI.getButton(OI.Operator.LBumper))
+        .whileTrue(climber.climb());
+    OI.getTrigger(OI.Operator.LTrigger)
+        .and(OI.getButton(OI.Operator.LBumper))
+        .whileTrue(climber.retract());
+    OI.getButton(OI.Operator.Start).onTrue(climber.zero());
 
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
