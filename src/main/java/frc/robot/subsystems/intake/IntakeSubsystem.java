@@ -376,49 +376,49 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (Robot.isCompetition) {
+    if (!Robot.isCompetition) {
 
-      // Pivot
-      Logger.recordOutput("Intake/Pivot/Motor Output", pivotMotor.get());
-      Logger.recordOutput("Intake/Pivot/Setpoint (Degrees)", pivotSetpoint.in(Degrees));
+      // Intake Rollers
+      Logger.recordOutput("Intake/Rollers/Motor Output", intakeMotor.get());
       Logger.recordOutput(
-          "Intake/Pivot/Position (Degrees)", pivotMotor.getPosition().getValue().in(Degrees));
+          "Intake/Rollers/Motor Voltage (Volts)",
+          intakeMotor.getMotorVoltage().getValue().in(Volts));
+
+      // Conveyor
+      Logger.recordOutput("Intake/Conveyor/Motor Output", conveyorMotor.get());
       Logger.recordOutput(
-          "Intake/Pivot/Absolute Encoder (Degrees)",
-          Rotations.of(throughBoreEncoder.get()).in(Degrees));
-      Logger.recordOutput("Intake/Pivot/At Setpoint", atSetpoint(pivotSetpoint));
-
-      // States
-      Logger.recordOutput("Intake/States/Intake State", intakeState.toString());
-      Logger.recordOutput("Intake/Intake Has Coral Trigger", intakeHasCoralTrigger());
+          "Intake/Conveyor/Motor Voltage (Volts)",
+          conveyorMotor.getMotorVoltage().getValue().in(Volts));
       Logger.recordOutput(
-          "Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoralTrigger());
+          "Intake/Conveyor/Velocity (RPS)",
+          conveyorMotor.getVelocity().getValue().in(RotationsPerSecond));
 
-      // Log TOF Sensors
-      for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID}) {
-        Logger.recordOutput(
-            "Intake/TOFSensors/" + i + " Dist (Inches)", sensors.getSensorDist(i).in(Inches));
-        Logger.recordOutput("Intake/TOFSensors/" + i + " bool", sensors.getSensorBool(i));
-      }
-
-      String currentCommand =
-          this.getCurrentCommand() != null ? this.getCurrentCommand().getName() : "None";
-      Logger.recordOutput("Intake/Current Command", currentCommand);
+      // Pose 3D of Intake
+      Angle currentAngle = getPivotAngle().times(-1);
+      Angle constantAngle = DrivetrainConstants.kIntakeStartPose.getRotation().getMeasureY();
+      Angle combinedAngle = currentAngle.plus(constantAngle);
+      Logger.recordOutput(
+          "Odometry/Mech Poses/Intake Pose",
+          new Pose3d(
+              DrivetrainConstants.kIntakeStartPose.getTranslation(),
+              new Rotation3d(0, combinedAngle.in(Radians), 0)));
     }
 
-    // Intake Rollers
-    Logger.recordOutput("Intake/Rollers/Motor Output", intakeMotor.get());
+    // Pivot
+    Logger.recordOutput("Intake/Pivot/Motor Output", pivotMotor.get());
+    Logger.recordOutput("Intake/Pivot/Setpoint (Degrees)", pivotSetpoint.in(Degrees));
     Logger.recordOutput(
-        "Intake/Rollers/Motor Voltage (Volts)", intakeMotor.getMotorVoltage().getValue().in(Volts));
+        "Intake/Pivot/Position (Degrees)", pivotMotor.getPosition().getValue().in(Degrees));
+    Logger.recordOutput(
+        "Intake/Pivot/Absolute Encoder (Degrees)",
+        Rotations.of(throughBoreEncoder.get()).in(Degrees));
+    Logger.recordOutput("Intake/Pivot/At Setpoint", atSetpoint(pivotSetpoint));
 
-    // Conveyor
-    Logger.recordOutput("Intake/Conveyor/Motor Output", conveyorMotor.get());
+    // States
+    Logger.recordOutput("Intake/States/Intake State", intakeState.toString());
+    Logger.recordOutput("Intake/Intake Has Coral Trigger", intakeHasCoralTrigger());
     Logger.recordOutput(
-        "Intake/Conveyor/Motor Voltage (Volts)",
-        conveyorMotor.getMotorVoltage().getValue().in(Volts));
-    Logger.recordOutput(
-        "Intake/Conveyor/Velocity (RPS)",
-        conveyorMotor.getVelocity().getValue().in(RotationsPerSecond));
+        "Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoralTrigger());
 
     // Pose 3D of Intake
     Logger.recordOutput(

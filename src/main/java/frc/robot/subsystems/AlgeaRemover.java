@@ -190,12 +190,12 @@ public class AlgeaRemover extends SubsystemBase {
       Logger.recordOutput("Algea Remover/Moter/Current (Amps)", algeaMotor.getOutputCurrent());
       Logger.recordOutput("Algea Remover/Motor/Percent", algeaMotor.get());
       Logger.recordOutput("Algea Remover/Motor/Applied Out", algeaMotor.getAppliedOutput());
+      Logger.recordOutput(
+          "Algea Remover/Encoder Position (Degrees)", Rotations.of(algeaEncoder.get()).in(Degrees));
     }
     Logger.recordOutput(
         "Algea Remover/Motor/Position (Degrees)",
         Rotations.of(algeaMotor.getEncoder().getPosition()).in(Degrees));
-    Logger.recordOutput(
-        "Algea Remover/Encoder Position (Degrees)", Rotations.of(algeaEncoder.get()).in(Degrees));
   }
 
   @Override

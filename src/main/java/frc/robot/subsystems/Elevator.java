@@ -337,8 +337,15 @@ public class Elevator extends SubsystemBase {
       Logger.recordOutput(
           "Elevator/Motor2/Velocity", elevatorMotor2.getVelocity().getValue().in(DegreesPerSecond));
 
-      Logger.recordOutput("Elevator/Elv/Height (Inches)", getElevatorHeight().in(Inches));
-      Logger.recordOutput("Elevator/limit switch state", elvLimitSwitch.get());
+      Logger.recordOutput("Elevator/Motor2/Percent Out", elevatorMotor2.get());
+      Logger.recordOutput(
+          "Elevator/Motor2/Voltage (Volts)", elevatorMotor2.getMotorVoltage().getValue().in(Volts));
+      Logger.recordOutput(
+          "Elevator/Motor2/Position (Degrees)",
+          elevatorMotor2.getPosition().getValue().in(Degrees));
+      Logger.recordOutput(
+          "Elevator/Motor2/Temp (Fahrenheit)",
+          elevatorMotor2.getDeviceTemp().getValue().in(Fahrenheit));
     }
     Logger.recordOutput("Elevator/Motor1/Percent Out", elevatorMotor1.get());
     Logger.recordOutput(
@@ -349,14 +356,8 @@ public class Elevator extends SubsystemBase {
         "Elevator/Motor1/Temp (Fahrenheit)",
         elevatorMotor1.getDeviceTemp().getValue().in(Fahrenheit));
 
-    Logger.recordOutput("Elevator/Motor2/Percent Out", elevatorMotor2.get());
-    Logger.recordOutput(
-        "Elevator/Motor2/Voltage (Volts)", elevatorMotor2.getMotorVoltage().getValue().in(Volts));
-    Logger.recordOutput(
-        "Elevator/Motor2/Position (Degrees)", elevatorMotor2.getPosition().getValue().in(Degrees));
-    Logger.recordOutput(
-        "Elevator/Motor2/Temp (Fahrenheit)",
-        elevatorMotor2.getDeviceTemp().getValue().in(Fahrenheit));
+    Logger.recordOutput("Elevator/Elv/Height (Inches)", getElevatorHeight().in(Inches));
+    Logger.recordOutput("Elevator/limit switch state", elvLimitSwitch.get());
 
     // Logger.recordOutput("Elevator/Setpoints/L0", getL0Setpoint().in(Inches));
     // Logger.recordOutput("Elevator/Setpoints/L2", getL2Setpoint().in(Inches));
