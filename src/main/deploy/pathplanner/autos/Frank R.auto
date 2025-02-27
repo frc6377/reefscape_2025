@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Zero Elv"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "StartR - E"
@@ -13,7 +19,19 @@
         {
           "type": "named",
           "data": {
-            "name": "L1 Score"
+            "name": "ElvL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL0"
           }
         }
       ]
