@@ -15,7 +15,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
@@ -208,8 +207,6 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
         "Drive SysId (Quasistatic Forward)",
         drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
@@ -229,20 +226,6 @@ public class RobotContainer {
             .andThen(drive.sysIdDynamicTurning(SysIdRoutine.Direction.kForward))
             .andThen(Commands.waitSeconds(0.5))
             .andThen(drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse)));
-    autoChooser.addOption(
-        "Drive SysId Turning (Quasistatic Forward)",
-        drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId Turning (Quasistatic Reverse)",
-        drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId Turning (Dynamic Forward)",
-        drive.sysIdDynamicTurning(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId Turning (Dynamic Reverse)",
-        drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive Velocity Test", DriveCommands.RunVelocity(drive, MetersPerSecond.of(2), 5));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -338,26 +321,29 @@ public class RobotContainer {
                 : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
     coralOuttakeButton.whileTrue(intake.floorOuttake());
 
+    Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
+    Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
+    Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
     OI.getButton(OI.Operator.Y)
         .onTrue(
             Commands.runOnce(
                 () -> {
                   elevatorNotL1 = !elevatorNotL1;
-                  Logger.recordOutput("Intake/Mode", elevatorNotL1);
+                  Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
                 }));
     OI.getButton(OI.Operator.X)
         .onTrue(
             Commands.runOnce(
                 () -> {
                   intakeAlgeaMode = !intakeAlgeaMode;
-                  Logger.recordOutput("Intake/Algea Mode", intakeAlgeaMode);
+                  Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
                 }));
     OI.getButton(OI.Operator.B)
         .onTrue(
             Commands.runOnce(
                 () -> {
                   coralStationMode = !coralStationMode;
-                  Logger.recordOutput("Intake/Coral Station Mode", coralStationMode);
+                  Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
                 }));
     OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB()); // Temporary
     OI.getTrigger(OI.Driver.LTrigger)
