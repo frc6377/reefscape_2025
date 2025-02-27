@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - E"
+            "pathName": "StartR - F"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "E - Source"
+            "pathName": "F - Source"
           }
         },
         {
@@ -71,6 +71,24 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "B - Source"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score E"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "ElvL0"
@@ -80,6 +98,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "The Kings",
   "choreoAuto": false
 }

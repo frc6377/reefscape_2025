@@ -7,61 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - E"
+            "pathName": "StartL - J (no Elv)"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "L1 Score"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "E - Source"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score D"
+            "pathName": "J - Source L1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "D - Source"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score C"
+            "pathName": "Score K L1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL0"
+            "name": "L1 Score"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "The Franks",
   "choreoAuto": false
 }

@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - F"
+            "pathName": "StartL - I"
           }
         },
         {
@@ -19,13 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "F - Source"
+            "pathName": "I - Source"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score D"
+            "pathName": "Score J"
           }
         },
         {
@@ -37,13 +37,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "D - Source"
+            "pathName": "J - Source"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score C"
+            "pathName": "Score K"
           }
         },
         {
@@ -55,13 +55,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "C - Source"
+            "pathName": "K - Source"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score B"
+            "pathName": "Score L"
           }
         },
         {
@@ -73,31 +73,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "B - Source"
+            "pathName": "L - Source"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score E"
+            "pathName": "Score A"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL0"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "The Kings",
   "choreoAuto": false
 }

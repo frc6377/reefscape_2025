@@ -71,14 +71,13 @@ public final class Constants {
   }
 
   public static class DIOConstants {
+    public static final int elvLimitID = 0;
     public static final int kthroughBoreEncoderID = 1;
-    public static final int kAlgeaEncoderID = 15;
+    public static final int kAlgeaEncoderID = 2;
     public static final int kClimberFrontEncoderID = 5;
     public static final int kClimberBackEncoderID = 6;
     public static final int gear11ID = 13;
     public static final int gear3ID = 14;
-
-    public static final int elvLimitID = 0;
   }
 
   public static class SensorIDs {
@@ -132,7 +131,7 @@ public final class Constants {
 
   // Scorer Constants
   public static class CoralScorerConstants {
-    public static final double kIntakeSpeed = -0.4;
+    public static final double kIntakeSpeed = -0.35;
     public static final double kScoreSpeed = -0.5;
 
     public static final Current kScoreAMPs = Amps.of(-20);
@@ -154,14 +153,15 @@ public final class Constants {
     public static final double kIntakeHandoffSpeed = -0.75;
     public static final double kConveyorSpeed = 0.45;
     public static final double kPivotSpeed = 0.2;
+    public static final double kHoldSpeed = kIntakeSpeed / 5;
 
     // Pivot Arm Setpoints
-    public static final Angle armZero = Degrees.of(83.05);
+    public static final Angle armZero = Degrees.of(83.05 - 7);
     public static final Angle kPivotRetractAngle = Degrees.of(128);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
-    public static final Angle kPivotCoralStationAngle = Degrees.of(101);
-    public static final Angle kPivotL1Score = Degrees.of(75.5);
+    public static final Angle kPivotCoralStationAngle = Degrees.of(105);
+    public static final Angle kPivotL1Score = Degrees.of(80);
     public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
     public static final Angle kClimbingAngle = Degrees.of(75.5);
 
@@ -218,16 +218,16 @@ public final class Constants {
 
     static {
       kElevatorPID.setKP(2);
-      kElevatorPID.setKI(0.04);
+      kElevatorPID.setKI(0.08);
       kElevatorPID.setKD(0.02);
-      kElevatorPID.setKS(0.45);
+      kElevatorPID.setKS(0.5);
       kElevatorPID.setStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
     }
 
     public static final HowdyMM kElevatorMM =
-        new HowdyMM(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(500));
+        new HowdyMM(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(250));
 
-    public static final Distance kSetpointTolerance = Inches.of(1);
+    public static final Distance kSetpointTolerance = Inches.of(1.25);
 
     // Mech Constants
     public static final Distance kElevatorDrumRadius = Inches.of(0.375);
@@ -267,10 +267,10 @@ public final class Constants {
     public static final double kAlgeaP = 0.7;
     public static final double kAlgeaI = 0.0;
     public static final double kAlgeaD = 0.0;
-    public static final double kAlgeaPercent = .2;
+    public static final double kAlgeaPercent = .4;
     public static final int kAlegeaGearRatio = 80;
-    public static final Angle algeaStowed = Degrees.of(-90);
-    public static final Angle algeaRemove = Degrees.of(0);
+    public static final Angle algeaStowed = Rotations.of(0.46);
+    public static final Angle algeaRemove = Rotations.of(0.1);
     public static final double algeaZero = 0.0; // update with actual value
     public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
     public static final Distance algeaArmLength = Inches.of(19);
@@ -281,7 +281,7 @@ public final class Constants {
 
   public final class DrivetrainConstants {
     // PathPlanner config constants
-    public static final Mass ROBOT_MASS = Pounds.of(75.5);
+    public static final Mass ROBOT_MASS = Pounds.of(96.2);
     public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(49.5459894327);
     public static final double WHEEL_COF = 1.2;
 

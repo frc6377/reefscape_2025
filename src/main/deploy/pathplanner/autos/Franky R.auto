@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StartR - E (no Elv)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L1 Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "E - Source (L1)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score D L1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L1 Score"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "The Franks",
+  "choreoAuto": false
+}

@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.158379680409871,
+        "y": 7.551500239751384
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.494691182686092,
+        "y": 6.791964217356621
+      },
+      "isLocked": false,
+      "linkedName": "Start Left"
+    },
+    {
+      "anchor": {
+        "x": 5.073208761049796,
+        "y": 5.052530670043824
+      },
+      "prevControl": {
+        "x": 5.419069770338594,
+        "y": 5.440198511821661
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Reef J L1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 2979.381,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -119.99999999999999
+  },
+  "reversed": false,
+  "folder": "Start - Score",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "useDefaultConstraints": true
+}

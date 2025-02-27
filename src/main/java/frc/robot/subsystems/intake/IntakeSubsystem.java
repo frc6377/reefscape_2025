@@ -13,22 +13,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.Constants.IntakeConstants.armZero;
-import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
-import static frc.robot.Constants.IntakeConstants.kGearing;
-import static frc.robot.Constants.IntakeConstants.kHoldPower;
-import static frc.robot.Constants.IntakeConstants.kIntakeHandoffSpeed;
-import static frc.robot.Constants.IntakeConstants.kIntakeSpeed;
-import static frc.robot.Constants.IntakeConstants.kLength;
-import static frc.robot.Constants.IntakeConstants.kMOI;
-import static frc.robot.Constants.IntakeConstants.kOuttakeSpeed;
-import static frc.robot.Constants.IntakeConstants.kPivotAlgaeIntakeAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotExtendAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotL1Score;
-import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotTolerance;
-import static frc.robot.Constants.IntakeConstants.kSensorToMechanism;
+import static frc.robot.Constants.IntakeConstants.*;
 import static frc.robot.Constants.SensorIDs.kSensor2ID;
 import static frc.robot.Constants.SensorIDs.kSensor3ID;
 import static frc.robot.Constants.SensorIDs.kSensor4ID;
@@ -231,6 +216,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void addGamePieceToIntakeSim() {
+    if (Robot.isReal()) return;
     intakeSim.addGamePieceToIntake();
   }
 
@@ -361,7 +347,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(
             () -> {
               goToPivotPosition(kPivotRetractAngle);
-              setIntakeMotor(kIntakeSpeed / 5);
+              setIntakeMotor(kHoldSpeed);
               setConveyerMotor(-kConveyorSpeed);
             },
             () -> {})
@@ -422,14 +408,17 @@ public class IntakeSubsystem extends SubsystemBase {
         "Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoralTrigger());
 
     // Pose 3D of Intake
-    Angle currentAngle = getPivotAngle().times(-1);
-    Angle constantAngle = DrivetrainConstants.kIntakeStartPose.getRotation().getMeasureY();
-    Angle combinedAngle = currentAngle.plus(constantAngle);
     Logger.recordOutput(
         "Odometry/Mech Poses/Intake Pose",
         new Pose3d(
             DrivetrainConstants.kIntakeStartPose.getTranslation(),
-            new Rotation3d(0, combinedAngle.in(Radians), 0)));
+            new Rotation3d(
+                0,
+                getPivotAngle()
+                    .times(-1)
+                    .plus(DrivetrainConstants.kIntakeStartPose.getRotation().getMeasureY())
+                    .in(Radians),
+                0)));
 
     // Log TOF Sensors
     for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID}) {

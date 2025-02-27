@@ -28,6 +28,10 @@ public class OI extends OI_Utils {
     public static final Control LTrigger =
         new Control(
             XboxController.Axis.kLeftTrigger, "The robot scores the coral.", controller, 0.5);
+    public static final Control LScoreTrigger =
+        new Control(
+            XboxController.Axis.kLeftTrigger, "Uses Trigger axis to run scorer", controller, 0.1);
+
     public static final Control RTrigger =
         new Control(XboxController.Axis.kRightTrigger, "The robot intakes.", controller, 0.5);
     public static final Control LBumper =
@@ -70,6 +74,7 @@ public class OI extends OI_Utils {
     public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 1, 0.1);
     public static final ControlCurve rotationCurve = new ControlCurve(1, 0, 0.2, 0.1, true);
     public static final ControlCurve elevatorCurve = new ControlCurve(1, 0, 0, 0.1, true);
+    public static final ControlCurve scorerCurve = new ControlCurve(1, 0, 0, 0.1, true);
 
     // Joystick Axes
     public static final Control LeftX =
@@ -80,6 +85,12 @@ public class OI extends OI_Utils {
         new Control(XboxController.Axis.kRightX, null, controller, rotationCurve);
     public static final Control RightY =
         new Control(XboxController.Axis.kRightY, null, controller, elevatorCurve);
+    public static final Control LeftTriggerAxis =
+        new Control(
+            XboxController.Axis.kLeftTrigger,
+            "The robot scores the coral.",
+            controller,
+            scorerCurve);
 
     public static void setRumble(double rumbleIntensity) {
       controller.setRumble(RumbleType.kBothRumble, rumbleIntensity);
@@ -95,11 +106,18 @@ public class OI extends OI_Utils {
     public static final Control X = new Control(XboxController.Button.kX, null, controller);
     public static final Control Y = new Control(XboxController.Button.kY, null, controller);
 
+    // Trigger Cruve
+    public static final ControlCurve TriggerCurve = new ControlCurve(1, 0, 0, 0.1);
+
     // Bumpers & Triggers
     public static final Control LTrigger =
         new Control(XboxController.Axis.kLeftTrigger, "The robot unclimbs.", controller, 0.5);
+    public static final Control LTriggerAxis =
+        new Control(XboxController.Axis.kLeftTrigger, null, controller, TriggerCurve);
     public static final Control RTrigger =
         new Control(XboxController.Axis.kRightTrigger, "The robot climbs.", controller, 0.5);
+    public static final Control RTriggerAxis =
+        new Control(XboxController.Axis.kRightTrigger, null, controller, TriggerCurve);
     public static final Control LBumper =
         new Control(XboxController.Button.kLeftBumper, null, controller);
     public static final Control RBumper =

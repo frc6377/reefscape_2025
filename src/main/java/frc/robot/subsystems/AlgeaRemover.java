@@ -33,6 +33,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.AlgeaRemoverConstants;
 import frc.robot.Constants.DIOConstants;
 import frc.robot.Robot;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class AlgeaRemover extends SubsystemBase {
@@ -53,17 +54,20 @@ public class AlgeaRemover extends SubsystemBase {
               AlgeaRemoverConstants.kAlgeaP,
               AlgeaRemoverConstants.kAlgeaI,
               AlgeaRemoverConstants.kAlgeaD);
+  private static final SparkMaxConfig algaeMotorConfig = new SparkMaxConfig();
 
   public AlgeaRemover() {
     algeaMotor = new SparkMax(Constants.CANIDs.kAlgeaMotor, MotorType.kBrushless);
+    algaeMotorConfig.smartCurrentLimit(60);
+    algaeMotorConfig.apply(algeaCfg);
     algeaMotor.configure(
-        new SparkMaxConfig().apply(algeaCfg),
-        ResetMode.kNoResetSafeParameters,
-        PersistMode.kNoPersistParameters);
+        algaeMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     algeaEncoder =
         new DutyCycleEncoder(
             DIOConstants.kAlgeaEncoderID, 1, AlgeaRemoverConstants.encoderOffset.in(Rotations));
-    algeaMotor.getEncoder().setPosition(algeaEncoder.get());
+    algeaMotor
+        .getEncoder()
+        .setPosition(algeaEncoder.get() * AlgeaRemoverConstants.kAlegeaGearRatio);
     if (Robot.isSimulation()) {
       simAlgeaMotor = new SparkMaxSim(algeaMotor, AlgeaRemoverConstants.kAlgeaGearbox);
       algeaSim =
@@ -87,6 +91,26 @@ public class AlgeaRemover extends SubsystemBase {
                       "Algea Mech [0]", 1, 0, 10, new Color8Bit(Color.kDarkViolet)));
       SmartDashboard.putData("Mech2Ds/algea remover mech", mech);
     }
+  }
+
+  public Command goUpCommand(Supplier<Double> input) {
+    return runEnd(
+        () -> {
+          algeaMotor.set(input.get());
+        },
+        () -> {
+          algeaMotor.stopMotor();
+        });
+  }
+
+  public Command goDownCommand(Supplier<Double> input) {
+    return runEnd(
+        () -> {
+          algeaMotor.set(-input.get());
+        },
+        () -> {
+          algeaMotor.stopMotor();
+        });
   }
 
   public Command goUp() {
@@ -134,10 +158,10 @@ public class AlgeaRemover extends SubsystemBase {
                   ControlType.kPosition);
 
           Logger.recordOutput(
-              "Algea/Setpoint (Rotations)",
+              "Algea Remover/Setpoint (Rotations)",
               angle.in(Rotations) * AlgeaRemoverConstants.kAlegeaGearRatio);
           Logger.recordOutput(
-              "Algea/Setpoint (Degrees)",
+              "Algea Remover/Setpoint (Degrees)",
               angle.in(Degrees) * AlgeaRemoverConstants.kAlegeaGearRatio);
         });
   }
@@ -160,9 +184,16 @@ public class AlgeaRemover extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Logger.recordOutput("Algea/Motor Relative Rotations", algeaMotor.getEncoder().getPosition());
-    Logger.recordOutput("Algea/Motor Rotations", algeaEncoder.get());
-    Logger.recordOutput("Algea/Motor Percent", algeaMotor.get());
+    Logger.recordOutput(
+        "Algea Remover/Motor/Position (Degrees)",
+        Rotations.of(algeaMotor.getEncoder().getPosition()).in(Degrees));
+    Logger.recordOutput(
+        "Algea Remover/Encoder Position (Degrees)", Rotations.of(algeaEncoder.get()).in(Degrees));
+    Logger.recordOutput("Algea Remover/Motor/Percent", algeaMotor.get());
+    Logger.recordOutput("Algea Remover/Motor/Applied Out", algeaMotor.getAppliedOutput());
+    Logger.recordOutput(
+        "Algea Remover/Motor/Velocity (RPM)", algeaMotor.getEncoder().getVelocity());
+    Logger.recordOutput("Algea Remover/Moter/Current (Amps)", algeaMotor.getOutputCurrent());
   }
 
   @Override
@@ -177,6 +208,6 @@ public class AlgeaRemover extends SubsystemBase {
     simAngle = Rotations.of(simAlgeaMotor.getPosition() / AlgeaRemoverConstants.kAlegeaGearRatio);
 
     algeaMech.setAngle(simAngle.in(Degrees));
-    Logger.recordOutput("Algea/Sim Angle", simAngle.in(Degrees));
+    Logger.recordOutput("Algea Remover/Sim Angle (Degrees)", simAngle.in(Degrees));
   }
 }

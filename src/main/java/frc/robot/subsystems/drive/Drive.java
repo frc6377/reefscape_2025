@@ -99,6 +99,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
           .withRobotMass(DrivetrainConstants.ROBOT_MASS)
           .withCustomModuleTranslations(getModuleTranslations())
           .withGyro(COTS.ofPigeon2())
+          .withBumperSize(Meters.of(0.876), Meters.of(0.876))
           .withSwerveModule(
               new SwerveModuleSimulationConfig(
                   DCMotor.getKrakenX60(1),
@@ -158,7 +159,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         this::setPose,
         this::getChassisSpeeds,
         this::runVelocity,
-        new PPHolonomicDriveController(new PIDConstants(20, 0.0, 1), new PIDConstants(20, 0.0, 1)),
+        new PPHolonomicDriveController(new PIDConstants(5, 0.0, 0), new PIDConstants(5, 0.0, 0)),
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -193,10 +194,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                 null,
                 null,
                 null,
-                (state) -> {
-                  SignalLogger.writeString("SwerveTurn/state", state.toString());
-                  Logger.recordOutput("Odometry/SysID Mode/Turn SysID", state.toString());
-                }),
+                (state) -> SignalLogger.writeString("SwerveTurn/state", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterizationTurning(voltage.in(Volts)), null, this));
 
@@ -265,7 +263,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
     int nameIndex = 0;
     for (boolean[] boolList : scoredPoses.values()) {
-      Logger.recordOutput("ScoredPoses/Pole " + Constants.kPoleLetters[nameIndex], boolList);
+      Logger.recordOutput(
+          "Swerve/Scored Pose Buttons/Pole " + Constants.kPoleLetters[nameIndex], boolList);
       nameIndex++;
     }
   }

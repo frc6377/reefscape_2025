@@ -19,14 +19,12 @@ import au.grapplerobotics.CanBridge;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.vision.VisionConstants;
 import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -120,14 +118,6 @@ public class Robot extends LoggedRobot {
     // finished or interrupted commands, and running subsystem periodic() methods.
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
-    Logger.recordOutput("Alliance Color Real?", DriverStation.getAlliance().isPresent());
-    Logger.recordOutput(
-        "Elv Camera Pose",
-        new Pose3d(
-            VisionConstants.robotToCamera0.getMeasureX(),
-            VisionConstants.robotToCamera0.getMeasureY(),
-            VisionConstants.robotToCamera0.getMeasureZ(),
-            VisionConstants.robotToCamera0.getRotation()));
     CommandScheduler.getInstance().run();
 
     // Return to normal thread priority

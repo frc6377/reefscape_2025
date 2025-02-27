@@ -1,6 +1,6 @@
 {
-  "robotWidth": 0.876,
-  "robotLength": 0.8763,
+  "robotWidth": 0.889,
+  "robotLength": 0.889,
   "holonomicMode": true,
   "pathFolders": [
     "Flow",
@@ -10,10 +10,12 @@
     "Testing"
   ],
   "autoFolders": [
-    "Test Autos"
+    "Test Autos",
+    "The Franks",
+    "The Kings"
   ],
-  "defaultMaxVel": 4.4,
-  "defaultMaxAccel": 6.25,
+  "defaultMaxVel": 4.0,
+  "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 300.0,
   "defaultMaxAngAccel": 2979.381,
   "defaultNominalVoltage": 12.0,

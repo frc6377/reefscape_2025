@@ -248,7 +248,7 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     }
 
     Logger.recordOutput(
-        "FieldSimulation",
+        "FieldSimulation/CurrentCommand",
         this.getCurrentCommand() == null ? "none" : this.getCurrentCommand().getName());
   }
 }
