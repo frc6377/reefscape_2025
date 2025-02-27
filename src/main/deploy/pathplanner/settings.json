@@ -10,10 +10,9 @@
     "Testing"
   ],
   "autoFolders": [
-    "The Kings",
     "Test Autos",
-    "The Chads",
-    "The Franks"
+    "The Franks",
+    "The Kings"
   ],
   "defaultMaxVel": 4.0,
   "defaultMaxAccel": 3.0,
