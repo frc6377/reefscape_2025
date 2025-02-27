@@ -50,16 +50,13 @@ public class LocateCoral extends Command {
         intakeSubsystem.goToPivotPosition(kPivotCoralStationAngle);
         break;
       case CORAL_TOO_FAR:
-        intakeSubsystem.setConveyerMotor(-kConveyorSpeed);
-        intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
-        break;
       case IN_ELEVATOR:
       case NO_CORAL:
       case CORAL_ALIGNED:
+      case OTHER:
         intakeSubsystem.setConveyerMotor(0);
         intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
         break;
-      case OTHER:
     }
   }
 
