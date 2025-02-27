@@ -163,7 +163,10 @@ public class RobotContainer {
         intake = new IntakeSubsystem(sensors, null);
         break;
     }
+
     scoreL1 = intake.l1ScoreModeA();
+    Trigger isDoneScoring = new Trigger(() -> (sensors.getSensorState() == CoralEnum.NO_CORAL));
+
     // Register Named Commands
     NamedCommands.registerCommand("ElvL0", elv0Command());
     NamedCommands.registerCommand("ElvL2", elevator.L2().andThen(waitForElevator()));
@@ -185,7 +188,7 @@ public class RobotContainer {
         new SequentialCommandGroup(
             Commands.runOnce(() -> elevatorNotL1 = false),
             Commands.waitUntil(intake.intakeHasCoralTrigger()),
-            scoreL1.asProxy().until(() -> (sensors.getSensorState() == CoralEnum.NO_CORAL)),
+            scoreL1.asProxy().until(isDoneScoring.debounce(3)),
             Commands.runOnce(() -> elevatorNotL1 = true)));
 
     // Set up auto routines

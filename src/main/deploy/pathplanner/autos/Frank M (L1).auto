@@ -13,13 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
+            "name": "L1 Score"
           }
         }
       ]
