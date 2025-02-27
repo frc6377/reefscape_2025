@@ -376,19 +376,33 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Intake Rollers
-    Logger.recordOutput("Intake/Rollers/Motor Output", intakeMotor.get());
-    Logger.recordOutput(
-        "Intake/Rollers/Motor Voltage (Volts)", intakeMotor.getMotorVoltage().getValue().in(Volts));
+    if (!Robot.isCompetition) {
 
-    // Convayor
-    Logger.recordOutput("Intake/Conveyor/Motor Output", conveyorMotor.get());
-    Logger.recordOutput(
-        "Intake/Conveyor/Motor Voltage (Volts)",
-        conveyorMotor.getMotorVoltage().getValue().in(Volts));
-    Logger.recordOutput(
-        "Intake/Conveyor/Velocity (RPS)",
-        conveyorMotor.getVelocity().getValue().in(RotationsPerSecond));
+      // Intake Rollers
+      Logger.recordOutput("Intake/Rollers/Motor Output", intakeMotor.get());
+      Logger.recordOutput(
+          "Intake/Rollers/Motor Voltage (Volts)",
+          intakeMotor.getMotorVoltage().getValue().in(Volts));
+
+      // Conveyor
+      Logger.recordOutput("Intake/Conveyor/Motor Output", conveyorMotor.get());
+      Logger.recordOutput(
+          "Intake/Conveyor/Motor Voltage (Volts)",
+          conveyorMotor.getMotorVoltage().getValue().in(Volts));
+      Logger.recordOutput(
+          "Intake/Conveyor/Velocity (RPS)",
+          conveyorMotor.getVelocity().getValue().in(RotationsPerSecond));
+
+      // Pose 3D of Intake
+      Angle currentAngle = getPivotAngle().times(-1);
+      Angle constantAngle = DrivetrainConstants.kIntakeStartPose.getRotation().getMeasureY();
+      Angle combinedAngle = currentAngle.plus(constantAngle);
+      Logger.recordOutput(
+          "Odometry/Mech Poses/Intake Pose",
+          new Pose3d(
+              DrivetrainConstants.kIntakeStartPose.getTranslation(),
+              new Rotation3d(0, combinedAngle.in(Radians), 0)));
+    }
 
     // Pivot
     Logger.recordOutput("Intake/Pivot/Motor Output", pivotMotor.get());
@@ -402,7 +416,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // States
     Logger.recordOutput("Intake/States/Intake State", intakeState.toString());
-
     Logger.recordOutput("Intake/Intake Has Coral Trigger", intakeHasCoralTrigger());
     Logger.recordOutput(
         "Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoralTrigger());
