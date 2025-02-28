@@ -125,9 +125,6 @@ public class Climber extends SubsystemBase {
     climberMotorFront.getConfigurator().apply(frontConfigs);
     climberMotorBack.getConfigurator().apply(backConfigs);
 
-    frontClimberServo = new Servo(PWMIDs.kFrontClimberServoID);
-    backClimberServo = new Servo(PWMIDs.kBackClimberServoID);
-
     Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
     Logger.recordOutput("Climber/Back/isBackServoEngaged", isBackServoEngaged);
     Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", DrivetrainConstants.kClimber1Pose);
@@ -221,19 +218,22 @@ public class Climber extends SubsystemBase {
   }
 
   public void seedEncoder() {
-    if (1 - climberFrontEncoder.get() < 0.5) {
+    double currentFront = climberFrontEncoder.get();
+    if (1 - currentFront < 0.5) {
       climberMotorFront.setPosition(
-          1 - climberFrontEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations));
+          1 - currentFront + ClimberConstants.kClimberOffsetAngle.in(Rotations));
     } else {
       climberMotorFront.setPosition(
-          -climberFrontEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations));
+          -currentFront + ClimberConstants.kClimberOffsetAngle.in(Rotations));
     }
-    if (climberBackEncoder.get() < 0.5) {
+
+    double currentBack = climberBackEncoder.get();
+    if (currentBack < 0.5) {
       climberMotorBack.setPosition(
-          climberBackEncoder.get() + ClimberConstants.kClimberOffsetAngle.in(Rotations));
+          currentBack + ClimberConstants.kClimberOffsetAngle.in(Rotations));
     } else {
       climberMotorBack.setPosition(
-          climberBackEncoder.get() - 1 + ClimberConstants.kClimberOffsetAngle.in(Rotations));
+          currentBack - 1 + ClimberConstants.kClimberOffsetAngle.in(Rotations));
     }
   }
 

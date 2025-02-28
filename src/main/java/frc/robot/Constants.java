@@ -111,8 +111,8 @@ public final class Constants {
     public static final Current kClimberIdleCurrentLimit = Amps.of(20);
     public static final Current kClimberClimbingCurrentLimit = Amps.of(70);
     public static final double kGearRatio = 126;
-    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-64);
-    public static final Angle kClimberBackOffsetAngle = Degrees.of(237);
+    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-333.3);
+    public static final Angle kClimberBackOffsetAngle = Degrees.of(148.1);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
     public static final Angle kClimberExtendedSetpoint = Degrees.of(225).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(190).plus(kClimberOffsetAngle);
