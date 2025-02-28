@@ -96,7 +96,7 @@ public class Elevator extends SubsystemBase {
     elevatorMotor1 = new TalonFX(CANIDs.kElevatorMotor1, Constants.RIOName);
     elevatorMotor2 = new TalonFX(CANIDs.kElevatorMotor2, Constants.RIOName);
 
-    currentLimit.StatorCurrentLimit = 120;
+    currentLimit.StatorCurrentLimit = 60;
     currentLimit.SupplyCurrentLimit = 70;
     currentLimit.SupplyCurrentLowerLimit = 40;
     currentLimit.SupplyCurrentLowerTime = 1;

@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Zero Elv"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "StartL - IJ (L1)"

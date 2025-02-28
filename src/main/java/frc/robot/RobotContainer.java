@@ -192,6 +192,12 @@ public class RobotContainer {
             Commands.waitUntil(coralHandoffCompleteTrigger)));
     NamedCommands.registerCommand("Score", scorerAutoCommand());
     NamedCommands.registerCommand(
+        "Set L1 Mode",
+        Commands.runOnce(
+            () -> {
+              elevatorNotL1 = false;
+            }));
+    NamedCommands.registerCommand(
         "L1 Score",
         new SequentialCommandGroup(
             Commands.runOnce(() -> elevatorNotL1 = false),
