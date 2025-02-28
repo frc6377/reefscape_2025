@@ -250,20 +250,19 @@ public class Climber extends SubsystemBase {
   }
 
   private Command runClimber(Angle position, int slot) {
-    return Commands.sequence(
-        runOnce(
-            () -> {
-              if (position.lt(climberMotorFront.getPosition().getValue())
-                  && (isFrontServoEngaged || isBackServoEngaged)) {
-                new Alert("Attempted motor output against servo ratchet", AlertType.kError)
-                    .set(true);
-              } else {
-                climberTargetAngle = position;
-                climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
-                climberMotorBack.setControl(new PositionVoltage(position).withSlot(slot));
-                Logger.recordOutput("Climber/Climber Position Setpoint", position.in(Degrees));
-              }
-            }));
+    return startEnd(
+        () -> {
+          if (position.gt(climberMotorFront.getPosition().getValue())
+              && (isFrontServoEngaged || isBackServoEngaged)) {
+            new Alert("Attempted motor output against servo ratchet", AlertType.kError).set(true);
+          } else {
+            climberTargetAngle = position;
+            climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
+            climberMotorBack.setControl(new PositionVoltage(position).withSlot(slot));
+            Logger.recordOutput("Climber/Climber Position Setpoint", position.in(Degrees));
+          }
+        },
+        () -> {});
   }
 
   private BooleanSupplier isClimberAtPosition(Angle position) {
@@ -287,6 +286,10 @@ public class Climber extends SubsystemBase {
     climberMotorBack.getConfigurator().apply(currentLimit.withStatorCurrentLimit(current));
   }
 
+  public Command climberToZero() {
+    return runClimber(Degrees.of(180), 0).until(isClimberAtPosition(Degrees.of(180)));
+  }
+
   public Command climb() {
     return extendToCage().andThen(engageServo()).andThen(extendFully());
   }
@@ -296,15 +299,16 @@ public class Climber extends SubsystemBase {
         .until(isClimberAtPosition(ClimberConstants.kClimberServoDisengageAngle))
         .andThen(disengageServo())
         .andThen(Commands.waitSeconds(1))
-        .andThen(runClimber(ClimberConstants.kClimberRetractedSetpoint, 0))
-        .until(isClimberAtPosition(ClimberConstants.kClimberRetractedSetpoint))
+        .andThen(
+            runClimber(ClimberConstants.kClimberRetractedSetpoint, 0)
+                .until(isClimberAtPosition(ClimberConstants.kClimberRetractedSetpoint)))
         .andThen(engageServo())
         .andThen(Commands.waitSeconds(1));
   }
 
   public Command extendToCage() {
     return runClimber(ClimberConstants.kClimberAtCageSetpoint, 0)
-        .andThen(Commands.waitUntil(isClimberAtPosition(ClimberConstants.kClimberAtCageSetpoint)));
+        .until(isClimberAtPosition(ClimberConstants.kClimberAtCageSetpoint));
   }
 
   public Command extendFully() {
@@ -326,9 +330,9 @@ public class Climber extends SubsystemBase {
   public Command engageServo() {
     return runOnce(
         () -> {
-          setServoAngle(frontClimberServo, ClimberConstants.kFrontServoEngageAngle.in(Rotations));
+          setServoAngle(frontClimberServo, ClimberConstants.kFrontServoEngageAngle.in(Degrees));
           // Change to back servo angle if needed
-          setServoAngle(backClimberServo, ClimberConstants.kBackServoEngageAngle.in(Rotations));
+          setServoAngle(backClimberServo, ClimberConstants.kBackServoEngageAngle.in(Degrees));
           isFrontServoEngaged = true;
           isBackServoEngaged = true;
           setCurrentLimit(ClimberConstants.kClimberClimbingCurrentLimit);

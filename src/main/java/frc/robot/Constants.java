@@ -114,12 +114,12 @@ public final class Constants {
     public static final Angle kClimberFrontOffsetAngle = Degrees.of(-333.3);
     public static final Angle kClimberBackOffsetAngle = Degrees.of(148.1);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(225).plus(kClimberOffsetAngle);
-    public static final Angle kClimberAtCageSetpoint = Degrees.of(190).plus(kClimberOffsetAngle);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(-45).plus(kClimberOffsetAngle);
+    public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
-    public static final Angle kClimberSensorTolerance = Degrees.of(2.5);
+    public static final Angle kClimberSensorTolerance = Degrees.of(4);
     public static final Angle kClimberServoDisengageAngle =
-        Degrees.of(225).plus(kClimberOffsetAngle);
+        Degrees.of(-45).plus(kClimberOffsetAngle);
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
 
@@ -130,9 +130,9 @@ public final class Constants {
     public static final Angle kClimberArmMinAngle = Degrees.of(-30).plus(kClimberOffsetAngle);
     public static final Angle kClimberArmMaxAngle = Degrees.of(250).plus(kClimberOffsetAngle);
 
-    public static final Angle kFrontServoEngageAngle = Degrees.of(90);
+    public static final Angle kFrontServoEngageAngle = Degrees.of(0);
     public static final Angle kBackServoEngageAngle = Degrees.of(90);
-    public static final Angle kFrontServoDisengageAngle = Degree.of(0);
+    public static final Angle kFrontServoDisengageAngle = Degree.of(90);
     public static final Angle kBackServoDisengageAngle = Degree.of(0);
   }
 
@@ -263,7 +263,7 @@ public final class Constants {
     // Simulation Constants
     public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60(2);
     public static final double elevatorOutput = .10;
-    public static final double kElevatorGearing = 1.0;
+    public static final double kElevatorGearing = 3;
     public static final Mass kCarriageMass = Pounds.of(4.75);
     public static final Distance kMinElevatorHeight = Inches.zero();
     public static final Distance kMaxElevatorHeight = Inches.of(72);

@@ -35,8 +35,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FeildConstants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
@@ -263,15 +263,15 @@ public class RobotContainer {
     testTrig(OI.getButton(OI.Driver.RBumper)).onTrue(climber.disengageServo());
     testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(climber.runRaw(Volts.of(3)));
     testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(climber.runRaw(Volts.of(-3)));
-    testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendToCage());
+    // testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendToCage());
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
         .whileTrue(climber.runRaw(Volts.of(3)));
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
         .whileTrue(climber.runRaw(Volts.of(-3)));
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.A))
-        .toggleOnTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Z) : OI.getTrigger(OI.Driver.Y))
-        .onTrue(climber.climb());
+    testTrig(OI.getButton(OI.Driver.X)).onTrue(climber.climberToZero());
+    testTrig(OI.getButton(OI.Driver.A)).onTrue(climber.retract());
+    testTrig(OI.getButton(OI.Driver.Y)).onTrue(climber.extendToCage());
+    testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendFully());
   }
 
   private void configureButtonBindings() {
@@ -329,6 +329,7 @@ public class RobotContainer {
         .and(() -> elevatorNotL1)
         .and(coralOuttakeButton.negate())
         .and(() -> !CommandScheduler.getInstance().isScheduled(locateCoral))
+        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height))
         .onTrue(
             Robot.isReal()
                 ? intake
@@ -510,7 +511,7 @@ public class RobotContainer {
   }
 
   public Command waitForElevator() {
-    return Commands.waitUntil(elevator.elevatorAtSetpoint());
+    return Commands.waitUntil(elevator.elevatorAtCurrentSetpoint());
   }
 
   public Command intakeAutoCommand() {
