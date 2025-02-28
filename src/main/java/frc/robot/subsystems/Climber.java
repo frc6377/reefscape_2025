@@ -82,9 +82,15 @@ public class Climber extends SubsystemBase {
     currentLimit.StatorCurrentLimitEnable = true;
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
     climberFrontEncoder =
-        new DutyCycleEncoder(DIOConstants.kClimberFrontEncoderID, 1, Degrees.of(20).in(Rotations));
+        new DutyCycleEncoder(
+            DIOConstants.kClimberFrontEncoderID,
+            1,
+            ClimberConstants.kClimberFrontOffsetAngle.in(Rotations));
     climberBackEncoder =
-        new DutyCycleEncoder(DIOConstants.kClimberBackEncoderID, 1, Degrees.of(243).in(Rotations));
+        new DutyCycleEncoder(
+            DIOConstants.kClimberBackEncoderID,
+            1,
+            ClimberConstants.kClimberBackOffsetAngle.in(Rotations));
     climberMotorFront = new TalonFX(CANIDs.kClimberMotorFront);
     climberMotorBack = new TalonFX(CANIDs.kClimberMotorBack);
     feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.kGearRatio);
@@ -114,12 +120,6 @@ public class Climber extends SubsystemBase {
     backConfigs.CurrentLimits = currentLimit;
     climberMotorFront.getConfigurator().apply(frontConfigs);
     climberMotorBack.getConfigurator().apply(backConfigs);
-    // climberOrchestra = new Orchestra();
-    // climberOrchestra.addInstrument(climberMotorFront, 2);
-    // climberOrchestra.addInstrument(climberMotorBack, 6);
-    // climberOrchestra.loadMusic("music/jeopardymusic.chrp");
-    climberMotorFront.setPosition(ClimberConstants.kClimberAtCageSetpoint.in(Rotations));
-    climberMotorBack.setPosition(ClimberConstants.kClimberAtCageSetpoint.in(Rotations));
 
     frontClimberServo = new Servo(CANIDs.kFrontClimberServoID);
     backClimberServo = new Servo(CANIDs.kBackClimberServoID);
@@ -307,12 +307,20 @@ public class Climber extends SubsystemBase {
     servo.setAngle(angle);
   }
 
+  public Command servoToZero() {
+    return runOnce(
+        () -> {
+          setServoAngle(frontClimberServo, 0);
+          setServoAngle(backClimberServo, 0);
+        });
+  }
+
   public Command engageServo() {
     return runOnce(
         () -> {
           setServoAngle(frontClimberServo, ClimberConstants.kFrontServoEngageAngle.in(Rotations));
           // Change to back servo angle if needed
-          setServoAngle(backClimberServo, ClimberConstants.kFrontServoEngageAngle.in(Rotations));
+          setServoAngle(backClimberServo, ClimberConstants.kBackServoEngageAngle.in(Rotations));
           isFrontServoEngaged = true;
           isBackServoEngaged = true;
           setCurrentLimit(Amps.of(70));
@@ -324,10 +332,9 @@ public class Climber extends SubsystemBase {
   public Command disengageServo() {
     return runOnce(
         () -> {
-          setServoAngle(
-              frontClimberServo, ClimberConstants.kFrontServoDisengageAngle.in(Rotations));
+          setServoAngle(frontClimberServo, ClimberConstants.kFrontServoDisengageAngle.in(Degrees));
           // Change to back servo angle if needed
-          setServoAngle(backClimberServo, ClimberConstants.kFrontServoDisengageAngle.in(Rotations));
+          setServoAngle(backClimberServo, ClimberConstants.kBackServoDisengageAngle.in(Degrees));
           isFrontServoEngaged = false;
           isBackServoEngaged = false;
           setCurrentLimit(Amps.of(5));
@@ -391,6 +398,10 @@ public class Climber extends SubsystemBase {
         climberMotorBack.getStatorCurrent().getValue().in(Amps));
     Logger.recordOutput("Climber/Back/Servo/Percent Out", backClimberServo.get());
     Logger.recordOutput("Climber/Back/Servo/Position (Degrees)", backClimberServo.getAngle());
+
+    Logger.recordOutput(
+        "Climber/Current Command",
+        this.getCurrentCommand() != null ? this.getCurrentCommand().getName() : "None");
   }
 
   @Override

@@ -69,7 +69,7 @@ public class Elevator extends SubsystemBase {
 
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
-      new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
+      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
   private static Mechanism2d mech = new Mechanism2d(2, 2);
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;

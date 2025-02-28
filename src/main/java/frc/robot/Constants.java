@@ -57,8 +57,8 @@ public final class Constants {
   public static class CANIDs {
     // Rev Can Bus
     // 1-8 Motor ID is reserved by the drivebase
-    public static final int kClimberMotorFront = 16; // FIXME
-    public static final int kClimberMotorBack = 17; // FIXME
+    public static final int kClimberMotorFront = 17; // FIXME
+    public static final int kClimberMotorBack = 16; // FIXME
     public static final int kScorerMotor = 15;
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
@@ -75,8 +75,8 @@ public final class Constants {
     public static final int elvLimitID = 0;
     public static final int kthroughBoreEncoderID = 1;
     public static final int kAlgeaEncoderID = 2;
-    public static final int kClimberFrontEncoderID = 5;
-    public static final int kClimberBackEncoderID = 6;
+    public static final int kClimberFrontEncoderID = 3;
+    public static final int kClimberBackEncoderID = 4;
     public static final int gear11ID = 13;
     public static final int gear3ID = 14;
   }
@@ -107,13 +107,14 @@ public final class Constants {
     }
 
     public static final double kGearRatio = 126;
+    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-64);
+    public static final Angle kClimberBackOffsetAngle = Degrees.of(237);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
     public static final Angle kClimberExtendedSetpoint = Degrees.of(225).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(190).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
     public static final Angle kClimberSensorTolerance = Degrees.of(2.5);
-    public static final Angle kClimberEmergencyUndoAngle =
-        Degrees.of(-45).plus(kClimberOffsetAngle);
+    public static final Angle kClimberEmergencyUndoAngle = Degrees.of(-45);
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
 

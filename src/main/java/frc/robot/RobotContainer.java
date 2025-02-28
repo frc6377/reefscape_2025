@@ -257,6 +257,7 @@ public class RobotContainer {
     //     .toggleOnTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
 
     // Climber Test Buttons
+    testTrig(OI.getPOVButton(OI.Operator.DPAD_RIGHT)).onTrue(climber.servoToZero());
     testTrig(OI.getButton(OI.Driver.LBumper)).onTrue(climber.engageServo());
     testTrig(OI.getButton(OI.Driver.RBumper)).onTrue(climber.disengageServo());
     testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(climber.runRaw(Volts.of(3)));
@@ -371,6 +372,8 @@ public class RobotContainer {
     //     .whileTrue(algeaRemover.goDownCommand(OI.getAxisSupplier(OI.Operator.RTriggerAxis)));
 
     // Climber Buttons TODO: Test this
+    OI.getPOVButton(OI.Operator.DPAD_RIGHT).onTrue(climber.engageServo());
+    OI.getPOVButton(OI.Operator.DPAD_LEFT).onTrue(climber.disengageServo());
     // OI.getTrigger(OI.Operator.Start)
     //     .and(OI.getPOVButton(OI.Operator.DPAD_DOWN))
     //     .whileTrue(climber.climb());
