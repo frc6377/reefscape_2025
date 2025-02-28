@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 4.004403682343531,
-        "y": 2.796852587038726
+        "x": 4.00389344262295,
+        "y": 2.9281249999999988
       },
       "prevControl": {
-        "x": 3.643498942847616,
-        "y": 2.507902440842781
+        "x": 3.6429887031270356,
+        "y": 2.639174853804054
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,17 +32,6 @@
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
-    {
-      "name": "Intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Intake"
-        }
-      }
-    },
     {
       "name": "ElvL4",
       "waypointRelativePos": 0.75,
