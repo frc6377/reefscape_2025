@@ -282,14 +282,15 @@ public class RobotContainer {
             }));
 
     // Climber Buttons
-    OI.getTrigger(OI.Operator.RTrigger)
-        .and(OI.getButton(OI.Operator.LBumper))
-        .whileTrue(climber.climb());
-    OI.getTrigger(OI.Operator.LTrigger)
-        .and(OI.getButton(OI.Operator.LBumper))
-        .whileTrue(climber.retract());
-    OI.getButton(OI.Operator.Start).onTrue(climber.zero());
-
+    /*
+        OI.getTrigger(OI.Operator.RTrigger)
+            .and(OI.getButton(OI.Operator.LBumper))
+            .whileTrue(climber.climb());
+        OI.getTrigger(OI.Operator.LTrigger)
+            .and(OI.getButton(OI.Operator.LBumper))
+            .whileTrue(climber.retract());
+        OI.getButton(OI.Operator.Start).onTrue(climber.zero());
+    */
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
     OI.getPOVButton(OI.Driver.DPAD_LEFT).onTrue(elevator.L2());
