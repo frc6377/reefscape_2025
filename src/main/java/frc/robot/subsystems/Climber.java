@@ -125,8 +125,8 @@ public class Climber extends SubsystemBase {
     climberMotorFront.getConfigurator().apply(frontConfigs);
     climberMotorBack.getConfigurator().apply(backConfigs);
 
-    frontClimberServo = new Servo(CANIDs.kFrontClimberServoID);
-    backClimberServo = new Servo(CANIDs.kBackClimberServoID);
+    frontClimberServo = new Servo(PWMIDs.kFrontClimberServoID);
+    backClimberServo = new Servo(PWMIDs.kBackClimberServoID);
 
     Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
     Logger.recordOutput("Climber/Back/isBackServoEngaged", isBackServoEngaged);
@@ -251,7 +251,6 @@ public class Climber extends SubsystemBase {
 
   private Command runClimber(Angle position, int slot) {
     return Commands.sequence(
-        stopJeopardy(),
         runOnce(
             () -> {
               if (position.lt(climberMotorFront.getPosition().getValue())
