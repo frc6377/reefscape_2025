@@ -36,7 +36,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.FeildConstants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
@@ -241,8 +240,11 @@ public class RobotContainer {
   }
 
   private void configureTestButtonBindsing() {
-    testTrig(OI.getPOVButton(OI.Driver.DPAD_UP))
-        .whileTrue(elevator.setElvPercent(OI.getAxisSupplier(OI.Driver.RightY).get()));
+    // Elevator Test Buttons
+    // testTrig(OI.getPOVButton(OI.Driver.DPAD_UP))
+    //     .whileTrue(elevator.setElvPercent(OI.getAxisSupplier(OI.Driver.RightY).get()));
+
+    // Algae Remover Test Buttons
     // testTrig(OI.getPOVButton(OI.Driver.DPAD_RIGHT)).whileTrue(intake.intakeCommand());
     // testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
     // testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
@@ -250,21 +252,18 @@ public class RobotContainer {
     // testTrig(OI.getButton(OI.Driver.X)).whileTrue(intake.extendPivotCommand());
     // testTrig(OI.getButton(OI.Driver.Y)).whileTrue(intake.retractPivotCommand());
 
+    // Intake Test Buttons
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.A))
+    //     .toggleOnTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
+
+    // Climber Test Buttons
     testTrig(OI.getButton(OI.Driver.LBumper)).onTrue(climber.engageServo());
     testTrig(OI.getButton(OI.Driver.RBumper)).onTrue(climber.disengageServo());
+    testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(climber.runRaw(Volts.of(3)));
+    testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(climber.runRaw(Volts.of(-3)));
     testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendToCage());
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
-        .whileTrue(climber.runRaw(Volts.of(3)));
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
-        .whileTrue(climber.runRaw(Volts.of(-3)));
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.A))
-        .toggleOnTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Z) : OI.getTrigger(OI.Driver.Y))
-        .onTrue(climber.climb());
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.X) : OI.getTrigger(OI.Driver.X))
-        .onTrue(climber.retract());
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
-        .onTrue(climber.toggleJeopardy());
+    testTrig(OI.getTrigger(OI.Driver.Y)).onTrue(climber.climb());
+    testTrig(OI.getTrigger(OI.Driver.X)).onTrue(climber.retract());
   }
 
   private void configureButtonBindings() {

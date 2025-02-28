@@ -50,6 +50,8 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
 
+  // private double lastTime = Timer.getFPGATimestamp() * 1000;
+
   public Robot() {
     // For TOF Sensor
     CanBridge.runTCP();
@@ -127,6 +129,12 @@ public class Robot extends LoggedRobot {
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
+
+    // double newTime = Timer.getFPGATimestamp() * 1000;
+    // Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
+    // lastTime = newTime;
+
+    // CommandScheduler.getInstance().printWatchdogEpochs();
   }
 
   /** This function is called once when the robot is disabled. */
