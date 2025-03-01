@@ -69,7 +69,7 @@ public class Elevator extends SubsystemBase {
 
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
-      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
+      new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
   private static Mechanism2d mech = new Mechanism2d(2, 2);
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
@@ -96,7 +96,7 @@ public class Elevator extends SubsystemBase {
     elevatorMotor1 = new TalonFX(CANIDs.kElevatorMotor1, Constants.RIOName);
     elevatorMotor2 = new TalonFX(CANIDs.kElevatorMotor2, Constants.RIOName);
 
-    currentLimit.StatorCurrentLimit = 60;
+    currentLimit.StatorCurrentLimit = 90;
     currentLimit.SupplyCurrentLimit = 70;
     currentLimit.SupplyCurrentLowerLimit = 40;
     currentLimit.SupplyCurrentLowerTime = 1;

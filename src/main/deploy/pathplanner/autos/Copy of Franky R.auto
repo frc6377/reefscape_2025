@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartL - IJ (L1)"
+            "pathName": "StartR - EF (L1)"
           }
         },
         {
@@ -25,7 +25,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "IJ - Source L1"
+            "pathName": "EF - Source (L1)"
           }
         },
         {
@@ -37,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score K L1"
+            "pathName": "Score D L1"
           }
         },
         {

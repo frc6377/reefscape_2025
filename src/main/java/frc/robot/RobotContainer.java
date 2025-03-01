@@ -191,19 +191,13 @@ public class RobotContainer {
             intakeFloorAutoCommand(),
             Commands.waitUntil(coralHandoffCompleteTrigger)));
     NamedCommands.registerCommand("Score", scorerAutoCommand());
-    NamedCommands.registerCommand(
-        "Set L1 Mode",
-        Commands.runOnce(
-            () -> {
-              elevatorNotL1 = false;
-            }));
+    NamedCommands.registerCommand("Set L1 Mode", Commands.runOnce(() -> elevatorNotL1 = false));
     NamedCommands.registerCommand(
         "L1 Score",
         new SequentialCommandGroup(
             Commands.runOnce(() -> elevatorNotL1 = false),
             Commands.waitUntil(intake.intakeHasCoralTrigger()),
-            scoreL1.asProxy().until(isDoneScoring.debounce(3)),
-            Commands.runOnce(() -> elevatorNotL1 = true)));
+            scoreL1.asProxy().until(isDoneScoring.debounce(3))));
     NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
 
     // Set up auto routines
