@@ -163,7 +163,7 @@ public final class Constants {
     public static final double kHoldSpeed = kIntakeSpeed / 5;
 
     // Pivot Arm Setpoints
-    public static final Angle armZero = Degrees.of(83.05 - 7);
+    public static final Angle armZero = Degrees.of(76.05);
     public static final Angle kPivotRetractAngle = Degrees.of(128);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
