@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - EF (L1)"
+            "pathName": "StartL - IJ (L1)"
           }
         },
         {
@@ -25,7 +25,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "EF - Source (L1)"
+            "pathName": "IJ - Source L1"
           }
         },
         {
@@ -37,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score D L1"
+            "pathName": "Score K L1"
           }
         },
         {
@@ -50,6 +50,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "The Franks",
+  "folder": "The Chads",
   "choreoAuto": false
 }
