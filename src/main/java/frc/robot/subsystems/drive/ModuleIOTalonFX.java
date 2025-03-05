@@ -22,9 +22,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
+import org.littletonrobotics.junction.Logger;
 
 public abstract class ModuleIOTalonFX implements ModuleIO {
   protected final SwerveModuleConstants<
@@ -72,8 +71,13 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
     turnTalon = new TalonFX(constants.SteerMotorId, TunerConstants.DrivetrainConstants.CANBusName);
     cancoder = new CANcoder(constants.EncoderId, TunerConstants.DrivetrainConstants.CANBusName);
 
+    voltageRequest.EnableFOC = true;
+    positionVoltageRequest.EnableFOC = true;
+    velocityVoltageRequest.EnableFOC = true;
+
     // Configure drive motor
     var driveConfig = constants.DriveMotorInitialConfigs;
+    driveConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     driveConfig.Feedback.SensorToMechanismRatio = constants.DriveMotorGearRatio;
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     driveConfig.Slot0 = constants.DriveMotorGains;
@@ -90,10 +94,9 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
 
     // Configure turn motor
     var turnConfig = new TalonFXConfiguration();
+    turnConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     turnConfig.Slot0 = constants.SteerMotorGains;
-    if (Constants.currentMode == Constants.Mode.SIM)
-      turnConfig.Slot0.withKD(0.5).withKS(0); // during simulation, gains are slightly different
 
     turnConfig.Feedback.FeedbackRemoteSensorID = constants.EncoderId;
     turnConfig.Feedback.FeedbackSensorSource =
@@ -162,11 +165,8 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
 
     // Update drive inputs
     inputs.driveConnected = driveConnectedDebounce.calculate(driveStatus.isOK());
-    SmartDashboard.putNumber("Module Drive Pose Rot", drivePosition.getValueAsDouble());
-    inputs.drivePositionRad =
-        Units.rotationsToRadians(drivePosition.getValueAsDouble()) / constants.DriveMotorGearRatio;
-    inputs.driveVelocityRadPerSec =
-        Units.rotationsToRadians(driveVelocity.getValueAsDouble()) / constants.DriveMotorGearRatio;
+    inputs.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble());
+    inputs.driveVelocityRadPerSec = Units.rotationsToRadians(driveVelocity.getValueAsDouble());
     inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     inputs.driveCurrentAmps = driveCurrent.getValueAsDouble();
 
@@ -177,6 +177,16 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
     inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble());
     inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
     inputs.turnCurrentAmps = turnCurrent.getValueAsDouble();
+
+    Logger.recordOutput(
+        "Swerve/SysID Values/" + turnTalon.getDeviceID() + "/Velocity",
+        cancoder.getVelocity().getValueAsDouble());
+    Logger.recordOutput(
+        "Swerve/SysID Values/" + turnTalon.getDeviceID() + "/Position",
+        cancoder.getPosition().getValueAsDouble());
+    Logger.recordOutput(
+        "Swerve/SysID Values/" + turnTalon.getDeviceID() + "/MotorVoltage",
+        turnTalon.getMotorVoltage().getValueAsDouble());
   }
 
   @Override
@@ -200,7 +210,7 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
   @Override
   public void setDriveVelocity(double wheelVelocityRadPerSec) {
     double motorVelocityRotPerSec =
-        Units.radiansToRotations(wheelVelocityRadPerSec) * constants.DriveMotorGearRatio;
+        Units.radiansToRotations(wheelVelocityRadPerSec); // * constants.DriveMotorGearRatio;
     driveTalon.setControl(
         switch (constants.DriveMotorClosedLoopOutput) {
           case Voltage -> velocityVoltageRequest.withVelocity(motorVelocityRotPerSec);

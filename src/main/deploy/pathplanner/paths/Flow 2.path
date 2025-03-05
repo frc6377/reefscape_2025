@@ -1,0 +1,112 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.00389344262295,
+        "y": 2.9281249999999988
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.6502519665956346,
+        "y": 2.6777066300277963
+      },
+      "isLocked": false,
+      "linkedName": "Reef D"
+    },
+    {
+      "anchor": {
+        "x": 1.225398490344323,
+        "y": 0.9680916092635675
+      },
+      "prevControl": {
+        "x": 1.5328988530681418,
+        "y": 0.445358491901795
+      },
+      "nextControl": {
+        "x": 1.098640306256951,
+        "y": 1.183573308641663
+      },
+      "isLocked": false,
+      "linkedName": "Right Coral Station Mid"
+    },
+    {
+      "anchor": {
+        "x": 3.737023566540091,
+        "y": 2.9543223594501957
+      },
+      "prevControl": {
+        "x": 1.2690312654106628,
+        "y": 1.8104531046666292
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Reef C"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -125.00000000000001
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.7718801910299006,
+      "maxWaypointRelativePos": 1.3170940614617954,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 6.25,
+        "maxAngularVelocity": 300.0,
+        "maxAngularAcceleration": 2979.381,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    },
+    {
+      "name": "ElvL4",
+      "waypointRelativePos": 1.9025384136212613,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ElvL4"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 2979.381,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 150.0
+  },
+  "reversed": false,
+  "folder": "Flow",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 150.0
+  },
+  "useDefaultConstraints": true
+}

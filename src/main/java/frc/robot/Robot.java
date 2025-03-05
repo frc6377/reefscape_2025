@@ -17,10 +17,13 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import au.grapplerobotics.CanBridge;
 import com.ctre.phoenix6.SignalLogger;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
+import edu.wpi.first.net.WebServer;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -42,12 +45,19 @@ public class Robot extends LoggedRobot {
   public static final Time period = Seconds.of(Robot.defaultPeriodSecs);
   public static final boolean isCompetition = false;
 
+  public Alliance robotAlliance;
+
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+
+  // private double lastTime = Timer.getFPGATimestamp() * 1000;
 
   public Robot() {
     // For TOF Sensor
     CanBridge.runTCP();
+
+    // For Elastic Layouts
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
     // Record metadata
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
@@ -116,19 +126,22 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    Logger.recordOutput(
-        "Allience Color", DriverStation.getAlliance().equals(Alliance.Red) ? "RED" : "BLUE");
-    Logger.recordOutput("Allience Color", DriverStation.getRawAllianceStation());
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
+
+    // double newTime = Timer.getFPGATimestamp() * 1000;
+    // Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
+    // lastTime = newTime;
+
+    // CommandScheduler.getInstance().printWatchdogEpochs();
   }
 
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
     robotContainer.resetSimulationField();
-    robotContainer.seedIntakeEncoder();
+    robotContainer.seedEncoders();
   }
 
   /** This function is called periodically when disabled. */
@@ -142,13 +155,17 @@ public class Robot extends LoggedRobot {
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
+      if (Robot.isSimulation()) robotContainer.givePreLoad();
       autonomousCommand.schedule();
+      robotContainer.startAuto();
     }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    Logger.recordOutput("Odometry/Current Auto Path", PathPlannerAuto.currentPathName);
+  }
 
   /** This function is called once when teleop is enabled. */
   @Override
@@ -187,7 +204,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    SimulatedArena.getInstance().resetFieldForAuto();
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override

@@ -1,0 +1,87 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.105067491843541,
+        "y": 2.99519364530496
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.867686493268369,
+        "y": 2.7408495601082468
+      },
+      "isLocked": false,
+      "linkedName": "Reef EF (L1)"
+    },
+    {
+      "anchor": {
+        "x": 4.77623138829533,
+        "y": 2.5638393555290055
+      },
+      "prevControl": {
+        "x": 4.992837617262143,
+        "y": 2.6886662018913836
+      },
+      "nextControl": {
+        "x": 4.117192596447046,
+        "y": 2.1840454114245773
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.225398490344323,
+        "y": 0.9680916092635675
+      },
+      "prevControl": {
+        "x": 2.660029814632682,
+        "y": 1.8265567090381485
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Right Coral Station Mid"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0167784202755936,
+      "rotationDegrees": 119.99999999999999
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 2979.381,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -126.0
+  },
+  "reversed": false,
+  "folder": "Score - Source",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 119.99999999999999
+  },
+  "useDefaultConstraints": true
+}

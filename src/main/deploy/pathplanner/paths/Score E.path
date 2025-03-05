@@ -3,73 +3,91 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.255966963421563,
-        "y": 0.9550863896519501
+        "x": 1.225398490344323,
+        "y": 0.9680916092635675
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.18028178217405,
-        "y": 1.2237246546250773
+        "x": 2.125960567637816,
+        "y": 1.3563198734804132
       },
       "isLocked": false,
       "linkedName": "Right Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 4.6337958160662245,
-        "y": 2.1959122195211798
+        "x": 4.161459835683334,
+        "y": 2.312468147620464
       },
       "prevControl": {
-        "x": 4.359189746674481,
-        "y": 1.9289075712072135
+        "x": 3.8211309094658765,
+        "y": 2.1074115780064644
       },
       "nextControl": {
-        "x": 4.899074630938606,
-        "y": 2.4538478027624286
+        "x": 4.440453772143362,
+        "y": 2.480568873554776
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.0002408479438145,
-        "y": 2.79938315454638
+        "x": 4.9868852459016395,
+        "y": 3.0120389344262293
       },
       "prevControl": {
-        "x": 4.842745690623821,
-        "y": 2.605230442948652
+        "x": 4.108869443678869,
+        "y": 2.4933684354229495
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Reef E"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.9209368848425199,
-      "rotationDegrees": 119.99999999999999
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    },
+    {
+      "name": "ElvL4",
+      "waypointRelativePos": 0.75,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ElvL4"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 2979.381,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -150.0
   },
   "reversed": false,
   "folder": "Source - Score",
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": 54.0
+    "rotation": -126.0
   },
   "useDefaultConstraints": true
 }
