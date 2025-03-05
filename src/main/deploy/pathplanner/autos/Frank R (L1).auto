@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Zero Elv"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "StartR - E (no Elv)"
+            "pathName": "StartR - EF (L1)"
           }
         },
         {

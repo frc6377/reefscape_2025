@@ -5,21 +5,33 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Zero Elv"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "StartR - E (no Elv)"
+            "pathName": "StartR - E"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L1 Score"
+            "name": "ElvL4 DeadLine"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "E - Source (L1)"
+            "pathName": "E - Source"
           }
         },
         {
@@ -31,13 +43,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score D L1"
+            "pathName": "Score D"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L1 Score"
+            "name": "Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL0"
           }
         }
       ]
