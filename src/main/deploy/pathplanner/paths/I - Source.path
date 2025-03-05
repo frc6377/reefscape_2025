@@ -8,27 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.795097078558154,
-        "y": 5.386758836014945
+        "x": 5.087087029925847,
+        "y": 6.226254220736228
       },
       "isLocked": false,
       "linkedName": "Reef I"
-    },
-    {
-      "anchor": {
-        "x": 3.513529932613403,
-        "y": 6.178447970091244
-      },
-      "prevControl": {
-        "x": 4.2460971334022695,
-        "y": 5.848934307756391
-      },
-      "nextControl": {
-        "x": 2.795889639531401,
-        "y": 6.501247408774633
-      },
-      "isLocked": false,
-      "linkedName": null
     },
     {
       "anchor": {
@@ -36,8 +20,8 @@
         "y": 7.074343420759858
       },
       "prevControl": {
-        "x": 1.5073730164445391,
-        "y": 6.91087108356334
+        "x": 1.6083239539194916,
+        "y": 6.762539724576271
       },
       "nextControl": null,
       "isLocked": false,
@@ -50,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "ElvL0",
-      "waypointRelativePos": 0.5167155774111674,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

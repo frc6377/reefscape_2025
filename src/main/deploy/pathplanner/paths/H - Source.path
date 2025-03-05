@@ -8,27 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.113464397110055,
-        "y": 4.585465347373776
+        "x": 6.971130577992585,
+        "y": 5.692486261917372
       },
       "isLocked": false,
       "linkedName": "Reef H"
-    },
-    {
-      "anchor": {
-        "x": 6.183877107182778,
-        "y": 4.915589944277951
-      },
-      "prevControl": {
-        "x": 6.210538540715174,
-        "y": 4.667015673763085
-      },
-      "nextControl": {
-        "x": 6.112209330935526,
-        "y": 5.583774765564352
-      },
-      "isLocked": false,
-      "linkedName": null
     },
     {
       "anchor": {
@@ -36,8 +20,8 @@
         "y": 7.074343420759858
       },
       "prevControl": {
-        "x": 2.460521287291485,
-        "y": 6.3866285264971605
+        "x": 2.9982992915783893,
+        "y": 5.905799788135593
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
+      "name": "ElvL0",
       "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "Intake"
+          "name": "ElvL0"
         }
       }
     }

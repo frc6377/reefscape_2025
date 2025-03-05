@@ -8,27 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.995179772652092,
-        "y": 5.600150362024573
+        "x": 5.100885113215042,
+        "y": 6.098053081965043
       },
       "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 3.5476018011111567,
-        "y": 6.174129608431883
-      },
-      "prevControl": {
-        "x": 4.466459916973576,
-        "y": 6.024854542586277
-      },
-      "nextControl": {
-        "x": 2.9680218900831594,
-        "y": 6.268286505876591
-      },
-      "isLocked": false,
-      "linkedName": null
+      "linkedName": "Reef IJ (L1)"
     },
     {
       "anchor": {

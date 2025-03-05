@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.9787245895254695,
-        "y": 6.151338996202089
+        "x": 4.986578886387711,
+        "y": 5.830902823755296
       },
       "isLocked": false,
       "linkedName": "Reef J"
@@ -20,8 +20,8 @@
         "y": 7.074343420759858
       },
       "prevControl": {
-        "x": 2.7339291427656,
-        "y": 6.242990875650495
+        "x": 2.7702466344352947,
+        "y": 6.41956401058494
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.34322453997461944,
+      "maxWaypointRelativePos": 0.19400380710659892,
       "constraints": {
         "maxVelocity": 1.0,
         "maxAcceleration": 2.5,

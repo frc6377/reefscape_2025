@@ -8,27 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0831833934244672,
-        "y": 1.3626126393319131
+        "x": 2.027829178385478,
+        "y": 1.351584598238465
       },
       "isLocked": false,
       "linkedName": "Right Coral Station Mid"
-    },
-    {
-      "anchor": {
-        "x": 4.711073945180848,
-        "y": 2.6052442283516406
-      },
-      "prevControl": {
-        "x": 4.019041139831323,
-        "y": 2.2117336600470634
-      },
-      "nextControl": {
-        "x": 4.928396243061116,
-        "y": 2.7288201922120936
-      },
-      "isLocked": false,
-      "linkedName": null
     },
     {
       "anchor": {
@@ -36,8 +20,8 @@
         "y": 3.0111717010357766
       },
       "prevControl": {
-        "x": 5.084564718750118,
-        "y": 2.853385111806134
+        "x": 5.3707949880826265,
+        "y": 2.254245977886653
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,19 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Intake"
-        }
-      }
-    },
-    {
       "name": "ElvL4",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 0.75,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
