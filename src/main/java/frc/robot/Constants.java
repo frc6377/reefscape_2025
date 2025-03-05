@@ -358,19 +358,18 @@ public final class Constants {
           new Pose2d(Meters.of(1.256), Meters.of(0.955), new Rotation2d(Degrees.of(54))),
         };
 
+    // Mech Poses for 3d visualization
     public static final Pose3d kIntakeStartPose =
         new Pose3d(
             Meters.of(0.191591),
             Meters.of(0.091696),
             Meters.of(0.242354),
             new Rotation3d(Degrees.of(0), Degrees.of(-90), Degrees.of(0)));
-
     public static final Pose3d kElvStage1Pose =
         new Pose3d(Meters.of(-0.0635), Meters.of(-0.236449), Meters.of(0.1016), new Rotation3d());
     public static final Pose3d kElvStage2Pose =
         new Pose3d(
             Meters.of(-0.063479), Meters.of(-0.236448), Meters.of(0.22065), new Rotation3d());
-
     public static final Pose3d kClimber1Pose =
         new Pose3d(
             Meters.of(0.16021),
@@ -383,7 +382,6 @@ public final class Constants {
             Meters.of(0.004064),
             Meters.of(0.133263),
             new Rotation3d(Degrees.of(-100), Degrees.of(0), Degrees.of(-90)));
-
     public static final Pose3d kCoralScorerPose =
         new Pose3d(
             Meters.of(0.037449),
@@ -832,5 +830,16 @@ public final class Constants {
           kL4H,
           new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero())),
     };
+  }
+
+  public static class SubsystemEnabled {
+    public static final boolean kDrivebase = false || Robot.isSimulation();
+    public static final boolean kVision = false || Robot.isSimulation();
+    public static final boolean kIntake = false || Robot.isSimulation();
+    public static final boolean kCoralScorer = false || Robot.isSimulation();
+    public static final boolean kElevator = false || Robot.isSimulation();
+    public static final boolean kAlgaeRemover = false || Robot.isSimulation();
+    public static final boolean kClimber = false || Robot.isSimulation();
+    public static final boolean kStreamDecks = false || Robot.isSimulation();
   }
 }
