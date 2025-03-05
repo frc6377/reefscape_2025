@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.646361127344751,
-        "y": 5.295528614039482
+        "x": 4.995179772652092,
+        "y": 5.600150362024573
       },
       "isLocked": false,
-      "linkedName": "Reef IJ L1"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.3419458160152145,
-        "y": 5.622779163959612
+        "x": 3.5476018011111567,
+        "y": 6.174129608431883
       },
       "prevControl": {
-        "x": 4.556925834789053,
-        "y": 5.495171987327574
+        "x": 4.466459916973576,
+        "y": 6.024854542586277
       },
       "nextControl": {
-        "x": 4.066353882422693,
-        "y": 5.786364174087006
+        "x": 2.9680218900831594,
+        "y": 6.268286505876591
       },
       "isLocked": false,
       "linkedName": null
@@ -36,20 +36,15 @@
         "y": 7.074343420759858
       },
       "prevControl": {
-        "x": 2.59898424674378,
-        "y": 6.183513358475481
+        "x": 2.183285165035015,
+        "y": 6.657924560376909
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": -119.99999999999999
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
@@ -69,7 +64,7 @@
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

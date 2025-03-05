@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.61816197364053,
-        "y": 2.81149518934429
+        "x": 4.874615033075008,
+        "y": 2.487799869212139
       },
       "isLocked": false,
       "linkedName": "Reef E"
     },
     {
       "anchor": {
-        "x": 4.4418729673952155,
-        "y": 2.498113193066363
+        "x": 3.54196751249092,
+        "y": 1.8062495359616924
       },
       "prevControl": {
-        "x": 4.967246766573732,
-        "y": 2.813501492216909
+        "x": 3.854757911840961,
+        "y": 1.9790384780907315
       },
       "nextControl": {
-        "x": 4.094599132842393,
-        "y": 2.289640474802986
+        "x": 3.1970456241591663,
+        "y": 1.6157107971582105
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 0.9680916092635675
       },
       "prevControl": {
-        "x": 1.5472661943996755,
-        "y": 1.1164692043177138
+        "x": 1.662562050144825,
+        "y": 1.1660489695360359
       },
       "nextControl": null,
       "isLocked": false,
@@ -69,7 +69,7 @@
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

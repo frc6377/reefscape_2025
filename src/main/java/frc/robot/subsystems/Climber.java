@@ -254,7 +254,8 @@ public class Climber extends SubsystemBase {
         () -> {
           if (position.gt(climberMotorFront.getPosition().getValue())
               && (isFrontServoEngaged || isBackServoEngaged)) {
-            Alert alert = new Alert("Attempted motor output against servo ratchet", AlertType.kError);
+            Alert alert =
+                new Alert("Attempted motor output against servo ratchet", AlertType.kError);
             alert.set(true);
             alert.close();
           } else {
