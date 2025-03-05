@@ -139,7 +139,7 @@ public class Vision extends SubsystemBase {
         }
 
         // Send vision observation
-        if (Robot.isUsingVision) {
+        if (Robot.isUsingVision && VisionConstants.kVisionAutoOnly) {
           consumer.accept(
               observation.pose().toPose2d(),
               observation.timestamp(),
