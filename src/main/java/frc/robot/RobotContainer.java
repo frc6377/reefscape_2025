@@ -18,7 +18,9 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.kClimbingAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
+import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
+import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -111,9 +113,11 @@ public class RobotContainer {
                 new ModuleIOTalonFXReal(TunerConstants.FrontRight),
                 new ModuleIOTalonFXReal(TunerConstants.BackLeft),
                 new ModuleIOTalonFXReal(TunerConstants.BackRight));
-        this.vision = new Vision(drive);
-        // new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-        new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation);
+        this.vision =
+            new Vision(
+                drive,
+                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
         intake = new IntakeSubsystem(sensors, null);
 
         DriverStation.getAlliance();
@@ -143,8 +147,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive,
-                // new VisionIOPhotonVisionSim(
-                //     camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
+                new VisionIOPhotonVisionSim(
+                    camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
                 new VisionIOPhotonVisionSim(
                     camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
         intake = new IntakeSubsystem(sensors, driveSimulation);
