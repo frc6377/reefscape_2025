@@ -141,16 +141,15 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
     Pose3d closestScorePose = null;
     double closestDistance = Double.MAX_VALUE;
     for (Pose2d polePose : SimulationConstants.kBlueStickPoses) {
-      for (String levelKey : SimulationConstants.kCoralHeightMap.keySet()) {
-        Pose2d currentLevel = SimulationConstants.kCoralHeightMap.get(levelKey);
+      for (Pose2d heightPose : SimulationConstants.kCoralHeightList) {
         Pose3d currentPose =
             new Pose3d(
                 polePose.getMeasureX(),
                 polePose.getMeasureY(),
-                currentLevel.getMeasureX(),
+                heightPose.getMeasureX(),
                 new Rotation3d(
                     Degrees.zero(),
-                    currentLevel.getRotation().getMeasure(),
+                    heightPose.getRotation().getMeasure(),
                     polePose.getRotation().getMeasure()));
         double currentDistance =
             robotCoralPose.getTranslation().getDistance(currentPose.getTranslation());
