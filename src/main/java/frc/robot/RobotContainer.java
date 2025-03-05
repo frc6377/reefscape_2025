@@ -282,16 +282,6 @@ public class RobotContainer {
               SignalLogger.stop();
             }));
 
-    // Climber Buttons
-    /*
-        OI.getTrigger(OI.Operator.RTrigger)
-            .and(OI.getButton(OI.Operator.LBumper))
-            .whileTrue(climber.climb());
-        OI.getTrigger(OI.Operator.LTrigger)
-            .and(OI.getButton(OI.Operator.LBumper))
-            .whileTrue(climber.retract());
-        OI.getButton(OI.Operator.Start).onTrue(climber.zero());
-    */
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
     OI.getPOVButton(OI.Driver.DPAD_LEFT).onTrue(elevator.L2());
@@ -390,7 +380,7 @@ public class RobotContainer {
     // OI.getTrigger(OI.Operator.RTrigger)
     //     .whileTrue(algeaRemover.goDownCommand(OI.getAxisSupplier(OI.Operator.RTriggerAxis)));
 
-    // Climber Buttons TODO: Test this
+    // Climber Buttons
     OI.getPOVButton(OI.Operator.DPAD_UP)
         .onTrue(climber.retract())
         .toggleOnTrue(intake.movePivot(kClimbingAngle));
@@ -444,7 +434,7 @@ public class RobotContainer {
     }
 
     // Button to update Setpoints of the elevator based on the Stream Deck nobs
-    // TODO: Fix axis imput
+    // TODO: Fix axis input
     OI.getButton(OI.StreamDeck.streamDeckButtons[1][31])
         .onTrue(
             elevator
