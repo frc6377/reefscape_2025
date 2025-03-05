@@ -171,7 +171,6 @@ public final class Constants {
     public static final Angle kPivotL1Score = Degrees.of(85);
     public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
     public static final Angle kClimbingAngle = Degrees.of(75.5);
-
     public static final Angle kPivotTolerance = Degrees.of(5);
 
     public static final HowdyPID kPivotArmPID = new HowdyPID();
@@ -187,7 +186,6 @@ public final class Constants {
         new HowdyMM(DegreesPerSecond.of(450), DegreesPerSecondPerSecond.of(2250), 80.0);
 
     public static final Current kHoldPower = Amps.of(40);
-
     public static final double kGearing = 60;
     public static final double kSensorToMechanism = 60;
 
@@ -203,7 +201,6 @@ public final class Constants {
     // Simulation
     public static final Distance kLength = Feet.of(1);
     public static final Mass kMass = Pounds.of(8);
-    // TODO: We can estimate MOI after doing SysID
     public static final MomentOfInertia kMOI =
         KilogramSquareMeters.of(
             SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
@@ -288,8 +285,8 @@ public final class Constants {
 
   public final class DrivetrainConstants {
     // PathPlanner config constants
-    public static final Mass ROBOT_MASS = Pounds.of(96.2);
-    public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(49.5459894327);
+    public static final Mass ROBOT_MASS = Pounds.of(106.6);
+    public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(69.8548622056);
     public static final double WHEEL_COF = 1.2;
 
     public static final PathConstraints PATH_CONSTRAINTS =

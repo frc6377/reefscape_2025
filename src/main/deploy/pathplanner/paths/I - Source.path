@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.976709928820134,
-        "y": 5.3333869078114935
+        "x": 4.795097078558154,
+        "y": 5.386758836014945
       },
       "isLocked": false,
       "linkedName": "Reef I"
@@ -20,12 +20,12 @@
         "y": 6.178447970091244
       },
       "prevControl": {
-        "x": 5.0131583520921605,
-        "y": 5.407761602886652
+        "x": 4.2460971334022695,
+        "y": 5.848934307756391
       },
       "nextControl": {
-        "x": 2.8758319025270596,
-        "y": 6.506172606272514
+        "x": 2.795889639531401,
+        "y": 6.501247408774633
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 7.074343420759858
       },
       "prevControl": {
-        "x": 1.5321802085986926,
-        "y": 6.866149437990381
+        "x": 1.5073730164445391,
+        "y": 6.91087108356334
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,21 +45,7 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.856043781725888,
-      "constraints": {
-        "maxVelocity": 1.0,
-        "maxAcceleration": 2.5,
-        "maxAngularVelocity": 300.0,
-        "maxAngularAcceleration": 2979.381,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -78,7 +64,7 @@
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
