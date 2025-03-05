@@ -16,6 +16,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.Constants.IntakeConstants.kClimbingAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
@@ -390,15 +391,11 @@ public class RobotContainer {
     //     .whileTrue(algeaRemover.goDownCommand(OI.getAxisSupplier(OI.Operator.RTriggerAxis)));
 
     // Climber Buttons TODO: Test this
-    OI.getPOVButton(OI.Operator.DPAD_RIGHT).onTrue(climber.engageServo());
-    OI.getPOVButton(OI.Operator.DPAD_LEFT).onTrue(climber.disengageServo());
-    // OI.getTrigger(OI.Operator.Start)
-    //     .and(OI.getPOVButton(OI.Operator.DPAD_DOWN))
-    //     .whileTrue(climber.climb());
-    // OI.getTrigger(OI.Operator.Start)
-    //     .and(OI.getPOVButton(OI.Operator.DPAD_UP))
-    //     .whileTrue(climber.retract());
-    // OI.getButton(OI.Operator.Back).onTrue(climber.zero());
+    OI.getPOVButton(OI.Operator.DPAD_UP)
+        .onTrue(climber.retract())
+        .toggleOnTrue(intake.movePivot(kClimbingAngle));
+    OI.getPOVButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
+    OI.getPOVButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =

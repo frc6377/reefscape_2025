@@ -102,7 +102,7 @@ public final class Constants {
     public static final HowdyPID kClimberPID1 = new HowdyPID();
 
     static {
-      kClimberPID1.setKP(100);
+      kClimberPID1.setKP(200);
       kClimberPID1.setKD(5);
       kClimberPID1.setKV(10);
       kClimberPID1.setKG(1);
@@ -114,7 +114,7 @@ public final class Constants {
     public static final Angle kClimberFrontOffsetAngle = Degrees.of(-333.3);
     public static final Angle kClimberBackOffsetAngle = Degrees.of(148.1);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(-45).plus(kClimberOffsetAngle);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(-50).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
     public static final Angle kClimberSensorTolerance = Degrees.of(4);
@@ -133,13 +133,13 @@ public final class Constants {
     public static final Angle kFrontServoEngageAngle = Degrees.of(45);
     public static final Angle kBackServoEngageAngle = Degrees.of(90);
     public static final Angle kFrontServoDisengageAngle = Degree.of(0);
-    public static final Angle kBackServoDisengageAngle = Degree.of(0);
+    public static final Angle kBackServoDisengageAngle = Degree.of(45);
   }
 
   // Scorer Constants
   public static class CoralScorerConstants {
-    public static final double kIntakeSpeed = -0.35;
-    public static final double kScoreSpeed = -0.5;
+    public static final double kIntakeSpeed = -0.5;
+    public static final double kScoreSpeed = -0.35;
 
     public static final Current kScoreAMPs = Amps.of(-20);
     public static final Current kIntakeAMPs = Amps.of(-20);
@@ -306,7 +306,7 @@ public final class Constants {
     public static final double ANGLE_MAX_ACCELERATION = 20.0;
     public static final double FF_START_DELAY = 2.0; // Secs
     public static final double FF_RAMP_RATE = 0.1; // Volts/Sec
-    public static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
+    public static final double WHEEL_RADIUS_MAX_VELOCITY = 1; // Rad/Sec
     public static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
     // Scoring Poses for PathFinder
