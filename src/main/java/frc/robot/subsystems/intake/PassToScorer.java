@@ -10,7 +10,6 @@ import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants.AlignMode;
-import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.subsystems.CoralScorer;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
@@ -45,7 +44,8 @@ public class PassToScorer extends Command {
     if (elevatorNotL1.getAsBoolean() && intakeSubsystem.atSetpoint(kPivotRetractAngle)) {
       intakeSubsystem.setIntakeMotor(kIntakeHandoffSpeed);
       intakeSubsystem.setConveyerMotor(-kConveyorSpeed);
-      coralScorer.setAlignMode(AlignMode.INWARD_ALIGN);   // FIXME: CHange to outward if it doesn't work
+      coralScorer.setAlignMode(
+          AlignMode.INWARD_ALIGN); // FIXME: CHange to outward if it doesn't work
       coralScorer.scoreCommand().initialize();
     } else {
       intakeSubsystem.goToPivotPosition(kPivotRetractAngle);

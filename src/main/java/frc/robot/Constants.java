@@ -142,6 +142,7 @@ public final class Constants {
   public static class CoralScorerConstants {
     public static final double kIntakeSpeed = -0.5;
     public static final double kScoreSpeed = -0.35;
+    public static final double kAlignSpeed = 0.2;
 
     public static final Current kScoreAMPs = Amps.of(-20);
     public static final Current kIntakeAMPs = Amps.of(-20);
@@ -206,6 +207,7 @@ public final class Constants {
       OUTWARD_ALIGN,
       INWARD_ALIGN
     }
+
     // Simulation
     public static final Distance kLength = Feet.of(1);
     public static final Mass kMass = Pounds.of(8);

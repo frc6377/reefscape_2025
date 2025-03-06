@@ -18,8 +18,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
-import frc.robot.Constants.IntakeConstants.AlignMode;
 import frc.robot.Constants.CoralScorerConstants;
+import frc.robot.Constants.IntakeConstants.AlignMode;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import utilities.TOFSensorSimple;
@@ -116,7 +116,8 @@ public class CoralScorer extends SubsystemBase {
         "CoralScorer/Motor Output", scorerMotor.getMotorVoltage().getValueAsDouble() / 3.0);
     Logger.recordOutput(
         "CoralScorer/Motor Velocity (RPS)", scorerMotor.getVelocity().getValueAsDouble());
-    Logger.recordOutput("CoralScorer/Sensor Distance (Inches)", scorerSensor.getDistance().in(Inches));
+    Logger.recordOutput(
+        "CoralScorer/Sensor Distance (Inches)", scorerSensor.getDistance().in(Inches));
     Logger.recordOutput("CoralScorer/Sensor Bool", scorerSensor.getBeamBroke());
   }
 }

@@ -101,20 +101,20 @@ public class Climber extends SubsystemBase {
     climberMotorFront = new TalonFX(CANIDs.kClimberMotorFront);
     climberMotorBack = new TalonFX(CANIDs.kClimberMotorBack);
     feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.kGearRatio);
-    climberConfigsToClimber =
-        new Slot0Configs()
-            .withKP(ClimberConstants.kClimberP0)
-            .withKI(ClimberConstants.kClimberI0)
-            .withKD(ClimberConstants.kClimberD0)
-            .withKG(ClimberConstants.kClimberkG0)
-            .withKV(ClimberConstants.kClimberkV0);
-    climberConfigsAtClimber =
-        new Slot1Configs()
-            .withKP(ClimberConstants.kClimberP1)
-            .withKI(ClimberConstants.kClimberI1)
-            .withKD(ClimberConstants.kClimberD1)
-            .withKG(ClimberConstants.kClimberkG1)
-            .withKV(ClimberConstants.kClimberkV1);
+    // climberConfigsToClimber =
+    //     new Slot0Configs()
+    //         .withKP(ClimberConstants.kClimberP0)
+    //         .withKI(ClimberConstants.kClimberI0)
+    //         .withKD(ClimberConstants.kClimberD0)
+    //         .withKG(ClimberConstants.kClimberkG0)
+    //         .withKV(ClimberConstants.kClimberkV0);
+    // climberConfigsAtClimber =
+    //     new Slot1Configs()
+    //         .withKP(ClimberConstants.kClimberP1)
+    //         .withKI(ClimberConstants.kClimberI1)
+    //         .withKD(ClimberConstants.kClimberD1)
+    //         .withKG(ClimberConstants.kClimberkG1)
+    //         .withKV(ClimberConstants.kClimberkV1);
     frontClimberServo = new Servo(PWMIDs.kFrontClimberServoID);
     backClimberServo = new Servo(PWMIDs.kBackClimberServoID);
     // Boolean to check if the climber is climbing of if it is just idle
