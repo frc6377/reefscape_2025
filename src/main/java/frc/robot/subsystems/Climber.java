@@ -15,8 +15,6 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -62,8 +60,6 @@ public class Climber extends SubsystemBase {
   private TalonFXConfiguration frontConfigs;
   private TalonFXConfiguration backConfigs;
   private Angle climberTargetAngle;
-  private Slot0Configs climberConfigsToClimber;
-  private Slot1Configs climberConfigsAtClimber;
   private Servo frontClimberServo;
   private Servo backClimberServo;
 
@@ -101,20 +97,6 @@ public class Climber extends SubsystemBase {
     climberMotorFront = new TalonFX(CANIDs.kClimberMotorFront);
     climberMotorBack = new TalonFX(CANIDs.kClimberMotorBack);
     feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.kGearRatio);
-    // climberConfigsToClimber =
-    //     new Slot0Configs()
-    //         .withKP(ClimberConstants.kClimberP0)
-    //         .withKI(ClimberConstants.kClimberI0)
-    //         .withKD(ClimberConstants.kClimberD0)
-    //         .withKG(ClimberConstants.kClimberkG0)
-    //         .withKV(ClimberConstants.kClimberkV0);
-    // climberConfigsAtClimber =
-    //     new Slot1Configs()
-    //         .withKP(ClimberConstants.kClimberP1)
-    //         .withKI(ClimberConstants.kClimberI1)
-    //         .withKD(ClimberConstants.kClimberD1)
-    //         .withKG(ClimberConstants.kClimberkG1)
-    //         .withKV(ClimberConstants.kClimberkV1);
     frontClimberServo = new Servo(PWMIDs.kFrontClimberServoID);
     backClimberServo = new Servo(PWMIDs.kBackClimberServoID);
     // Boolean to check if the climber is climbing of if it is just idle
