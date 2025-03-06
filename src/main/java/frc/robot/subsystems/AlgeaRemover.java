@@ -58,8 +58,9 @@ public class AlgeaRemover extends SubsystemBase {
 
   public AlgeaRemover() {
     algeaMotor = new SparkMax(Constants.CANIDs.kAlgeaMotor, MotorType.kBrushless);
-    algaeMotorConfig.smartCurrentLimit(60);
+    algaeMotorConfig.smartCurrentLimit(20);
     algaeMotorConfig.apply(algeaCfg);
+    algaeMotorConfig.inverted(true);
     algeaMotor.configure(
         algaeMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     algeaEncoder =
@@ -129,8 +130,15 @@ public class AlgeaRemover extends SubsystemBase {
         () -> algeaMotor.set(0));
   }
 
+  public Command ToggleAlgaeRemoverCommand() {
+    return changeAngle(AlgeaRemoverConstants.algeaRemove)
+        .andThen(changeAngle(AlgeaRemoverConstants.algeaStowed));
+  }
+
   public void seedEncoder() {
-    algeaMotor.getEncoder().setPosition(algeaEncoder.get());
+    algeaMotor
+        .getEncoder()
+        .setPosition(algeaEncoder.get() * AlgeaRemoverConstants.kAlegeaGearRatio);
   }
 
   public Command zeroAlgeaEncoder() {
@@ -193,7 +201,7 @@ public class AlgeaRemover extends SubsystemBase {
     Logger.recordOutput("Algea Remover/Motor/Applied Out", algeaMotor.getAppliedOutput());
     Logger.recordOutput(
         "Algea Remover/Motor/Velocity (RPM)", algeaMotor.getEncoder().getVelocity());
-    Logger.recordOutput("Algea Remover/Moter/Current (Amps)", algeaMotor.getOutputCurrent());
+    Logger.recordOutput("Algea Remover/Motor/Current (Amps)", algeaMotor.getOutputCurrent());
   }
 
   @Override

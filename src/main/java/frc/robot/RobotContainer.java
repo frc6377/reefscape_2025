@@ -375,10 +375,9 @@ public class RobotContainer {
     OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
 
     // Algae Remover
-    // OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
-    // OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
-    // OI.getButton(OI.Operator.A).whileTrue(algeaRemover.removeAlgea());
-    // OI.getButton(OI.Operator.B).whileTrue(algeaRemover.stowAlgeaArm());
+    OI.getButton(OI.Operator.A).toggleOnTrue(algeaRemover.ToggleAlgaeRemoverCommand());
+    OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goUp());
+    OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goDown());
     // OI.getTrigger(OI.Operator.LTrigger)
     //     .whileTrue(algeaRemover.goUpCommand(OI.getAxisSupplier(OI.Operator.LTriggerAxis)));
     // OI.getTrigger(OI.Operator.RTrigger)
