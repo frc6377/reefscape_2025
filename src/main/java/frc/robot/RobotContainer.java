@@ -53,6 +53,7 @@ import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.jspecify.annotations.Nullable;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -70,18 +71,18 @@ public class RobotContainer {
   private EventLoop testEventLoop = new EventLoop();
 
   // Subsystems
-  private final Drive drive;
+  private final @Nullable Drive drive;
   private final Vision vision;
   private final MapleSimArenaSubsystem mapleSimArenaSubsystem;
 
-  private final IntakeSubsystem intake;
+  private final @Nullable IntakeSubsystem intake;
   private final Sensors sensors;
 
-  private final Elevator elevator;
-  private final CoralScorer coralScorer;
+  private final @Nullable Elevator elevator;
+  private final @Nullable CoralScorer coralScorer;
 
-  private final AlgeaRemover algeaRemover;
-  private final Climber climber;
+  private final @Nullable AlgeaRemover algeaRemover;
+  private final @Nullable Climber climber;
 
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;

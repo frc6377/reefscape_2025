@@ -4,6 +4,7 @@ plugins {
     id 'com.diffplug.spotless' version '6.25.0'
     id "com.peterabeles.gversion" version "1.10"
     id "maven-publish"
+    id "net.ltgt.errorprone" version "4.1.0"
 }
 
 java {
@@ -138,10 +139,15 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+
     def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
     annotationProcessor "org.littletonrobotics.akit:akit-autolog:$akitJson.version"
     testImplementation 'org.mockito:mockito-core:5.8.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.1'
+
+    errorprone "com.uber.nullaway:nullaway:0.12.4"
+    compileOnly "org.jspecify:jspecify:1.0.0"
+    errorprone "com.google.errorprone:error_prone_core:2.36.0"
 }
 
 test {
@@ -232,6 +238,33 @@ test {
 }
 compileJava.dependsOn("unpackSaddlebags")
 compileJava.finalizedBy("spotlessApply")
+
+import net.ltgt.gradle.errorprone.CheckSeverity
+
+tasks.withType(JavaCompile) {
+    options.errorprone.disableAllChecks = true
+    // remove the if condition if you want to run NullAway on test code
+    if (!name.toLowerCase().contains("test")) {
+        options.errorprone {
+            check("NullAway", CheckSeverity.ERROR)
+            option("NullAway:AnnotatedPackages", "frc.robot")
+            option("NullAway:KnownInitializers", "frc.robot.Robot.autonomousInit")
+            option("NullAway:ExcludedClasses",
+                    "frc.robot.subsystems.Elevator," +
+                    "frc.robot.subsystems.Climber," +
+                    "frc.robot.subsystems.CoralScorer," +
+                    "frc.robot.subsystems.AlgeaRemover," +
+                    "frc.robot.Sensors," +
+                    "frc.robot.subsystems.intake.IntakeSubsystem," +
+                    "frc.robot.subsystems.drive.Drive," +
+                    "frc.robot.subsystems.drive.PhoenixOdometryThread," +
+                    "frc.robot.subsystems.vision.VisionIOPhotonVisionSim," +
+                    "frc.robot.subsystems.MapleSimArenaSubsystem," +
+                    "frc.robot.util.LocalADStarAK"
+                    )
+        }
+    }
+}
 
 sourceSets {
     main {
