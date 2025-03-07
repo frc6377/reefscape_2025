@@ -87,7 +87,7 @@ public class TunerConstants {
 
   private static final double kDriveGearRatio = 6.122448979591837;
   private static final double kSteerGearRatio = 21.428571428571427;
-  private static final Distance kWheelRadius = Inches.of(1.927);
+  private static final Distance kWheelRadius = Inches.of(1.964);
 
   private static final boolean kInvertLeftSide = false;
   private static final boolean kInvertRightSide = true;
@@ -171,7 +171,7 @@ public class TunerConstants {
   private static final int kBackRightSteerMotorId = 8;
   private static final int kBackRightEncoderId = 4;
   private static final Angle kBackRightEncoderOffset = Rotations.of(-0.473876953125);
-  private static final boolean kBackRightSteerMotorInverted = true;
+  private static final boolean kBackRightSteerMotorInverted = false;
   private static final boolean kBackRightEncoderInverted = false;
 
   private static final Distance kBackRightXPos = Inches.of(-11);

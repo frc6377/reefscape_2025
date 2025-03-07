@@ -57,8 +57,8 @@ public final class Constants {
   public static class CANIDs {
     // Rev Can Bus
     // 1-8 Motor ID is reserved by the drivebase
-    public static final int kClimberMotorFront = 16; // FIXME
-    public static final int kClimberMotorBack = 17; // FIXME
+    public static final int kClimberMotorFront = 17; // FIXME
+    public static final int kClimberMotorBack = 16; // FIXME
     public static final int kScorerMotor = 15;
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
@@ -66,18 +66,21 @@ public final class Constants {
     public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
     public static final int kAlgeaMotor = 18;
-    public static final int kFrontClimberServoID = 100;
-    public static final int kBackClimberServoID = 100;
   }
 
   public static class DIOConstants {
     public static final int elvLimitID = 0;
     public static final int kthroughBoreEncoderID = 1;
     public static final int kAlgeaEncoderID = 2;
-    public static final int kClimberFrontEncoderID = 5;
-    public static final int kClimberBackEncoderID = 6;
+    public static final int kClimberFrontEncoderID = 3;
+    public static final int kClimberBackEncoderID = 4;
     public static final int gear11ID = 13;
     public static final int gear3ID = 14;
+  }
+
+  public static class PWMIDs {
+    public static final int kFrontClimberServoID = 1;
+    public static final int kBackClimberServoID = 0;
   }
 
   public static class SensorIDs {
@@ -99,19 +102,23 @@ public final class Constants {
     public static final HowdyPID kClimberPID1 = new HowdyPID();
 
     static {
-      kClimberPID1.setKP(100);
+      kClimberPID1.setKP(200);
       kClimberPID1.setKD(5);
       kClimberPID1.setKV(10);
       kClimberPID1.setKG(1);
     }
 
+    public static final Current kClimberIdleCurrentLimit = Amps.of(20);
+    public static final Current kClimberClimbingCurrentLimit = Amps.of(70);
     public static final double kGearRatio = 126;
+    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-333.3);
+    public static final Angle kClimberBackOffsetAngle = Degrees.of(148.1);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(225).plus(kClimberOffsetAngle);
-    public static final Angle kClimberAtCageSetpoint = Degrees.of(190).plus(kClimberOffsetAngle);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(-50).plus(kClimberOffsetAngle);
+    public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
-    public static final Angle kClimberSensorTolerance = Degrees.of(2.5);
-    public static final Angle kClimberEmergencyUndoAngle =
+    public static final Angle kClimberSensorTolerance = Degrees.of(4);
+    public static final Angle kClimberServoDisengageAngle =
         Degrees.of(-45).plus(kClimberOffsetAngle);
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
@@ -123,16 +130,16 @@ public final class Constants {
     public static final Angle kClimberArmMinAngle = Degrees.of(-30).plus(kClimberOffsetAngle);
     public static final Angle kClimberArmMaxAngle = Degrees.of(250).plus(kClimberOffsetAngle);
 
-    public static final Angle kFrontServoEngageAngle = Degrees.of(200);
-    public static final Angle kBackServoEngageAngle = Degrees.of(-200);
-    public static final Angle kFrontServoDisengageAngle = Degree.of(90);
-    public static final Angle kBackServoDisengageAngle = Degree.of(-90);
+    public static final Angle kFrontServoEngageAngle = Degrees.of(45);
+    public static final Angle kBackServoEngageAngle = Degrees.of(45);
+    public static final Angle kFrontServoDisengageAngle = Degree.of(0);
+    public static final Angle kBackServoDisengageAngle = Degree.of(90);
   }
 
   // Scorer Constants
   public static class CoralScorerConstants {
-    public static final double kIntakeSpeed = -0.35;
-    public static final double kScoreSpeed = -0.5;
+    public static final double kIntakeSpeed = -0.5;
+    public static final double kScoreSpeed = -0.35;
 
     public static final Current kScoreAMPs = Amps.of(-20);
     public static final Current kIntakeAMPs = Amps.of(-20);
@@ -156,12 +163,12 @@ public final class Constants {
     public static final double kHoldSpeed = kIntakeSpeed / 5;
 
     // Pivot Arm Setpoints
-    public static final Angle armZero = Degrees.of(83.05 - 7);
+    public static final Angle armZero = Degrees.of(76.05);
     public static final Angle kPivotRetractAngle = Degrees.of(128);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
     public static final Angle kPivotCoralStationAngle = Degrees.of(105);
-    public static final Angle kPivotL1Score = Degrees.of(80);
+    public static final Angle kPivotL1Score = Degrees.of(85);
     public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
     public static final Angle kClimbingAngle = Degrees.of(75.5);
 
@@ -225,7 +232,7 @@ public final class Constants {
     }
 
     public static final HowdyMM kElevatorMM =
-        new HowdyMM(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(250));
+        new HowdyMM(RotationsPerSecond.of(200), RotationsPerSecondPerSecond.of(250));
 
     public static final Distance kSetpointTolerance = Inches.of(1.25);
 
@@ -256,7 +263,7 @@ public final class Constants {
     // Simulation Constants
     public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60(2);
     public static final double elevatorOutput = .10;
-    public static final double kElevatorGearing = 1.0;
+    public static final double kElevatorGearing = 3;
     public static final Mass kCarriageMass = Pounds.of(4.75);
     public static final Distance kMinElevatorHeight = Inches.zero();
     public static final Distance kMaxElevatorHeight = Inches.of(72);
@@ -299,7 +306,7 @@ public final class Constants {
     public static final double ANGLE_MAX_ACCELERATION = 20.0;
     public static final double FF_START_DELAY = 2.0; // Secs
     public static final double FF_RAMP_RATE = 0.1; // Volts/Sec
-    public static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
+    public static final double WHEEL_RADIUS_MAX_VELOCITY = 1; // Rad/Sec
     public static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
     // Scoring Poses for PathFinder

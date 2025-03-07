@@ -7,37 +7,49 @@
         {
           "type": "named",
           "data": {
-            "name": "Zero Elv"
+            "name": "Set L1 Mode"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Start M - H"
+            "pathName": "StartR - EF (L1)"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4"
+            "name": "L1 Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "EF - Source (L1)"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score CD L1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL0"
+            "name": "L1 Score"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "The Franks",
+  "folder": "The Chads",
   "choreoAuto": false
 }

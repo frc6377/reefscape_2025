@@ -8,53 +8,41 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9258873868804458,
-        "y": 1.6319231944274823
+        "x": 2.483613788221268,
+        "y": 2.5801201360876465
       },
       "isLocked": false,
       "linkedName": "Right Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 4.00389344262295,
-        "y": 2.9281249999999988
+        "x": 3.9079918032786884,
+        "y": 2.940112704918032
       },
       "prevControl": {
-        "x": 3.6429887031270356,
-        "y": 2.639174853804054
+        "x": 3.030368624912634,
+        "y": 2.1203400633566525
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef D"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "ElvL4",
-      "waypointRelativePos": 0.75,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ElvL4"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 150.0
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": "Source - Score",

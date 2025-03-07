@@ -210,7 +210,12 @@ public class Elevator extends SubsystemBase {
     return Meters.of(elevatorMech.getLength());
   }
 
-  public Trigger elevatorAtSetpoint() {
+  public Trigger elevatorAtSetpoint(Distance setpoint) {
+    return new Trigger(() -> getElevatorHeight().isNear(setpoint, kSetpointTolerance))
+        .debounce(0.5);
+  }
+
+  public Trigger elevatorAtCurrentSetpoint() {
     return new Trigger(() -> getElevatorHeight().isNear(currentSetpoint, kSetpointTolerance))
         .debounce(0.5);
   }
@@ -337,6 +342,9 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput(
         "Elevator/Motor1/Position (Degrees)", elevatorMotor1.getPosition().getValue().in(Degrees));
     Logger.recordOutput(
+        "Elevator/Motor1/Stator Current (Amps)",
+        elevatorMotor1.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput(
         "Elevator/Motor1/Temp (Fahrenheit)",
         elevatorMotor1.getDeviceTemp().getValue().in(Fahrenheit));
 
@@ -347,6 +355,15 @@ public class Elevator extends SubsystemBase {
         "Elevator/Motor2/Velocity", elevatorMotor2.getVelocity().getValue().in(DegreesPerSecond));
     Logger.recordOutput(
         "Elevator/Motor2/Position (Degrees)", elevatorMotor2.getPosition().getValue().in(Degrees));
+    Logger.recordOutput(
+        "Elevator/Motor1/Stator Current (Amps)",
+        elevatorMotor2.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput(
+        "Elevator/Motor1/Supply Current (Amps)",
+        elevatorMotor2.getSupplyCurrent().getValueAsDouble());
+    Logger.recordOutput(
+        "Elevator/Motor1/Stall Current (Amps)",
+        elevatorMotor2.getMotorStallCurrent().getValueAsDouble());
     Logger.recordOutput(
         "Elevator/Motor2/Temp (Fahrenheit)",
         elevatorMotor2.getDeviceTemp().getValue().in(Fahrenheit));

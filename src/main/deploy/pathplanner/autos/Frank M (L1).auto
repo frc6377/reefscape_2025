@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Set L1 Mode"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Start M - GH"
+            "pathName": "Start M - GH (L1)"
           }
         },
         {

@@ -13,7 +13,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start M - H"
+            "pathName": "StartL - I"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL4 DeadLine"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "I - Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score K"
           }
         },
         {
@@ -38,6 +68,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "The Franks",
+  "folder": "The Chads",
   "choreoAuto": false
 }

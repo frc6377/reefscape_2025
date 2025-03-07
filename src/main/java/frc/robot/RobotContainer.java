@@ -16,6 +16,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.Constants.IntakeConstants.kClimbingAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
@@ -35,8 +36,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FeildConstants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
@@ -191,13 +192,13 @@ public class RobotContainer {
             intakeFloorAutoCommand(),
             Commands.waitUntil(coralHandoffCompleteTrigger)));
     NamedCommands.registerCommand("Score", scorerAutoCommand());
+    NamedCommands.registerCommand("Set L1 Mode", Commands.runOnce(() -> elevatorNotL1 = false));
     NamedCommands.registerCommand(
         "L1 Score",
         new SequentialCommandGroup(
             Commands.runOnce(() -> elevatorNotL1 = false),
             Commands.waitUntil(intake.intakeHasCoralTrigger()),
-            scoreL1.asProxy().until(isDoneScoring.debounce(3)),
-            Commands.runOnce(() -> elevatorNotL1 = true)));
+            scoreL1.asProxy().until(isDoneScoring.debounce(3))));
     NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
 
     // Set up auto routines
@@ -241,8 +242,11 @@ public class RobotContainer {
   }
 
   private void configureTestButtonBindsing() {
-    testTrig(OI.getPOVButton(OI.Driver.DPAD_UP))
-        .whileTrue(elevator.setElvPercent(OI.getAxisSupplier(OI.Driver.RightY).get()));
+    // Elevator Test Buttons
+    // testTrig(OI.getPOVButton(OI.Driver.DPAD_UP))
+    //     .whileTrue(elevator.setElvPercent(OI.getAxisSupplier(OI.Driver.RightY).get()));
+
+    // Algae Remover Test Buttons
     // testTrig(OI.getPOVButton(OI.Driver.DPAD_RIGHT)).whileTrue(intake.intakeCommand());
     // testTrig(OI.getPOVButton(OI.Driver.DPAD_LEFT)).whileTrue(intake.outtakeCommand());
     // testTrig(OI.getButton(OI.Driver.RBumper)).whileTrue(intake.conveyorEject());
@@ -250,21 +254,25 @@ public class RobotContainer {
     // testTrig(OI.getButton(OI.Driver.X)).whileTrue(intake.extendPivotCommand());
     // testTrig(OI.getButton(OI.Driver.Y)).whileTrue(intake.retractPivotCommand());
 
+    // Intake Test Buttons
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.A))
+    //     .toggleOnTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
+
+    // Climber Test Buttons
+    testTrig(OI.getPOVButton(OI.Operator.DPAD_RIGHT)).onTrue(climber.servoToZero());
     testTrig(OI.getButton(OI.Driver.LBumper)).onTrue(climber.engageServo());
     testTrig(OI.getButton(OI.Driver.RBumper)).onTrue(climber.disengageServo());
-    testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendToCage());
+    testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(climber.runRaw(Volts.of(3)));
+    testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(climber.runRaw(Volts.of(-3)));
+    // testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendToCage());
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
         .whileTrue(climber.runRaw(Volts.of(3)));
     testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
         .whileTrue(climber.runRaw(Volts.of(-3)));
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.A))
-        .toggleOnTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Z) : OI.getTrigger(OI.Driver.Y))
-        .onTrue(climber.climb());
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.X) : OI.getTrigger(OI.Driver.X))
-        .onTrue(climber.retract());
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Period) : OI.getButton(OI.Driver.Start))
-        .onTrue(climber.toggleJeopardy());
+    testTrig(OI.getButton(OI.Driver.X)).onTrue(climber.climberToZero());
+    testTrig(OI.getButton(OI.Driver.A)).onTrue(climber.retract());
+    testTrig(OI.getButton(OI.Driver.Y)).onTrue(climber.extendToCage());
+    testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendFully());
   }
 
   private void configureButtonBindings() {
@@ -312,6 +320,7 @@ public class RobotContainer {
         .and(() -> elevatorNotL1)
         .and(coralOuttakeButton.negate())
         .and(() -> !CommandScheduler.getInstance().isScheduled(locateCoral))
+        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height))
         .onTrue(
             Robot.isReal()
                 ? intake
@@ -371,14 +380,12 @@ public class RobotContainer {
     // OI.getTrigger(OI.Operator.RTrigger)
     //     .whileTrue(algeaRemover.goDownCommand(OI.getAxisSupplier(OI.Operator.RTriggerAxis)));
 
-    // Climber Buttons TODO: Test this
-    // OI.getTrigger(OI.Operator.Start)
-    //     .and(OI.getPOVButton(OI.Operator.DPAD_DOWN))
-    //     .whileTrue(climber.climb());
-    // OI.getTrigger(OI.Operator.Start)
-    //     .and(OI.getPOVButton(OI.Operator.DPAD_UP))
-    //     .whileTrue(climber.retract());
-    // OI.getButton(OI.Operator.Back).onTrue(climber.zero());
+    // Climber Buttons
+    OI.getPOVButton(OI.Operator.DPAD_UP)
+        .onTrue(climber.retract())
+        .toggleOnTrue(intake.movePivot(kClimbingAngle));
+    OI.getPOVButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
+    OI.getPOVButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
@@ -427,7 +434,7 @@ public class RobotContainer {
     }
 
     // Button to update Setpoints of the elevator based on the Stream Deck nobs
-    // TODO: Fix axis imput
+    // TODO: Fix axis input
     OI.getButton(OI.StreamDeck.streamDeckButtons[1][31])
         .onTrue(
             elevator
@@ -491,7 +498,7 @@ public class RobotContainer {
   }
 
   public Command waitForElevator() {
-    return Commands.waitUntil(elevator.elevatorAtSetpoint());
+    return Commands.waitUntil(elevator.elevatorAtCurrentSetpoint());
   }
 
   public Command intakeAutoCommand() {

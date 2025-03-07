@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.148308221462903,
-        "y": 4.983075317909357
+        "x": 5.2065,
+        "y": 5.0097499999999995
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.929947963073295,
-        "y": 5.316607894590782
+        "x": 4.976709928820134,
+        "y": 5.3333869078114935
       },
       "isLocked": false,
       "linkedName": "Reef I"
@@ -20,12 +20,12 @@
         "y": 6.178447970091244
       },
       "prevControl": {
-        "x": 4.40123953178129,
-        "y": 5.82608855904585
+        "x": 5.0131583520921605,
+        "y": 5.407761602886652
       },
       "nextControl": {
-        "x": 3.092276224320434,
-        "y": 6.345656603065288
+        "x": 2.8758319025270596,
+        "y": 6.506172606272514
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 7.074343420759858
       },
       "prevControl": {
-        "x": 1.502672607821221,
-        "y": 6.919670371256738
+        "x": 1.5321802085986926,
+        "y": 6.866149437990381
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,7 +49,7 @@
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.3258050444162437,
+      "maxWaypointRelativePos": 0.856043781725888,
       "constraints": {
         "maxVelocity": 1.0,
         "maxAcceleration": 2.5,
@@ -64,7 +64,7 @@
   "eventMarkers": [
     {
       "name": "ElvL0",
-      "waypointRelativePos": 0.1,
+      "waypointRelativePos": 0.5167155774111674,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
