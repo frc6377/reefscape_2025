@@ -345,12 +345,6 @@ public class Elevator extends SubsystemBase {
         "Elevator/Motor1/Stator Current (Amps)",
         elevatorMotor1.getStatorCurrent().getValueAsDouble());
     Logger.recordOutput(
-        "Elevator/Motor1/Supply Current (Amps)",
-        elevatorMotor1.getSupplyCurrent().getValueAsDouble());
-    Logger.recordOutput(
-        "Elevator/Motor1/Stall Current (Amps)",
-        elevatorMotor1.getMotorStallCurrent().getValueAsDouble());
-    Logger.recordOutput(
         "Elevator/Motor1/Temp (Fahrenheit)",
         elevatorMotor1.getDeviceTemp().getValue().in(Fahrenheit));
 

@@ -332,7 +332,7 @@ public class Climber extends SubsystemBase {
         () -> {
           setServoAngle(frontClimberServo, ClimberConstants.kFrontServoEngageAngle.in(Degrees));
           // Change to back servo angle if needed
-          setServoAngle(backClimberServo, ClimberConstants.kBackServoDisengageAngle.in(Degrees));
+          setServoAngle(backClimberServo, ClimberConstants.kBackServoEngageAngle.in(Degrees));
           isFrontServoEngaged = true;
           isBackServoEngaged = true;
           setCurrentLimit(ClimberConstants.kClimberClimbingCurrentLimit);
@@ -346,7 +346,7 @@ public class Climber extends SubsystemBase {
         () -> {
           setServoAngle(frontClimberServo, ClimberConstants.kFrontServoDisengageAngle.in(Degrees));
           // Change to back servo angle if needed
-          setServoAngle(backClimberServo, ClimberConstants.kBackServoEngageAngle.in(Degrees));
+          setServoAngle(backClimberServo, ClimberConstants.kBackServoDisengageAngle.in(Degrees));
           isFrontServoEngaged = false;
           isBackServoEngaged = false;
           setCurrentLimit(ClimberConstants.kClimberIdleCurrentLimit);
