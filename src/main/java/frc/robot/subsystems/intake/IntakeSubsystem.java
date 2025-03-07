@@ -53,6 +53,7 @@ import frc.robot.Robot;
 import frc.robot.Sensors;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.jspecify.annotations.Nullable;
 import org.littletonrobotics.junction.Logger;
 
 @SuppressWarnings("unused")
@@ -108,7 +109,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private SingleJointedArmSim pivotSim;
   private IntakeSimulation intakeSim;
 
-  public IntakeSubsystem(Sensors sensors, SwerveDriveSimulation driveSim) {
+  public IntakeSubsystem(Sensors sensors, @Nullable SwerveDriveSimulation driveSim) {
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
     conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);

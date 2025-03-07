@@ -841,5 +841,6 @@ public final class Constants {
     public static final boolean kAlgaeRemover = false || Robot.isSimulation();
     public static final boolean kClimber = false || Robot.isSimulation();
     public static final boolean kStreamDecks = false || Robot.isSimulation();
+    public static final boolean kSensors = false || Robot.isSimulation();
   }
 }
