@@ -122,8 +122,8 @@ public class Elevator extends SubsystemBase {
 
     elvLimitSwitch = new DigitalInput(DIOConstants.elvLimitID);
 
-    gear3 = new DutyCycleEncoder(DIOConstants.gear3ID, 1.0, ElevatorConstants.gear3Offset);
-    gear11 = new DutyCycleEncoder(DIOConstants.gear11ID, 1.0, ElevatorConstants.gear11Offset);
+    gear3 = new DutyCycleEncoder(DIOConstants.kGearID2, 1.0, ElevatorConstants.kGearOffset1);
+    gear11 = new DutyCycleEncoder(DIOConstants.kGearID1, 1.0, ElevatorConstants.kGearOffset2);
 
     m_sysIdElevator =
         new SysIdRoutine(
@@ -252,7 +252,7 @@ public class Elevator extends SubsystemBase {
   public Command elevatorUpOrDown(Supplier<Double> upPower) {
     return runEnd(
         () -> {
-          elevatorMotor1.set(upPower.get() * elevatorOutput);
+          elevatorMotor1.set(upPower.get() * kElvRawOutput);
         },
         () -> elevatorMotor1.set(0));
   }
@@ -410,8 +410,8 @@ public class Elevator extends SubsystemBase {
     simElvMotor1.setRawRotorPosition(heightToRotations(simDist));
     simElvMotor1.setRotorVelocity(heightToRotations(simVel));
     simElvMotor1.setSupplyVoltage(RobotController.getBatteryVoltage());
-    simGear3.set((heightToRotations(simDist).in(Rotations) / gear1Toothing) % 1);
-    simGear11.set((heightToRotations(simDist).in(Rotations) / gear2Toothing) % 1);
+    simGear3.set((heightToRotations(simDist).in(Rotations) / kGearToothing1) % 1);
+    simGear11.set((heightToRotations(simDist).in(Rotations) / kGearToothing2) % 1);
 
     elevatorMech.setLength(simDist.in(Meters));
 

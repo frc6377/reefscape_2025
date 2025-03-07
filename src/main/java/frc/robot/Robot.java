@@ -160,7 +160,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       if (Robot.isSimulation()) robotContainer.givePreLoad();
       autonomousCommand.schedule();
-      robotContainer.startAuto();
+      robotContainer.startSimAuto();
     }
   }
 

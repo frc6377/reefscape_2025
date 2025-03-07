@@ -106,8 +106,8 @@ public class Vision extends SubsystemBase {
 
         boolean rejectPose =
             observation.tagCount() == 0 // Must have at least one tag
-                || (observation.tagCount() == 1
-                    && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
+                || observation.tagCount() < VisionConstants.minTags // Must have enough tags
+                || observation.ambiguity() > maxAmbiguity // Cannot be high ambiguity
                 || Math.abs(observation.pose().getZ()) > maxZError // Must have realistic Z cord
 
                 // Must be within the field boundaries

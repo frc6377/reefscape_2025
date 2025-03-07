@@ -298,8 +298,8 @@ public class Climber extends SubsystemBase {
   }
 
   public Command retract() {
-    return runClimber(ClimberConstants.kClimberServoDisengageAngle, 0)
-        .until(isClimberAtPosition(ClimberConstants.kClimberServoDisengageAngle))
+    return runClimber(ClimberConstants.kClimberDisengageAngle, 0)
+        .until(isClimberAtPosition(ClimberConstants.kClimberDisengageAngle))
         .andThen(disengageServo())
         .andThen(Commands.waitSeconds(1))
         .andThen(

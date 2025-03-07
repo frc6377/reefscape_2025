@@ -52,8 +52,9 @@ public class VisionConstants {
           new Rotation3d(Degrees.of(0), Degrees.of(-23), Degrees.of(-90)));
 
   // Basic filtering thresholds
-  public static double maxAmbiguity = 0.3;
-  public static double maxZError = 0.75;
+  public static int minTags = 2;
+  public static double maxAmbiguity = 0.3; // Lower Better
+  public static double maxZError = 0.75; // / Lower Better
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
