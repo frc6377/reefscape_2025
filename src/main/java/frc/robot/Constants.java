@@ -131,9 +131,9 @@ public final class Constants {
     public static final Angle kClimberArmMaxAngle = Degrees.of(250).plus(kClimberOffsetAngle);
 
     public static final Angle kFrontServoEngageAngle = Degrees.of(45);
-    public static final Angle kBackServoEngageAngle = Degrees.of(90);
+    public static final Angle kBackServoEngageAngle = Degrees.of(45);
     public static final Angle kFrontServoDisengageAngle = Degree.of(0);
-    public static final Angle kBackServoDisengageAngle = Degree.of(45);
+    public static final Angle kBackServoDisengageAngle = Degree.of(90);
   }
 
   // Scorer Constants
