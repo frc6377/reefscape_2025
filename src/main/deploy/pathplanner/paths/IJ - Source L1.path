@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.073208761049796,
-        "y": 5.052530670043824
+        "x": 5.117265206113934,
+        "y": 5.137871412388509
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.100885113215042,
-        "y": 6.098053081965043
+        "x": 5.41381369580711,
+        "y": 5.700766072980275
       },
       "isLocked": false,
       "linkedName": "Reef IJ (L1)"
@@ -31,19 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Intake"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,

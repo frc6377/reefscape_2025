@@ -9,10 +9,10 @@
     "Testing"
   ],
   "autoFolders": [
-    "The Chads",
-    "Test Autos",
-    "The Franks",
-    "The Kings"
+    "🧪 Tests",
+    "🗿 Chads",
+    "🐸 Franks",
+    "👑 Kings"
   ],
   "defaultMaxVel": 4.0,
   "defaultMaxAccel": 3.0,
@@ -39,7 +39,7 @@
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
   "robotFeatures": [
-    "{\"name\":\"Elevator\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.035,\"y\":-0.267},\"size\":{\"width\":0.5,\"length\":0.114},\"borderRadius\":0.0,\"strokeWidth\":0.0125,\"filled\":false}}",
+    "{\"name\":\"Elevator\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.035,\"y\":-0.267},\"size\":{\"width\":0.75,\"length\":0.075},\"borderRadius\":0.0,\"strokeWidth\":0.0125,\"filled\":false}}",
     "{\"name\":\"Intake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.538,\"y\":0.1},\"size\":{\"width\":0.47,\"length\":0.191},\"borderRadius\":0.0,\"strokeWidth\":0.01,\"filled\":false}}"
   ]
 }

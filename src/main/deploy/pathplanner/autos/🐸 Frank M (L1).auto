@@ -7,25 +7,25 @@
         {
           "type": "named",
           "data": {
-            "name": "Intake"
+            "name": "Set L1 Mode"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Start M - GH (L1)"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
+            "name": "L1 Score"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
-  "folder": "Test Autos",
+  "resetOdom": true,
+  "folder": "🐸 Franks",
   "choreoAuto": false
 }

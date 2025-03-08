@@ -7,13 +7,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Zero Elv"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "StartL - I"
+            "name": "Intake"
           }
         },
         {
@@ -27,23 +21,11 @@
           "data": {
             "name": "Score"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "I - Source"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
         }
       ]
     }
   },
-  "resetOdom": true,
-  "folder": "The Franks",
+  "resetOdom": false,
+  "folder": "🧪 Tests",
   "choreoAuto": false
 }

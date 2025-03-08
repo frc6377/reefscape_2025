@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.4898113572435605,
-        "y": 6.785425778959448
+        "x": 6.652987763471165,
+        "y": 6.94981359601947
       },
       "isLocked": false,
       "linkedName": "Start Left"
     },
     {
       "anchor": {
-        "x": 5.2065,
-        "y": 5.0097499999999995
+        "x": 5.239412841877079,
+        "y": 5.072012762727696
       },
       "prevControl": {
-        "x": 6.178504501038475,
-        "y": 6.446412204936971
+        "x": 5.429292051946553,
+        "y": 5.286371560387164
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": "Start - Score",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

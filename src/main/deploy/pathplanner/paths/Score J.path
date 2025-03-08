@@ -8,33 +8,54 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1294972565319634,
-        "y": 6.793948953606921
+        "x": 2.252602850679441,
+        "y": 6.912370894123786
       },
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 4.985904950643874,
-        "y": 5.140147439396003
+        "x": 4.497231788558235,
+        "y": 5.557531845445145
       },
       "prevControl": {
-        "x": 4.825552833686441,
-        "y": 6.04073051840572
+        "x": 3.1048376457711337,
+        "y": 6.586703408478484
+      },
+      "nextControl": {
+        "x": 4.8580688948251725,
+        "y": 5.290823391821641
+      },
+      "isLocked": false,
+      "linkedName": "Transition L"
+    },
+    {
+      "anchor": {
+        "x": 4.956933024016228,
+        "y": 5.235532952442172
+      },
+      "prevControl": {
+        "x": 4.673712428324912,
+        "y": 5.419827786654545
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Reef J"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -29.999999999999996
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "ElvL4",
-      "waypointRelativePos": 0.75,
+      "waypointRelativePos": 1.5,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

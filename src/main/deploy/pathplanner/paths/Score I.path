@@ -8,20 +8,36 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.140345663303037,
-        "y": 6.742097839448576
+        "x": 2.180127307115715,
+        "y": 6.767045557098487
       },
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 5.2065,
-        "y": 5.0097499999999995
+        "x": 4.497231788558235,
+        "y": 5.557531845445145
       },
       "prevControl": {
-        "x": 5.237946073887712,
-        "y": 5.876267048463983
+        "x": 4.023704045254395,
+        "y": 5.836928420136381
+      },
+      "nextControl": {
+        "x": 4.712546076842875,
+        "y": 5.430489501085168
+      },
+      "isLocked": false,
+      "linkedName": "Transition L"
+    },
+    {
+      "anchor": {
+        "x": 5.239412841877079,
+        "y": 5.072012762727696
+      },
+      "prevControl": {
+        "x": 5.057723217815408,
+        "y": 5.243736029958228
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +50,7 @@
   "eventMarkers": [
     {
       "name": "ElvL4",
-      "waypointRelativePos": 0.75,
+      "waypointRelativePos": 1.5,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

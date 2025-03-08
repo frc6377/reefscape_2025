@@ -13,37 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - E"
+            "pathName": "Start M - H"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4 DeadLine"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "E - Source"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score D"
+            "name": "ElvL4"
           }
         },
         {
@@ -62,6 +38,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "The Chads",
+  "folder": "🐸 Franks",
   "choreoAuto": false
 }

@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.6358873444931366,
-        "y": 1.3448028879883547
+        "x": 6.543695810744506,
+        "y": 1.2803870750924957
       },
       "isLocked": false,
       "linkedName": "Start Right"
     },
     {
       "anchor": {
-        "x": 5.314739782827511,
-        "y": 3.0111717010357766
+        "x": 5.302171536275998,
+        "y": 3.014711304231577
       },
       "prevControl": {
-        "x": 5.819720857668457,
-        "y": 2.2392199687784693
+        "x": 5.875548421410098,
+        "y": 2.260686590947174
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,19 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "ElvL4",
-      "waypointRelativePos": 0.75,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ElvL4"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
@@ -60,7 +48,7 @@
   "folder": "Start - Score",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

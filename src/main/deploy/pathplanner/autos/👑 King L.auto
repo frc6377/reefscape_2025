@@ -5,33 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "StartL - I"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "Zero Elv"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "I - Source"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score J"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
+            "pathName": "StartL - J"
           }
         },
         {
@@ -41,15 +23,15 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Score K"
+            "name": "Intake"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Score"
+            "pathName": "Score K"
           }
         },
         {
@@ -59,15 +41,15 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Score L"
+            "name": "Intake"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Score"
+            "pathName": "Score L"
           }
         },
         {
@@ -77,21 +59,15 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Score A"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "Intake"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "The Kings",
+  "folder": "👑 Kings",
   "choreoAuto": false
 }

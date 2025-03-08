@@ -37,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score K L1"
+            "pathName": "Score KL L1"
           }
         },
         {
@@ -50,6 +50,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "The Chads",
+  "folder": "🗿 Chads",
   "choreoAuto": false
 }

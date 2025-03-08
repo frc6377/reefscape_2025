@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1299131120205557,
-        "y": 5.890728684659756
+        "x": 1.7405467733504585,
+        "y": 6.222170875739052
       },
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
@@ -20,8 +20,8 @@
         "y": 5.063376900665393
       },
       "prevControl": {
-        "x": 3.085301412338338,
-        "y": 5.716475833479653
+        "x": 3.2023091623082003,
+        "y": 5.589343388328563
       },
       "nextControl": null,
       "isLocked": false,
