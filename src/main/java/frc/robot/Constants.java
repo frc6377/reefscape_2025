@@ -141,11 +141,11 @@ public final class Constants {
   // Scorer Constants
   public static class CoralScorerConstants {
     public static final double kIntakeSpeed = -0.5;
-    public static final double kScoreSpeed = -0.35;
+    public static final double kScoreSpeed = -0.2;
     public static final double kReverseSpeed = 0.25;
 
     public static final Distance kSensorDistnace = Inches.of(1.5);
-    public static final Distance kAlignSensorDistnace = Inches.of(4);
+    public static final Distance kAlignSensorDistnace = Inches.of(5);
   }
 
   // Intake Constants
@@ -211,9 +211,9 @@ public final class Constants {
   // Elevator Constants
   public static class ElevatorConstants {
     public static final Distance kL0Height = Inches.of(0);
-    public static final Distance kL2Height = Inches.of(16.62);
+    public static final Distance kL2Height = Inches.of(18);
     public static final Distance kL3Height = Inches.of(30.9);
-    public static final Distance kL4Height = Inches.of(55);
+    public static final Distance kL4Height = Inches.of(54);
 
     public static final HowdyPID kElevatorPID = new HowdyPID();
 

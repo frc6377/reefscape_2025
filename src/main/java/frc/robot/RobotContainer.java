@@ -15,8 +15,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.Constants.IntakeConstants.kPivotClimbingAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
@@ -45,7 +43,6 @@ import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgeaRemover;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
@@ -72,7 +69,7 @@ public class RobotContainer {
   private EventLoop testEventLoop = new EventLoop();
 
   // Subsystems
-  private final Climber climber = new Climber();
+  // private final Climber climber = new Climber();
   private final AlgeaRemover algeaRemover = new AlgeaRemover();
   private static final Sensors sensors = new Sensors();
   private final Drive drive;
@@ -263,20 +260,20 @@ public class RobotContainer {
     //     .toggleOnTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
 
     // Climber Test Buttons
-    testTrig(OI.getPOVButton(OI.Operator.DPAD_RIGHT)).onTrue(climber.servoToZero());
-    testTrig(OI.getButton(OI.Driver.LBumper)).onTrue(climber.engageServo());
-    testTrig(OI.getButton(OI.Driver.RBumper)).onTrue(climber.disengageServo());
-    testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(climber.runRaw(Volts.of(3)));
-    testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(climber.runRaw(Volts.of(-3)));
-    // testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendToCage());
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
-        .whileTrue(climber.runRaw(Volts.of(3)));
-    testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
-        .whileTrue(climber.runRaw(Volts.of(-3)));
-    testTrig(OI.getButton(OI.Driver.X)).onTrue(climber.climberToZero());
-    testTrig(OI.getButton(OI.Driver.A)).onTrue(climber.retract());
-    testTrig(OI.getButton(OI.Driver.Y)).onTrue(climber.extendToCage());
-    testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendFully());
+    // testTrig(OI.getPOVButton(OI.Operator.DPAD_RIGHT)).onTrue(climber.servoToZero());
+    // testTrig(OI.getButton(OI.Driver.LBumper)).onTrue(climber.engageServo());
+    // testTrig(OI.getButton(OI.Driver.RBumper)).onTrue(climber.disengageServo());
+    // testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(climber.runRaw(Volts.of(3)));
+    // testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(climber.runRaw(Volts.of(-3)));
+    // // testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendToCage());
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
+    //     .whileTrue(climber.runRaw(Volts.of(3)));
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
+    //     .whileTrue(climber.runRaw(Volts.of(-3)));
+    // testTrig(OI.getButton(OI.Driver.X)).onTrue(climber.climberToZero());
+    // testTrig(OI.getButton(OI.Driver.A)).onTrue(climber.retract());
+    // testTrig(OI.getButton(OI.Driver.Y)).onTrue(climber.extendToCage());
+    // testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendFully());
   }
 
   private void configureButtonBindings() {
@@ -288,7 +285,20 @@ public class RobotContainer {
 
     coralScorer
         .scorerAlignedTrigger()
-        .whileTrue(Commands.runEnd(() -> OI.Driver.setRumble(0.5), () -> OI.Driver.setRumble(0)));
+        .debounce(0.1)
+        .and(coralScorer.hasCoralTrigger())
+        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
+        .and(elevator.elevatorAtCurrentSetpoint())
+        .whileTrue(
+            Commands.runEnd(
+                () -> {
+                  OI.Driver.setRumble(0.5);
+                  OI.Operator.setRumble(0.5);
+                },
+                () -> {
+                  OI.Driver.setRumble(0);
+                  OI.Operator.setRumble(0);
+                }));
 
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
@@ -385,11 +395,11 @@ public class RobotContainer {
     OI.getTrigger(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
 
     // Climber Buttons
-    OI.getPOVButton(OI.Operator.DPAD_UP)
-        .onTrue(climber.retract())
-        .toggleOnTrue(intake.movePivot(kPivotClimbingAngle));
-    OI.getPOVButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
-    OI.getPOVButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
+    // OI.getPOVButton(OI.Operator.DPAD_UP)
+    //     .onTrue(climber.retract())
+    //     .toggleOnTrue(intake.movePivot(kPivotClimbingAngle));
+    // OI.getPOVButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
+    // OI.getPOVButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
@@ -560,7 +570,7 @@ public class RobotContainer {
   public void seedEncoders() {
     intake.seedEncoder();
     algeaRemover.seedEncoder();
-    climber.seedEncoder();
+    // climber.seedEncoder();
   }
 
   public void resetSimulationField() {
