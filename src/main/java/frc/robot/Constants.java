@@ -88,6 +88,7 @@ public final class Constants {
     public static final int kSensor3ID = 3;
     public static final int kSensor4ID = 4;
     public static final int kScorerSensorID = 1;
+    public static final int kAlignmentSensorID = 5;
   }
 
   public static class ClimberConstants {
@@ -144,6 +145,7 @@ public final class Constants {
     public static final double kReverseSpeed = 0.25;
 
     public static final Distance kSensorDistnace = Inches.of(1.5);
+    public static final Distance kAlignSensorDistnace = Inches.of(4);
   }
 
   // Intake Constants
@@ -155,7 +157,7 @@ public final class Constants {
     public static final double kIntakeHandoffSpeed = -0.75;
     public static final double kConveyorSpeed = 0.45;
     public static final double kPivotSpeed = 0.2;
-    public static final double kHoldSpeed = 0.2;
+    public static final double kHoldSpeed = -0.2;
 
     // Pivot Arm Setpoints
     public static final Angle kPivotZero = Degrees.of(76.05);

@@ -6,7 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
 import static frc.robot.Constants.CoralScorerConstants.*;
-import static frc.robot.Constants.SensorIDs.kScorerSensorID;
+import static frc.robot.Constants.SensorIDs.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -26,9 +26,9 @@ public class CoralScorer extends SubsystemBase {
   private TalonFX scorerMotor;
 
   private TalonFXConfiguration scoreMotorConfig = new TalonFXConfiguration();
-  ;
 
   private TOFSensorSimple TOFSensor;
+  private TOFSensorSimple alignSensor;
 
   public CoralScorer() {
     scorerMotor = new TalonFX(CANIDs.kScorerMotor, Constants.RIOName);
@@ -38,10 +38,17 @@ public class CoralScorer extends SubsystemBase {
     scorerMotor.getConfigurator().apply(scoreMotorConfig);
 
     TOFSensor = new TOFSensorSimple(kScorerSensorID, kSensorDistnace, TOFType.LASER_CAN);
+    alignSensor =
+        new TOFSensorSimple(
+            kAlignmentSensorID, kAlignSensorDistnace, TOFSensorSimple.TOFType.LASER_CAN);
   }
 
-  public Trigger hasCoral() {
+  public Trigger hasCoralTrigger() {
     return TOFSensor.getBeamBrokenTrigger();
+  }
+
+  public Trigger scorerAlignedTrigger() {
+    return alignSensor.getBeamBrokenTrigger();
   }
 
   public void stopMotor() {
@@ -79,7 +86,11 @@ public class CoralScorer extends SubsystemBase {
         "CoralScorer/Motor Output", scorerMotor.getMotorVoltage().getValueAsDouble() / 3.0);
     Logger.recordOutput(
         "CoralScorer/Motor Velocity (RPS)", scorerMotor.getVelocity().getValueAsDouble());
-    Logger.recordOutput("CoralScorer/Sensor Distance (Inches)", TOFSensor.getDistance().in(Inches));
-    Logger.recordOutput("CoralScorer/Sensor Bool", TOFSensor.getBeamBroke());
+    Logger.recordOutput(
+        "CoralScorer/Coral Sensor/Distance (Inches)", TOFSensor.getDistance().in(Inches));
+    Logger.recordOutput("CoralScorer/Coral Sensor/Bool", TOFSensor.getBeamBroke());
+    Logger.recordOutput(
+        "CoralScorer/Align Sensor/Distance (Inches)", alignSensor.getDistance().in(Inches));
+    Logger.recordOutput("CoralScorer/Align Sensor/Bool", alignSensor.getBeamBroke());
   }
 }

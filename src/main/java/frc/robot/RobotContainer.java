@@ -96,7 +96,7 @@ public class RobotContainer {
       new Trigger(
           () ->
               sensors.getSensorState() == CoralEnum.NO_CORAL
-                  || coralScorer.hasCoral().getAsBoolean());
+                  || coralScorer.hasCoralTrigger().getAsBoolean());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -285,6 +285,10 @@ public class RobotContainer {
             () -> {
               SignalLogger.stop();
             }));
+
+    coralScorer
+        .scorerAlignedTrigger()
+        .whileTrue(Commands.runEnd(() -> OI.Driver.setRumble(0.5), () -> OI.Driver.setRumble(0)));
 
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
@@ -531,7 +535,7 @@ public class RobotContainer {
           .until(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
           .asProxy();
     } else {
-      return coralScorer.scoreCommand().until(coralScorer.hasCoral().negate()).asProxy();
+      return coralScorer.scoreCommand().until(coralScorer.hasCoralTrigger().negate()).asProxy();
     }
   }
 
