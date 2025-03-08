@@ -197,14 +197,23 @@ public class Signaling extends SubsystemBase {
     }
     ledStrip.setData(ledBuffer);
   }
-
+  public Command setSweep() {
+    return run(
+      () -> {
+        setFullStrip(RGB.BLACK);
+        tick++;
+        setSection(RGB.WHITE, (int) Math.floor(tick * SignalingConstants.PATTERN_SPEED) % SignalingConstants.NUMBER_OF_LEDS, 2);
+        ledStrip.setData(ledBuffer);
+      }
+    )
+  }
   public void randomizePattern() {
     disablePattern = DisablePattern.getRandom();
   }
 
   private enum DisablePattern {
-    RAINBOW;
-
+    RAINBOW,
+    SWEEP;
     public static DisablePattern getRandom() {
       DisablePattern[] allPatterns = DisablePattern.values();
       return allPatterns[(int) Math.floor(Math.random() * (allPatterns.length))];

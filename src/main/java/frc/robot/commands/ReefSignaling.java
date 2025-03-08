@@ -39,7 +39,7 @@ public class ReefSignaling {
         return () -> RGB.YELLOW;
       }
     } else {
-      return () -> signalingSubsystem.getColorFromAlliance(Constants.kAllianceColor);
+      return () -> RGB.BLUE;
     }
   }
 
