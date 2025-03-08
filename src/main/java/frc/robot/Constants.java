@@ -88,6 +88,7 @@ public final class Constants {
     public static final int kSensor3ID = 3;
     public static final int kSensor4ID = 4;
     public static final int kScorerSensorID = 1;
+    public static final int kScorerReefSensorID = 5;
   }
 
   public static class ClimberConstants {
@@ -140,7 +141,7 @@ public final class Constants {
   public static class CoralScorerConstants {
     public static final double kIntakeSpeed = -0.5;
     public static final double kScoreSpeed = -0.35;
-
+    public static final Distance kReefSensorThreshold = Inches.of(5);
     public static final Current kScoreAMPs = Amps.of(-20);
     public static final Current kIntakeAMPs = Amps.of(-20);
 

@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
 import static frc.robot.Constants.CoralScorerConstants.*;
+import static frc.robot.Constants.SensorIDs.kScorerReefSensorID;
 import static frc.robot.Constants.SensorIDs.kScorerSensorID;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.CoralScorerConstants;
+import frc.robot.OI;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import utilities.TOFSensorSimple;
@@ -33,6 +35,8 @@ public class CoralScorer extends SubsystemBase {
 
   private TOFSensorSimple TOFSensor;
 
+  private TOFSensorSimple ReefTOFSensor;
+
   public CoralScorer() {
     scorerMotor = new TalonFX(CANIDs.kScorerMotor, Constants.RIOName);
     scoreMotorConfig = new TalonFXConfiguration();
@@ -42,6 +46,8 @@ public class CoralScorer extends SubsystemBase {
     scorerMotor.getConfigurator().apply(scoreMotorConfig);
 
     TOFSensor = new TOFSensorSimple(kScorerSensorID, Inches.of(1.5), TOFType.LASER_CAN);
+    ReefTOFSensor =
+        new TOFSensorSimple(kScorerReefSensorID, kReefSensorThreshold, TOFType.LASER_CAN);
   }
 
   public Trigger hasCoral() {
@@ -88,6 +94,10 @@ public class CoralScorer extends SubsystemBase {
         });
   }
 
+  public boolean getReefSensorBool() {
+    return ReefTOFSensor.getBeamBroke();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -97,5 +107,9 @@ public class CoralScorer extends SubsystemBase {
         "CoralScorer/Motor Velocity (RPS)", scorerMotor.getVelocity().getValueAsDouble());
     Logger.recordOutput("CoralScorer/Sensor Distance (Inches)", TOFSensor.getDistance().in(Inches));
     Logger.recordOutput("CoralScorer/Sensor Bool", TOFSensor.getBeamBroke());
+    Logger.recordOutput(
+        "CoralScorer/Reef Sensor Distance (Inches)", ReefTOFSensor.getDistance().in(Inches));
+    Logger.recordOutput("CoralScorer/Reef Sensor Bool", ReefTOFSensor.getBeamBroke());
+    OI.Driver.setRumble(TOFSensor.getBeamBroke() ? 1 : 0);
   }
 }
