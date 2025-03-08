@@ -45,7 +45,7 @@ public class Signaling extends SubsystemBase {
   public void periodic() {
     // Update Light Pattern
     if (DriverStation.isDisabled()) updatePattern();
-    else {                              
+    else {
     }
 
     // End Signaling
@@ -176,12 +176,19 @@ public class Signaling extends SubsystemBase {
       case RAINBOW:
         pattern = RainbowPattern.getPattern();
         patternLength = RainbowPattern.getPatternLength();
+        getLEDIndex(pattern, patternLength);
+        break;
+      case SWEEP:
+        setSweep().schedule();
         break;
       default:
         pattern = RainbowPattern.getPattern();
         patternLength = RainbowPattern.getPatternLength();
         break;
     }
+  }
+
+  private void getLEDIndex(PatternNode[] pattern, int patternLength) {
     int patternIndex = 0;
     patternTick %= patternLength;
     int LEDIndex = -patternTick - 1;
@@ -197,16 +204,21 @@ public class Signaling extends SubsystemBase {
     }
     ledStrip.setData(ledBuffer);
   }
+
   public Command setSweep() {
     return run(
-      () -> {
-        setFullStrip(RGB.BLACK);
-        tick++;
-        setSection(RGB.WHITE, (int) Math.floor(tick * SignalingConstants.PATTERN_SPEED) % SignalingConstants.NUMBER_OF_LEDS, 2);
-        ledStrip.setData(ledBuffer);
-      }
-    )
+        () -> {
+          setFullStrip(RGB.BLACK);
+          tick++;
+          setSection(
+              RGB.WHITE,
+              (int) Math.floor(tick * SignalingConstants.PATTERN_SPEED)
+                  % SignalingConstants.NUMBER_OF_LEDS,
+              2);
+          ledStrip.setData(ledBuffer);
+        });
   }
+
   public void randomizePattern() {
     disablePattern = DisablePattern.getRandom();
   }
@@ -214,6 +226,7 @@ public class Signaling extends SubsystemBase {
   private enum DisablePattern {
     RAINBOW,
     SWEEP;
+
     public static DisablePattern getRandom() {
       DisablePattern[] allPatterns = DisablePattern.values();
       return allPatterns[(int) Math.floor(Math.random() * (allPatterns.length))];
