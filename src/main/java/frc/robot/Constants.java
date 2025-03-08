@@ -833,14 +833,14 @@ public final class Constants {
   }
 
   public static class SubsystemEnabled {
-    public static final boolean kDrivebase = false || Robot.isSimulation();
-    public static final boolean kVision = false || Robot.isSimulation();
-    public static final boolean kIntake = false || Robot.isSimulation();
-    public static final boolean kCoralScorer = false || Robot.isSimulation();
-    public static final boolean kElevator = false || Robot.isSimulation();
-    public static final boolean kAlgaeRemover = false || Robot.isSimulation();
-    public static final boolean kClimber = false || Robot.isSimulation();
-    public static final boolean kStreamDecks = false || Robot.isSimulation();
-    public static final boolean kSensors = false || Robot.isSimulation();
+    public static final boolean kDrivebase = true;
+    public static final boolean kVision = true;
+    public static final boolean kIntake = true;
+    public static final boolean kCoralScorer = true;
+    public static final boolean kElevator = true;
+    public static final boolean kAlgaeRemover = true;
+    public static final boolean kClimber = true;
+    public static final boolean kStreamDecks = true;
+    public static final boolean kSensors = true;
   }
 }

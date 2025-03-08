@@ -285,7 +285,7 @@ public class RobotContainer {
               .andThen(Commands.waitSeconds(0.5))
               .andThen(drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse)));
     } else {
-      autoChooser = null;
+      autoChooser.addOption("No Autos Avaiable", null);
     }
 
     // Configure the button bindings
