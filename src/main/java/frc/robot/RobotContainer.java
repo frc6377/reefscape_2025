@@ -41,6 +41,7 @@ import frc.robot.Constants.FeildConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ReefSignaling;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgeaRemover;
 import frc.robot.subsystems.Climber;
@@ -50,6 +51,7 @@ import frc.robot.subsystems.MapleSimArenaSubsystem;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
+import frc.robot.subsystems.signaling.Signaling;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -79,7 +81,8 @@ public class RobotContainer {
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
   private final IntakeSubsystem intake;
-
+  private final Signaling signaling = new Signaling();
+  private final ReefSignaling reefSignaling = new ReefSignaling(coralScorer, elevator, signaling);
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
   private boolean coralStationMode = false;
@@ -416,7 +419,7 @@ public class RobotContainer {
                 OI.getAxisSupplier(Driver.LeftY),
                 OI.getAxisSupplier(Driver.LeftX),
                 drive.getAlignRotation()));
-
+    signaling.setDefaultCommand(reefSignaling.getCommand());
     /* This is for creating the button mappings for logging what coral have been scored
      * The Driverstation has a hard limit of 32 buttons so we use 2 different vjoy controllers
      * to get the effective 64 buttons that we need for logging. this first 16 buttons of every controller are

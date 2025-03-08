@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.CoralScorerConstants;
-import frc.robot.OI;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import utilities.TOFSensorSimple;
@@ -52,6 +51,10 @@ public class CoralScorer extends SubsystemBase {
 
   public Trigger hasCoral() {
     return TOFSensor.getBeamBrokenTrigger();
+  }
+
+  public boolean hasCoralBool() {
+    return TOFSensor.getBeamBroke();
   }
 
   public void stopMotor() {
@@ -106,10 +109,12 @@ public class CoralScorer extends SubsystemBase {
     Logger.recordOutput(
         "CoralScorer/Motor Velocity (RPS)", scorerMotor.getVelocity().getValueAsDouble());
     Logger.recordOutput("CoralScorer/Sensor Distance (Inches)", TOFSensor.getDistance().in(Inches));
-    Logger.recordOutput("CoralScorer/Sensor Bool", TOFSensor.getBeamBroke());
-    Logger.recordOutput(
-        "CoralScorer/Reef Sensor Distance (Inches)", ReefTOFSensor.getDistance().in(Inches));
-    Logger.recordOutput("CoralScorer/Reef Sensor Bool", ReefTOFSensor.getBeamBroke());
-    OI.Driver.setRumble(TOFSensor.getBeamBroke() ? 1 : 0);
+    if (TOFSensor.getBeamBroke()) {
+      if (ReefTOFSensor.getBeamBroke()) {
+        Logger.recordOutput("CoralScorer/Reef Sensor", "Reef & Coral");
+      } else {
+        Logger.recordOutput("CoralScorer/Reef Sensor", "Coral");
+      }
+    }
   }
 }
