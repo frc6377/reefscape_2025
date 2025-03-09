@@ -164,7 +164,7 @@ public final class Constants {
     public static final Angle kPivotZero = Degrees.of(76.05 - 4.47);
     public static final Angle kPivotRetractAngle = Degrees.of(134.5);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
-    public static final Angle kPivotExtendAngle = Degrees.of(3);
+    public static final Angle kPivotExtendAngle = Degrees.of(0);
     public static final Angle kPivotCoralStationAngle = Degrees.of(105);
     public static final Angle kPivotL1Score = Degrees.of(85);
     public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
@@ -295,10 +295,10 @@ public final class Constants {
 
     public static final PathConstraints PATH_CONSTRAINTS =
         new PathConstraints(
-            4.3,
-            4.3,
-            DegreesPerSecond.of(630).in(RadiansPerSecond),
-            DegreesPerSecond.of(630).in(RadiansPerSecond));
+            3.5,
+            2,
+            DegreesPerSecond.of(300).in(RadiansPerSecond),
+            DegreesPerSecond.of(1200).in(RadiansPerSecond));
 
     // Constants from DriveCommands
     public static final double ANGLE_KP = 5;
@@ -351,6 +351,15 @@ public final class Constants {
       SCORE_POSES.put(
           kPoleLetters[11],
           new Pose2d(Meters.of(3.667), Meters.of(5.062), new Rotation2d(Degrees.of(30))));
+    }
+
+    public static final HashMap<String, Pose2d> kSourcePoses = new HashMap<String, Pose2d>();
+
+    static {
+      kSourcePoses.put(
+          "L", new Pose2d(Meters.of(1.180), Meters.of(7.125), new Rotation2d(Degrees.of(126))));
+      kSourcePoses.put(
+          "R", new Pose2d(Meters.of(1.225), Meters.of(0.968), new Rotation2d(Degrees.of(-126))));
     }
 
     public static final Pose2d[] SOURSE_POSES =

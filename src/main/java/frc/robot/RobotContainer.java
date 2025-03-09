@@ -50,6 +50,7 @@ import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.vision.*;
+import java.util.Set;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -202,6 +203,15 @@ public class RobotContainer {
             scoreL1.asProxy().until(isDoneScoring.debounce(3))));
     NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
 
+    NamedCommands.registerCommand(
+        "Start R - E",
+        DriveCommands.GoToPose(
+            () -> Constants.DrivetrainConstants.SCORE_POSES.get("E"), Set.of(drive)));
+    NamedCommands.registerCommand(
+        "Start L - I",
+        DriveCommands.GoToPose(
+            () -> Constants.DrivetrainConstants.SCORE_POSES.get("I"), Set.of(drive)));
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -219,7 +229,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "🧪 Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     autoChooser.addOption(
-        "🧪 Drive SysID (All)",
+        "🧪 Drive SysID Turning (All)",
         drive
             .sysIdQuasistaticTurning(SysIdRoutine.Direction.kForward)
             .andThen(Commands.waitSeconds(0.5))

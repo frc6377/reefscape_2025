@@ -11,9 +11,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "StartR - E"
+            "name": "Start R - E"
           }
         },
         {
@@ -67,7 +67,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "🗿 Chads",
   "choreoAuto": false
 }
