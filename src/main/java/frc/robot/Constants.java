@@ -81,7 +81,7 @@ public final class Constants {
   public static class PWMIDs {
     public static final int kFrontClimberServoID = 1;
     public static final int kBackClimberServoID = 0;
-    public static final int kLED_PWM_PORT = 2;
+    public static final int kLED_PWM_PORT = 0;
   }
 
   public static class SensorIDs {
@@ -155,10 +155,9 @@ public final class Constants {
 
   // Signaling Constants
   public static class SignalingConstants {
-    public static final double RUMBLE_STRENGTH = 0.5;
-    public static final int NUMBER_OF_LEDS = 60;
-    public static final double LED_BRIGHTNESS = 0.5;
-    public static final double PATTERN_SPEED = 0.02;
+    public static final int NUMBER_OF_LEDS = 30;
+    public static final double LED_BRIGHTNESS = 1;
+    public static final double PATTERN_SPEED = 0.001;
   }
 
   // Intake Constants
