@@ -174,7 +174,7 @@ public class RobotContainer {
 
         sensors = SubsystemEnabled.kIntake ? new Sensors() : null;
         intake =
-            SubsystemEnabled.kIntake && sensors != null && driveSimulation != null
+            SubsystemEnabled.kIntake && sensors != null
                 ? new IntakeSubsystem(sensors, driveSimulation)
                 : null;
         break;
