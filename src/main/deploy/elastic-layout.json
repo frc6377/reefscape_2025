@@ -12,7 +12,7 @@
             "x": 0.0,
             "y": 0.0,
             "width": 512.0,
-            "height": 256.0,
+            "height": 128.0,
             "type": "ComboBox Chooser",
             "properties": {
               "topic": "/SmartDashboard/Auto Choices",
@@ -22,10 +22,10 @@
           },
           {
             "title": "Algae Mode",
-            "x": 640.0,
+            "x": 768.0,
             "y": 128.0,
             "width": 256.0,
-            "height": 256.0,
+            "height": 192.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/Modes/Algae Mode",
@@ -39,10 +39,10 @@
           },
           {
             "title": "Coral Station Mode",
-            "x": 1152.0,
+            "x": 1280.0,
             "y": 128.0,
             "width": 256.0,
-            "height": 256.0,
+            "height": 192.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/Modes/Coral Station Mode",
@@ -56,10 +56,10 @@
           },
           {
             "title": "L1 Score Mode",
-            "x": 896.0,
+            "x": 1024.0,
             "y": 128.0,
             "width": 256.0,
-            "height": 256.0,
+            "height": 192.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/Modes/L1 Score Mode",
@@ -72,20 +72,8 @@
             }
           },
           {
-            "title": "limelight-lowcam-raw",
-            "x": 0.0,
-            "y": 256.0,
-            "width": 512.0,
-            "height": 256.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/limelight-lowcam-raw",
-              "period": 0.06
-            }
-          },
-          {
             "title": "Voltage",
-            "x": 768.0,
+            "x": 896.0,
             "y": 0.0,
             "width": 640.0,
             "height": 128.0,
@@ -103,8 +91,8 @@
           },
           {
             "title": "EmergencyStop",
-            "x": 1024.0,
-            "y": 384.0,
+            "x": 1152.0,
+            "y": 320.0,
             "width": 384.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -120,8 +108,8 @@
           },
           {
             "title": "Radio Connected",
-            "x": 640.0,
-            "y": 384.0,
+            "x": 768.0,
+            "y": 320.0,
             "width": 384.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -138,7 +126,7 @@
           {
             "title": "EventName",
             "x": 0.0,
-            "y": 640.0,
+            "y": 576.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Text Display",
@@ -152,7 +140,7 @@
           {
             "title": "AllianceStation",
             "x": 256.0,
-            "y": 640.0,
+            "y": 576.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Text Display",
@@ -165,8 +153,8 @@
           },
           {
             "title": "Motor 1 Temp",
-            "x": 1088.0,
-            "y": 512.0,
+            "x": 1216.0,
+            "y": 448.0,
             "width": 320.0,
             "height": 128.0,
             "type": "Number Bar",
@@ -183,8 +171,8 @@
           },
           {
             "title": "Motor 2 Temp",
-            "x": 1088.0,
-            "y": 640.0,
+            "x": 1216.0,
+            "y": 576.0,
             "width": 320.0,
             "height": 128.0,
             "type": "Number Bar",
@@ -201,8 +189,8 @@
           },
           {
             "title": "Height (Inches)",
-            "x": 832.0,
-            "y": 512.0,
+            "x": 960.0,
+            "y": 448.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Number Bar",
@@ -219,8 +207,8 @@
           },
           {
             "title": "Setpoint (Inches)",
-            "x": 832.0,
-            "y": 640.0,
+            "x": 960.0,
+            "y": 576.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Number Bar",
@@ -238,7 +226,7 @@
           {
             "title": "IsRedAlliance",
             "x": 0.0,
-            "y": 512.0,
+            "y": 448.0,
             "width": 512.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -254,7 +242,7 @@
           },
           {
             "title": "BrownedOut",
-            "x": 640.0,
+            "x": 768.0,
             "y": 0.0,
             "width": 128.0,
             "height": 128.0,
@@ -271,8 +259,8 @@
           },
           {
             "title": "Setpoint Error (Inches)",
-            "x": 640.0,
-            "y": 512.0,
+            "x": 768.0,
+            "y": 448.0,
             "width": 192.0,
             "height": 256.0,
             "type": "Number Bar",
@@ -285,6 +273,22 @@
               "divisions": 5,
               "inverted": false,
               "orientation": "vertical"
+            }
+          },
+          {
+            "title": "MatchTime",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 768.0,
+            "height": 320.0,
+            "type": "Match Time",
+            "properties": {
+              "topic": "/AdvantageKit/DriverStation/MatchTime",
+              "period": 0.06,
+              "data_type": "double",
+              "time_display_mode": "Minutes and Seconds",
+              "red_start_time": 15,
+              "yellow_start_time": 30
             }
           }
         ]
@@ -586,6 +590,28 @@
               "time_displayed": 5.0,
               "color": 4278238420,
               "line_width": 2.0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Elevator",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Elevator PID: kP",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/Shuffleboard/Elevator/Elevator PID: kP",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
             }
           }
         ]
