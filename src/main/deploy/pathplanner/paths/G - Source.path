@@ -3,32 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.791037454804503,
-        "y": 3.8979533186718593
+        "x": 5.771623873822696,
+        "y": 3.8968182267843003
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.003933866631042,
-        "y": 3.6380312676692785
+        "x": 7.231939123599761,
+        "y": 2.8879679602840507
       },
       "isLocked": false,
       "linkedName": "Reef G"
-    },
-    {
-      "anchor": {
-        "x": 6.062115776104202,
-        "y": 3.3304547863596765
-      },
-      "prevControl": {
-        "x": 6.065547371352917,
-        "y": 3.7409023167655446
-      },
-      "nextControl": {
-        "x": 6.0558776350462376,
-        "y": 2.5843208731239966
-      },
-      "isLocked": false,
-      "linkedName": null
     },
     {
       "anchor": {
@@ -36,8 +20,8 @@
         "y": 0.9680916092635675
       },
       "prevControl": {
-        "x": 4.004103523265163,
-        "y": 1.9199659781032494
+        "x": 3.6263783600370756,
+        "y": 1.885086731991525
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,22 +33,22 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
+      "name": "ElvL0",
       "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "Intake"
+          "name": "ElvL0"
         }
       }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

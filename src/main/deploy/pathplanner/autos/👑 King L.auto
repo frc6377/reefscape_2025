@@ -7,25 +7,19 @@
         {
           "type": "named",
           "data": {
-            "name": "Set L1 Mode"
+            "name": "Zero Elv"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - EF (L1)"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L1 Score"
+            "pathName": "StartL - J"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "EF - Source (L1)"
+            "pathName": "J - Source"
           }
         },
         {
@@ -37,19 +31,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score CD L1"
+            "pathName": "Score K"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "K - Source"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L1 Score"
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score L"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L - Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "The Chads",
+  "folder": "👑 Kings",
   "choreoAuto": false
 }

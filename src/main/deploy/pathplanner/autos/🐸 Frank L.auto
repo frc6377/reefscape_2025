@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - E"
+            "pathName": "StartL - I"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4 DeadLine"
+            "name": "ElvL4"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "E - Source"
+            "pathName": "I - Source"
           }
         },
         {
@@ -39,29 +39,11 @@
           "data": {
             "name": "Intake"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score D"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL0"
-          }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "The Franks",
+  "folder": "🐸 Franks",
   "choreoAuto": false
 }

@@ -1,6 +1,6 @@
 {
   "version": 1.0,
-  "grid_size": 128,
+  "grid_size": 64,
   "tabs": [
     {
       "name": "Teleoperated",
@@ -165,9 +165,9 @@
           },
           {
             "title": "Motor 1 Temp",
-            "x": 1024.0,
+            "x": 1088.0,
             "y": 512.0,
-            "width": 384.0,
+            "width": 320.0,
             "height": 128.0,
             "type": "Number Bar",
             "properties": {
@@ -176,16 +176,16 @@
               "data_type": "double",
               "min_value": 50.0,
               "max_value": 150.0,
-              "divisions": 5,
+              "divisions": 3,
               "inverted": false,
               "orientation": "horizontal"
             }
           },
           {
             "title": "Motor 2 Temp",
-            "x": 1024.0,
+            "x": 1088.0,
             "y": 640.0,
-            "width": 384.0,
+            "width": 320.0,
             "height": 128.0,
             "type": "Number Bar",
             "properties": {
@@ -194,16 +194,16 @@
               "data_type": "double",
               "min_value": 50.0,
               "max_value": 150.0,
-              "divisions": 5,
+              "divisions": 3,
               "inverted": false,
               "orientation": "horizontal"
             }
           },
           {
             "title": "Height (Inches)",
-            "x": 640.0,
+            "x": 832.0,
             "y": 512.0,
-            "width": 384.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Number Bar",
             "properties": {
@@ -212,16 +212,16 @@
               "data_type": "double",
               "min_value": 0.0,
               "max_value": 60.0,
-              "divisions": 5,
+              "divisions": 3,
               "inverted": false,
               "orientation": "horizontal"
             }
           },
           {
             "title": "Setpoint (Inches)",
-            "x": 640.0,
+            "x": 832.0,
             "y": 640.0,
-            "width": 384.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Number Bar",
             "properties": {
@@ -230,7 +230,7 @@
               "data_type": "double",
               "min_value": 0.0,
               "max_value": 60.0,
-              "divisions": 5,
+              "divisions": 3,
               "inverted": false,
               "orientation": "horizontal"
             }
@@ -267,6 +267,24 @@
               "false_color": 4294198070,
               "true_icon": "None",
               "false_icon": "None"
+            }
+          },
+          {
+            "title": "Setpoint Error (Inches)",
+            "x": 640.0,
+            "y": 512.0,
+            "width": 192.0,
+            "height": 256.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Elevator/Setpoint Error (Inches)",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": -10.0,
+              "max_value": 10.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "vertical"
             }
           }
         ]
