@@ -304,6 +304,11 @@ public class Elevator extends SubsystemBase {
         });
   }
 
+  public Trigger elevatorUpTrigger() {
+    return new Trigger(() -> !getElevatorHeight().isNear(getL0Setpoint(), kSetpointTolerance))
+        .debounce(0.2);
+  }
+
   public Command L0() {
     return changeElevation(getL0Setpoint());
   }

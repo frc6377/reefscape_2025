@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
 import static frc.robot.Constants.CoralScorerConstants.*;
+import static frc.robot.Constants.SensorIDs.kScorerReefSensorID;
 import static frc.robot.Constants.SensorIDs.kScorerSensorID;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -33,6 +34,8 @@ public class CoralScorer extends SubsystemBase {
 
   private TOFSensorSimple TOFSensor;
 
+  private TOFSensorSimple ReefTOFSensor;
+
   public CoralScorer() {
     scorerMotor = new TalonFX(CANIDs.kScorerMotor, Constants.RIOName);
     scoreMotorConfig = new TalonFXConfiguration();
@@ -42,10 +45,16 @@ public class CoralScorer extends SubsystemBase {
     scorerMotor.getConfigurator().apply(scoreMotorConfig);
 
     TOFSensor = new TOFSensorSimple(kScorerSensorID, Inches.of(1.5), TOFType.LASER_CAN);
+    ReefTOFSensor =
+        new TOFSensorSimple(kScorerReefSensorID, kReefSensorThreshold, TOFType.LASER_CAN);
   }
 
   public Trigger hasCoral() {
     return TOFSensor.getBeamBrokenTrigger();
+  }
+
+  public boolean hasCoralBool() {
+    return TOFSensor.getBeamBroke();
   }
 
   public void stopMotor() {
@@ -88,6 +97,14 @@ public class CoralScorer extends SubsystemBase {
         });
   }
 
+  public boolean getReefSensorBool() {
+    return ReefTOFSensor.getBeamBroke();
+  }
+
+  public Trigger getReefSensorTrigger() {
+    return ReefTOFSensor.getBeamBrokenTrigger();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -96,6 +113,12 @@ public class CoralScorer extends SubsystemBase {
     Logger.recordOutput(
         "CoralScorer/Motor Velocity (RPS)", scorerMotor.getVelocity().getValueAsDouble());
     Logger.recordOutput("CoralScorer/Sensor Distance (Inches)", TOFSensor.getDistance().in(Inches));
-    Logger.recordOutput("CoralScorer/Sensor Bool", TOFSensor.getBeamBroke());
+    if (TOFSensor.getBeamBroke()) {
+      if (ReefTOFSensor.getBeamBroke()) {
+        Logger.recordOutput("CoralScorer/Reef Sensor", "Reef & Coral");
+      } else {
+        Logger.recordOutput("CoralScorer/Reef Sensor", "Coral");
+      }
+    }
   }
 }
