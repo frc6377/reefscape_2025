@@ -172,13 +172,13 @@ public class RobotContainer {
     NamedCommands.registerCommand("ElvL0", elv0Command());
     NamedCommands.registerCommand(
         "ElvL2 DeadLine",
-        elevator.L2().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(3)));
+        elevator.L2().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(1.75)));
     NamedCommands.registerCommand(
         "ElvL3 DeadLine",
-        elevator.L3().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(3)));
+        elevator.L3().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(1.75)));
     NamedCommands.registerCommand(
         "ElvL4 DeadLine",
-        elevator.L4().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(3)));
+        elevator.L4().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(1.75)));
     NamedCommands.registerCommand("ElvL2", elevator.L2().andThen(waitForElevator()));
     NamedCommands.registerCommand("ElvL3", elevator.L3().andThen(waitForElevator()));
     NamedCommands.registerCommand("ElvL4", elevator.L4().andThen(waitForElevator()));
@@ -320,12 +320,12 @@ public class RobotContainer {
         new LocateCoral(
             sensors::getSensorState,
             intake,
-            coralOuttakeButton.or(OI.getTrigger(OI.Driver.LTrigger)));
+            coralOuttakeButton.or(OI.getTrigger(OI.Driver.RTrigger)));
 
     intake
         .intakeHasUnalignedCoralTrigger()
         .and(coralOuttakeButton.negate())
-        .and(OI.getTrigger(OI.Driver.LTrigger).negate())
+        .and(OI.getTrigger(OI.Driver.RTrigger).negate())
         .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
         .onTrue(locateCoral);
 
@@ -545,7 +545,7 @@ public class RobotContainer {
           .until(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
           .asProxy();
     } else {
-      return coralScorer.scoreCommand().until(coralScorer.hasCoralTrigger().negate()).asProxy();
+      return coralScorer.scoreAutoCommand().until(coralScorer.hasCoralTrigger().negate()).asProxy();
     }
   }
 

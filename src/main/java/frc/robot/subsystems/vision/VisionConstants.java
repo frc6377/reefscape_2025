@@ -52,7 +52,7 @@ public class VisionConstants {
           new Rotation3d(Degrees.of(0), Degrees.of(-23), Degrees.of(-90)));
 
   // Basic filtering thresholds
-  public static int minTags = 2;
+  public static int minTags = 1;
   public static double maxAmbiguity = 0.3; // Lower Better
   public static double maxZError = 0.75; // / Lower Better
 

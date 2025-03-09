@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2456343910549479,
-        "y": 7.074343420759858
+        "x": 1.1804137538808899,
+        "y": 7.124655826548762
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1331149854003018,
-        "y": 6.463938502677374
+        "x": 2.0678943482262433,
+        "y": 6.514250908466278
       },
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
@@ -28,25 +28,18 @@
       "linkedName": "Reef K"
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
-  "pointTowardsZones": [],
-  "eventMarkers": [
+  "rotationTargets": [
     {
-      "name": "ElvL4",
-      "waypointRelativePos": 0.75,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ElvL4"
-        }
-      }
+      "waypointRelativePos": 0.3736595394736843,
+      "rotationDegrees": 29.999999999999996
     }
   ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
     "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,

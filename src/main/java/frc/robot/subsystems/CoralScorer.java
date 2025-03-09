@@ -64,6 +64,10 @@ public class CoralScorer extends SubsystemBase {
     return startEnd(() -> setScoreMotor(kScoreSpeed), () -> stopMotor());
   }
 
+  public Command scoreAutoCommand() {
+    return startEnd(() -> setScoreMotor(kScoreAutoSpeed), () -> stopMotor());
+  }
+
   public Command intakeCommand() {
     return startEnd(() -> setScoreMotor(kIntakeSpeed), () -> stopMotor());
   }

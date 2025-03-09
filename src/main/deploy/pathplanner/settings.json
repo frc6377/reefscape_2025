@@ -14,8 +14,8 @@
     "🐸 Franks",
     "👑 Kings"
   ],
-  "defaultMaxVel": 4.0,
-  "defaultMaxAccel": 3.0,
+  "defaultMaxVel": 3.5,
+  "defaultMaxAccel": 2.0,
   "defaultMaxAngVel": 300.0,
   "defaultMaxAngAccel": 1200.0,
   "defaultNominalVoltage": 12.0,
