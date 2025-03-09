@@ -100,9 +100,11 @@ public class CoralScorer extends SubsystemBase {
   public boolean getReefSensorBool() {
     return ReefTOFSensor.getBeamBroke();
   }
+
   public Trigger getReefSensorTrigger() {
     return ReefTOFSensor.getBeamBrokenTrigger();
   }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
