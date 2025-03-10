@@ -11,9 +11,9 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Start R - E"
+            "pathName": "StartR - E"
           }
         },
         {

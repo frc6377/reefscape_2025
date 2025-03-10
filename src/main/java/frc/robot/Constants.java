@@ -229,7 +229,7 @@ public final class Constants {
     public static final HowdyMM kElevatorMM =
         new HowdyMM(RotationsPerSecond.of(200), RotationsPerSecondPerSecond.of(250));
 
-    public static final Distance kSetpointTolerance = Inches.of(1.5);
+    public static final Distance kSetpointTolerance = Inches.of(1.75);
 
     // Mech Constants
     public static final Distance kElevatorDrumRadius = Inches.of(0.375);
@@ -274,12 +274,12 @@ public final class Constants {
     public static final int kAlegeaGearRatio = 80;
     public static final Angle ksetpointTolerance = Degrees.of(10);
 
-    // Algea Arm Setpoints
+    // Algea Arm Setpoints (// 40 Degrees is breaking point)
     public static final Angle kEncoderOffset = Rotations.of(0);
-    public static final Angle kAlgeaStowed = Degrees.of(105);
-    public static final Angle kAlgeaRemove = Degrees.of(23);
-    public static final Angle kRemoveUpAngle = Degrees.of(55);
-    public static final Angle kRemoveDownAngle = Degrees.of(-2);
+    public static final Angle kAlgeaStowed = Degrees.of(145);
+    public static final Angle kAlgeaRemove = Degrees.of(63);
+    public static final Angle kRemoveUpAngle = Degrees.of(95);
+    public static final Angle kRemoveDownAngle = Degrees.of(58);
 
     // Simulation Constants
     public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);

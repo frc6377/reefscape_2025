@@ -13,7 +13,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartL - J"
+            "pathName": "StartML - J"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL4 DeadLine"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         },
         {
@@ -35,39 +47,27 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "K - Source"
+            "name": "ElvL4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score L"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L - Source"
+            "name": "Score"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake"
+            "name": "ElvL0"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
-  "folder": "👑 Kings",
+  "resetOdom": false,
+  "folder": "🗿 Chads",
   "choreoAuto": false
 }
