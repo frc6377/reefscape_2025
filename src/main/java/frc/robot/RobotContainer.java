@@ -221,19 +221,19 @@ public class RobotContainer {
 
     // Set up SysId routines
     autoChooser.addOption(
-        "🧪 Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+        "☑ Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addOption(
-        "🧪 Drive SysId (Quasistatic Forward)",
+        "☑ Drive SysId (Quasistatic Forward)",
         drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
-        "🧪 Drive SysId (Quasistatic Reverse)",
+        "☑ Drive SysId (Quasistatic Reverse)",
         drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     autoChooser.addOption(
-        "🧪 Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        "☑ Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
-        "🧪 Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        "☑ Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     autoChooser.addOption(
-        "🧪 Drive SysID Turning (All)",
+        "☑ Drive SysID Turning (All)",
         drive
             .sysIdQuasistaticTurning(SysIdRoutine.Direction.kForward)
             .andThen(Commands.waitSeconds(0.5))

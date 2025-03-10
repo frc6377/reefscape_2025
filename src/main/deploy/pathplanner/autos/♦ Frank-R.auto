@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartL - I"
+            "pathName": "StartR - E"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "I - Source"
+            "pathName": "E - Source"
           }
         },
         {
@@ -44,6 +44,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "🐸 Franks",
+  "folder": "♦ Franks",
   "choreoAuto": false
 }

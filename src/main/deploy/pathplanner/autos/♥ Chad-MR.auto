@@ -59,36 +59,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "D - Source"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score C"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "ElvL0"
@@ -97,7 +67,7 @@
       ]
     }
   },
-  "resetOdom": true,
-  "folder": "👑 Kings",
+  "resetOdom": false,
+  "folder": "♥ Chads",
   "choreoAuto": false
 }

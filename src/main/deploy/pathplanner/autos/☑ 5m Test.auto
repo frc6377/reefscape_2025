@@ -7,19 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartL - IJ (L1)"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L1 Score"
+            "pathName": "5m Test"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "🐸 Franks",
+  "folder": "☑ Tests",
   "choreoAuto": false
 }
