@@ -35,12 +35,16 @@ public class Signaling extends SubsystemBase {
     if (DriverStation.isDisabled()) {
       tagCount =
           NetworkTableInstance.getDefault().getTable("vision").getEntry("TagCount").getInteger(0);
-      if (tagCount == 0) {
-        setCandle(RGB.RED);
-      } else if (tagCount == 1) {
-        setCandle(RGB.YELLOW);
-      } else {
-        setCandle(RGB.GREEN);
+      switch ((int) tagCount) {
+        case 0:
+          setCandle(RGB.RED);
+          break;
+        case 1:
+          setCandle(RGB.YELLOW);
+          break;
+        default:
+          setCandle(RGB.GREEN);
+          break;
       }
       updatePattern();
     } else {
