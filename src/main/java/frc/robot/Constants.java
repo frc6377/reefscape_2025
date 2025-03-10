@@ -44,7 +44,7 @@ public final class Constants {
   }
 
   public static final Alliance kAllianceColor =
-      DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Red;
+      DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue;
 
   public static final String CANivoreName = "Default Name";
   public static final String RIOName = "rio";
@@ -66,6 +66,7 @@ public final class Constants {
     public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
     public static final int kAlgeaMotor = 18;
+    public static final int kCANdle = 19;
   }
 
   public static class DIOConstants {
@@ -81,6 +82,7 @@ public final class Constants {
   public static class PWMIDs {
     public static final int kFrontClimberServoID = 1;
     public static final int kBackClimberServoID = 0;
+    public static final int kLED_PWM_PORT = 2;
   }
 
   public static class SensorIDs {
@@ -88,6 +90,7 @@ public final class Constants {
     public static final int kSensor3ID = 3;
     public static final int kSensor4ID = 4;
     public static final int kScorerSensorID = 1;
+    public static final int kScorerReefSensorID = 5;
   }
 
   public static class ClimberConstants {
@@ -140,7 +143,7 @@ public final class Constants {
   public static class CoralScorerConstants {
     public static final double kIntakeSpeed = -0.5;
     public static final double kScoreSpeed = -0.35;
-
+    public static final Distance kReefSensorThreshold = Inches.of(5);
     public static final Current kScoreAMPs = Amps.of(-20);
     public static final Current kIntakeAMPs = Amps.of(-20);
 
@@ -149,6 +152,13 @@ public final class Constants {
     static {
       CoralScorerPID.setKP(0.1);
     }
+  }
+
+  // Signaling Constants
+  public static class SignalingConstants {
+    public static final int NUMBER_OF_LEDS = 30;
+    public static final double LED_BRIGHTNESS = 1;
+    public static final double PATTERN_SPEED = 0.001;
   }
 
   // Intake Constants

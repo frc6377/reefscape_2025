@@ -50,6 +50,8 @@ import frc.robot.subsystems.MapleSimArenaSubsystem;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
+import frc.robot.subsystems.signaling.RGB;
+import frc.robot.subsystems.signaling.Signaling;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -79,7 +81,7 @@ public class RobotContainer {
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
   private final IntakeSubsystem intake;
-
+  private final Signaling signaling = new Signaling();
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
   private boolean coralStationMode = false;
@@ -281,7 +283,17 @@ public class RobotContainer {
             () -> {
               SignalLogger.stop();
             }));
-
+    coralScorer
+        .getReefSensorTrigger()
+        .and(coralScorer.hasCoral())
+        .and(elevator.elevatorUpTrigger())
+        .onTrue(signaling.setColor(RGB.GREEN));
+    coralScorer
+        .hasCoral()
+        .and(elevator.elevatorUpTrigger())
+        .and(coralScorer.getReefSensorTrigger().negate())
+        .onTrue(signaling.setColor(RGB.YELLOW));
+    coralScorer.hasCoral().and(elevator.elevatorUpTrigger()).onFalse(signaling.setColor(RGB.BLUE));
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
     OI.getPOVButton(OI.Driver.DPAD_LEFT).onTrue(elevator.L2());
@@ -416,7 +428,6 @@ public class RobotContainer {
                 OI.getAxisSupplier(Driver.LeftY),
                 OI.getAxisSupplier(Driver.LeftX),
                 drive.getAlignRotation()));
-
     /* This is for creating the button mappings for logging what coral have been scored
      * The Driverstation has a hard limit of 32 buttons so we use 2 different vjoy controllers
      * to get the effective 64 buttons that we need for logging. this first 16 buttons of every controller are
