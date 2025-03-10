@@ -1,75 +1,55 @@
 package frc.robot.subsystems.signaling;
 
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import com.ctre.phoenix.led.CANdle;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.PWMIDs;
+import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.SignalingConstants;
 import frc.robot.OI;
 import frc.robot.subsystems.signaling.patterns.AlliancePattern;
 import frc.robot.subsystems.signaling.patterns.PatternNode;
 import frc.robot.subsystems.signaling.patterns.RainbowPattern;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Signaling extends SubsystemBase {
 
-  private final AddressableLED ledStrip;
-  private final AddressableLEDBuffer ledBuffer;
-
+  private final CANdle candle = new CANdle(CANIDs.kCANdle);
   private int tick;
   private int patternTick;
 
-  private DisablePattern disablePattern = DisablePattern.getRandom();
+  private DisablePattern disablePattern = DisablePattern.RAINBOW;
 
   public Signaling() {
     tick = 0;
     patternTick = 0;
-
-    // Initialize LED Strip
-    ledStrip = new AddressableLED(PWMIDs.kLED_PWM_PORT);
-    ledBuffer = new AddressableLEDBuffer(SignalingConstants.NUMBER_OF_LEDS);
-    ledStrip.setLength(SignalingConstants.NUMBER_OF_LEDS);
-    ledStrip.start();
-    ledStrip.setData(ledBuffer);
   }
 
   @Override
   public void periodic() {
     // Update Light Pattern
     if (DriverStation.isDisabled()) {
+      if (NetworkTableInstance.getDefault()
+              .getTable("Vision")
+              .getSubTable("Summary")
+              .getEntry("TagCount")
+              .getInteger(0)
+          > 0) {
+        disablePattern = DisablePattern.ALLIANCE;
+      }
       updatePattern();
     } else {
-      getReefSignalingCommand().schedule();
+      setColor(RGB.GREEN);
     }
-    Logger.recordOutput("LED green", ledBuffer.getGreen(1));
-  }
-
-  public Supplier<RGB> getRGB() {
-    if (true) {
-      if (true) {
-        return () -> RGB.GREEN;
-      } else {
-        return () -> RGB.YELLOW;
-      }
-    } else {
-      return () -> RGB.BLUE;
-    }
-  }
-
-  public Command getReefSignalingCommand() {
-    return setColor(getRGB().get());
   }
 
   public Command setColor(RGB rgb) {
     return runOnce(
         () -> {
           setFullStrip(rgb);
-          ledStrip.setData(ledBuffer);
           Logger.recordOutput("Signaling/LED Color", rgb.toHex());
         });
   }
@@ -78,7 +58,6 @@ public class Signaling extends SubsystemBase {
     return startEnd(
         () -> {
           setFullStrip(getColorFromAlliance(Constants.kAllianceColor));
-          ledStrip.setData(ledBuffer);
         },
         this::resetLEDs);
   }
@@ -98,7 +77,6 @@ public class Signaling extends SubsystemBase {
 
   private void resetLEDs() {
     setFullStrip(RGB.BLACK);
-    ledStrip.setData(ledBuffer);
   }
 
   private void setFullStrip(final RGB rgb) {
@@ -106,15 +84,7 @@ public class Signaling extends SubsystemBase {
   }
 
   private void setSection(final RGB rgb, final int startID, final int count) {
-    for (var i = startID; i < startID + count; i++) {
-      if (i >= 0 && i < SignalingConstants.NUMBER_OF_LEDS) {
-        ledBuffer.setRGB(
-            i,
-            (int) (rgb.red * SignalingConstants.LED_BRIGHTNESS),
-            (int) (rgb.green * SignalingConstants.LED_BRIGHTNESS),
-            (int) (rgb.blue * SignalingConstants.LED_BRIGHTNESS));
-      }
-    }
+    candle.setLEDs(rgb.red, rgb.green, rgb.blue, 0, startID, count);
   }
 
   private void updatePattern() {
@@ -141,6 +111,7 @@ public class Signaling extends SubsystemBase {
       case ALLIANCE:
         pattern = AlliancePattern.getPattern();
         patternLength = AlliancePattern.getPatternLength();
+        break;
       default:
         pattern = AlliancePattern.getPattern();
         patternLength = AlliancePattern.getPatternLength();
@@ -162,7 +133,6 @@ public class Signaling extends SubsystemBase {
       LEDIndex += node.repeat;
       patternIndex++;
     }
-    ledStrip.setData(ledBuffer);
   }
 
   public void randomizePattern() {
@@ -182,6 +152,5 @@ public class Signaling extends SubsystemBase {
 
   public void clearLEDs() {
     setFullStrip(RGB.BLACK);
-    ledStrip.setData(ledBuffer);
   }
 }

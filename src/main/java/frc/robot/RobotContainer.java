@@ -293,10 +293,7 @@ public class RobotContainer {
         .and(elevator.elevatorUpTrigger())
         .and(coralScorer.getReefSensorTrigger().negate())
         .onTrue(signaling.setColor(RGB.YELLOW));
-    coralScorer
-        .hasCoral()
-        .and(elevator.elevatorUpTrigger())
-        .onFalse(signaling.setColor(RGB.BLUE));
+    coralScorer.hasCoral().and(elevator.elevatorUpTrigger()).onFalse(signaling.setColor(RGB.BLUE));
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
     OI.getPOVButton(OI.Driver.DPAD_LEFT).onTrue(elevator.L2());

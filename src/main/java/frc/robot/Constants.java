@@ -66,6 +66,7 @@ public final class Constants {
     public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
     public static final int kAlgeaMotor = 18;
+    public static final int kCANdle = 19;
   }
 
   public static class DIOConstants {
@@ -81,7 +82,7 @@ public final class Constants {
   public static class PWMIDs {
     public static final int kFrontClimberServoID = 1;
     public static final int kBackClimberServoID = 0;
-    public static final int kLED_PWM_PORT = 0;
+    public static final int kLED_PWM_PORT = 2;
   }
 
   public static class SensorIDs {
