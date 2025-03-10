@@ -22,6 +22,9 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -35,6 +38,10 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+  NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  NetworkTable tagsTable = inst.getTable("vision");
+  ;
+  DoublePublisher tagCountPub = tagsTable.getDoubleTopic("TagCount").publish();
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -176,7 +183,7 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
-    Logger.recordOutput("Vision/Summary/TagCount", tagCount);
+    tagCountPub.set(tagCount);
   }
 
   @FunctionalInterface

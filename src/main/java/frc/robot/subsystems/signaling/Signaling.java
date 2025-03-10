@@ -32,11 +32,7 @@ public class Signaling extends SubsystemBase {
   public void periodic() {
     // Update Light Pattern
     if (DriverStation.isDisabled()) {
-      if (NetworkTableInstance.getDefault()
-              .getTable("Vision")
-              .getSubTable("Summary")
-              .getEntry("TagCount")
-              .getInteger(0)
+      if (NetworkTableInstance.getDefault().getTable("vision").getEntry("TagCount").getInteger(0)
           > 0) {
         disablePattern = DisablePattern.ALLIANCE;
       }
