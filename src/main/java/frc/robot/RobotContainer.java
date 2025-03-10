@@ -95,6 +95,10 @@ public class RobotContainer {
           () ->
               sensors.getSensorState() == CoralEnum.NO_CORAL
                   || coralScorer.hasCoralTrigger().getAsBoolean());
+  private final Trigger UpButtonTrigger = OI.getPOVButton(OI.Driver.POV0);
+  private final Trigger DownButtonTrigger = OI.getPOVButton(OI.Driver.POV90);
+  private final Trigger RightButtonTrigger = OI.getPOVButton(OI.Driver.POV180);
+  private final Trigger LeftButtonTrigger = OI.getPOVButton(OI.Driver.POV270);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -441,6 +445,19 @@ public class RobotContainer {
                 OI.getAxisSupplier(Driver.LeftX),
                 drive.getAlignRotation()));
 
+    UpButtonTrigger.or(DownButtonTrigger)
+        .or(RightButtonTrigger)
+        .or(LeftButtonTrigger)
+        .whileTrue(
+            DriveCommands.POVDrive(
+                drive,
+                () ->
+                    (RightButtonTrigger.getAsBoolean() ? 1.0 : 0.0)
+                        + (LeftButtonTrigger.getAsBoolean() ? -1.0 : 0.0),
+                () ->
+                    (UpButtonTrigger.getAsBoolean() ? 1.0 : 0.0)
+                        + (DownButtonTrigger.getAsBoolean() ? -1.0 : 0.0)));
+
     /* This is for creating the button mappings for logging what coral have been scored
      * The Driverstation has a hard limit of 32 buttons so we use 2 different vjoy controllers
      * to get the effective 64 buttons that we need for logging. this first 16 buttons of every controller are
@@ -483,13 +500,13 @@ public class RobotContainer {
               OI.getAxisSupplier(OI.Keyboard.AD),
               OI.getAxisSupplier(OI.Keyboard.WS),
               OI.getAxisSupplier(OI.Keyboard.ArrowLR)));
-      OI.getButton(OI.Keyboard.M)
-          .whileTrue(
-              DriveCommands.AlignToReef(
-                  drive,
-                  OI.getAxisSupplier(OI.Keyboard.AD),
-                  OI.getAxisSupplier(OI.Keyboard.WS),
-                  drive.getAlignRotation()));
+      // OI.getButton(OI.Keyboard.M)
+      //     .whileTrue(
+      //         DriveCommands.AlignToReef(
+      //             drive,
+      //             OI.getAxisSupplier(OI.Keyboard.AD),
+      //             OI.getAxisSupplier(OI.Keyboard.WS),
+      //             drive.getAlignRotation()));
 
       // Intake
       OI.getButton(OI.Keyboard.ForwardSlash).whileTrue(intake.floorIntake());
@@ -505,6 +522,14 @@ public class RobotContainer {
 
       // Reset Button
       OI.getButton(OI.Keyboard.Comma).onTrue(Commands.runOnce(() -> resetSimulationField()));
+
+      // POV Drive
+      OI.getButton(OI.Keyboard.M)
+          .whileTrue(
+              DriveCommands.POVDrive(
+                  drive,
+                  () -> OI.getAxisSupplier(OI.Keyboard.JL).get(),
+                  () -> OI.getAxisSupplier(OI.Keyboard.IK).get()));
     }
   }
 

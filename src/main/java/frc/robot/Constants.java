@@ -293,6 +293,9 @@ public final class Constants {
     public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(69.8548622056);
     public static final double WHEEL_COF = 1.2;
 
+    // POV Drive Constants
+    public static final LinearVelocity kPOVDriveSpeed = MetersPerSecond.of(1);
+
     public static final PathConstraints PATH_CONSTRAINTS =
         new PathConstraints(
             3.5,
