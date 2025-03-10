@@ -3,68 +3,59 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.2065,
-        "y": 5.0097499999999995
+        "x": 5.239412841877079,
+        "y": 5.072012762727696
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.976709928820134,
-        "y": 5.3333869078114935
+        "x": 4.864933113865634,
+        "y": 5.35967495264944
       },
       "isLocked": false,
       "linkedName": "Reef I"
     },
     {
       "anchor": {
-        "x": 3.513529932613403,
-        "y": 6.178447970091244
+        "x": 4.497231788558235,
+        "y": 5.557531845445145
       },
       "prevControl": {
-        "x": 5.0131583520921605,
-        "y": 5.407761602886652
+        "x": 5.0111996933432374,
+        "y": 5.189366491647869
       },
       "nextControl": {
-        "x": 2.8758319025270596,
-        "y": 6.506172606272514
+        "x": 3.6963526197503986,
+        "y": 6.131217400103166
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Transition L"
     },
     {
       "anchor": {
-        "x": 1.2456343910549479,
-        "y": 7.074343420759858
+        "x": 1.18,
+        "y": 7.125
       },
       "prevControl": {
-        "x": 1.5321802085986926,
-        "y": 6.866149437990381
+        "x": 1.4056001450566487,
+        "y": 7.0172754691334465
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [
+  "rotationTargets": [
     {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.856043781725888,
-      "constraints": {
-        "maxVelocity": 1.0,
-        "maxAcceleration": 2.5,
-        "maxAngularVelocity": 300.0,
-        "maxAngularAcceleration": 2979.381,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -29.999999999999996
     }
   ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "ElvL0",
-      "waypointRelativePos": 0.5167155774111674,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -75,10 +66,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

@@ -39,11 +39,35 @@
           "data": {
             "name": "Intake"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score D"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL0"
+          }
         }
       ]
     }
   },
-  "resetOdom": true,
-  "folder": "The Franks",
+  "resetOdom": false,
+  "folder": "🗿 Chads",
   "choreoAuto": false
 }

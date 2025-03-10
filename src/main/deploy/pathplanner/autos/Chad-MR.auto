@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - E"
+            "pathName": "StartMR - E"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4 DeadLine"
+            "name": "ElvL4"
           }
         },
         {
@@ -49,6 +49,12 @@
         {
           "type": "named",
           "data": {
+            "name": "ElvL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Score"
           }
         },
@@ -61,7 +67,7 @@
       ]
     }
   },
-  "resetOdom": true,
-  "folder": "The Franks",
+  "resetOdom": false,
+  "folder": "🗿 Chads",
   "choreoAuto": false
 }

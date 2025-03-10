@@ -39,11 +39,12 @@
             "/AdvantageKit/RealOutputs/Elevator/Motor2",
             "/AdvantageKit/RealOutputs/CoralScorer",
             "/AdvantageKit/RealOutputs/Algea",
-            "/AdvantageKit/RealOutputs/Algea Remover"
+            "/AdvantageKit/RealOutputs/Algea Remover",
+            "/AdvantageKit/RealOutputs/Odometry"
           ]
         },
         "tabs": {
-          "selected": 5,
+          "selected": 6,
           "tabs": [
             {
               "type": 0,
@@ -307,17 +308,52 @@
               },
               "controllerUUID": "puw4i9b7e0fznf83gxyhzfh50dkcsiih",
               "renderer": {
+                "cameraIndex": -1,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  7.700035502082993,
+                  5.432353768648502,
+                  10.177507276911433
+                ],
+                "cameraTarget": [
+                  3.421441634044945,
+                  -0.09850392579553469,
+                  -1.0186191816543337
+                ]
+              },
+              "controlsHeight": 200
+            },
+            {
+              "type": 3,
+              "title": "3D Field",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "robot",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Robot",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "HowdyBot"
+                    }
+                  }
+                ],
+                "game": "2025 Field (Welded)",
+                "origin": "blue"
+              },
+              "controllerUUID": "9xwdw0ljv6tu6lj19y40ulfvpg71f6qz",
+              "renderer": {
                 "cameraIndex": 1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -15.30920789836614,
-                  0.24363679999999965,
-                  2.330845158799856
+                  8.558033548952217,
+                  0.2436367999999981,
+                  -4.350476203397841
                 ],
                 "cameraTarget": [
-                  -15.308843076055906,
-                  0.6343679284892731,
-                  3.2513499399575534
+                  8.55790117050639,
+                  0.6343679284892715,
+                  -5.2709810473315635
                 ]
               },
               "controlsHeight": 200

@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartL - I"
+            "pathName": "StartMR - E"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4 DeadLine"
+            "name": "ElvL4"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "I - Source"
+            "pathName": "E - Source"
           }
         },
         {
@@ -43,7 +43,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score K"
+            "pathName": "Score D"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "D - Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score C"
           }
         },
         {
@@ -68,6 +98,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "The Franks",
+  "folder": "👑 Kings",
   "choreoAuto": false
 }

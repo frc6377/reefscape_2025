@@ -7,25 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartMR - G"
+            "pathName": "StartL - IJ (L1)"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL0"
+            "name": "L1 Score"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "The Franks",
+  "folder": "🐸 Franks",
   "choreoAuto": false
 }

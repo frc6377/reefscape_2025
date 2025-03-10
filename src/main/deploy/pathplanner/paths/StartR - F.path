@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.153354883821793,
-        "y": 0.49849087715277735
+        "x": 6.998154821642303,
+        "y": 0.6584370810728194
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.6358873444931366,
-        "y": 1.3448028879883547
+        "x": 6.388495748565016,
+        "y": 1.4403332790125378
       },
       "isLocked": false,
       "linkedName": "Start Right"
     },
     {
       "anchor": {
-        "x": 5.314739782827511,
-        "y": 3.0111717010357766
+        "x": 5.302171536275998,
+        "y": 3.014711304231577
       },
       "prevControl": {
-        "x": 5.819720857668457,
-        "y": 2.2392199687784693
+        "x": 5.875548421410098,
+        "y": 2.260686590947174
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,24 +31,12 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "ElvL4",
-      "waypointRelativePos": 0.75,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ElvL4"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
@@ -60,7 +48,7 @@
   "folder": "Start - Score",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -135.0
   },
   "useDefaultConstraints": true
 }

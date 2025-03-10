@@ -15,16 +15,22 @@ package frc.robot.subsystems.vision;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 
 public class VisionConstants {
   // AprilTag layout
   public static AprilTagFieldLayout aprilTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+
+  public static final boolean kVisionAutoOnly = true;
 
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "limelight-elvcam";
@@ -46,20 +52,21 @@ public class VisionConstants {
           new Rotation3d(Degrees.of(0), Degrees.of(-23), Degrees.of(-90)));
 
   // Basic filtering thresholds
-  public static double maxAmbiguity = 0.3;
-  public static double maxZError = 0.75;
+  public static int minTags = 2;
+  public static double maxAmbiguity = 0.1; // Lower Better
+  public static double maxZError = 0.5; // / Lower Better
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
-  public static double linearStdDevBaseline = 0.02; // Meters
-  public static double angularStdDevBaseline = 0.06; // Radians
+  public static Distance linearStdDevBaseline = Meters.of(0.02);
+  public static Angle angularStdDevBaseline = Radians.of(0.06);
 
   // Standard deviation multipliers for each camera
   // (Adjust to trust some cameras more than others)
   public static double[] cameraStdDevFactors =
       new double[] {
-        1, // Camera 0
-        1, // Camera 1
+        1.0, // Camera 0
+        1.0, // Camera 1
       };
 
   // Multipliers to apply for MegaTag 2 observations
