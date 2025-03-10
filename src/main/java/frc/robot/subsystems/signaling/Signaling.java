@@ -20,8 +20,8 @@ public class Signaling extends SubsystemBase {
   private final CANdle candle = new CANdle(CANIDs.kCANdle);
   private int tick;
   private int patternTick;
-
-  private DisablePattern disablePattern = DisablePattern.RAINBOW;
+  private long tagCount;
+  private DisablePattern disablePattern = DisablePattern.ALLIANCE;
 
   public Signaling() {
     tick = 0;
@@ -31,10 +31,17 @@ public class Signaling extends SubsystemBase {
   @Override
   public void periodic() {
     // Update Light Pattern
+    
     if (DriverStation.isDisabled()) {
-      if (NetworkTableInstance.getDefault().getTable("vision").getEntry("TagCount").getInteger(0)
-          > 0) {
-        disablePattern = DisablePattern.ALLIANCE;
+      tagCount = NetworkTableInstance.getDefault().getTable("vision").getEntry("TagCount").getInteger(0);
+      if (tagCount
+          == 0) {
+        setCandle(RGB.RED);
+      } else if (tagCount
+          == 1) {
+        setCandle(RGB.YELLOW);
+      } else {
+        setCandle(RGB.GREEN);
       }
       updatePattern();
     } else {
@@ -49,7 +56,9 @@ public class Signaling extends SubsystemBase {
           Logger.recordOutput("Signaling/LED Color", rgb.toHex());
         });
   }
-
+  private void setCandle(RGB rgb) {
+    setSection(rgb, 0, 8, true);
+  }
   public Command setToAlliance() {
     return startEnd(
         () -> {
@@ -79,10 +88,12 @@ public class Signaling extends SubsystemBase {
     setSection(rgb, 0, SignalingConstants.NUMBER_OF_LEDS);
   }
 
-  private void setSection(final RGB rgb, final int startID, final int count) {
-    candle.setLEDs(rgb.red, rgb.green, rgb.blue, 0, startID, count);
+  private void setSection(final RGB rgb, final int startID, final int count, final Boolean candleBool) {
+    candle.setLEDs(rgb.red, rgb.green, rgb.blue, 0, startID + (8 * (candleBool ? 0 : 1)), count);
   }
-
+  private void setSection(final RGB rgb, final int startID, final int count) {
+    setSection(rgb, startID, count, false);
+  }
   private void updatePattern() {
     PatternNode[] pattern;
     int patternLength;
