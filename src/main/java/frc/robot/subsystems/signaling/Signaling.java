@@ -1,9 +1,11 @@
 package frc.robot.subsystems.signaling;
 
 import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.FireAnimation;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -21,7 +23,8 @@ public class Signaling extends SubsystemBase {
   private int tick;
   private int patternTick;
   private long tagCount;
-  private DisablePattern disablePattern = DisablePattern.ALLIANCE;
+  private DisablePattern disablePattern = DisablePattern.FIRE;
+  private PowerDistribution pdp = new PowerDistribution();
 
   public Signaling() {
     tick = 0;
@@ -34,22 +37,40 @@ public class Signaling extends SubsystemBase {
 
     if (DriverStation.isDisabled()) {
       tagCount =
-          NetworkTableInstance.getDefault().getTable("vision").getEntry("TagCount").getInteger(0);
+          NetworkTableInstance.getDefault().getTable("Vision").getEntry("TagCount").getInteger(0);
       switch ((int) tagCount) {
         case 0:
           setCandle(RGB.RED);
+          Logger.recordOutput("Signaling/CANdle Color", "Red");
           break;
         case 1:
           setCandle(RGB.YELLOW);
+          Logger.recordOutput("Signaling/CANdle Color", "Yellow");
           break;
         default:
           setCandle(RGB.GREEN);
+          Logger.recordOutput("Signaling/CANdle Color", "Green");
           break;
       }
       updatePattern();
     } else {
-      setColor(RGB.GREEN);
+      if (getProblem()) {
+        setCandle(RGB.RED);
+      } else {
+        if (DriverStation.isAutonomous()) {
+          setCandle(RGB.PURPLE);
+        } else if (DriverStation.isTest()) {
+          setCandle(RGB.BLUE);
+        } else {
+          setCandle(RGB.GREEN);
+        }
+      }
     }
+    Logger.recordOutput("Signaling/Pattern", disablePattern.toString());
+  }
+
+  private boolean getProblem() {
+    return (pdp.getVoltage() < 6) || (pdp.getTemperature() > 60);
   }
 
   public Command setColor(RGB rgb) {
@@ -90,7 +111,7 @@ public class Signaling extends SubsystemBase {
   }
 
   private void setFullStrip(final RGB rgb) {
-    setSection(rgb, 0, SignalingConstants.NUMBER_OF_LEDS);
+    setSection(rgb, 0, SignalingConstants.kNumLEDs);
   }
 
   private void setSection(
@@ -107,39 +128,51 @@ public class Signaling extends SubsystemBase {
     int patternLength;
 
     tick++;
-    if (tick > SignalingConstants.PATTERN_SPEED * 50) {
+    if (tick > SignalingConstants.kPatternSpeed * 50) {
       tick = 0;
       patternTick++;
     } else {
       return;
     }
-
     switch (disablePattern) {
+      case FIRE:
+        candle.animate(
+            new FireAnimation(
+                1.0,
+                SignalingConstants.kPatternSpeed,
+                SignalingConstants.kNumLEDs,
+                0.5,
+                0.5,
+                false,
+                8));
       case RAINBOW:
         pattern = RainbowPattern.getPattern();
         patternLength = RainbowPattern.getPatternLength();
+        getLEDIndex(pattern, patternLength);
         break;
       case SWEEP:
         pattern = RainbowPattern.getPattern();
         patternLength = RainbowPattern.getPatternLength();
+        getLEDIndex(pattern, patternLength);
         break;
       case ALLIANCE:
         pattern = AlliancePattern.getPattern();
         patternLength = AlliancePattern.getPatternLength();
+        getLEDIndex(pattern, patternLength);
         break;
       default:
         pattern = AlliancePattern.getPattern();
         patternLength = AlliancePattern.getPatternLength();
+        getLEDIndex(pattern, patternLength);
         break;
     }
-    getLEDIndex(pattern, patternLength);
   }
 
   private void getLEDIndex(PatternNode[] pattern, int patternLength) {
     int patternIndex = 0;
     patternTick %= patternLength;
     int LEDIndex = -patternTick - 1;
-    while (LEDIndex < SignalingConstants.NUMBER_OF_LEDS) {
+    while (LEDIndex < SignalingConstants.kNumLEDs) {
       patternIndex %= pattern.length;
       PatternNode node = pattern[patternIndex];
       RGB color = node.color;
@@ -157,6 +190,7 @@ public class Signaling extends SubsystemBase {
   private enum DisablePattern {
     RAINBOW,
     ALLIANCE,
+    FIRE,
     SWEEP;
 
     public static DisablePattern getRandom() {

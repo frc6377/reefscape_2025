@@ -44,7 +44,7 @@ public final class Constants {
   }
 
   public static final Alliance kAllianceColor =
-      DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue;
+      DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Red;
 
   public static final String CANivoreName = "Default Name";
   public static final String RIOName = "rio";
@@ -82,7 +82,6 @@ public final class Constants {
   public static class PWMIDs {
     public static final int kFrontClimberServoID = 1;
     public static final int kBackClimberServoID = 0;
-    public static final int kLED_PWM_PORT = 2;
   }
 
   public static class SensorIDs {
@@ -156,9 +155,9 @@ public final class Constants {
 
   // Signaling Constants
   public static class SignalingConstants {
-    public static final int NUMBER_OF_LEDS = 30;
-    public static final double LED_BRIGHTNESS = 1;
-    public static final double PATTERN_SPEED = 0.001;
+    public static final int kNumLEDs = 30;
+    public static final double kLEDBrightness = 1;
+    public static final double kPatternSpeed = 0.001;
   }
 
   // Intake Constants

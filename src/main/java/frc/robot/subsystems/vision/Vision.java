@@ -39,9 +39,9 @@ public class Vision extends SubsystemBase {
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
-  NetworkTable tagsTable = inst.getTable("vision");
-  ;
+  NetworkTable tagsTable = inst.getTable("Vision");
   DoublePublisher tagCountPub = tagsTable.getDoubleTopic("TagCount").publish();
+  public int tagCount;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -83,7 +83,7 @@ public class Vision extends SubsystemBase {
     List<Pose3d> allRobotPoses = new LinkedList<>();
     List<Pose3d> allRobotPosesAccepted = new LinkedList<>();
     List<Pose3d> allRobotPosesRejected = new LinkedList<>();
-    int tagCount = 0;
+    tagCount = 0;
     // Loop over cameras
     for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
       // Update disconnected alert
