@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.ironmaple.simulation.SimulatedArena;
@@ -51,7 +52,7 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
 
-  // private double lastTime = Timer.getFPGATimestamp() * 1000;
+  private double lastTime = Timer.getFPGATimestamp() * 1000;
 
   public Robot() {
     // For TOF Sensor
@@ -131,9 +132,9 @@ public class Robot extends LoggedRobot {
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
 
-    // double newTime = Timer.getFPGATimestamp() * 1000;
-    // Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
-    // lastTime = newTime;
+    double newTime = Timer.getFPGATimestamp() * 1000;
+    Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
+    lastTime = newTime;
 
     // CommandScheduler.getInstance().printWatchdogEpochs();
   }

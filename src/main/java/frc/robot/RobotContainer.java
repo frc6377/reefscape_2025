@@ -299,7 +299,6 @@ public class RobotContainer {
 
     coralScorer
         .scorerAlignedTrigger()
-        .debounce(0.1)
         .and(coralScorer.hasCoralTrigger())
         .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
         .and(elevator.elevatorAtCurrentSetpoint())

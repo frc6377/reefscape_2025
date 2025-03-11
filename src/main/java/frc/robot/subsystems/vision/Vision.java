@@ -39,6 +39,8 @@ public class Vision extends SubsystemBase {
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
 
+  private int currentTagCount = 0;
+
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
@@ -102,11 +104,11 @@ public class Vision extends SubsystemBase {
       // Loop over pose observations
       for (var observation : inputs[cameraIndex].poseObservations) {
         // Check whether to reject pose
-        Logger.recordOutput("Vision/Ambiguity " + cameraIndex, observation.ambiguity());
+        currentTagCount = observation.tagCount();
 
         boolean rejectPose =
             observation.tagCount() == 0 // Must have at least one tag
-                || observation.tagCount() < VisionConstants.minTags // Must have enough tags
+                || observation.tagCount() < minTags // Must have enough tags
                 || observation.ambiguity() > maxAmbiguity // Cannot be high ambiguity
                 || Math.abs(observation.pose().getZ()) > maxZError // Must have realistic Z cord
 
@@ -180,6 +182,10 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+  }
+
+  public int getTagCount() {
+    return currentTagCount;
   }
 
   @FunctionalInterface

@@ -33,18 +33,18 @@ public class VisionConstants {
   public static final boolean kVisionAutoOnly = true;
 
   // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "limelight-elvcam";
-  public static String camera1Name = "limelight-lowcam";
+  public static final String camera0Name = "limelight-elvcam";
+  public static final String camera1Name = "limelight-lowcam";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
-  public static Transform3d robotToCamera0 =
+  public static final Transform3d robotToCamera0 =
       new Transform3d(
           Inches.of(-6.871),
           Inches.of(-9.31),
           Inches.of(39.96),
           new Rotation3d(Degrees.of(0), Degrees.of(5.42), Degrees.of(180)));
-  public static Transform3d robotToCamera1 =
+  public static final Transform3d robotToCamera1 =
       new Transform3d(
           Inches.of(8.5),
           Inches.of(-12.789),
@@ -52,9 +52,9 @@ public class VisionConstants {
           new Rotation3d(Degrees.of(0), Degrees.of(-23), Degrees.of(-90)));
 
   // Basic filtering thresholds
-  public static int minTags = 2;
-  public static double maxAmbiguity = 0.1; // Lower Better
-  public static double maxZError = 0.5; // / Lower Better
+  public static final int minTags = 2;
+  public static final double maxAmbiguity = 0.1; // Lower Better
+  public static final double maxZError = 0.5; // / Lower Better
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)

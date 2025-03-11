@@ -146,7 +146,9 @@ public final class Constants {
     public static final double kReverseSpeed = 0.25;
 
     public static final Distance kSensorDistnace = Inches.of(1.5);
+
     public static final Distance kAlignSensorDistnace = Inches.of(5);
+    public static final Time kAlignSensorDebounce = Seconds.of(0.04);
   }
 
   // Intake Constants

@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.CoralScorerConstants.*;
 import static frc.robot.Constants.SensorIDs.*;
 
@@ -48,7 +49,7 @@ public class CoralScorer extends SubsystemBase {
   }
 
   public Trigger scorerAlignedTrigger() {
-    return alignSensor.getBeamBrokenTrigger();
+    return alignSensor.getBeamBrokenTrigger().debounce(kAlignSensorDebounce.in(Seconds));
   }
 
   public void stopMotor() {
@@ -86,13 +87,14 @@ public class CoralScorer extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    Logger.recordOutput("CoralScorer/Motor/Output", scorerMotor.get());
     Logger.recordOutput(
-        "CoralScorer/Motor Output", scorerMotor.getMotorVoltage().getValueAsDouble() / 3.0);
-    Logger.recordOutput(
-        "CoralScorer/Motor Velocity (RPS)", scorerMotor.getVelocity().getValueAsDouble());
+        "CoralScorer/Motor/Velocity (RPS)", scorerMotor.getVelocity().getValueAsDouble());
+
     Logger.recordOutput(
         "CoralScorer/Coral Sensor/Distance (Inches)", TOFSensor.getDistance().in(Inches));
     Logger.recordOutput("CoralScorer/Coral Sensor/Bool", TOFSensor.getBeamBroke());
+
     Logger.recordOutput(
         "CoralScorer/Align Sensor/Distance (Inches)", alignSensor.getDistance().in(Inches));
     Logger.recordOutput("CoralScorer/Align Sensor/Bool", alignSensor.getBeamBroke());
