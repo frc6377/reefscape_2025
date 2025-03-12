@@ -3,37 +3,58 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.985904950643874,
-        "y": 5.140147439396003
+        "x": 4.956933024016228,
+        "y": 5.235532952442172
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.9787245895254695,
-        "y": 6.151338996202089
+        "x": 4.773555926713528,
+        "y": 5.4054530518560915
       },
       "isLocked": false,
       "linkedName": "Reef J"
     },
     {
       "anchor": {
-        "x": 1.2456343910549479,
-        "y": 7.074343420759858
+        "x": 4.497231788558235,
+        "y": 5.557531845445145
       },
       "prevControl": {
-        "x": 2.7339291427656,
-        "y": 6.242990875650495
+        "x": 4.721916207680188,
+        "y": 5.447910169651394
+      },
+      "nextControl": {
+        "x": 3.8960762424519535,
+        "y": 5.8508306804707715
+      },
+      "isLocked": false,
+      "linkedName": "Transition L"
+    },
+    {
+      "anchor": {
+        "x": 1.1804137538808899,
+        "y": 7.124655826548762
+      },
+      "prevControl": {
+        "x": 2.742513158802102,
+        "y": 6.529910753018544
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -29.999999999999996
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.34322453997461944,
+      "maxWaypointRelativePos": 0.4,
       "constraints": {
         "maxVelocity": 1.0,
         "maxAcceleration": 2.5,
@@ -48,7 +69,7 @@
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0.10049175126903559,
+      "waypointRelativePos": 0.2,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -59,10 +80,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

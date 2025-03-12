@@ -8,60 +8,54 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0831833934244672,
-        "y": 1.3626126393319131
+        "x": 2.1420601620309,
+        "y": 1.3668076004081398
       },
       "isLocked": false,
       "linkedName": "Right Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 4.711073945180848,
-        "y": 2.6052442283516406
+        "x": 4.497231788558235,
+        "y": 2.45
       },
       "prevControl": {
-        "x": 4.019041139831323,
-        "y": 2.2117336600470634
+        "x": 3.828249973370709,
+        "y": 2.0875281334557476
       },
       "nextControl": {
-        "x": 4.928396243061116,
-        "y": 2.7288201922120936
+        "x": 4.8115787533610686,
+        "y": 2.6203214175450555
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Transition R"
     },
     {
       "anchor": {
-        "x": 5.314739782827511,
-        "y": 3.0111717010357766
+        "x": 5.302171536275998,
+        "y": 3.014711304231577
       },
       "prevControl": {
-        "x": 5.084564718750118,
-        "y": 2.853385111806134
+        "x": 5.127260900398015,
+        "y": 2.8087849400505207
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Reef F"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -150.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Intake"
-        }
-      }
-    },
-    {
       "name": "ElvL4",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 1.5,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -72,10 +66,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

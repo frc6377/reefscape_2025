@@ -3,65 +3,59 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2456343910549479,
-        "y": 7.074343420759858
+        "x": 1.1804137538808899,
+        "y": 7.124655826548762
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1821916340534866,
-        "y": 6.680404367933619
+        "x": 2.187382213505383,
+        "y": 6.9626832999126895
       },
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 4.413800440537468,
-        "y": 5.5615298402549165
+        "x": 4.497231788558235,
+        "y": 5.557531845445145
       },
       "prevControl": {
-        "x": 2.962226550679044,
-        "y": 6.187188682468368
+        "x": 3.1048376457711337,
+        "y": 6.586703408478484
       },
       "nextControl": {
-        "x": 4.643382586564975,
-        "y": 5.462575112093982
+        "x": 4.8580688948251725,
+        "y": 5.290823391821641
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Transition L"
     },
     {
       "anchor": {
-        "x": 4.985904950643874,
-        "y": 5.140147439396003
+        "x": 4.956933024016228,
+        "y": 5.235532952442172
       },
       "prevControl": {
-        "x": 4.54329490885461,
-        "y": 5.371816929797883
+        "x": 4.673712428324912,
+        "y": 5.419827786654545
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Reef J"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -29.999999999999996
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Intake"
-        }
-      }
-    },
-    {
       "name": "ElvL4",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 1.5,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -72,10 +66,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

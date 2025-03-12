@@ -1,0 +1,255 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.771133447353976,
+        "y": 4.2264591321343685
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.668892623432221,
+        "y": 4.594782285191267
+      },
+      "isLocked": false,
+      "linkedName": "Reef H"
+    },
+    {
+      "anchor": {
+        "x": 5.239412841877079,
+        "y": 5.072012762727696
+      },
+      "prevControl": {
+        "x": 5.747700221380268,
+        "y": 4.71010470904538
+      },
+      "nextControl": {
+        "x": 5.01230918916126,
+        "y": 5.23371388743172
+      },
+      "isLocked": false,
+      "linkedName": "Reef I"
+    },
+    {
+      "anchor": {
+        "x": 4.956933024016228,
+        "y": 5.235532952442172
+      },
+      "prevControl": {
+        "x": 5.224262206525994,
+        "y": 5.089979919615821
+      },
+      "nextControl": {
+        "x": 4.671190047790876,
+        "y": 5.391111765080439
+      },
+      "isLocked": false,
+      "linkedName": "Reef J"
+    },
+    {
+      "anchor": {
+        "x": 3.960225596164967,
+        "y": 5.201472783996333
+      },
+      "prevControl": {
+        "x": 4.5166526339495086,
+        "y": 5.5316069133270895
+      },
+      "nextControl": {
+        "x": 3.677458158504796,
+        "y": 5.033703830484091
+      },
+      "isLocked": false,
+      "linkedName": "Reef K"
+    },
+    {
+      "anchor": {
+        "x": 3.668025657847955,
+        "y": 5.032479435342304
+      },
+      "prevControl": {
+        "x": 4.004276989560707,
+        "y": 5.2676590195426
+      },
+      "nextControl": {
+        "x": 3.405119115566748,
+        "y": 4.848598375355748
+      },
+      "isLocked": false,
+      "linkedName": "Reef L"
+    },
+    {
+      "anchor": {
+        "x": 3.2040357097247134,
+        "y": 4.155966705653013
+      },
+      "prevControl": {
+        "x": 3.197203221359374,
+        "y": 4.828171827008803
+      },
+      "nextControl": {
+        "x": 3.208169187305032,
+        "y": 3.749300107785865
+      },
+      "isLocked": false,
+      "linkedName": "Reef A"
+    },
+    {
+      "anchor": {
+        "x": 3.203564988413454,
+        "y": 3.825491058277251
+      },
+      "prevControl": {
+        "x": 3.2240432725424055,
+        "y": 4.203648469585831
+      },
+      "nextControl": {
+        "x": 3.1805611788320487,
+        "y": 3.4006966259526545
+      },
+      "isLocked": false,
+      "linkedName": "Reef B"
+    },
+    {
+      "anchor": {
+        "x": 3.7335101397266515,
+        "y": 2.9806245565335248
+      },
+      "prevControl": {
+        "x": 3.310466700738675,
+        "y": 3.1718659591037164
+      },
+      "nextControl": {
+        "x": 3.9613144910207385,
+        "y": 2.8776431138776744
+      },
+      "isLocked": false,
+      "linkedName": "Reef C"
+    },
+    {
+      "anchor": {
+        "x": 4.018625531639518,
+        "y": 2.815484153465194
+      },
+      "prevControl": {
+        "x": 3.771987685478297,
+        "y": 2.8934237609200166
+      },
+      "nextControl": {
+        "x": 4.399819724855033,
+        "y": 2.695023622992291
+      },
+      "isLocked": false,
+      "linkedName": "Reef D"
+    },
+    {
+      "anchor": {
+        "x": 5.015838007728944,
+        "y": 2.848528319399927
+      },
+      "prevControl": {
+        "x": 4.5454770434578915,
+        "y": 2.554875778592377
+      },
+      "nextControl": {
+        "x": 5.237870375090009,
+        "y": 2.987146048696696
+      },
+      "isLocked": false,
+      "linkedName": "Reef E"
+    },
+    {
+      "anchor": {
+        "x": 5.302171536275998,
+        "y": 3.014711304231577
+      },
+      "prevControl": {
+        "x": 4.8731976343253605,
+        "y": 2.758050288109975
+      },
+      "nextControl": {
+        "x": 5.704739498537891,
+        "y": 3.2555732815740352
+      },
+      "isLocked": false,
+      "linkedName": "Reef F"
+    },
+    {
+      "anchor": {
+        "x": 5.771623873822696,
+        "y": 3.8968182267843003
+      },
+      "prevControl": {
+        "x": 5.795079255608341,
+        "y": 3.6479209687333336
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Reef G"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -29.999999999999996
+    },
+    {
+      "waypointRelativePos": 2.0016052246093734,
+      "rotationDegrees": -65.18829124704496
+    },
+    {
+      "waypointRelativePos": 3.0,
+      "rotationDegrees": 29.999999999999996
+    },
+    {
+      "waypointRelativePos": 3.995220947265625,
+      "rotationDegrees": 29.999999999999996
+    },
+    {
+      "waypointRelativePos": 5.0,
+      "rotationDegrees": 90.0
+    },
+    {
+      "waypointRelativePos": 6.0,
+      "rotationDegrees": 90.0
+    },
+    {
+      "waypointRelativePos": 7.0,
+      "rotationDegrees": 150.0
+    },
+    {
+      "waypointRelativePos": 8.000982666015627,
+      "rotationDegrees": 150.0
+    },
+    {
+      "waypointRelativePos": 9.0,
+      "rotationDegrees": -150.0
+    },
+    {
+      "waypointRelativePos": 10.0,
+      "rotationDegrees": -150.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 1200.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "reversed": false,
+  "folder": "Testing",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "useDefaultConstraints": true
+}

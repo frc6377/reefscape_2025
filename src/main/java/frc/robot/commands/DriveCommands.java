@@ -53,7 +53,7 @@ public class DriveCommands {
     Rotation2d linearDirection = new Rotation2d(Math.atan2(y, x));
 
     // Square magnitude for more precise control
-    linearMagnitude = linearMagnitude * linearMagnitude;
+    // linearMagnitude = linearMagnitude * linearMagnitude;
 
     // Return new linear velocity
     return new Pose2d(new Translation2d(), linearDirection)
@@ -120,6 +120,24 @@ public class DriveCommands {
                   isFlipped
                       ? drive.getRotation().plus(new Rotation2d(Math.PI))
                       : drive.getRotation()));
+        },
+        drive);
+  }
+
+  public static Command POVDrive(
+      Drive drive, Supplier<Double> xSupplier, Supplier<Double> ySupplier) {
+    return Commands.run(
+        () -> {
+          // Get linear velocity
+          Translation2d linearVelocity =
+              getLinearVelocityFromJoysticks(xSupplier.get(), ySupplier.get());
+
+          ChassisSpeeds speeds =
+              new ChassisSpeeds(
+                  linearVelocity.getX() * DrivetrainConstants.kPOVDriveSpeed.in(MetersPerSecond),
+                  linearVelocity.getY() * DrivetrainConstants.kPOVDriveSpeed.in(MetersPerSecond),
+                  0);
+          drive.runVelocity(speeds);
         },
         drive);
   }

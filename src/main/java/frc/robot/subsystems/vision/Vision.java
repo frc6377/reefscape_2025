@@ -13,6 +13,8 @@
 
 package frc.robot.subsystems.vision;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import edu.wpi.first.math.Matrix;
@@ -28,6 +30,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +45,8 @@ public class Vision extends SubsystemBase {
   NetworkTable tagsTable = inst.getTable("Vision");
   DoublePublisher tagCountPub = tagsTable.getDoubleTopic("TagCount").publish();
   public int tagCount;
+
+  private int currentTagCount = 0;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -106,12 +111,13 @@ public class Vision extends SubsystemBase {
       // Loop over pose observations
       for (var observation : inputs[cameraIndex].poseObservations) {
         // Check whether to reject pose
+        currentTagCount = observation.tagCount();
+
         boolean rejectPose =
             observation.tagCount() == 0 // Must have at least one tag
-                || (observation.tagCount() == 1
-                    && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
-                || Math.abs(observation.pose().getZ())
-                    > maxZError // Must have realistic Z coordinate
+                || observation.tagCount() < minTags // Must have enough tags
+                || observation.ambiguity() > maxAmbiguity // Cannot be high ambiguity
+                || Math.abs(observation.pose().getZ()) > maxZError // Must have realistic Z cord
 
                 // Must be within the field boundaries
                 || observation.pose().getX() < 0.0
@@ -127,15 +133,13 @@ public class Vision extends SubsystemBase {
         }
 
         // Skip if rejected
-        if (rejectPose) {
-          continue;
-        }
+        if (rejectPose) continue;
 
         // Calculate standard deviations
         double stdDevFactor =
             Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
-        double linearStdDev = linearStdDevBaseline * stdDevFactor;
-        double angularStdDev = angularStdDevBaseline * stdDevFactor;
+        double linearStdDev = linearStdDevBaseline.in(Meters) * stdDevFactor;
+        double angularStdDev = angularStdDevBaseline.in(Radians) * stdDevFactor;
         if (observation.type() == PoseObservationType.MEGATAG_2) {
           linearStdDev *= linearStdDevMegatag2Factor;
           angularStdDev *= angularStdDevMegatag2Factor;
@@ -146,10 +150,12 @@ public class Vision extends SubsystemBase {
         }
 
         // Send vision observation
-        consumer.accept(
-            observation.pose().toPose2d(),
-            observation.timestamp(),
-            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+        if (Robot.isUsingVision && VisionConstants.kVisionAutoOnly) {
+          consumer.accept(
+              observation.pose().toPose2d(),
+              observation.timestamp(),
+              VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+        }
       }
 
       // Log camera datadata
@@ -184,6 +190,10 @@ public class Vision extends SubsystemBase {
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
     tagCountPub.set(tagCount);
+  }
+
+  public int getTagCount() {
+    return currentTagCount;
   }
 
   @FunctionalInterface

@@ -1,0 +1,135 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.2082729621398975,
+        "y": 4.001030428632984
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.2377372626394654,
+        "y": 3.565494427035419
+      },
+      "isLocked": false,
+      "linkedName": "Reef AB (L1)"
+    },
+    {
+      "anchor": {
+        "x": 3.8489204744030894,
+        "y": 2.9219579815169756
+      },
+      "prevControl": {
+        "x": 3.314053584419797,
+        "y": 3.247311969149939
+      },
+      "nextControl": {
+        "x": 4.453390711511455,
+        "y": 2.5542649989605257
+      },
+      "isLocked": false,
+      "linkedName": "Reef CD (L1)"
+    },
+    {
+      "anchor": {
+        "x": 5.146910101036884,
+        "y": 2.930135758819312
+      },
+      "prevControl": {
+        "x": 4.888574080473522,
+        "y": 2.7409506392218677
+      },
+      "nextControl": {
+        "x": 5.746281749654138,
+        "y": 3.3690687298378124
+      },
+      "isLocked": false,
+      "linkedName": "Reef EF (L1)"
+    },
+    {
+      "anchor": {
+        "x": 5.699636988121139,
+        "y": 4.222314715322886
+      },
+      "prevControl": {
+        "x": 5.713356100654852,
+        "y": 3.8850882374313294
+      },
+      "nextControl": {
+        "x": 5.67290099307921,
+        "y": 4.879506309805375
+      },
+      "isLocked": false,
+      "linkedName": "Reef GH (L1)"
+    },
+    {
+      "anchor": {
+        "x": 5.117265206113934,
+        "y": 5.137871412388509
+      },
+      "prevControl": {
+        "x": 5.356846179222384,
+        "y": 5.01060757114026
+      },
+      "nextControl": {
+        "x": 4.423878462611717,
+        "y": 5.506193901874191
+      },
+      "isLocked": false,
+      "linkedName": "Reef IJ (L1)"
+    },
+    {
+      "anchor": {
+        "x": 3.8374742987366233,
+        "y": 5.127985099526077
+      },
+      "prevControl": {
+        "x": 4.070572174583583,
+        "y": 5.218347593270084
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Reef KL (L1)"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 59.99999999999999
+    },
+    {
+      "waypointRelativePos": 2.0,
+      "rotationDegrees": 119.99999999999999
+    },
+    {
+      "waypointRelativePos": 3.0,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 4.0,
+      "rotationDegrees": -119.99999999999999
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 1200.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -59.99999999999999
+  },
+  "reversed": false,
+  "folder": "Testing",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

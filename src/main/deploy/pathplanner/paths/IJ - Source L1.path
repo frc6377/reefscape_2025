@@ -3,73 +3,40 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.073208761049796,
-        "y": 5.052530670043824
+        "x": 5.117265206113934,
+        "y": 5.137871412388509
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.646361127344751,
-        "y": 5.295528614039482
+        "x": 5.41381369580711,
+        "y": 5.700766072980275
       },
       "isLocked": false,
-      "linkedName": "Reef IJ L1"
+      "linkedName": "Reef IJ (L1)"
     },
     {
       "anchor": {
-        "x": 4.3419458160152145,
-        "y": 5.622779163959612
+        "x": 1.1804137538808899,
+        "y": 7.124655826548762
       },
       "prevControl": {
-        "x": 4.556925834789053,
-        "y": 5.495171987327574
-      },
-      "nextControl": {
-        "x": 4.066353882422693,
-        "y": 5.786364174087006
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.2456343910549479,
-        "y": 7.074343420759858
-      },
-      "prevControl": {
-        "x": 2.59898424674378,
-        "y": 6.183513358475481
+        "x": 2.118064527860957,
+        "y": 6.7082369661658126
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": -119.99999999999999
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Intake"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

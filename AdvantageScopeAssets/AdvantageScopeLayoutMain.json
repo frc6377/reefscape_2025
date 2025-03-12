@@ -9,7 +9,6 @@
         "sidebar": {
           "width": 321,
           "expanded": [
-            "/AdvantageKit",
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/0",
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/1",
             "/AdvantageKit/RealOutputs/FieldSimulation/Coral/2",
@@ -31,19 +30,19 @@
             "/AdvantageKit/RealOutputs/TOFSensor",
             "/AdvantageKit/RealOutputs/TOFSensors",
             "/AdvantageKit/RealOutputs/Scoring Poses",
-            "/AdvantageKit/RealOutputs",
-            "/AdvantageKit/RealOutputs/Swerve/SwerveChassisSpeeds",
-            "/AdvantageKit/RealOutputs/Swerve/SwerveStates",
-            "/AdvantageKit/RealOutputs/Intake",
             "/AdvantageKit/RealOutputs/Elevator/Motor1",
             "/AdvantageKit/RealOutputs/Elevator/Motor2",
-            "/AdvantageKit/RealOutputs/CoralScorer",
             "/AdvantageKit/RealOutputs/Algea",
-            "/AdvantageKit/RealOutputs/Algea Remover"
+            "/AdvantageKit/RealOutputs",
+            "/AdvantageKit/SystemStats",
+            "/AdvantageKit/RadioStatus",
+            "/AdvantageKit/Vision/Camera0",
+            "/CameraPublisher/limelight-elvcam-processed/modes",
+            "/CameraPublisher/limelight-elvcam-processed/streams"
           ]
         },
         "tabs": {
-          "selected": 5,
+          "selected": 7,
           "tabs": [
             {
               "type": 0,
@@ -97,22 +96,6 @@
               "controlsHeight": 200
             },
             {
-              "type": 12,
-              "title": "Metadata",
-              "controller": null,
-              "controllerUUID": "dxsjj7937g2t1v0lftjn1hq9kqcnv44m",
-              "renderer": null,
-              "controlsHeight": 0
-            },
-            {
-              "type": 7,
-              "title": "Video",
-              "controller": null,
-              "controllerUUID": "4v6c1b12bl2ux0tqej2m26yyyrnpgg9a",
-              "renderer": null,
-              "controlsHeight": 85
-            },
-            {
               "type": 2,
               "title": "Odometry",
               "controller": {
@@ -162,37 +145,37 @@
                     "type": "robot",
                     "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/RobotPosition",
                     "logType": "Pose2d",
-                    "visible": false,
+                    "visible": true,
                     "options": {
-                      "model": "2025 KitBot"
+                      "model": "HowdyBot"
                     }
                   },
                   {
                     "type": "component",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Intake Pose",
                     "logType": "Pose3d",
-                    "visible": false,
+                    "visible": true,
                     "options": {}
                   },
                   {
                     "type": "component",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Elv 1 Pose",
                     "logType": "Pose3d",
-                    "visible": false,
+                    "visible": true,
                     "options": {}
                   },
                   {
                     "type": "component",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Elv 2 Pose",
                     "logType": "Pose3d",
-                    "visible": false,
+                    "visible": true,
                     "options": {}
                   },
                   {
                     "type": "vision",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera0/TagPoses",
                     "logType": "Pose3d[]",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#00ff00",
                       "size": "normal"
@@ -202,19 +185,20 @@
                     "type": "vision",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera1/TagPoses",
                     "logType": "Pose3d[]",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#00ffff",
                       "size": "normal"
                     }
                   },
                   {
-                    "type": "robot",
+                    "type": "ghost",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Robot",
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "HowdyBot"
+                      "model": "HowdyBot",
+                      "color": "#00ff00"
                     }
                   },
                   {
@@ -307,17 +291,17 @@
               },
               "controllerUUID": "puw4i9b7e0fznf83gxyhzfh50dkcsiih",
               "renderer": {
-                "cameraIndex": 1,
+                "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -15.30920789836614,
-                  0.24363679999999965,
-                  2.330845158799856
+                  -4.65007203912746,
+                  2.302161175546832,
+                  -5.589245674181504
                 ],
                 "cameraTarget": [
-                  -15.308843076055906,
-                  0.6343679284892731,
-                  3.2513499399575534
+                  -3.9136220633462213,
+                  -0.08435207009898571,
+                  -0.5733056167991383
                 ]
               },
               "controlsHeight": 200
@@ -384,6 +368,72 @@
                 "highlight": false
               },
               "controlsHeight": 0
+            },
+            {
+              "type": 6,
+              "title": "Robot Run Time",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "independent",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Loop Time (ms)",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2"
+                    }
+                  },
+                  {
+                    "type": "independent",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/LoggedRobot/FullCycleMS",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b"
+                    }
+                  },
+                  {
+                    "type": "independent",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/LoggedRobot/UserCodeMS",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437"
+                    }
+                  }
+                ],
+                "timeRange": "full",
+                "rangeMin": 5,
+                "rangeMax": 100,
+                "stepSize": 0.1
+              },
+              "controllerUUID": "8bw8dcmwax4mvot5mhqgu69bxvfz9h5z",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 6,
+              "title": "Battery",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "independent",
+                    "logKey": "NT:/SmartDashboard/BatterySim/BatteryVoltage (Volts)",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2"
+                    }
+                  }
+                ],
+                "timeRange": "full",
+                "rangeMin": 0,
+                "rangeMax": 15,
+                "stepSize": 0.1
+              },
+              "controllerUUID": "7phm2om2ebvseca03ax16mbs719migmx",
+              "renderer": null,
+              "controlsHeight": 200
             }
           ]
         }
@@ -391,5 +441,5 @@
     }
   ],
   "satellites": [],
-  "version": "4.1.2"
+  "version": "4.1.4"
 }
