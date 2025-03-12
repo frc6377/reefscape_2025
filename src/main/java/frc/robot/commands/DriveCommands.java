@@ -18,6 +18,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.Constants.DrivetrainConstants.PATH_CONSTRAINTS;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -72,6 +73,11 @@ public class DriveCommands {
   public static Command GoToPose(Supplier<Pose2d> targetPose, Set<Subsystem> drive) {
     return new DeferredCommand(
         () -> AutoBuilder.pathfindToPose(targetPose.get(), PATH_CONSTRAINTS), drive);
+  }
+
+  public static Command GoToPath(PathPlannerPath targetPath, Set<Subsystem> drive) {
+    return new DeferredCommand(
+        () -> AutoBuilder.pathfindThenFollowPath(targetPath, PATH_CONSTRAINTS), drive);
   }
 
   public static Command RunVelocity(Drive drive, LinearVelocity velocity, double timeSec) {

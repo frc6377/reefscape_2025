@@ -148,7 +148,7 @@ public final class Constants {
     public static final Distance kSensorDistnace = Inches.of(1.5);
 
     public static final Distance kAlignSensorDistnace = Inches.of(5);
-    public static final Time kAlignSensorDebounce = Seconds.of(0.04);
+    public static final Time kAlignSensorDebounce = Seconds.of(0.06);
   }
 
   // Intake Constants

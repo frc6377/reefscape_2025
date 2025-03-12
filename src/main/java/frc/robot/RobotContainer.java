@@ -24,6 +24,8 @@ import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.FileVersionException;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -49,9 +51,11 @@ import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.vision.*;
+import java.io.IOException;
 import java.util.Set;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -218,19 +222,19 @@ public class RobotContainer {
 
     // Set up SysId routines
     autoChooser.addOption(
-        "☑ Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addOption(
-        "☑ Drive SysId (Quasistatic Forward)",
+        "Drive SysId (Quasistatic Forward)",
         drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
-        "☑ Drive SysId (Quasistatic Reverse)",
+        "Drive SysId (Quasistatic Reverse)",
         drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     autoChooser.addOption(
-        "☑ Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
-        "☑ Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     autoChooser.addOption(
-        "☑ Drive SysID Turning (All)",
+        "Drive SysID Turning (All)",
         drive
             .sysIdQuasistaticTurning(SysIdRoutine.Direction.kForward)
             .andThen(Commands.waitSeconds(0.5))
@@ -338,10 +342,6 @@ public class RobotContainer {
         .and(OI.getTrigger(OI.Driver.RTrigger).negate())
         .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
         .onTrue(locateCoral);
-
-    // OI.getButton(OI.Driver.A)
-    //     .whileTrue(intake.conveyerInCommand().alongWith(coralScorer.intakeCommand()));
-    // .until(coralHandoffCompleteTrigger));
 
     intake
         .intakeHasCoralTrigger()

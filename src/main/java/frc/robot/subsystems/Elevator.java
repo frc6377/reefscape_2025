@@ -20,7 +20,7 @@ import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -86,8 +86,8 @@ public class Elevator extends SubsystemBase {
               heightToRotations(Constants.ElevatorConstants.kBottomLimit));
   public static final Slot0Configs loopCfg = kElevatorPID.getSlot0Configs();
 
-  private Pose3d elvSimPose1;
-  private Pose3d elvSimPose2;
+  private Pose3d elvPose3D1;
+  private Pose3d elvPose3D2;
 
   private Distance currentSetpoint = Meter.zero();
 
@@ -164,10 +164,10 @@ public class Elevator extends SubsystemBase {
       SmartDashboard.putData("Mech2Ds/Elevator Mech", mech);
     }
 
-    elvSimPose1 = DrivetrainConstants.kElvStage1Pose;
-    elvSimPose2 = DrivetrainConstants.kElvStage2Pose;
-    Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", elvSimPose1);
-    Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", elvSimPose2);
+    elvPose3D1 = DrivetrainConstants.kElvStage1Pose;
+    elvPose3D2 = DrivetrainConstants.kElvStage2Pose;
+    Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", elvPose3D1);
+    Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", elvPose3D2);
     Logger.recordOutput("Elevator/Elv/Setpoint (Inches)", 0.0);
     Logger.recordOutput("Elevator/Elv/Setpoint (Rotations)", 0.0);
   }
@@ -382,22 +382,13 @@ public class Elevator extends SubsystemBase {
         this.getCurrentCommand() != null ? this.getCurrentCommand().getName() : "None");
 
     Distance elvHeight = getElevatorHeight();
-    elvSimPose1 =
-        new Pose3d(
-            new Translation3d(
-                elvSimPose1.getMeasureX(),
-                elvSimPose1.getMeasureY(),
-                DrivetrainConstants.kElvStage1Pose.getMeasureZ().plus(elvHeight.div(2))),
-            new Rotation3d());
-    elvSimPose2 =
-        new Pose3d(
-            new Translation3d(
-                elvSimPose2.getMeasureX(),
-                elvSimPose2.getMeasureY(),
-                DrivetrainConstants.kElvStage2Pose.getMeasureZ().plus(elvHeight)),
-            new Rotation3d());
-    Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", elvSimPose1);
-    Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", elvSimPose2);
+    Logger.recordOutput(
+        "Odometry/Mech Poses/Elv 1 Pose",
+        elvPose3D1.plus(
+            new Transform3d(Meter.zero(), Meter.zero(), elvHeight.div(2), new Rotation3d())));
+    Logger.recordOutput(
+        "Odometry/Mech Poses/Elv 2 Pose",
+        elvPose3D2.plus(new Transform3d(Meter.zero(), Meter.zero(), elvHeight, new Rotation3d())));
 
     // Logger.recordOutput("Elevator/Setpoints/L0", getL0Setpoint().in(Inches));
     // Logger.recordOutput("Elevator/Setpoints/L2", getL2Setpoint().in(Inches));
