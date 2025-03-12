@@ -63,7 +63,8 @@ public class NTTracer {
     long now = RobotController.getFPGATime();
     if (now - m_lastEpochsPrintTime > kMinPrintPeriod) {
       m_lastEpochsPrintTime = now;
-      m_epochs.forEach((key, value) -> Logger.recordOutput(key + " (ms)", value / 1.0e6));
+      m_epochs.forEach(
+          (key, value) -> Logger.recordOutput("subsystem times" + key + " (ms)", value / 1.0e6));
     }
   }
 }

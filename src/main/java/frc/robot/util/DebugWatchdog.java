@@ -157,7 +157,8 @@ public class DebugWatchdog implements Closeable, Comparable<DebugWatchdog> {
    * @see Tracer#printEpochs()
    */
   public void logEpochs() {
-    m_tracer.logEpochs();;
+    m_tracer.logEpochs();
+    ;
   }
 
   /**

@@ -9,11 +9,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -83,7 +83,7 @@ public class DebugCommandScheduler implements Sendable, AutoCloseable {
   private final List<Optional<Command>> m_toCancelInterruptors = new ArrayList<>();
   private final Set<Command> m_endingCommands = new LinkedHashSet<>();
 
-  private final Watchdog m_watchdog = new Watchdog(TimedRobot.kDefaultPeriod, () -> {});
+  private final DebugWatchdog m_watchdog = new DebugWatchdog(TimedRobot.kDefaultPeriod, () -> {});
 
   DebugCommandScheduler() {
     SendableRegistry.addLW(this, "Scheduler");
@@ -321,7 +321,7 @@ public class DebugCommandScheduler implements Sendable, AutoCloseable {
     m_watchdog.disable();
     if (m_watchdog.isExpired()) {
       System.out.println("CommandScheduler loop overrun");
-      m_watchdog.printEpochs();
+      m_watchdog.logEpochs();
     }
   }
 
@@ -541,7 +541,7 @@ public class DebugCommandScheduler implements Sendable, AutoCloseable {
 
   /** Prints list of epochs added so far and their times. */
   public void printWatchdogEpochs() {
-    m_watchdog.printEpochs();
+    m_watchdog.logEpochs();
   }
 
   /**
