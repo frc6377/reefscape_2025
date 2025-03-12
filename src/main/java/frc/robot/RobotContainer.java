@@ -314,10 +314,10 @@ public class RobotContainer {
                 }));
 
     // Elevator Buttons
-    OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());
-    OI.getPOVButton(OI.Driver.DPAD_LEFT).onTrue(elevator.L2());
-    OI.getPOVButton(OI.Driver.DPAD_RIGHT).onTrue(elevator.L3());
-    OI.getPOVButton(OI.Driver.DPAD_DOWN).onTrue(elevator.L4());
+    OI.getPOVButton(OI.Driver.A).onTrue(elevator.L0());
+    OI.getPOVButton(OI.Driver.B).onTrue(elevator.L2());
+    OI.getPOVButton(OI.Driver.X).onTrue(elevator.L3());
+    OI.getPOVButton(OI.Driver.Y).onTrue(elevator.L4());
     OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
 
     // Intake Buttons
@@ -591,13 +591,10 @@ public class RobotContainer {
         .asProxy();
   }
 
-  public void givePreLoad() {
-    intake.addGamePieceToIntakeSim();
-  }
-
   public void startSimAuto() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
+    intake.addGamePieceToIntakeSim();
     driveSimulation.setSimulationWorldPose(drive.getPose());
   }
 

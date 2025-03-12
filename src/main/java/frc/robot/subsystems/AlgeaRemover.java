@@ -120,12 +120,12 @@ public class AlgeaRemover extends SubsystemBase {
 
   public Command upCommand() {
     return startEnd(
-        () -> algeaMotor.set(AlgeaRemoverConstants.kAlgeaPercent), () -> algeaMotor.stopMotor());
+        () -> algeaMotor.set(-AlgeaRemoverConstants.kAlgeaPercent), () -> algeaMotor.stopMotor());
   }
 
   public Command downCommand() {
     return startEnd(
-        () -> algeaMotor.set(-AlgeaRemoverConstants.kAlgeaPercent), () -> algeaMotor.stopMotor());
+        () -> algeaMotor.set(AlgeaRemoverConstants.kAlgeaPercent), () -> algeaMotor.stopMotor());
   }
 
   public Command removeUpCommand() {

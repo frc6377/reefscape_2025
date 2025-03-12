@@ -159,7 +159,6 @@ public class Robot extends LoggedRobot {
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
-      if (Robot.isSimulation()) robotContainer.givePreLoad();
       autonomousCommand.schedule();
       robotContainer.startSimAuto();
     }
