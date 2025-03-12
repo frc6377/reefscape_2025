@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -50,6 +49,7 @@ import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.vision.*;
+import frc.robot.util.DebugCommandScheduler;
 import java.util.Set;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -339,7 +339,7 @@ public class RobotContainer {
         .intakeHasUnalignedCoralTrigger()
         .and(coralOuttakeButton.negate())
         .and(OI.getTrigger(OI.Driver.RTrigger).negate())
-        .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
+        .and(() -> !DebugCommandScheduler.getInstance().isScheduled(scoreL1))
         .onTrue(locateCoral);
 
     OI.getButton(OI.Driver.A)
@@ -350,7 +350,7 @@ public class RobotContainer {
         .intakeHasCoralTrigger()
         .and(() -> elevatorNotL1)
         .and(coralOuttakeButton.negate())
-        .and(() -> !CommandScheduler.getInstance().isScheduled(locateCoral))
+        .and(() -> !DebugCommandScheduler.getInstance().isScheduled(locateCoral))
         .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height))
         .onTrue(
             Robot.isReal()

@@ -18,10 +18,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.SimulationConstants;
+import frc.robot.util.HowdySubsystem;
 import java.util.ArrayList;
 import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
@@ -29,7 +29,7 @@ import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnField;
 import org.littletonrobotics.junction.Logger;
 
-public class MapleSimArenaSubsystem extends SubsystemBase {
+public class MapleSimArenaSubsystem extends HowdySubsystem {
   private final SwerveDriveSimulation swerveDriveSimulation;
 
   private List<Pose3d> scoredCoralPoses = new ArrayList<Pose3d>();
