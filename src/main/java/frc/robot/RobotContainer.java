@@ -172,7 +172,7 @@ public class RobotContainer {
         intake = new IntakeSubsystem(sensors, null);
         break;
     }
-    signaling = new Signaling(vision,pdp);
+    signaling = new Signaling(vision, pdp);
     scoreL1 = intake.l1ScoreModeA();
     Trigger isDoneScoring = new Trigger(() -> (sensors.getSensorState() == CoralEnum.NO_CORAL));
 
