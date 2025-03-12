@@ -13,19 +13,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - EF (L1)"
+            "pathName": "Start M - H"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L1 Score"
+            "name": "ElvL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL0"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": " ▲ Franks",
+  "folder": " Franks",
   "choreoAuto": false
 }

@@ -7,31 +7,25 @@
         {
           "type": "named",
           "data": {
-            "name": "Zero Elv"
+            "name": "Set L1 Mode"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "StartML - J"
+            "pathName": "StartR - EF (L1)"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4 DeadLine"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
+            "name": "L1 Score"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "J - Source"
+            "pathName": "EF - Source (L1)"
           }
         },
         {
@@ -43,31 +37,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score K"
+            "pathName": "Score CD L1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL0"
+            "name": "L1 Score"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
-  "folder": "♥ Chads",
+  "resetOdom": true,
+  "folder": "Chads",
   "choreoAuto": false
 }

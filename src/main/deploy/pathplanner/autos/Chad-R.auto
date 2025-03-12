@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartL - I"
+            "pathName": "StartR - E"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4 DeadLine"
+            "name": "ElvL4"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "I - Source"
+            "pathName": "E - Source"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score K"
+            "pathName": "Score D"
           }
         },
         {
@@ -68,6 +68,6 @@
     }
   },
   "resetOdom": false,
-  "folder": "♥ Chads",
+  "folder": "Chads",
   "choreoAuto": false
 }

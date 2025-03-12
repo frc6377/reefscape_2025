@@ -26,7 +26,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -121,8 +120,6 @@ public class RobotContainer {
                 // new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                 new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
         intake = new IntakeSubsystem(sensors, null);
-
-        DriverStation.getAlliance();
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -314,10 +311,10 @@ public class RobotContainer {
                 }));
 
     // Elevator Buttons
-    OI.getPOVButton(OI.Driver.A).onTrue(elevator.L0());
-    OI.getPOVButton(OI.Driver.B).onTrue(elevator.L2());
-    OI.getPOVButton(OI.Driver.X).onTrue(elevator.L3());
-    OI.getPOVButton(OI.Driver.Y).onTrue(elevator.L4());
+    OI.getButton(OI.Driver.A).onTrue(elevator.L0());
+    OI.getButton(OI.Driver.B).onTrue(elevator.L2());
+    OI.getButton(OI.Driver.X).onTrue(elevator.L3());
+    OI.getButton(OI.Driver.Y).onTrue(elevator.L4());
     OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
 
     // Intake Buttons
@@ -342,8 +339,8 @@ public class RobotContainer {
         .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
         .onTrue(locateCoral);
 
-    OI.getButton(OI.Driver.A)
-        .whileTrue(intake.conveyerInCommand().alongWith(coralScorer.intakeCommand()));
+    // OI.getButton(OI.Driver.A)
+    //     .whileTrue(intake.conveyerInCommand().alongWith(coralScorer.intakeCommand()));
     // .until(coralHandoffCompleteTrigger));
 
     intake
@@ -352,7 +349,7 @@ public class RobotContainer {
         .and(coralOuttakeButton.negate())
         .and(() -> !CommandScheduler.getInstance().isScheduled(locateCoral))
         .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height))
-        .onTrue(
+        .whileTrue(
             Robot.isReal()
                 ? intake
                     .conveyerInCommand()
@@ -385,7 +382,7 @@ public class RobotContainer {
                   coralStationMode = !coralStationMode;
                   Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
                 }));
-    OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB());
+    // OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB());
     OI.getTrigger(OI.Driver.LTrigger)
         .and(() -> !elevatorNotL1 && !intakeAlgeaMode)
         .whileTrue(scoreL1);
@@ -451,39 +448,39 @@ public class RobotContainer {
             DriveCommands.POVDrive(
                 drive,
                 () ->
-                    (RightButtonTrigger.getAsBoolean() ? 1.0 : 0.0)
-                        + (LeftButtonTrigger.getAsBoolean() ? -1.0 : 0.0),
-                () ->
                     (UpButtonTrigger.getAsBoolean() ? 1.0 : 0.0)
-                        + (DownButtonTrigger.getAsBoolean() ? -1.0 : 0.0)));
+                        + (DownButtonTrigger.getAsBoolean() ? -1.0 : 0.0),
+                () ->
+                    (LeftButtonTrigger.getAsBoolean() ? 1.0 : 0.0)
+                        + (RightButtonTrigger.getAsBoolean() ? -1.0 : 0.0)));
 
     /* This is for creating the button mappings for logging what coral have been scored
      * The Driverstation has a hard limit of 32 buttons so we use 2 different vjoy controllers
      * to get the effective 64 buttons that we need for logging. this first 16 buttons of every controller are
      * used for the front and back coral scored poses. */
-    int rows = 3;
-    for (int i = 0; i < Constants.kPoleLetters.length / 2; i++) {
-      for (int j = 0; j < rows; j++) {
-        OI.getButton(OI.StreamDeck.streamDeckButtons[0][i * rows + j])
-            .onChange(drive.setPoseScored(Constants.kPoleLetters[i], j));
-        OI.getButton(OI.StreamDeck.streamDeckButtons[1][i * rows + j])
-            .onChange(
-                drive.setPoseScored(
-                    Constants.kPoleLetters[i + Constants.kPoleLetters.length / 2], j));
-      }
-    }
+    // int rows = 3;
+    // for (int i = 0; i < Constants.kPoleLetters.length / 2; i++) {
+    //   for (int j = 0; j < rows; j++) {
+    //     OI.getButton(OI.StreamDeck.streamDeckButtons[0][i * rows + j])
+    //         .onChange(drive.setPoseScored(Constants.kPoleLetters[i], j));
+    //     OI.getButton(OI.StreamDeck.streamDeckButtons[1][i * rows + j])
+    //         .onChange(
+    //             drive.setPoseScored(
+    //                 Constants.kPoleLetters[i + Constants.kPoleLetters.length / 2], j));
+    //   }
+    // }
 
     // Button to update Setpoints of the elevator based on the Stream Deck nobs
     // TODO: Fix axis input
-    OI.getButton(OI.StreamDeck.streamDeckButtons[1][31])
-        .onTrue(
-            elevator
-                .tuneSetpoints(
-                    () -> OI.getAxisSupplier(OI.StreamDeck.Nob1).get(),
-                    () -> OI.getAxisSupplier(OI.StreamDeck.Nob2).get(),
-                    () -> OI.getAxisSupplier(OI.StreamDeck.Nob3).get(),
-                    () -> OI.getAxisSupplier(OI.StreamDeck.Nob4).get())
-                .ignoringDisable(true));
+    // OI.getButton(OI.StreamDeck.streamDeckButtons[1][31])
+    //     .onTrue(
+    //         elevator
+    //             .tuneSetpoints(
+    //                 () -> OI.getAxisSupplier(OI.StreamDeck.Nob1).get(),
+    //                 () -> OI.getAxisSupplier(OI.StreamDeck.Nob2).get(),
+    //                 () -> OI.getAxisSupplier(OI.StreamDeck.Nob3).get(),
+    //                 () -> OI.getAxisSupplier(OI.StreamDeck.Nob4).get())
+    //             .ignoringDisable(true));
 
     if (Robot.isSimulation()) {
       new Trigger(() -> mapleSimArenaSubsystem.getRobotHasCoral())

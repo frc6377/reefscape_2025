@@ -276,11 +276,10 @@ public final class Constants {
     public static final int kAlegeaGearRatio = 80;
     public static final Angle ksetpointTolerance = Degrees.of(10);
 
-    // Algea Arm Setpoints (// 30 Degrees is breaking point)
+    // Algea Arm Setpoints (// 35 Degrees is breaking point)
     public static final Angle kEncoderOffset = Rotations.of(0);
-    public static final Angle kAlgeaStowed = Degrees.of(155);
-    public static final Angle kAlgeaRemove = Degrees.of(63);
-    public static final Angle kRemoveUpAngle = Degrees.of(100);
+    public static final Angle kAlgeaStowed = Degrees.of(170);
+    public static final Angle kRemoveUpAngle = Degrees.of(115);
     public static final Angle kRemoveDownAngle = Degrees.of(40);
 
     // Simulation Constants
