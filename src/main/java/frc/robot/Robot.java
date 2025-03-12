@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.DebugCommandScheduler;
 import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -127,16 +127,18 @@ public class Robot extends LoggedRobot {
     // finished or interrupted commands, and running subsystem periodic() methods.
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
-    CommandScheduler.getInstance().run();
+    DebugCommandScheduler.getInstance().run();
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
 
     double newTime = Timer.getFPGATimestamp() * 1000;
     Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
-    lastTime = newTime;
 
-    // CommandScheduler.getInstance().printWatchdogEpochs();
+    DebugCommandScheduler.getInstance().printWatchdogEpochs();
+
+    // print epochs is non-trivial time, so the time is re-calculated
+    lastTime = Timer.getFPGATimestamp() * 1000;
   }
 
   /** This function is called once when the robot is disabled. */
@@ -192,15 +194,15 @@ public class Robot extends LoggedRobot {
   public void testInit() {
     isUsingVision = true;
     // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-    CommandScheduler.getInstance().setActiveButtonLoop(robotContainer.getTestEventLoop());
+    DebugCommandScheduler.getInstance().cancelAll();
+    DebugCommandScheduler.getInstance().setActiveButtonLoop(robotContainer.getTestEventLoop());
   }
 
   @Override
   public void testExit() {
-    CommandScheduler.getInstance().cancelAll();
-    CommandScheduler.getInstance()
-        .setActiveButtonLoop(CommandScheduler.getInstance().getDefaultButtonLoop());
+    DebugCommandScheduler.getInstance().cancelAll();
+    DebugCommandScheduler.getInstance()
+        .setActiveButtonLoop(DebugCommandScheduler.getInstance().getDefaultButtonLoop());
   }
 
   /** This function is called periodically during test mode. */
