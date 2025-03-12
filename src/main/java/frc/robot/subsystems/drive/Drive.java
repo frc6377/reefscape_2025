@@ -15,7 +15,7 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.DrivetrainConstants.SCORE_POSES;
-import static frc.robot.Constants.DrivetrainConstants.SOURSE_POSES;
+import static frc.robot.Constants.DrivetrainConstants.kSourcePoses;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
@@ -455,10 +455,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   }
 
   public Pose2d getClosestSoursePose() {
-    double dist1 = getPose().getTranslation().getDistance(SOURSE_POSES[0].getTranslation());
-    double dist2 = getPose().getTranslation().getDistance(SOURSE_POSES[1].getTranslation());
+    double dist1 = getPose().getTranslation().getDistance(kSourcePoses.get("L").getTranslation());
+    double dist2 = getPose().getTranslation().getDistance(kSourcePoses.get("R").getTranslation());
 
-    Pose2d closestSource = dist1 < dist2 ? SOURSE_POSES[0] : SOURSE_POSES[1];
+    Pose2d closestSource = dist1 < dist2 ? kSourcePoses.get("L") : kSourcePoses.get("R");
 
     Logger.recordOutput("Odometry/Closest Source Pose", closestSource);
     return closestSource;

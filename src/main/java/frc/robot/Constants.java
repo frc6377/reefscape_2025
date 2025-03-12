@@ -366,12 +366,6 @@ public final class Constants {
           "R", new Pose2d(Meters.of(1.225), Meters.of(0.968), new Rotation2d(Degrees.of(-126))));
     }
 
-    public static final Pose2d[] SOURSE_POSES =
-        new Pose2d[] {
-          new Pose2d(Meters.of(1.227), Meters.of(7.045), new Rotation2d(Degrees.of(-54))),
-          new Pose2d(Meters.of(1.256), Meters.of(0.955), new Rotation2d(Degrees.of(54))),
-        };
-
     public static final Pose3d kIntakeStartPose =
         new Pose3d(
             Meters.of(0.191591),
