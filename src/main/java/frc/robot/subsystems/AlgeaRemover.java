@@ -26,15 +26,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.AlgeaRemoverConstants;
 import frc.robot.Constants.DIOConstants;
 import frc.robot.Robot;
+import frc.robot.util.HowdySubsystem;
 import org.littletonrobotics.junction.Logger;
 
-public class AlgeaRemover extends SubsystemBase {
+public class AlgeaRemover extends HowdySubsystem {
   private SingleJointedArmSim algeaSim;
   private SparkMax algeaMotor;
   private SparkMaxSim simAlgeaMotor;

@@ -128,15 +128,17 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     DebugCommandScheduler.getInstance().run();
-
+    
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
-
+    
     double newTime = Timer.getFPGATimestamp() * 1000;
     Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
-    lastTime = newTime;
+    
+    DebugCommandScheduler.getInstance().printWatchdogEpochs();
 
-    // CommandScheduler.getInstance().printWatchdogEpochs();
+    // print epochs is non-trivial time, so the time is re-calculated
+    lastTime = Timer.getFPGATimestamp() * 1000;
   }
 
   /** This function is called once when the robot is disabled. */

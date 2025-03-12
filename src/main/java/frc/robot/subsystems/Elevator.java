@@ -38,7 +38,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -47,10 +46,11 @@ import frc.robot.Constants.DIOConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Robot;
+import frc.robot.util.HowdySubsystem;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
-public class Elevator extends SubsystemBase {
+public class Elevator extends HowdySubsystem {
   private TalonFX elevatorMotor1;
   private TalonFXSimState simElvMotor1;
   private TalonFX elevatorMotor2;

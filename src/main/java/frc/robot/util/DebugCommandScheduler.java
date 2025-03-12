@@ -85,8 +85,8 @@ public class DebugCommandScheduler implements Sendable, AutoCloseable {
 
   private final DebugWatchdog m_watchdog = new DebugWatchdog(TimedRobot.kDefaultPeriod, () -> {});
 
-  DebugCommandScheduler() {
-    SendableRegistry.addLW(this, "Scheduler");
+  private DebugCommandScheduler() {
+    SendableRegistry.addLW(this, "Debug Scheduler");
     LiveWindow.setEnabledListener(
         () -> {
           disable();

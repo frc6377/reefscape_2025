@@ -42,7 +42,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
@@ -51,12 +50,13 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.Robot;
 import frc.robot.Sensors;
+import frc.robot.util.HowdySubsystem;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 
 @SuppressWarnings("unused")
-public class IntakeSubsystem extends SubsystemBase {
+public class IntakeSubsystem extends HowdySubsystem {
   /** Creates a new IntakeSubsystem. */
   private TalonFX intakeMotor;
 
