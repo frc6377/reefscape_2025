@@ -81,7 +81,7 @@ public class RobotContainer {
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
   private final IntakeSubsystem intake;
-  private final Signaling signaling = new Signaling();
+  private final Signaling signaling;
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
   private boolean coralStationMode = false;
@@ -171,7 +171,7 @@ public class RobotContainer {
         intake = new IntakeSubsystem(sensors, null);
         break;
     }
-
+    signaling = new Signaling(vision);
     scoreL1 = intake.l1ScoreModeA();
     Trigger isDoneScoring = new Trigger(() -> (sensors.getSensorState() == CoralEnum.NO_CORAL));
 
@@ -299,24 +299,21 @@ public class RobotContainer {
               SignalLogger.stop();
             }));
     coralScorer
-        .getReefSensorTrigger()
-        .and(coralScorer.hasCoral())
+        .hasCoralTrigger()
         .and(elevator.elevatorUpTrigger())
-        .onTrue(signaling.setColor(RGB.GREEN));
-    coralScorer
-        .hasCoral()
-        .and(elevator.elevatorUpTrigger())
-        .and(coralScorer.getReefSensorTrigger().negate())
+        .and(coralScorer.scorerAlignedTrigger().negate())
         .onTrue(signaling.setColor(RGB.YELLOW));
-    coralScorer.hasCoral().and(elevator.elevatorUpTrigger()).onFalse(signaling.setColor(RGB.BLUE));
-
+    coralScorer
+        .hasCoralTrigger()
+        .and(elevator.elevatorUpTrigger())
+        .onFalse(signaling.setColor(RGB.BLUE));
     coralScorer
         .scorerAlignedTrigger()
         .and(coralScorer.hasCoralTrigger())
         .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
         .and(elevator.elevatorAtCurrentSetpoint())
         .whileTrue(
-            Commands.runEnd(
+            Commands.startEnd(
                 () -> {
                   OI.Driver.setRumble(0.5);
                   OI.Operator.setRumble(0.5);
@@ -324,7 +321,8 @@ public class RobotContainer {
                 () -> {
                   OI.Driver.setRumble(0);
                   OI.Operator.setRumble(0);
-                }));
+                }))
+        .onTrue(signaling.setColor(RGB.GREEN));
 
     // Elevator Buttons
     OI.getPOVButton(OI.Driver.DPAD_UP).onTrue(elevator.L0());

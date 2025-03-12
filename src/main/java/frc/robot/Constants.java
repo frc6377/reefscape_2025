@@ -154,7 +154,7 @@ public final class Constants {
 
   // Signaling Constants
   public static class SignalingConstants {
-    public static final int kNumLEDs = 30;
+    public static final int kNumLEDs = 68;
     public static final double kLEDBrightness = 1;
     public static final double kPatternSpeed = 0.001;
   }

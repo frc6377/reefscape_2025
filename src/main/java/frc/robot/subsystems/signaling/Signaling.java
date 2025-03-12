@@ -2,7 +2,6 @@ package frc.robot.subsystems.signaling;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.FireAnimation;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -15,6 +14,7 @@ import frc.robot.OI;
 import frc.robot.subsystems.signaling.patterns.AlliancePattern;
 import frc.robot.subsystems.signaling.patterns.PatternNode;
 import frc.robot.subsystems.signaling.patterns.RainbowPattern;
+import frc.robot.subsystems.vision.Vision;
 import org.littletonrobotics.junction.Logger;
 
 public class Signaling extends SubsystemBase {
@@ -25,10 +25,12 @@ public class Signaling extends SubsystemBase {
   private long tagCount;
   private DisablePattern disablePattern = DisablePattern.FIRE;
   private PowerDistribution pdp = new PowerDistribution();
+  private Vision visionSubsystem;
 
-  public Signaling() {
+  public Signaling(Vision vision) {
     tick = 0;
     patternTick = 0;
+    visionSubsystem = vision;
   }
 
   @Override
@@ -36,8 +38,8 @@ public class Signaling extends SubsystemBase {
     // Update Light Pattern
 
     if (DriverStation.isDisabled()) {
-      tagCount =
-          NetworkTableInstance.getDefault().getTable("Vision").getEntry("TagCount").getInteger(0);
+      tagCount = visionSubsystem.getTagCount();
+
       switch ((int) tagCount) {
         case 0:
           setCandle(RGB.RED);
