@@ -49,10 +49,20 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
-import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOSim;
+import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
+import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
-import frc.robot.subsystems.vision.*;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.jspecify.annotations.Nullable;
@@ -659,8 +669,8 @@ public class RobotContainer {
   }
 
   public Command scorerAutoCommand() {
-    if (intake != null && coralScorer != null) {
-      if (Robot.isSimulation() && mapleSimArenaSubsystem != null) {
+    if (coralScorer != null) {
+      if (Robot.isSimulation() && mapleSimArenaSubsystem != null && intake != null) {
         return Commands.runOnce(() -> intake.removePieceFromIntakeSim())
             .andThen(mapleSimArenaSubsystem.scoreCoral())
             .until(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
