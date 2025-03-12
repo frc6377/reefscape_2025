@@ -24,13 +24,14 @@ public class Signaling extends SubsystemBase {
   private int patternTick;
   private long tagCount;
   private DisablePattern disablePattern = DisablePattern.FIRE;
-  private PowerDistribution pdp = new PowerDistribution();
+  
   private Vision visionSubsystem;
-
-  public Signaling(Vision vision) {
+  private PowerDistribution pdp;
+  public Signaling(Vision vision, PowerDistribution power) {
     tick = 0;
     patternTick = 0;
     visionSubsystem = vision;
+    pdp = power;
   }
 
   @Override
@@ -61,7 +62,11 @@ public class Signaling extends SubsystemBase {
       } else {
         if (DriverStation.isAutonomous()) {
           setCandle(RGB.PURPLE);
-        } else if (DriverStation.isTest()) {
+
+        }else if (DriverStation.isEStopped()){
+          setCandle(RGB.RED);
+        } 
+        else if (DriverStation.isTest()) {
           setCandle(RGB.BLUE);
         } else {
           setCandle(RGB.GREEN);

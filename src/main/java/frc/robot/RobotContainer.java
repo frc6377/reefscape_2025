@@ -28,6 +28,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -86,7 +87,7 @@ public class RobotContainer {
   private boolean intakeAlgeaMode = false;
   private boolean coralStationMode = false;
   private Command scoreL1;
-
+  private PowerDistribution pdp = new PowerDistribution();
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose = new Pose2d(2, 2, new Rotation2d());
 
@@ -171,7 +172,7 @@ public class RobotContainer {
         intake = new IntakeSubsystem(sensors, null);
         break;
     }
-    signaling = new Signaling(vision);
+    signaling = new Signaling(vision,pdp);
     scoreL1 = intake.l1ScoreModeA();
     Trigger isDoneScoring = new Trigger(() -> (sensors.getSensorState() == CoralEnum.NO_CORAL));
 
