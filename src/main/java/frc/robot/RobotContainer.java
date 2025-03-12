@@ -287,7 +287,7 @@ public class RobotContainer {
               .andThen(Commands.waitSeconds(0.5))
               .andThen(drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse)));
     } else {
-      autoChooser.addOption("No Autos Avaiable", null);
+      autoChooser.addOption("No Autos Avaiable", Commands.none());
     }
 
     // Configure the button bindings
@@ -356,6 +356,32 @@ public class RobotContainer {
     }
 
     // Intake Buttons
+
+    Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
+    Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
+    Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
+
+    OI.getButton(OI.Operator.Y)
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  elevatorNotL1 = !elevatorNotL1;
+                  Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
+                }));
+    OI.getButton(OI.Operator.X)
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  intakeAlgeaMode = !intakeAlgeaMode;
+                  Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
+                }));
+    OI.getButton(OI.Operator.B)
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
+                }));
+
     if (intake != null) {
       OI.getTrigger(OI.Driver.RTrigger)
           .and(() -> !intakeAlgeaMode && !coralStationMode)
@@ -393,31 +419,7 @@ public class RobotContainer {
               .whileTrue(intake.conveyerInCommand().alongWith(coralScorer.intakeCommand()));
           // .until(coralHandoffCompleteTrigger));
 
-          Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
-          Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
-          Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
 
-          OI.getButton(OI.Operator.Y)
-              .onTrue(
-                  Commands.runOnce(
-                      () -> {
-                        elevatorNotL1 = !elevatorNotL1;
-                        Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
-                      }));
-          OI.getButton(OI.Operator.X)
-              .onTrue(
-                  Commands.runOnce(
-                      () -> {
-                        intakeAlgeaMode = !intakeAlgeaMode;
-                        Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
-                      }));
-          OI.getButton(OI.Operator.B)
-              .onTrue(
-                  Commands.runOnce(
-                      () -> {
-                        coralStationMode = !coralStationMode;
-                        Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
-                      }));
 
           if (elevator != null) {
             intake
