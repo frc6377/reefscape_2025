@@ -340,6 +340,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+
     SmartDashboard.putData(
         Commands.runOnce(
             () -> {
@@ -419,30 +420,33 @@ public class RobotContainer {
               .whileTrue(intake.conveyerInCommand().alongWith(coralScorer.intakeCommand()));
           // .until(coralHandoffCompleteTrigger));
 
-
-
           if (elevator != null) {
-            intake
-                .intakeHasCoralTrigger()
-                .and(() -> elevatorNotL1)
-                .and(coralOuttakeButton.negate())
-                .and(() -> !CommandScheduler.getInstance().isScheduled(locateCoral))
-                .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height))
-                .onTrue(
-                    intake
-                        .conveyerInCommand()
-                        .alongWith(coralScorer.intakeCommand())
-                        .until(coralHandoffCompleteTrigger));
+
+            Trigger intakeButton =
+                intake
+                    .intakeHasCoralTrigger()
+                    .and(() -> elevatorNotL1)
+                    .and(coralOuttakeButton.negate())
+                    .and(
+                        () ->
+                            !CommandScheduler.getInstance()
+                                .isScheduled(
+                                    new LocateCoral(
+                                        sensors::getSensorState,
+                                        intake,
+                                        coralOuttakeButton.or(OI.getTrigger(OI.Driver.LTrigger)))))
+                    .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height));
+
+            intakeButton.onTrue(
+                intake
+                    .conveyerInCommand()
+                    .alongWith(coralScorer.intakeCommand())
+                    .until(coralHandoffCompleteTrigger));
             coralOuttakeButton.whileTrue(intake.floorOuttake());
 
             if (mapleSimArenaSubsystem != null) {
-              intake
-                  .intakeHasCoralTrigger()
-                  .and(() -> elevatorNotL1)
-                  .and(coralOuttakeButton.negate())
-                  .and(() -> !CommandScheduler.getInstance().isScheduled(locateCoral))
-                  .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height))
-                  .onTrue(Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
+              intakeButton.onTrue(
+                  Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
               coralOuttakeButton.whileTrue(intake.floorOuttake());
             }
           }
