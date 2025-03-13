@@ -167,7 +167,7 @@ public final class Constants {
     public static final Angle kPivotRetractAngle = Degrees.of(134.5);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(0);
-    public static final Angle kPivotCoralStationAngle = Degrees.of(105);
+    public static final Angle kPivotCoralStationAngle = Degrees.of(110);
     public static final Angle kPivotL1Score = Degrees.of(85);
     public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
     public static final Angle kPivotClimbingAngle = Degrees.of(75.5);
@@ -279,7 +279,7 @@ public final class Constants {
     // Algea Arm Setpoints (// 35 Degrees is breaking point)
     public static final Angle kEncoderOffset = Rotations.of(0);
     public static final Angle kAlgeaStowed = Degrees.of(170);
-    public static final Angle kRemoveUpAngle = Degrees.of(115);
+    public static final Angle kRemoveUpAngle = Degrees.of(105);
     public static final Angle kRemoveDownAngle = Degrees.of(40);
 
     // Simulation Constants

@@ -20,7 +20,6 @@ import static frc.robot.Constants.DrivetrainConstants.kSourcePoses;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -81,18 +80,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
   // PathPlanner config constants
-  private static final RobotConfig PP_CONFIG =
-      new RobotConfig(
-          DrivetrainConstants.ROBOT_MASS.in(Kilograms),
-          DrivetrainConstants.ROBOT_MOI.in(KilogramSquareMeters),
-          new ModuleConfig(
-              TunerConstants.FrontLeft.WheelRadius,
-              TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
-              DrivetrainConstants.WHEEL_COF,
-              DCMotor.getKrakenX60(1).withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
-              TunerConstants.FrontLeft.SlipCurrent,
-              1),
-          getModuleTranslations());
+  private static RobotConfig PP_CONFIG;
 
   public static final DriveTrainSimulationConfig mapleSimConfig =
       DriveTrainSimulationConfig.Default()
@@ -152,6 +140,12 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
+
+    try {
+      PP_CONFIG = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to load PathPlanner config", e);
+    }
 
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(

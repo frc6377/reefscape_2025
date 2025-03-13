@@ -24,8 +24,6 @@ import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.FileVersionException;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -51,11 +49,9 @@ import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.vision.*;
-import java.io.IOException;
 import java.util.Set;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -192,6 +188,7 @@ public class RobotContainer {
         "Intake",
         new SequentialCommandGroup(
             elv0Command(), intakeAutoCommand(), Commands.waitUntil(coralHandoffCompleteTrigger)));
+    NamedCommands.registerCommand("Intake L1", intakeAutoCommand());
     NamedCommands.registerCommand(
         "Intake Floor",
         new SequentialCommandGroup(
@@ -210,12 +207,10 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "Start R - E",
-        DriveCommands.GoToPose(
-            () -> Constants.DrivetrainConstants.SCORE_POSES.get("E"), Set.of(drive)));
+        DriveCommands.GoToPose(Constants.DrivetrainConstants.SCORE_POSES.get("E"), Set.of(drive)));
     NamedCommands.registerCommand(
         "Start L - I",
-        DriveCommands.GoToPose(
-            () -> Constants.DrivetrainConstants.SCORE_POSES.get("I"), Set.of(drive)));
+        DriveCommands.GoToPose(Constants.DrivetrainConstants.SCORE_POSES.get("I"), Set.of(drive)));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

@@ -70,9 +70,9 @@ public class DriveCommands {
     return joystickDriveAtAngle(drive, AxisX, AxisY, rotationTarget);
   }
 
-  public static Command GoToPose(Supplier<Pose2d> targetPose, Set<Subsystem> drive) {
+  public static Command GoToPose(Pose2d targetPose, Set<Subsystem> drive) {
     return new DeferredCommand(
-        () -> AutoBuilder.pathfindToPose(targetPose.get(), PATH_CONSTRAINTS), drive);
+        () -> AutoBuilder.pathfindToPose(targetPose, PATH_CONSTRAINTS), drive);
   }
 
   public static Command GoToPath(PathPlannerPath targetPath, Set<Subsystem> drive) {

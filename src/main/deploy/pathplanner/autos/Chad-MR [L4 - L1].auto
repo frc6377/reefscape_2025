@@ -37,25 +37,25 @@
         {
           "type": "named",
           "data": {
-            "name": "Intake"
+            "name": "Set L1 Mode"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake L1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score D"
+            "pathName": "Score CD L1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
+            "name": "L1 Score"
           }
         },
         {

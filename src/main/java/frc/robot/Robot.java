@@ -144,7 +144,7 @@ public class Robot extends LoggedRobot {
   public void disabledInit() {
     robotContainer.resetSimulationField();
     robotContainer.seedEncoders();
-    isUsingVision = true;
+    isUsingVision = false;
   }
 
   /** This function is called periodically when disabled. */
