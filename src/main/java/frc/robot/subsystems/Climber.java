@@ -254,7 +254,10 @@ public class Climber extends SubsystemBase {
         () -> {
           if (position.gt(climberMotorFront.getPosition().getValue())
               && (isFrontServoEngaged || isBackServoEngaged)) {
-            new Alert("Attempted motor output against servo ratchet", AlertType.kError).set(true);
+            Alert alert =
+                new Alert("Attempted motor output against servo ratchet", AlertType.kError);
+            alert.set(true);
+            alert.close();
           } else {
             climberTargetAngle = position;
             climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
@@ -295,8 +298,8 @@ public class Climber extends SubsystemBase {
   }
 
   public Command retract() {
-    return runClimber(ClimberConstants.kClimberServoDisengageAngle, 0)
-        .until(isClimberAtPosition(ClimberConstants.kClimberServoDisengageAngle))
+    return runClimber(ClimberConstants.kClimberDisengageAngle, 0)
+        .until(isClimberAtPosition(ClimberConstants.kClimberDisengageAngle))
         .andThen(disengageServo())
         .andThen(Commands.waitSeconds(1))
         .andThen(

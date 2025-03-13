@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4672457256377003,
-        "y": 1.3760707374170151
+        "x": 1.7372056670757035,
+        "y": 1.7916455308508101
       },
       "isLocked": false,
       "linkedName": "Right Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 3.1844346735739295,
-        "y": 3.8284492724085264
+        "x": 3.203869938713683,
+        "y": 3.82432106787267
       },
       "prevControl": {
-        "x": 3.0584326593630475,
-        "y": 3.612524534560357
+        "x": 2.7535084024354495,
+        "y": 3.2183218308701793
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,19 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Intake"
-        }
-      }
-    },
-    {
       "name": "ElvL4",
-      "waypointRelativePos": 0.30748288977723287,
+      "waypointRelativePos": 0.75,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -56,10 +45,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

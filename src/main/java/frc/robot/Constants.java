@@ -70,12 +70,12 @@ public final class Constants {
 
   public static class DIOConstants {
     public static final int elvLimitID = 0;
-    public static final int kthroughBoreEncoderID = 1;
+    public static final int kIntakePivotEncoderID = 1;
     public static final int kAlgeaEncoderID = 2;
     public static final int kClimberFrontEncoderID = 3;
     public static final int kClimberBackEncoderID = 4;
-    public static final int gear11ID = 13;
-    public static final int gear3ID = 14;
+    public static final int kGearID1 = 13;
+    public static final int kGearID2 = 14;
   }
 
   public static class PWMIDs {
@@ -88,29 +88,33 @@ public final class Constants {
     public static final int kSensor3ID = 3;
     public static final int kSensor4ID = 4;
     public static final int kScorerSensorID = 1;
+    public static final int kAlignmentSensorID = 5;
   }
 
   public static class ClimberConstants {
+    // PIDs
     public static final HowdyPID kClimberPID0 = new HowdyPID();
+    public static final HowdyPID kClimberPID1 = new HowdyPID();
 
     static {
       kClimberPID0.setKP(100);
       kClimberPID0.setKD(5);
       kClimberPID0.setKV(10);
-    }
 
-    public static final HowdyPID kClimberPID1 = new HowdyPID();
-
-    static {
       kClimberPID1.setKP(200);
       kClimberPID1.setKD(5);
       kClimberPID1.setKV(10);
       kClimberPID1.setKG(1);
     }
 
+    // Mech Constants
+    public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
     public static final Current kClimberIdleCurrentLimit = Amps.of(20);
     public static final Current kClimberClimbingCurrentLimit = Amps.of(70);
     public static final double kGearRatio = 126;
+
+    // Motor Setpoints
     public static final Angle kClimberFrontOffsetAngle = Degrees.of(-333.3);
     public static final Angle kClimberBackOffsetAngle = Degrees.of(148.1);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
@@ -118,10 +122,13 @@ public final class Constants {
     public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
     public static final Angle kClimberSensorTolerance = Degrees.of(4);
-    public static final Angle kClimberServoDisengageAngle =
-        Degrees.of(-45).plus(kClimberOffsetAngle);
-    public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
-    public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
+    public static final Angle kClimberDisengageAngle = Degrees.of(-45).plus(kClimberOffsetAngle);
+
+    // Servo Setpoints
+    public static final Angle kFrontServoEngageAngle = Degrees.of(45);
+    public static final Angle kBackServoEngageAngle = Degrees.of(45);
+    public static final Angle kFrontServoDisengageAngle = Degree.of(0);
+    public static final Angle kBackServoDisengageAngle = Degree.of(90);
 
     // Sim Constants
     public static final int KClimberMotorsCount = 2;
@@ -129,26 +136,19 @@ public final class Constants {
     public static final Mass kClimberMass = Pounds.of(0.5);
     public static final Angle kClimberArmMinAngle = Degrees.of(0);
     public static final Angle kClimberArmMaxAngle = Degrees.of(250).plus(kClimberOffsetAngle);
-
-    public static final Angle kFrontServoEngageAngle = Degrees.of(45);
-    public static final Angle kBackServoEngageAngle = Degrees.of(45);
-    public static final Angle kFrontServoDisengageAngle = Degree.of(0);
-    public static final Angle kBackServoDisengageAngle = Degree.of(90);
   }
 
   // Scorer Constants
   public static class CoralScorerConstants {
     public static final double kIntakeSpeed = -0.5;
-    public static final double kScoreSpeed = -0.35;
+    public static final double kScoreSpeed = -0.2;
+    public static final double kScoreAutoSpeed = -0.1;
+    public static final double kReverseSpeed = 0.25;
 
-    public static final Current kScoreAMPs = Amps.of(-20);
-    public static final Current kIntakeAMPs = Amps.of(-20);
+    public static final Distance kSensorDistnace = Inches.of(1.5);
 
-    public static final HowdyPID CoralScorerPID = new HowdyPID();
-
-    static {
-      CoralScorerPID.setKP(0.1);
-    }
+    public static final Distance kAlignSensorDistnace = Inches.of(5);
+    public static final Time kAlignSensorDebounce = Seconds.of(0.06);
   }
 
   // Intake Constants
@@ -160,18 +160,17 @@ public final class Constants {
     public static final double kIntakeHandoffSpeed = -0.75;
     public static final double kConveyorSpeed = 0.45;
     public static final double kPivotSpeed = 0.2;
-    public static final double kHoldSpeed = kIntakeSpeed / 5;
+    public static final double kHoldSpeed = -0.2;
 
     // Pivot Arm Setpoints
-    public static final Angle armZero = Degrees.of(76.05);
-    public static final Angle kPivotRetractAngle = Degrees.of(128);
+    public static final Angle kPivotZero = Degrees.of(76.05 - 4.47);
+    public static final Angle kPivotRetractAngle = Degrees.of(134.5);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
-    public static final Angle kPivotExtendAngle = Degrees.of(-6.25);
-    public static final Angle kPivotCoralStationAngle = Degrees.of(105);
+    public static final Angle kPivotExtendAngle = Degrees.of(0);
+    public static final Angle kPivotCoralStationAngle = Degrees.of(110);
     public static final Angle kPivotL1Score = Degrees.of(85);
     public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
-    public static final Angle kClimbingAngle = Degrees.of(75.5);
-
+    public static final Angle kPivotClimbingAngle = Degrees.of(75.5);
     public static final Angle kPivotTolerance = Degrees.of(5);
 
     public static final HowdyPID kPivotArmPID = new HowdyPID();
@@ -187,7 +186,6 @@ public final class Constants {
         new HowdyMM(DegreesPerSecond.of(450), DegreesPerSecondPerSecond.of(2250), 80.0);
 
     public static final Current kHoldPower = Amps.of(40);
-
     public static final double kGearing = 60;
     public static final double kSensorToMechanism = 60;
 
@@ -201,12 +199,11 @@ public final class Constants {
     }
 
     // Simulation
-    public static final Distance kLength = Feet.of(1);
-    public static final Mass kMass = Pounds.of(8);
-    // TODO: We can estimate MOI after doing SysID
-    public static final MomentOfInertia kMOI =
+    public static final Distance kPivotLength = Feet.of(1);
+    public static final Mass kPivotMass = Pounds.of(8);
+    public static final MomentOfInertia kPivotMOI =
         KilogramSquareMeters.of(
-            SingleJointedArmSim.estimateMOI(kLength.in(Meters), kMass.in(Kilograms)));
+            SingleJointedArmSim.estimateMOI(kPivotLength.in(Meters), kPivotMass.in(Kilograms)));
 
     // For maplesim Intake
     public static final Distance kIntakeWidth = Meters.of(0.470);
@@ -217,9 +214,9 @@ public final class Constants {
   // Elevator Constants
   public static class ElevatorConstants {
     public static final Distance kL0Height = Inches.of(0);
-    public static final Distance kL2Height = Inches.of(16.62);
+    public static final Distance kL2Height = Inches.of(18);
     public static final Distance kL3Height = Inches.of(30.9);
-    public static final Distance kL4Height = Inches.of(55);
+    public static final Distance kL4Height = Inches.of(54);
 
     public static final HowdyPID kElevatorPID = new HowdyPID();
 
@@ -234,24 +231,24 @@ public final class Constants {
     public static final HowdyMM kElevatorMM =
         new HowdyMM(RotationsPerSecond.of(200), RotationsPerSecondPerSecond.of(250));
 
-    public static final Distance kSetpointTolerance = Inches.of(1.25);
+    public static final Distance kSetpointTolerance = Inches.of(1.75);
 
     // Mech Constants
     public static final Distance kElevatorDrumRadius = Inches.of(0.375);
     public static final Distance kElevatorDrumCircumference =
         kElevatorDrumRadius.times(2 * Math.PI);
+    public static final double kElvRawOutput = .10;
+    public static final double kElevatorGearing = 3;
+    public static final int kGearToothing1 = 3;
+    public static final int kGearToothing2 = 11;
 
     public static final Distance kBottomLimit = Inches.of(0);
     public static final Distance kTopLimit = Inches.of(75);
-    public static final double kElevatorConversion = 1.0;
-
-    public static final int gear1Toothing = 3;
-    public static final int gear2Toothing = 11;
 
     // Gear for CRT offsets
     // TODO: get actual offset values
-    public static final double gear3Offset = 0.0;
-    public static final double gear11Offset = 0.0;
+    public static final double kGearOffset1 = 0.0;
+    public static final double kGearOffset2 = 0.0;
 
     // CRTA - Chinese Remainder Theorem Array
     public static int[][] CRTA = {
@@ -262,8 +259,6 @@ public final class Constants {
 
     // Simulation Constants
     public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60(2);
-    public static final double elevatorOutput = .10;
-    public static final double kElevatorGearing = 3;
     public static final Mass kCarriageMass = Pounds.of(4.75);
     public static final Distance kMinElevatorHeight = Inches.zero();
     public static final Distance kMaxElevatorHeight = Inches.of(72);
@@ -271,33 +266,43 @@ public final class Constants {
 
   // Algea Remover Constants
   public static class AlgeaRemoverConstants {
-    public static final double kAlgeaP = 0.7;
+    // PID
+    public static final double kAlgeaP = 0.1;
     public static final double kAlgeaI = 0.0;
     public static final double kAlgeaD = 0.0;
-    public static final double kAlgeaPercent = .4;
+
+    // Mech Constants
+    public static final double kAlgeaPercent = 0.1;
     public static final int kAlegeaGearRatio = 80;
-    public static final Angle algeaStowed = Rotations.of(0.46);
-    public static final Angle algeaRemove = Rotations.of(0.1);
-    public static final double algeaZero = 0.0; // update with actual value
-    public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
-    public static final Distance algeaArmLength = Inches.of(19);
-    public static final Angle kAlgeaStartingAngle = Rotations.of(-.25);
-    public static final Angle encoderOffset = Rotations.of(0); // update with actual offset
     public static final Angle ksetpointTolerance = Degrees.of(10);
+
+    // Algea Arm Setpoints (// 35 Degrees is breaking point)
+    public static final Angle kEncoderOffset = Rotations.of(0);
+    public static final Angle kAlgeaStowed = Degrees.of(170);
+    public static final Angle kRemoveUpAngle = Degrees.of(105);
+    public static final Angle kRemoveDownAngle = Degrees.of(40);
+
+    // Simulation Constants
+    public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
+    public static final Distance kAlgeaArmLength = Inches.of(19);
+    public static final Angle kAlgeaStartingAngle = Rotations.of(-0.25);
   }
 
   public final class DrivetrainConstants {
     // PathPlanner config constants
-    public static final Mass ROBOT_MASS = Pounds.of(96.2);
-    public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(49.5459894327);
+    public static final Mass ROBOT_MASS = Pounds.of(106.6);
+    public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(69.8548622056);
     public static final double WHEEL_COF = 1.2;
+
+    // POV Drive Constants
+    public static final LinearVelocity kPOVDriveSpeed = MetersPerSecond.of(1);
 
     public static final PathConstraints PATH_CONSTRAINTS =
         new PathConstraints(
-            4.3,
-            4.3,
-            DegreesPerSecond.of(630).in(RadiansPerSecond),
-            DegreesPerSecond.of(630).in(RadiansPerSecond));
+            3.5,
+            2,
+            DegreesPerSecond.of(300).in(RadiansPerSecond),
+            DegreesPerSecond.of(1200).in(RadiansPerSecond));
 
     // Constants from DriveCommands
     public static final double ANGLE_KP = 5;
@@ -352,11 +357,14 @@ public final class Constants {
           new Pose2d(Meters.of(3.667), Meters.of(5.062), new Rotation2d(Degrees.of(30))));
     }
 
-    public static final Pose2d[] SOURSE_POSES =
-        new Pose2d[] {
-          new Pose2d(Meters.of(1.227), Meters.of(7.045), new Rotation2d(Degrees.of(-54))),
-          new Pose2d(Meters.of(1.256), Meters.of(0.955), new Rotation2d(Degrees.of(54))),
-        };
+    public static final HashMap<String, Pose2d> kSourcePoses = new HashMap<String, Pose2d>();
+
+    static {
+      kSourcePoses.put(
+          "L", new Pose2d(Meters.of(1.180), Meters.of(7.125), new Rotation2d(Degrees.of(126))));
+      kSourcePoses.put(
+          "R", new Pose2d(Meters.of(1.225), Meters.of(0.968), new Rotation2d(Degrees.of(-126))));
+    }
 
     public static final Pose3d kIntakeStartPose =
         new Pose3d(
