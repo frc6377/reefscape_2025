@@ -261,6 +261,9 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
           "Swerve/Scored Pose Buttons/Pole " + Constants.kPoleLetters[nameIndex], boolList);
       nameIndex++;
     }
+    Logger.recordOutput(
+        "Swerve/Current Command",
+        this.getCurrentCommand() != null ? this.getCurrentCommand().getName() : "None");
   }
 
   /**
@@ -466,6 +469,29 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+  }
+
+  public Command strafe() {
+    return Commands.sequence(
+            run(() ->
+                    runVelocity(
+                        new ChassisSpeeds(
+                            0, -DrivetrainConstants.kStrafeSpeed.in(MetersPerSecond), 0)))
+                .withTimeout(DrivetrainConstants.kStrafeTime.div(2)),
+            Commands.sequence(
+                    run(() ->
+                            runVelocity(
+                                new ChassisSpeeds(
+                                    0, DrivetrainConstants.kStrafeSpeed.in(MetersPerSecond), 0)))
+                        .withTimeout(DrivetrainConstants.kStrafeTime),
+                    run(() ->
+                            runVelocity(
+                                new ChassisSpeeds(
+                                    0, -DrivetrainConstants.kStrafeSpeed.in(MetersPerSecond), 0)))
+                        .withTimeout(DrivetrainConstants.kStrafeTime))
+                .repeatedly())
+        .finallyDo(interrupted -> stop())
+        .withName("Strafe");
   }
 
   /** Adds a new timestamped vision measurement. */
