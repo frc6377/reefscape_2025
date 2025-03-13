@@ -27,6 +27,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -51,8 +52,12 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.Robot;
 import frc.robot.Sensors;
+import java.util.function.Supplier;
 import org.ironmaple.simulation.IntakeSimulation;
+import org.ironmaple.simulation.drivesims.GyroSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.jspecify.annotations.Nullable;
 import org.littletonrobotics.junction.Logger;
 
@@ -109,6 +114,11 @@ public class IntakeSubsystem extends SubsystemBase {
   private SingleJointedArmSim pivotSim;
   private IntakeSimulation intakeSim;
 
+  private Supplier<SwerveModuleSimulation>[] blankSwerveModuleSim;
+  private Supplier<GyroSimulation> blankGyroSim;
+  private DriveTrainSimulationConfig blankDriveTrainConfig;
+  private SwerveDriveSimulation blankSwerveDrive;
+
   public IntakeSubsystem(Sensors sensors, @Nullable SwerveDriveSimulation driveSim) {
     intakeMotor = new TalonFX(CANIDs.kIntakeMotor);
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
@@ -160,10 +170,14 @@ public class IntakeSubsystem extends SubsystemBase {
                   new MechanismLigament2d("Pivot Mech", 1, 90, 10, new Color8Bit(Color.kPurple)));
       SmartDashboard.putData("Intake/Pivot Arm", mech);
 
+      blankDriveTrainConfig = DriveTrainSimulationConfig.Default();
+
+      blankSwerveDrive = new SwerveDriveSimulation(blankDriveTrainConfig, new Pose2d());
+
       intakeSim =
           IntakeSimulation.OverTheBumperIntake(
               "Coral",
-              driveSim,
+              driveSim != null ? driveSim : blankSwerveDrive,
               IntakeConstants.kIntakeWidth,
               IntakeConstants.kIntakeExtension,
               IntakeSimulation.IntakeSide.FRONT,

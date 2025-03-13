@@ -423,7 +423,7 @@ public final class Constants {
     private static final Distance kL3H = Inches.of(47.0542);
     private static final Distance kL4H = Inches.of(71.9348);
 
-    // X, Y Cordiantes
+    // X, Y Coordinates
     private static final Distance[][] kBlueStickPoses =
         new Distance[][] {
           new Distance[] {Inches.of(146.303), Inches.of(152.030)},

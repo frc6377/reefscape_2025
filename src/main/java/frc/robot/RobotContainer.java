@@ -30,6 +30,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -102,7 +103,7 @@ public class RobotContainer {
   private Command scoreL1;
 
   @Nullable private SwerveDriveSimulation driveSimulation;
-  private Pose2d driveSimDefualtPose = new Pose2d(2, 2, new Rotation2d());
+  private Pose2d driveSimDefaultPose = new Pose2d(2, 2, new Rotation2d());
 
   // Trigger Variables
   private final Trigger coralOuttakeButton = OI.getButton(OI.Driver.RBumper);
@@ -143,7 +144,7 @@ public class RobotContainer {
       case SIM:
         if (SubsystemEnabled.kDrivebase) {
           // Sim robot, instantiate physics sim IO implementations
-          driveSimDefualtPose =
+          driveSimDefaultPose =
               Constants.kAllianceColor.equals(Alliance.Blue)
                   ? new Pose2d(
                       Meters.of(2),
@@ -154,7 +155,7 @@ public class RobotContainer {
                       Meters.of(2),
                       new Rotation2d(Degrees.of(180)));
 
-          driveSimulation = new SwerveDriveSimulation(Drive.mapleSimConfig, driveSimDefualtPose);
+          driveSimulation = new SwerveDriveSimulation(Drive.mapleSimConfig, driveSimDefaultPose);
           SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
           mapleSimArenaSubsystem = new MapleSimArenaSubsystem(driveSimulation);
 
@@ -270,7 +271,10 @@ public class RobotContainer {
               scoreL1.asProxy().until(isDoneScoring.debounce(3))));
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser =
+        drive != null
+            ? new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser())
+            : new LoggedDashboardChooser<>("Auto Choices", new SendableChooser<Command>());
 
     if (drive != null) {
       // Set up SysId routines
@@ -302,7 +306,7 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-    configureTestButtonBindsing();
+    configureTestButtonBindings();
   }
 
   public EventLoop getTestEventLoop() {
@@ -313,7 +317,7 @@ public class RobotContainer {
     return new Trigger(testEventLoop, t);
   }
 
-  private void configureTestButtonBindsing() {
+  private void configureTestButtonBindings() {
     // Elevator Test Buttons
     // testTrig(OI.getPOVButton(OI.Driver.DPAD_UP))
     //     .whileTrue(elevator.setElvPercent(OI.getAxisSupplier(OI.Driver.RightY).get()));
@@ -367,7 +371,6 @@ public class RobotContainer {
     }
 
     // Intake Buttons
-
     Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
     Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
     Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
@@ -730,7 +733,7 @@ public class RobotContainer {
       intake.resetSim();
     }
     if (driveSimulation != null) {
-      driveSimulation.setSimulationWorldPose(driveSimDefualtPose);
+      driveSimulation.setSimulationWorldPose(driveSimDefaultPose);
     }
   }
 
