@@ -67,7 +67,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 @SuppressWarnings("unused")
 public class RobotContainer {
   // Change the raw boolean to true to pick keyboard during simulation
-  private final boolean usingKeyboard = true && Robot.isSimulation();
+  private final boolean usingKeyboard = false && Robot.isSimulation();
 
   private EventLoop testEventLoop = new EventLoop();
 
@@ -207,6 +207,8 @@ public class RobotContainer {
             Commands.waitUntil(intake.intakeHasCoralTrigger()),
             scoreL1.asProxy().until(isDoneScoring.debounce(1))));
     NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
+    NamedCommands.registerCommand(
+        "Strafe", drive.strafe().until(coralScorer.scorerAlignedTrigger()));
 
     NamedCommands.registerCommand(
         "Start R - E",

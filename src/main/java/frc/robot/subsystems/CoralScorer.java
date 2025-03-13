@@ -96,8 +96,7 @@ public class CoralScorer extends SubsystemBase {
     Logger.recordOutput("CoralScorer/Coral Sensor/Bool", TOFSensor.getBeamBroke());
 
     Logger.recordOutput(
-        "CoralScorer/Motor Velocity (RPS)", scorerMotor.getVelocity().getValueAsDouble());
-    Logger.recordOutput("CoralScorer/Sensor Distance (Inches)", TOFSensor.getDistance().in(Inches));
-    Logger.recordOutput("CoralScorer/Sensor Bool", TOFSensor.getBeamBroke());
+        "CoralScorer/Align Sensor/Distance (Inches)", alignSensor.getDistance().in(Inches));
+    Logger.recordOutput("CoralScorer/Align Sensor/Bool", alignSensor.getBeamBroke());
   }
 }

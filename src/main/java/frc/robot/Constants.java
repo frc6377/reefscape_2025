@@ -301,7 +301,8 @@ public final class Constants {
     public static final Mass ROBOT_MASS = Pounds.of(106.6);
     public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(69.8548622056);
     public static final double WHEEL_COF = 1.2;
-
+    public static final Time kStrafeTime = Seconds.of(0.5);
+    public static final LinearVelocity kStrafeSpeed = MetersPerSecond.of(0.5);
     // POV Drive Constants
     public static final LinearVelocity kPOVDriveSpeed = MetersPerSecond.of(1);
 
