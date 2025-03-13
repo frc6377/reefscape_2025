@@ -204,7 +204,8 @@ public class RobotContainer {
             Commands.waitUntil(intake.intakeHasCoralTrigger()),
             scoreL1.asProxy().until(isDoneScoring.debounce(1))));
     NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
-    NamedCommands.registerCommand("Strafe", drive.strafe().until(coralScorer.scorerAlignedTrigger()));
+    NamedCommands.registerCommand(
+        "Strafe", drive.strafe().until(coralScorer.scorerAlignedTrigger()));
     NamedCommands.registerCommand(
         "Start R - E",
         DriveCommands.GoToPose(Constants.DrivetrainConstants.SCORE_POSES.get("E"), Set.of(drive)));
