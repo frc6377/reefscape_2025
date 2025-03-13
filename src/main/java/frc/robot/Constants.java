@@ -149,7 +149,7 @@ public final class Constants {
     public static final Distance kSensorDistnace = Inches.of(1.5);
 
     public static final Distance kAlignSensorDistnace = Inches.of(5);
-    public static final Time kAlignSensorDebounce = Seconds.of(0.04);
+    public static final Time kAlignSensorDebounce = Seconds.of(0.06);
   }
 
   // Signaling Constants
@@ -175,7 +175,7 @@ public final class Constants {
     public static final Angle kPivotRetractAngle = Degrees.of(134.5);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(0);
-    public static final Angle kPivotCoralStationAngle = Degrees.of(105);
+    public static final Angle kPivotCoralStationAngle = Degrees.of(110);
     public static final Angle kPivotL1Score = Degrees.of(85);
     public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
     public static final Angle kPivotClimbingAngle = Degrees.of(75.5);
@@ -284,12 +284,11 @@ public final class Constants {
     public static final int kAlegeaGearRatio = 80;
     public static final Angle ksetpointTolerance = Degrees.of(10);
 
-    // Algea Arm Setpoints (// 40 Degrees is breaking point)
+    // Algea Arm Setpoints (// 35 Degrees is breaking point)
     public static final Angle kEncoderOffset = Rotations.of(0);
-    public static final Angle kAlgeaStowed = Degrees.of(145);
-    public static final Angle kAlgeaRemove = Degrees.of(63);
-    public static final Angle kRemoveUpAngle = Degrees.of(95);
-    public static final Angle kRemoveDownAngle = Degrees.of(58);
+    public static final Angle kAlgeaStowed = Degrees.of(170);
+    public static final Angle kRemoveUpAngle = Degrees.of(105);
+    public static final Angle kRemoveDownAngle = Degrees.of(40);
 
     // Simulation Constants
     public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
@@ -374,12 +373,6 @@ public final class Constants {
       kSourcePoses.put(
           "R", new Pose2d(Meters.of(1.225), Meters.of(0.968), new Rotation2d(Degrees.of(-126))));
     }
-
-    public static final Pose2d[] SOURSE_POSES =
-        new Pose2d[] {
-          new Pose2d(Meters.of(1.227), Meters.of(7.045), new Rotation2d(Degrees.of(-54))),
-          new Pose2d(Meters.of(1.256), Meters.of(0.955), new Rotation2d(Degrees.of(54))),
-        };
 
     public static final Pose3d kIntakeStartPose =
         new Pose3d(

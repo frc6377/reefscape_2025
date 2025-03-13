@@ -31,6 +31,7 @@ import frc.robot.Robot;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
@@ -106,8 +107,7 @@ public class Vision extends SubsystemBase {
         currentTagCount = observation.tagCount();
 
         boolean rejectPose =
-            observation.tagCount() == 0 // Must have at least one tag
-                || observation.tagCount() < minTags // Must have enough tags
+            observation.tagCount() < minTags // Must have enough tags
                 || observation.ambiguity() > maxAmbiguity // Cannot be high ambiguity
                 || Math.abs(observation.pose().getZ()) > maxZError // Must have realistic Z cord
 
@@ -182,6 +182,7 @@ public class Vision extends SubsystemBase {
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
   }
 
+  @AutoLogOutput(key = "Vision/TagCount")
   public int getTagCount() {
     return currentTagCount;
   }

@@ -13,43 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartML - I"
+            "pathName": "StartML - J"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "I - Source"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score K"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL4"
+            "name": "ElvL4 DeadLine"
           }
         },
         {
@@ -61,31 +31,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "K - Source"
+            "pathName": "J - Source"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake"
+            "name": "Set L1 Mode"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake L1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score L"
+            "pathName": "Score KL L1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
+            "name": "L1 Score"
           }
         },
         {
@@ -98,6 +68,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "♠ Kings",
+  "folder": "Chads",
   "choreoAuto": false
 }

@@ -15,12 +15,11 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.DrivetrainConstants.SCORE_POSES;
-import static frc.robot.Constants.DrivetrainConstants.SOURSE_POSES;
+import static frc.robot.Constants.DrivetrainConstants.kSourcePoses;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -81,18 +80,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
   // PathPlanner config constants
-  private static final RobotConfig PP_CONFIG =
-      new RobotConfig(
-          DrivetrainConstants.ROBOT_MASS.in(Kilograms),
-          DrivetrainConstants.ROBOT_MOI.in(KilogramSquareMeters),
-          new ModuleConfig(
-              TunerConstants.FrontLeft.WheelRadius,
-              TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
-              DrivetrainConstants.WHEEL_COF,
-              DCMotor.getKrakenX60(1).withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
-              TunerConstants.FrontLeft.SlipCurrent,
-              1),
-          getModuleTranslations());
+  private static RobotConfig PP_CONFIG;
 
   public static final DriveTrainSimulationConfig mapleSimConfig =
       DriveTrainSimulationConfig.Default()
@@ -152,6 +140,12 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
+
+    try {
+      PP_CONFIG = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to load PathPlanner config", e);
+    }
 
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(
@@ -455,10 +449,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   }
 
   public Pose2d getClosestSoursePose() {
-    double dist1 = getPose().getTranslation().getDistance(SOURSE_POSES[0].getTranslation());
-    double dist2 = getPose().getTranslation().getDistance(SOURSE_POSES[1].getTranslation());
+    double dist1 = getPose().getTranslation().getDistance(kSourcePoses.get("L").getTranslation());
+    double dist2 = getPose().getTranslation().getDistance(kSourcePoses.get("R").getTranslation());
 
-    Pose2d closestSource = dist1 < dist2 ? SOURSE_POSES[0] : SOURSE_POSES[1];
+    Pose2d closestSource = dist1 < dist2 ? kSourcePoses.get("L") : kSourcePoses.get("R");
 
     Logger.recordOutput("Odometry/Closest Source Pose", closestSource);
     return closestSource;

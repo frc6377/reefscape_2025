@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - E"
+            "pathName": "StartMR - E"
           }
         },
         {
@@ -67,7 +67,7 @@
       ]
     }
   },
-  "resetOdom": false,
-  "folder": "♥ Chads",
+  "resetOdom": true,
+  "folder": "Chads",
   "choreoAuto": false
 }

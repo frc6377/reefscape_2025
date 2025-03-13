@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartMR - E"
+            "pathName": "StartML - I"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "E - Source"
+            "pathName": "I - Source"
           }
         },
         {
@@ -43,7 +43,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score D"
+            "pathName": "Score K"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "K - Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score L"
           }
         },
         {
@@ -67,7 +97,7 @@
       ]
     }
   },
-  "resetOdom": false,
-  "folder": "♥ Chads",
+  "resetOdom": true,
+  "folder": "Kings",
   "choreoAuto": false
 }

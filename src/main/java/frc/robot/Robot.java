@@ -144,7 +144,7 @@ public class Robot extends LoggedRobot {
   public void disabledInit() {
     robotContainer.resetSimulationField();
     robotContainer.seedEncoders();
-    isUsingVision = true;
+    isUsingVision = false;
   }
 
   /** This function is called periodically when disabled. */
@@ -159,7 +159,6 @@ public class Robot extends LoggedRobot {
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
-      if (Robot.isSimulation()) robotContainer.givePreLoad();
       autonomousCommand.schedule();
       robotContainer.startSimAuto();
     }
