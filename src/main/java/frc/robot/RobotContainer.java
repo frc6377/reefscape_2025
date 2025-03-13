@@ -202,7 +202,7 @@ public class RobotContainer {
         new SequentialCommandGroup(
             Commands.runOnce(() -> elevatorNotL1 = false),
             Commands.waitUntil(intake.intakeHasCoralTrigger()),
-            scoreL1.asProxy().until(isDoneScoring.debounce(3))));
+            scoreL1.asProxy().until(isDoneScoring.debounce(1))));
     NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
 
     NamedCommands.registerCommand(
