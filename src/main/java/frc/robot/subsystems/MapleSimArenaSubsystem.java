@@ -200,7 +200,7 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
         .withName("scoreCoral");
   }
 
-  public Command resetSimFeild() {
+  public Command resetSimField() {
     return Commands.runOnce(
             () -> {
               resetScoredPoses();
