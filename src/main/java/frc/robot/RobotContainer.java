@@ -94,10 +94,10 @@ public class RobotContainer {
           () ->
               sensors.getSensorState() == CoralEnum.NO_CORAL
                   || coralScorer.hasCoralTrigger().getAsBoolean());
-  private final Trigger UpButtonTrigger = OI.getPOVButton(OI.Driver.POV0);
-  private final Trigger DownButtonTrigger = OI.getPOVButton(OI.Driver.POV90);
-  private final Trigger RightButtonTrigger = OI.getPOVButton(OI.Driver.POV180);
-  private final Trigger LeftButtonTrigger = OI.getPOVButton(OI.Driver.POV270);
+  private final Trigger UpButtonTrigger = OI.getButton(OI.Driver.POV0);
+  private final Trigger DownButtonTrigger = OI.getButton(OI.Driver.POV90);
+  private final Trigger RightButtonTrigger = OI.getButton(OI.Driver.POV180);
+  private final Trigger LeftButtonTrigger = OI.getButton(OI.Driver.POV270);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -318,24 +318,24 @@ public class RobotContainer {
     OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
 
     // Intake Buttons
-    OI.getTrigger(OI.Driver.RTrigger)
+    OI.getButton(OI.Driver.RTrigger)
         .and(() -> !intakeAlgeaMode && !coralStationMode)
         .whileTrue(intake.floorIntake());
-    OI.getTrigger(OI.Driver.RTrigger)
+    OI.getButton(OI.Driver.RTrigger)
         .and(() -> !intakeAlgeaMode && coralStationMode)
         .whileTrue(intake.humanPlayerIntake());
-    OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
-    OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
+    OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
+    OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
     Command locateCoral =
         new LocateCoral(
             sensors::getSensorState,
             intake,
-            coralOuttakeButton.or(OI.getTrigger(OI.Driver.RTrigger)));
+            coralOuttakeButton.or(OI.getButton(OI.Driver.RTrigger)));
 
     intake
         .intakeHasUnalignedCoralTrigger()
         .and(coralOuttakeButton.negate())
-        .and(OI.getTrigger(OI.Driver.RTrigger).negate())
+        .and(OI.getButton(OI.Driver.RTrigger).negate())
         .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
         .onTrue(locateCoral);
 
@@ -379,26 +379,26 @@ public class RobotContainer {
                   Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
                 }));
     // OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB());
-    OI.getTrigger(OI.Driver.LTrigger)
+    OI.getButton(OI.Driver.LTrigger)
         .and(() -> !elevatorNotL1 && !intakeAlgeaMode)
         .whileTrue(scoreL1);
     intake.setDefaultCommand(intake.Idle());
 
     // Scorer Buttons
-    OI.getTrigger(OI.Driver.LScoreTrigger)
+    OI.getButton(OI.Driver.LScoreTrigger)
         .and(() -> !intakeAlgeaMode && elevatorNotL1)
         .whileTrue(
             Robot.isReal()
                 ? coralScorer.runScorer(OI.getAxisSupplier(OI.Driver.LeftTriggerAxis))
                 : mapleSimArenaSubsystem.scoreCoral());
-    OI.getTrigger(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
+    OI.getButton(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
     OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
 
     // Algae Remover
     OI.getButton(OI.Operator.LBumper).toggleOnTrue(algeaRemover.removeUpCommand());
     OI.getButton(OI.Operator.RBumper).toggleOnTrue(algeaRemover.removeDownCommand());
-    OI.getTrigger(OI.Operator.LTrigger).whileTrue(algeaRemover.upCommand());
-    OI.getTrigger(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
+    OI.getButton(OI.Operator.LTrigger).whileTrue(algeaRemover.upCommand());
+    OI.getButton(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
 
     // Climber Buttons
     // OI.getPOVButton(OI.Operator.DPAD_UP)
