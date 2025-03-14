@@ -15,8 +15,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.Constants.IntakeConstants.kClimbingAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
@@ -40,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FeildConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.Constants.SubsystemEnabled;
 import frc.robot.OI.Driver;
@@ -79,7 +78,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 @SuppressWarnings("unused")
 public class RobotContainer {
   // Change the raw boolean to true to pick keyboard during simulation
-  private final boolean usingKeyboard = true && Robot.isSimulation();
+  private final boolean usingKeyboard = false && Robot.isSimulation();
 
   private EventLoop testEventLoop = new EventLoop();
 
@@ -107,7 +106,11 @@ public class RobotContainer {
 
   // Trigger Variables
   private final Trigger coralOuttakeButton = OI.getButton(OI.Driver.RBumper);
-  private final Trigger coralHandoffCompleteTrigger;
+  private Trigger coralHandoffCompleteTrigger;
+  private final Trigger UpButtonTrigger = OI.getPOVButton(OI.Driver.POV0);
+  private final Trigger DownButtonTrigger = OI.getPOVButton(OI.Driver.POV90);
+  private final Trigger RightButtonTrigger = OI.getPOVButton(OI.Driver.POV180);
+  private final Trigger LeftButtonTrigger = OI.getPOVButton(OI.Driver.POV270);
 
   // Dashboard inputs
   @Nullable private final LoggedDashboardChooser<Command> autoChooser;
@@ -222,8 +225,9 @@ public class RobotContainer {
             ? new Trigger(
                 () ->
                     sensors.getSensorState() == CoralEnum.NO_CORAL
-                        || coralScorer.hasCoral().getAsBoolean())
+                        || coralScorer.hasCoralTrigger().getAsBoolean())
             : new Trigger(() -> true);
+
     scoreL1 = intake != null ? intake.l1ScoreModeA() : Commands.none();
 
     Trigger isDoneScoring =
@@ -335,22 +339,20 @@ public class RobotContainer {
     //     .toggleOnTrue(intake.movePivot(IntakeConstants.kClimbingAngle));
 
     // Climber Test Buttons
-    if (climber != null) {
-      testTrig(OI.getPOVButton(OI.Operator.DPAD_RIGHT)).onTrue(climber.servoToZero());
-      testTrig(OI.getButton(OI.Driver.LBumper)).onTrue(climber.engageServo());
-      testTrig(OI.getButton(OI.Driver.RBumper)).onTrue(climber.disengageServo());
-      testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(climber.runRaw(Volts.of(3)));
-      testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(climber.runRaw(Volts.of(-3)));
-      // testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendToCage());
-      testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
-          .whileTrue(climber.runRaw(Volts.of(3)));
-      testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
-          .whileTrue(climber.runRaw(Volts.of(-3)));
-      testTrig(OI.getButton(OI.Driver.X)).onTrue(climber.climberToZero());
-      testTrig(OI.getButton(OI.Driver.A)).onTrue(climber.retract());
-      testTrig(OI.getButton(OI.Driver.Y)).onTrue(climber.extendToCage());
-      testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendFully());
-    }
+    // testTrig(OI.getPOVButton(OI.Operator.DPAD_RIGHT)).onTrue(climber.servoToZero());
+    // testTrig(OI.getButton(OI.Driver.LBumper)).onTrue(climber.engageServo());
+    // testTrig(OI.getButton(OI.Driver.RBumper)).onTrue(climber.disengageServo());
+    // testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(climber.runRaw(Volts.of(3)));
+    // testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(climber.runRaw(Volts.of(-3)));
+    // // testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendToCage());
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.M) : OI.getTrigger(OI.Driver.RTrigger))
+    //     .whileTrue(climber.runRaw(Volts.of(3)));
+    // testTrig(usingKeyboard ? OI.getButton(OI.Keyboard.Comma) : OI.getTrigger(OI.Driver.LTrigger))
+    //     .whileTrue(climber.runRaw(Volts.of(-3)));
+    // testTrig(OI.getButton(OI.Driver.X)).onTrue(climber.climberToZero());
+    // testTrig(OI.getButton(OI.Driver.A)).onTrue(climber.retract());
+    // testTrig(OI.getButton(OI.Driver.Y)).onTrue(climber.extendToCage());
+    // testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendFully());
   }
 
   private void configureButtonBindings() {
@@ -360,6 +362,24 @@ public class RobotContainer {
             () -> {
               SignalLogger.stop();
             }));
+
+    if (coralScorer != null && elevator != null) {
+      coralScorer
+          .scorerAlignedTrigger()
+          .and(coralScorer.hasCoralTrigger())
+          .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
+          .and(elevator.elevatorAtCurrentSetpoint())
+          .whileTrue(
+              Commands.runEnd(
+                  () -> {
+                    OI.Driver.setRumble(0.5);
+                    OI.Operator.setRumble(0.5);
+                  },
+                  () -> {
+                    OI.Driver.setRumble(0);
+                    OI.Operator.setRumble(0);
+                  }));
+    }
 
     // Elevator Buttons
     if (elevator != null) {
@@ -395,8 +415,14 @@ public class RobotContainer {
                 () -> {
                   Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
                 }));
+    // OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB());
+    OI.getTrigger(OI.Driver.LTrigger)
+        .and(() -> !elevatorNotL1 && !intakeAlgeaMode)
+        .whileTrue(scoreL1);
 
     if (intake != null) {
+      intake.setDefaultCommand(intake.Idle());
+
       OI.getTrigger(OI.Driver.RTrigger)
           .and(() -> !intakeAlgeaMode && !coralStationMode)
           .whileTrue(intake.floorIntake());
@@ -411,6 +437,13 @@ public class RobotContainer {
       OI.getTrigger(OI.Driver.LTrigger)
           .and(() -> !elevatorNotL1 && !intakeAlgeaMode)
           .whileTrue(scoreL1); // Temporary
+
+      // Climber Buttons
+      // OI.getPOVButton(OI.Operator.DPAD_UP)
+      //     .onTrue(climber.retract())
+      //     .toggleOnTrue(intake.movePivot(kPivotClimbingAngle));
+      // OI.getPOVButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
+      // OI.getPOVButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
 
       intake.setDefaultCommand(intake.Idle());
 
@@ -467,6 +500,14 @@ public class RobotContainer {
       }
     }
 
+    // Algae Remover
+    if (algeaRemover != null) {
+      OI.getButton(OI.Operator.LBumper).toggleOnTrue(algeaRemover.removeUpCommand());
+      OI.getButton(OI.Operator.RBumper).toggleOnTrue(algeaRemover.removeDownCommand());
+      OI.getTrigger(OI.Operator.LTrigger).whileTrue(algeaRemover.upCommand());
+      OI.getTrigger(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
+    }
+
     // Scorer Buttons
     if (coralScorer != null && intake != null) {
       OI.getTrigger(OI.Driver.LScoreTrigger)
@@ -479,23 +520,47 @@ public class RobotContainer {
       OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
     }
 
+    /* This is for creating the button mappings for logging what coral have been scored
+     * The Driverstation has a hard limit of 32 buttons so we use 2 different vjoy controllers
+     * to get the effective 64 buttons that we need for logging. this first 16 buttons of every controller are
+     * used for the front and back coral scored poses. */
+    // int rows = 3;
+    // for (int i = 0; i < Constants.kPoleLetters.length / 2; i++) {
+    //   for (int j = 0; j < rows; j++) {
+    //     OI.getButton(OI.StreamDeck.streamDeckButtons[0][i * rows + j])
+    //         .onChange(drive.setPoseScored(Constants.kPoleLetters[i], j));
+    //     OI.getButton(OI.StreamDeck.streamDeckButtons[1][i * rows + j])
+    //         .onChange(
+    //             drive.setPoseScored(
+    //                 Constants.kPoleLetters[i + Constants.kPoleLetters.length / 2], j));
+    //   }
+    // }
+
+    // Button to update Setpoints of the elevator based on the Stream Deck nobs
+    // TODO: Fix axis input
+    // OI.getButton(OI.StreamDeck.streamDeckButtons[1][31])
+    //     .onTrue(
+    //         elevator
+    //             .tuneSetpoints(
+    //                 () -> OI.getAxisSupplier(OI.StreamDeck.Nob1).get(),
+    //                 () -> OI.getAxisSupplier(OI.StreamDeck.Nob2).get(),
+    //                 () -> OI.getAxisSupplier(OI.StreamDeck.Nob3).get(),
+    //                 () -> OI.getAxisSupplier(OI.StreamDeck.Nob4).get())
+    //             .ignoringDisable(true));
+
     // Algae Remover
     if (algeaRemover != null) {
-      OI.getButton(OI.Operator.RBumper).whileTrue(algeaRemover.goUp());
-      OI.getButton(OI.Operator.LBumper).whileTrue(algeaRemover.goDown());
-      OI.getButton(OI.Operator.A).whileTrue(algeaRemover.removeAlgea());
-      OI.getButton(OI.Operator.B).whileTrue(algeaRemover.stowAlgeaArm());
-      OI.getTrigger(OI.Operator.LTrigger)
-          .whileTrue(algeaRemover.goUpCommand(OI.getAxisSupplier(OI.Operator.LTriggerAxis)));
-      OI.getTrigger(OI.Operator.RTrigger)
-          .whileTrue(algeaRemover.goDownCommand(OI.getAxisSupplier(OI.Operator.RTriggerAxis)));
+      OI.getButton(OI.Operator.LBumper).toggleOnTrue(algeaRemover.removeUpCommand());
+      OI.getButton(OI.Operator.RBumper).toggleOnTrue(algeaRemover.removeDownCommand());
+      OI.getTrigger(OI.Operator.LTrigger).whileTrue(algeaRemover.upCommand());
+      OI.getTrigger(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
     }
 
     // Climber Buttons
     if (climber != null && intake != null) {
       OI.getPOVButton(OI.Operator.DPAD_UP)
           .onTrue(climber.retract())
-          .toggleOnTrue(intake.movePivot(kClimbingAngle));
+          .toggleOnTrue(intake.movePivot(IntakeConstants.kPivotClimbingAngle));
       OI.getPOVButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
       OI.getPOVButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
     }
@@ -512,6 +577,19 @@ public class RobotContainer {
               : () ->
                   drive.setPose(
                       new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+
+      UpButtonTrigger.or(DownButtonTrigger)
+          .or(RightButtonTrigger)
+          .or(LeftButtonTrigger)
+          .whileTrue(
+              DriveCommands.POVDrive(
+                  drive,
+                  () ->
+                      (UpButtonTrigger.getAsBoolean() ? 1.0 : 0.0)
+                          + (DownButtonTrigger.getAsBoolean() ? -1.0 : 0.0),
+                  () ->
+                      (LeftButtonTrigger.getAsBoolean() ? 1.0 : 0.0)
+                          + (RightButtonTrigger.getAsBoolean() ? -1.0 : 0.0)));
 
       // Default command, normal field-relative drive
       drive.setDefaultCommand(
@@ -552,7 +630,7 @@ public class RobotContainer {
       }
 
       // Button to update Setpoints of the elevator based on the Stream Deck nobs
-      // TODO: Fix axis imput
+      // TODO: Fix axis input
       if (elevator != null) {
         OI.getButton(OI.StreamDeck.streamDeckButtons[1][31])
             .onTrue(
@@ -589,6 +667,14 @@ public class RobotContainer {
                     OI.getAxisSupplier(OI.Keyboard.WS),
                     drive.getAlignRotation()));
         OI.getButton(OI.Keyboard.Comma).onTrue(Commands.runOnce(() -> resetSimulationField()));
+
+        // POV Drive
+        OI.getButton(OI.Keyboard.M)
+            .whileTrue(
+                DriveCommands.POVDrive(
+                    drive,
+                    () -> OI.getAxisSupplier(OI.Keyboard.JL).get(),
+                    () -> OI.getAxisSupplier(OI.Keyboard.IK).get()));
       }
 
       // Intake
@@ -607,7 +693,11 @@ public class RobotContainer {
       // Scorer
       if (coralScorer != null && mapleSimArenaSubsystem != null) {
         OI.getButton(OI.Keyboard.Period).whileTrue(mapleSimArenaSubsystem.scoreCoral());
+        OI.getButton(OI.Keyboard.Period).whileTrue(mapleSimArenaSubsystem.scoreCoral());
       }
+
+      // Reset Button
+      OI.getButton(OI.Keyboard.Comma).onTrue(Commands.runOnce(() -> resetSimulationField()));
     }
   }
 
@@ -679,7 +769,7 @@ public class RobotContainer {
             .until(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
             .asProxy();
       } else {
-        return coralScorer.scoreCommand().until(coralScorer.hasCoral().negate()).asProxy();
+        return coralScorer.scoreCommand().until(coralScorer.hasCoralTrigger().negate()).asProxy();
       }
     } else {
       return Commands.none();
@@ -689,9 +779,9 @@ public class RobotContainer {
   public Command algeaRemoverAutoCommand() {
     if (algeaRemover != null) {
       return algeaRemover
-          .removeAlgea()
+          .removeUpCommand()
           .until(algeaRemover.algeaArmAtSetpoint())
-          .andThen(algeaRemover.goUp())
+          .andThen(algeaRemover.upCommand())
           .asProxy();
     } else {
       return Commands.none();
@@ -709,6 +799,15 @@ public class RobotContainer {
 
     if (drive != null && driveSimulation != null)
       driveSimulation.setSimulationWorldPose(drive.getPose());
+  }
+
+  public void startSimAuto() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    if (intake != null && driveSimulation != null && drive != null) {
+      intake.addGamePieceToIntakeSim();
+      driveSimulation.setSimulationWorldPose(drive.getPose());
+    }
   }
 
   public void seedEncoders() {

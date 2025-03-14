@@ -68,8 +68,8 @@ public class PassToScorer extends Command {
       boolean intakeSensorBool =
           intakeSubsystem.getSensors().getSensorTrigger(2).negate().debounce(0.04).getAsBoolean();
       Logger.recordOutput("PassToScorer Intake State", intakeSensorBool);
-      Logger.recordOutput("PassToScorer Coral State", coralScorer.hasCoral().getAsBoolean());
-      return coralScorer.hasCoral().getAsBoolean() || intakeSensorBool;
+      Logger.recordOutput("PassToScorer Coral State", coralScorer.hasCoralTrigger().getAsBoolean());
+      return coralScorer.hasCoralTrigger().getAsBoolean() || intakeSensorBool;
     } else {
       return intakeSubsystem.atSetpoint(kPivotRetractAngle);
     }

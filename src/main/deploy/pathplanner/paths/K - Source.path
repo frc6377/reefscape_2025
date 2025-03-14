@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.000326122155322,
-        "y": 5.125906417864064
+        "x": 3.9577902396958105,
+        "y": 5.203105781312949
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.3432784633629153,
-        "y": 5.842006498384175
+        "x": 3.3163776718384277,
+        "y": 5.9400208457546615
       },
       "isLocked": false,
       "linkedName": "Reef K"
     },
     {
       "anchor": {
-        "x": 1.2456343910549479,
-        "y": 7.074343420759858
+        "x": 1.2160285010126541,
+        "y": 7.054196584282895
       },
       "prevControl": {
-        "x": 1.8914505036736342,
-        "y": 6.652202184000613
+        "x": 1.8680197671673344,
+        "y": 6.607726443555704
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,10 +45,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

@@ -7,13 +7,49 @@
         {
           "type": "named",
           "data": {
+            "name": "Zero Elv"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StartML - J"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL4 DeadLine"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "J - Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Set L1 Mode"
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Intake L1"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "StartL - IJ (L1)"
+            "pathName": "Score KL L1"
           }
         },
         {
@@ -23,33 +59,15 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "IJ - Source L1"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score K L1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L1 Score"
+            "name": "ElvL0"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "The Franks",
+  "folder": "Chads",
   "choreoAuto": false
 }

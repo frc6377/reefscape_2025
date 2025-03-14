@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Zero Elv"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "StartR - F"
+            "pathName": "StartL - I"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL4"
           }
         },
         {
@@ -19,55 +31,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Flow 1"
+            "pathName": "I - Source"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Flow 2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Flow 3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Flow 4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
+            "name": "Intake"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": " Franks",
   "choreoAuto": false
 }

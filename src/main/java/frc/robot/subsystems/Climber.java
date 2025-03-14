@@ -159,8 +159,8 @@ public class Climber extends SubsystemBase {
               ClimberConstants.kClimberRetractedSetpoint.in(Radians));
 
       climbMech = new Mechanism2d(4, 2);
-      climbMechRoot1 = climbMech.getRoot("Climb Mech right", 3, 1);
-      climbMechRoot2 = climbMech.getRoot("Climb Mech left", 1, 1);
+      climbMechRoot1 = climbMech.getRoot("Climb Mech right", 1, 1);
+      climbMechRoot2 = climbMech.getRoot("Climb Mech left", 3, 1);
       climbMechLigament1 =
           climbMechRoot1.append(
               new MechanismLigament2d(
@@ -254,7 +254,10 @@ public class Climber extends SubsystemBase {
         () -> {
           if (position.gt(climberMotorFront.getPosition().getValue())
               && (isFrontServoEngaged || isBackServoEngaged)) {
-            new Alert("Attempted motor output against servo ratchet", AlertType.kError).set(true);
+            Alert alert =
+                new Alert("Attempted motor output against servo ratchet", AlertType.kError);
+            alert.set(true);
+            alert.close();
           } else {
             climberTargetAngle = position;
             climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
@@ -295,8 +298,8 @@ public class Climber extends SubsystemBase {
   }
 
   public Command retract() {
-    return runClimber(ClimberConstants.kClimberServoDisengageAngle, 0)
-        .until(isClimberAtPosition(ClimberConstants.kClimberServoDisengageAngle))
+    return runClimber(ClimberConstants.kClimberDisengageAngle, 0)
+        .until(isClimberAtPosition(ClimberConstants.kClimberDisengageAngle))
         .andThen(disengageServo())
         .andThen(Commands.waitSeconds(1))
         .andThen(
@@ -312,7 +315,8 @@ public class Climber extends SubsystemBase {
   }
 
   public Command extendFully() {
-    return runClimber(ClimberConstants.kClimberExtendedSetpoint, 1);
+    return runClimber(ClimberConstants.kClimberExtendedSetpoint, 1)
+        .alongWith(Commands.runOnce(() -> toggleClimbingSim()));
   }
 
   private void setServoAngle(Servo servo, double angle) {
@@ -438,14 +442,14 @@ public class Climber extends SubsystemBase {
 
     Logger.recordOutput("Climber/Climber Angle", Radians.of(simulator.getAngleRads()).in(Degrees));
     Logger.recordOutput("Climber/Climbing", isClimbingStateSim);
-    if (climberMotorFront.getPosition().getValue().gt(ClimberConstants.kClimberAtCageSetpoint)) {
-      if (simulator == climberSimNormal) {
-        toggleClimbingSim();
-      }
-    } else {
-      if (simulator == climberSimLifting) {
-        toggleClimbingSim();
-      }
-    }
+    // if (climberMotorFront.getPosition().getValue().gt(ClimberConstants.kClimberAtCageSetpoint)) {
+    //   if (simulator == climberSimNormal) {
+    //     toggleClimbingSim();
+    //   }
+    // } else {
+    //   if (simulator == climberSimLifting) {
+    //     toggleClimbingSim();
+    //   }
+    // }
   }
 }

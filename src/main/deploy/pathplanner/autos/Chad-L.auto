@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Zero Elv"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "StartL - I"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL4 DeadLine"
           }
         },
         {
@@ -23,21 +35,9 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Score J"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "J - Source"
+            "name": "Intake"
           }
         },
         {
@@ -49,19 +49,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "K - Source"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score L"
+            "name": "ElvL4"
           }
         },
         {
@@ -71,27 +59,15 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "L - Source"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score A"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "ElvL0"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
-  "folder": "The Kings",
+  "resetOdom": false,
+  "folder": "Chads",
   "choreoAuto": false
 }

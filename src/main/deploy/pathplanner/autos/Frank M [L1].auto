@@ -7,13 +7,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Zero Elv"
+            "name": "Set L1 Mode"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "StartR - EF (L1)"
+            "pathName": "Start M - GH (L1)"
           }
         },
         {
@@ -26,6 +26,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "The Franks",
+  "folder": " Franks",
   "choreoAuto": false
 }
