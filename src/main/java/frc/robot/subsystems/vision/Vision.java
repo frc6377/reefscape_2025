@@ -31,7 +31,6 @@ import frc.robot.Robot;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
@@ -41,6 +40,7 @@ public class Vision extends SubsystemBase {
   private final Alert[] disconnectedAlerts;
 
   private int currentTagCount = 0;
+  private int finalTagCount = 0;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -72,11 +72,11 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
+    currentTagCount = 0;
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + i, inputs[i]);
     }
-
     // Initialize logging values
     List<Pose3d> allTagPoses = new LinkedList<>();
     List<Pose3d> allRobotPoses = new LinkedList<>();
@@ -100,11 +100,13 @@ public class Vision extends SubsystemBase {
           tagPoses.add(tagPose.get());
         }
       }
-
+      try {
+        currentTagCount += inputs[cameraIndex].poseObservations[0].tagCount();
+      } catch (ArrayIndexOutOfBoundsException e) {
+      }
       // Loop over pose observations
       for (var observation : inputs[cameraIndex].poseObservations) {
         // Check whether to reject pose
-        currentTagCount = observation.tagCount();
 
         boolean rejectPose =
             observation.tagCount() < minTags // Must have enough tags
@@ -168,7 +170,7 @@ public class Vision extends SubsystemBase {
       allRobotPosesAccepted.addAll(robotPosesAccepted);
       allRobotPosesRejected.addAll(robotPosesRejected);
     }
-
+    finalTagCount = currentTagCount;
     // Log summary data
     Logger.recordOutput(
         "Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
@@ -180,11 +182,11 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+    Logger.recordOutput("Vision/Summary/TagCount", currentTagCount);
   }
 
-  @AutoLogOutput(key = "Vision/TagCount")
   public int getTagCount() {
-    return currentTagCount;
+    return finalTagCount;
   }
 
   @FunctionalInterface

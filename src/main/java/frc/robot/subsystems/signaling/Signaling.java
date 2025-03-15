@@ -23,7 +23,7 @@ public class Signaling extends SubsystemBase {
   private int tick;
   private int patternTick;
   private long tagCount;
-  private DisablePattern disablePattern = DisablePattern.FIRE;
+  private DisablePattern disablePattern = DisablePattern.ALLIANCE;
 
   private Vision visionSubsystem;
   private PowerDistribution pdp;
@@ -33,6 +33,7 @@ public class Signaling extends SubsystemBase {
     patternTick = 0;
     visionSubsystem = vision;
     pdp = power;
+    candle.configBrightnessScalar(SignalingConstants.kLEDBrightness);
   }
 
   @Override
@@ -56,7 +57,6 @@ public class Signaling extends SubsystemBase {
           Logger.recordOutput("Signaling/CANdle Color", "Green");
           break;
       }
-      updatePattern();
     } else {
       if (getProblem()) {
         setCandle(RGB.RED);
@@ -123,7 +123,7 @@ public class Signaling extends SubsystemBase {
 
   private void setSection(
       final RGB rgb, final int startID, final int count, final Boolean candleBool) {
-    candle.setLEDs(rgb.red, rgb.green, rgb.blue, 0, startID + (8 * (candleBool ? 0 : 1)), count);
+    candle.setLEDs(rgb.red, rgb.green, rgb.blue, 0, startID + (candleBool ? 0 : 9), count);
   }
 
   private void setSection(final RGB rgb, final int startID, final int count) {
