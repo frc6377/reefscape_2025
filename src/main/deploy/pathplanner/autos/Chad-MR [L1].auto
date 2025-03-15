@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Zero Elv"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set L1 Mode"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StartR - EF (L1)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L1 Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "EF - Source (L1)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake L1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score CD L1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L1 Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL0"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Chads",
+  "choreoAuto": false
+}

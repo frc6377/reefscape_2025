@@ -115,8 +115,8 @@ public final class Constants {
     public static final double kGearRatio = 126;
 
     // Motor Setpoints
-    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-333.3);
-    public static final Angle kClimberBackOffsetAngle = Degrees.of(148.1);
+    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-333.3 + 41 + 180);
+    public static final Angle kClimberBackOffsetAngle = Degrees.of(148.1 + 88);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
     public static final Angle kClimberExtendedSetpoint = Degrees.of(-50).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
@@ -142,13 +142,14 @@ public final class Constants {
   public static class CoralScorerConstants {
     public static final double kIntakeSpeed = -0.5;
     public static final double kScoreSpeed = -0.2;
-    public static final double kScoreAutoSpeed = -0.1;
+    public static final double kScoreAutoSpeed = -0.2;
+    public static final double kScoreMax = -0.7;
     public static final double kReverseSpeed = 0.25;
 
     public static final Distance kSensorDistnace = Inches.of(1.5);
 
     public static final Distance kAlignSensorDistnace = Inches.of(5);
-    public static final Time kAlignSensorDebounce = Seconds.of(0.06);
+    public static final Time kAlignSensorDebounce = Seconds.of(0);
   }
 
   // Intake Constants
@@ -278,9 +279,9 @@ public final class Constants {
 
     // Algea Arm Setpoints (// 35 Degrees is breaking point)
     public static final Angle kEncoderOffset = Rotations.of(0);
-    public static final Angle kAlgeaStowed = Degrees.of(170);
-    public static final Angle kRemoveUpAngle = Degrees.of(105);
-    public static final Angle kRemoveDownAngle = Degrees.of(40);
+    public static final Angle kAlgeaStowed = Degrees.of(200);
+    public static final Angle kRemoveUpAngle = Degrees.of(100);
+    public static final Angle kRemoveDownAngle = Degrees.of(50);
 
     // Simulation Constants
     public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);

@@ -26,6 +26,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -42,6 +43,7 @@ import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgeaRemover;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
@@ -69,7 +71,7 @@ public class RobotContainer {
   private EventLoop testEventLoop = new EventLoop();
 
   // Subsystems
-  // private final Climber climber = new Climber();
+  private final Climber climber = new Climber();
   private final AlgeaRemover algeaRemover = new AlgeaRemover();
   private static final Sensors sensors = new Sensors();
   private final Drive drive;
@@ -413,7 +415,12 @@ public class RobotContainer {
             ? () -> drive.setPose(driveSimulation.getSimulatedDriveTrainPose())
             : () ->
                 drive.setPose(
-                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+                    new Pose2d(
+                        drive.getPose().getTranslation(),
+                        new Rotation2d(
+                            DriverStation.getAlliance().get() == Alliance.Blue
+                                ? Degrees.zero()
+                                : Degrees.of(180)))); // zero gyro
 
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -572,7 +579,7 @@ public class RobotContainer {
           .until(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
           .asProxy();
     } else {
-      return coralScorer.scoreAutoCommand().until(coralScorer.hasCoralTrigger().negate()).asProxy();
+      return coralScorer.scoreAutoCommand().until(coralScorer.hasCoralTrigger().negate());
     }
   }
 
@@ -594,7 +601,7 @@ public class RobotContainer {
   public void seedEncoders() {
     intake.seedEncoder();
     algeaRemover.seedEncoder();
-    // climber.seedEncoder();
+    climber.seedEncoder();
   }
 
   public void resetSimulationField() {
