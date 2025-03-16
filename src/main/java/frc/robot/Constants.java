@@ -115,8 +115,8 @@ public final class Constants {
     public static final double kGearRatio = 126;
 
     // Motor Setpoints
-    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-333.3 + 41 + 180);
-    public static final Angle kClimberBackOffsetAngle = Degrees.of(148.1 + 88);
+    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-112.3);
+    public static final Angle kClimberBackOffsetAngle = Degrees.of(236.1);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
     public static final Angle kClimberExtendedSetpoint = Degrees.of(-50).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
@@ -142,7 +142,7 @@ public final class Constants {
   public static class CoralScorerConstants {
     public static final double kIntakeSpeed = -0.5;
     public static final double kScoreSpeed = -0.2;
-    public static final double kScoreAutoSpeed = -0.2;
+    public static final double kScoreAutoSpeed = -0.125;
     public static final double kScoreMax = -0.7;
     public static final double kReverseSpeed = 0.25;
 
