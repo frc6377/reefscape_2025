@@ -115,10 +115,11 @@ public final class Constants {
     public static final double kGearRatio = 126;
 
     // Motor Setpoints
-    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-112.3);
-    public static final Angle kClimberBackOffsetAngle = Degrees.of(236.1);
+    // 120 Degrees for climb
+    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-112.3 - 180);
+    public static final Angle kClimberBackOffsetAngle = Degrees.of(236.1 - 180);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(-50).plus(kClimberOffsetAngle);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(-63).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
     public static final Angle kClimberSensorTolerance = Degrees.of(4);
@@ -142,13 +143,13 @@ public final class Constants {
   public static class CoralScorerConstants {
     public static final double kIntakeSpeed = -0.5;
     public static final double kScoreSpeed = -0.2;
-    public static final double kScoreAutoSpeed = -0.125;
+    public static final double kScoreAutoSpeed = -0.2;
     public static final double kScoreMax = -0.7;
     public static final double kReverseSpeed = 0.25;
 
     public static final Distance kSensorDistnace = Inches.of(1.5);
 
-    public static final Distance kAlignSensorDistnace = Inches.of(5);
+    public static final Distance kAlignSensorDistnace = Inches.of(5.5);
     public static final Time kAlignSensorDebounce = Seconds.of(0);
   }
 
@@ -217,7 +218,7 @@ public final class Constants {
     public static final Distance kL0Height = Inches.of(0);
     public static final Distance kL2Height = Inches.of(18);
     public static final Distance kL3Height = Inches.of(30.9);
-    public static final Distance kL4Height = Inches.of(54);
+    public static final Distance kL4Height = Inches.of(55);
 
     public static final HowdyPID kElevatorPID = new HowdyPID();
 

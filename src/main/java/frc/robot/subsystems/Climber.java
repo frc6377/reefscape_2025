@@ -316,7 +316,11 @@ public class Climber extends SubsystemBase {
 
   public Command extendFully() {
     return runClimber(ClimberConstants.kClimberExtendedSetpoint, 1)
-        .alongWith(Commands.runOnce(() -> toggleClimbingSim()));
+        .alongWith(
+            Commands.runOnce(
+                () -> {
+                  if (Robot.isSimulation()) toggleClimbingSim();
+                }));
   }
 
   private void setServoAngle(Servo servo, double angle) {
