@@ -22,6 +22,9 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
@@ -31,6 +34,7 @@ import frc.robot.Robot;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -68,6 +72,80 @@ public class Vision extends SubsystemBase {
    */
   public Rotation2d getTargetX(int cameraIndex) {
     return inputs[cameraIndex].latestTargetObservation.tx();
+  }
+
+  public Pose3d getVisionPose(int cameraIndex) {
+    if (inputs[cameraIndex].poseObservations.length == 0 || inputs[cameraIndex].tagIds.length == 0)
+      return new Pose3d();
+    return inputs[cameraIndex].poseObservations[0].pose();
+  }
+
+  public int getTagID(int cameraIndex, int tagIndex) {
+    if (inputs[cameraIndex].tagIds.length <= 0) return -1;
+    return inputs[cameraIndex].tagIds[tagIndex];
+  }
+
+  public int getClosestTagID(int cameraIndex) {
+    if (inputs[cameraIndex].tagIds.length == 0) return -1;
+
+    Pose3d cameraPose = getVisionPose(cameraIndex);
+    int closestTagID = -1;
+    double minDistance = Double.MAX_VALUE;
+
+    for (int tagId : inputs[cameraIndex].tagIds) {
+      Pose3d tagPose = getTagPose(tagId);
+      double distance = cameraPose.getTranslation().getDistance(tagPose.getTranslation());
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestTagID = tagId;
+      }
+    }
+
+    return closestTagID;
+  }
+
+  public Pose3d getTagPose(int tagID) {
+    Optional<Pose3d> tagPoseOptional = VisionConstants.aprilTagLayout.getTagPose(tagID);
+    if (tagPoseOptional.isEmpty()) return new Pose3d();
+    return tagPoseOptional.get();
+  }
+
+  public Pose3d getClosestTagPose(int cameraIndex) {
+    if (inputs[cameraIndex].tagIds.length == 0) return new Pose3d();
+
+    Pose3d cameraPose = getVisionPose(cameraIndex);
+    Pose3d closestTagPose = new Pose3d();
+    double minDistance = Double.MAX_VALUE;
+
+    for (int tagId : inputs[cameraIndex].tagIds) {
+      Pose3d tagPose = getTagPose(tagId);
+      double distance = cameraPose.getTranslation().getDistance(tagPose.getTranslation());
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestTagPose = tagPose;
+      }
+    }
+
+    return closestTagPose;
+  }
+
+  public Pose2d feildToTagRelative(Pose3d robotFeildPose, Pose3d tagPose) {
+    return robotFeildPose.relativeTo(tagPose).toPose2d();
+  }
+
+  public Pose2d tagToFeildRelative(int cameraIndex, Pose2d robotTagRelativePose) {
+    return getClosestTagPose(cameraIndex)
+        .transformBy(
+            new Transform3d(
+                new Translation3d(robotTagRelativePose.getX(), robotTagRelativePose.getY(), 0),
+                new Rotation3d(0, 0, robotTagRelativePose.getRotation().getRadians())))
+        .toPose2d();
+  }
+
+  public Pose2d getSimulatedPose(int cameraIndex) {
+    return feildToTagRelative(getVisionPose(cameraIndex), getTagPose(getTagID(cameraIndex, 0)));
   }
 
   @Override
@@ -108,7 +186,7 @@ public class Vision extends SubsystemBase {
         currentTagCount = observation.tagCount();
 
         boolean rejectPose =
-            observation.tagCount() < minTags // Must have enough tags
+            currentTagCount < minTags // Must have enough tags
                 || observation.ambiguity() > maxAmbiguity // Cannot be high ambiguity
                 || Math.abs(observation.pose().getZ()) > maxZError // Must have realistic Z cord
 
@@ -130,8 +208,7 @@ public class Vision extends SubsystemBase {
         if (rejectPose) continue;
 
         // Calculate standard deviations
-        double stdDevFactor =
-            Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+        double stdDevFactor = Math.pow(observation.averageTagDistance(), 2.0) / currentTagCount;
         double linearStdDev = linearStdDevBaseline.in(Meters) * stdDevFactor;
         double angularStdDev = angularStdDevBaseline.in(Radians) * stdDevFactor;
         if (observation.type() == PoseObservationType.MEGATAG_2) {

@@ -26,9 +26,10 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 
 public class VisionConstants {
+
   // AprilTag layout
   public static AprilTagFieldLayout aprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
   public static final boolean kVisionAutoOnly = true;
 

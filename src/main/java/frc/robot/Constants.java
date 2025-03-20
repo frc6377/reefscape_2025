@@ -403,6 +403,19 @@ public final class Constants {
             new Rotation3d(Degrees.of(0), Degrees.of(-45), Degrees.of(90)));
   }
 
+  public final class ReefAlignConstants {
+    public static final Pose2d kLeftReefPose =
+        new Pose2d(Meters.of(0.5), Meters.of(0.25), new Rotation2d(Degrees.of(-90)));
+    public static final Pose2d kRightReefPose =
+        new Pose2d(Meters.of(0.5), Meters.of(-0.25), new Rotation2d(Degrees.of(-90)));
+
+    public static final Angle kSetpointRotTolerance = Degrees.of(1);
+    public static final Distance kSetpointTolerance = Inches.of(2);
+
+    public static final Time kNoTagDebounce = Seconds.of(3);
+    public static final Time kAtPoseDebounce = Seconds.of(0.1);
+  }
+
   public final class FeildConstants {
     public static final Distance kFieldWidth = Inches.of(317);
     public static final Distance kFieldLength = Inches.of(690 + (7 / 8));

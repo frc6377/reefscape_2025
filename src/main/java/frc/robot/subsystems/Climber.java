@@ -428,26 +428,27 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    climbMechTargetLigament.setAngle(
-        climberTargetAngle.minus(ClimberConstants.kClimberOffsetAngle).in(Degrees));
+    // climbMechTargetLigament.setAngle(
+    //     climberTargetAngle.minus(ClimberConstants.kClimberOffsetAngle).in(Degrees));
 
-    SingleJointedArmSim simulator = getSimulator();
-    simulator.setInputVoltage(climberMotorFront.getMotorVoltage().getValue().in(Volts));
-    simulator.update(Robot.defaultPeriodSecs);
-    climberMotorFront.setPosition(Radians.of(simulator.getAngleRads()));
-    climbMechLigament1.setAngle(
-        Radians.of(simulator.getAngleRads())
-            .minus(ClimberConstants.kClimberOffsetAngle)
-            .in(Degrees));
-    climbMechLigament2.setAngle(
-        Radians.of(simulator.getAngleRads())
-            .minus(ClimberConstants.kClimberOffsetAngle)
-            .times(-1)
-            .plus(Degrees.of(180))
-            .in(Degrees));
+    // SingleJointedArmSim simulator = getSimulator();
+    // simulator.setInputVoltage(climberMotorFront.getMotorVoltage().getValue().in(Volts));
+    // simulator.update(Robot.defaultPeriodSecs);
+    // climberMotorFront.setPosition(Radians.of(simulator.getAngleRads()));
+    // climbMechLigament1.setAngle(
+    //     Radians.of(simulator.getAngleRads())
+    //         .minus(ClimberConstants.kClimberOffsetAngle)
+    //         .in(Degrees));
+    // climbMechLigament2.setAngle(
+    //     Radians.of(simulator.getAngleRads())
+    //         .minus(ClimberConstants.kClimberOffsetAngle)
+    //         .times(-1)
+    //         .plus(Degrees.of(180))
+    //         .in(Degrees));
 
-    Logger.recordOutput("Climber/Climber Angle", Radians.of(simulator.getAngleRads()).in(Degrees));
-    Logger.recordOutput("Climber/Climbing", isClimbingStateSim);
+    // Logger.recordOutput("Climber/Climber Angle",
+    // Radians.of(simulator.getAngleRads()).in(Degrees));
+    // Logger.recordOutput("Climber/Climbing", isClimbingStateSim);
     // if (climberMotorFront.getPosition().getValue().gt(ClimberConstants.kClimberAtCageSetpoint)) {
     //   if (simulator == climberSimNormal) {
     //     toggleClimbingSim();

@@ -16,9 +16,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
-import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
-import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -39,7 +37,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FeildConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
-import frc.robot.OI.Driver;
+import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgeaRemover;
@@ -66,7 +64,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 @SuppressWarnings("unused")
 public class RobotContainer {
   // Change the raw boolean to true to pick keyboard during simulation
-  private final boolean usingKeyboard = false && Robot.isSimulation();
+  private final boolean usingKeyboard = true && Robot.isSimulation();
 
   private EventLoop testEventLoop = new EventLoop();
 
@@ -87,7 +85,7 @@ public class RobotContainer {
   private Command scoreL1;
 
   private SwerveDriveSimulation driveSimulation;
-  private Pose2d driveSimDefualtPose = new Pose2d(2, 2, new Rotation2d());
+  private Pose2d driveSimDefualtPose;
 
   // Trigger Variables
   private final Trigger coralOuttakeButton = OI.getButton(OI.Driver.RBumper);
@@ -97,8 +95,8 @@ public class RobotContainer {
               sensors.getSensorState() == CoralEnum.NO_CORAL
                   || coralScorer.hasCoralTrigger().getAsBoolean());
   private final Trigger UpButtonTrigger = OI.getButton(OI.Driver.POV0);
-  private final Trigger DownButtonTrigger = OI.getButton(OI.Driver.POV90);
-  private final Trigger RightButtonTrigger = OI.getButton(OI.Driver.POV180);
+  private final Trigger DownButtonTrigger = OI.getButton(OI.Driver.POV180);
+  private final Trigger RightButtonTrigger = OI.getButton(OI.Driver.POV90);
   private final Trigger LeftButtonTrigger = OI.getButton(OI.Driver.POV270);
 
   // Dashboard inputs
@@ -128,11 +126,13 @@ public class RobotContainer {
         driveSimDefualtPose =
             Constants.kAllianceColor.equals(Alliance.Blue)
                 ? new Pose2d(
-                    Meters.of(2), FeildConstants.kFieldWidth.minus(Meters.of(2)), new Rotation2d())
+                    Meters.of(2),
+                    FeildConstants.kFieldWidth.minus(Meters.of(2)),
+                    new Rotation2d(Degrees.of(180)))
                 : new Pose2d(
                     FeildConstants.kFieldLength.minus(Meters.of(2)),
                     Meters.of(2),
-                    new Rotation2d(Degrees.of(180)));
+                    new Rotation2d(Degrees.of(0)));
 
         driveSimulation = new SwerveDriveSimulation(Drive.mapleSimConfig, driveSimDefualtPose);
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
@@ -148,8 +148,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive,
-                new VisionIOPhotonVisionSim(
-                    camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
+                // new VisionIOPhotonVisionSim(
+                //     camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
                 new VisionIOPhotonVisionSim(
                     camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
         intake = new IntakeSubsystem(sensors, driveSimulation);
@@ -380,7 +380,6 @@ public class RobotContainer {
                   coralStationMode = !coralStationMode;
                   Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
                 }));
-    // OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB());
     OI.getButton(OI.Driver.LTrigger)
         .and(() -> !elevatorNotL1 && !intakeAlgeaMode)
         .whileTrue(scoreL1);
@@ -411,16 +410,14 @@ public class RobotContainer {
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
-        Constants.currentMode == Constants.Mode.SIM
-            ? () -> drive.setPose(driveSimulation.getSimulatedDriveTrainPose())
-            : () ->
-                drive.setPose(
-                    new Pose2d(
-                        drive.getPose().getTranslation(),
-                        new Rotation2d(
-                            DriverStation.getAlliance().get() == Alliance.Blue
-                                ? Degrees.zero()
-                                : Degrees.of(180)))); // zero gyro
+        () ->
+            drive.setPose(
+                new Pose2d(
+                    drive.getPose().getTranslation(),
+                    new Rotation2d(
+                        DriverStation.getAlliance().get() == Alliance.Blue
+                            ? Degrees.zero()
+                            : Degrees.of(180)))); // zero gyro
 
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -428,21 +425,21 @@ public class RobotContainer {
             drive,
             OI.getAxisSupplier(OI.Driver.LeftY),
             OI.getAxisSupplier(OI.Driver.LeftX),
-            OI.getButton(Driver.RSB).getAsBoolean()
-                ? () -> 0.0
-                : OI.getAxisSupplier(OI.Driver.RightX)));
+            OI.getAxisSupplier(OI.Driver.RightX),
+            OI.getButton(OI.Driver.RSB)));
     OI.getButton(OI.Driver.Back)
         .onTrue(
             Robot.isReal()
                 ? Commands.runOnce(resetGyro, drive).ignoringDisable(true)
                 : Commands.runOnce(() -> resetSimulationField()));
+    Command alignLeftCommand = new AlignToReefTagRelative(false, camera1Name, drive, vision);
+    Command alignRightCommand = new AlignToReefTagRelative(true, camera1Name, drive, vision);
     OI.getButton(OI.Driver.RSB)
-        .whileTrue(
-            DriveCommands.AlignToReef(
-                drive,
-                OI.getAxisSupplier(Driver.LeftY),
-                OI.getAxisSupplier(Driver.LeftX),
-                drive.getAlignRotation()));
+        .whileTrue(alignLeftCommand)
+        .and(() -> !alignLeftCommand.isFinished());
+    OI.getButton(OI.Driver.LSB)
+        .whileTrue(alignRightCommand)
+        .and(() -> !alignRightCommand.isFinished());
 
     UpButtonTrigger.or(DownButtonTrigger)
         .or(RightButtonTrigger)
@@ -455,7 +452,8 @@ public class RobotContainer {
                         + (DownButtonTrigger.getAsBoolean() ? -1.0 : 0.0),
                 () ->
                     (LeftButtonTrigger.getAsBoolean() ? 1.0 : 0.0)
-                        + (RightButtonTrigger.getAsBoolean() ? -1.0 : 0.0)));
+                        + (RightButtonTrigger.getAsBoolean() ? -1.0 : 0.0),
+                () -> 0.0));
 
     /* This is for creating the button mappings for logging what coral have been scored
      * The Driverstation has a hard limit of 32 buttons so we use 2 different vjoy controllers
@@ -498,7 +496,8 @@ public class RobotContainer {
               drive,
               OI.getAxisSupplier(OI.Keyboard.AD),
               OI.getAxisSupplier(OI.Keyboard.WS),
-              OI.getAxisSupplier(OI.Keyboard.ArrowLR)));
+              OI.getAxisSupplier(OI.Keyboard.ArrowLR),
+              new Trigger(() -> false)));
       // OI.getButton(OI.Keyboard.M)
       //     .whileTrue(
       //         DriveCommands.AlignToReef(
@@ -519,16 +518,12 @@ public class RobotContainer {
       // Scorer
       OI.getButton(OI.Keyboard.Period).whileTrue(mapleSimArenaSubsystem.scoreCoral());
 
-      // Reset Button
-      OI.getButton(OI.Keyboard.Comma).onTrue(Commands.runOnce(() -> resetSimulationField()));
-
-      // POV Drive
       OI.getButton(OI.Keyboard.M)
-          .whileTrue(
-              DriveCommands.POVDrive(
-                  drive,
-                  () -> OI.getAxisSupplier(OI.Keyboard.JL).get(),
-                  () -> OI.getAxisSupplier(OI.Keyboard.IK).get()));
+          .whileTrue(alignLeftCommand)
+          .and(() -> !alignLeftCommand.isFinished());
+      OI.getButton(OI.Keyboard.Comma)
+          .whileTrue(alignRightCommand)
+          .and(() -> !alignRightCommand.isFinished());
     }
   }
 
@@ -599,6 +594,7 @@ public class RobotContainer {
   }
 
   public void seedEncoders() {
+    if (Robot.isSimulation()) return;
     intake.seedEncoder();
     algeaRemover.seedEncoder();
     climber.seedEncoder();
@@ -607,8 +603,8 @@ public class RobotContainer {
   public void resetSimulationField() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
-    driveSimulation.setSimulationWorldPose(driveSimDefualtPose);
     mapleSimArenaSubsystem.resetSimFeild().initialize();
+    driveSimulation.setSimulationWorldPose(driveSimDefualtPose);
     intake.resetSim();
   }
 

@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
@@ -52,9 +53,6 @@ public class DriveCommands {
     // Apply deadband
     double linearMagnitude = Math.hypot(x, y);
     Rotation2d linearDirection = new Rotation2d(Math.atan2(y, x));
-
-    // Square magnitude for more precise control
-    // linearMagnitude = linearMagnitude * linearMagnitude;
 
     // Return new linear velocity
     return new Pose2d(new Translation2d(), linearDirection)
@@ -98,40 +96,42 @@ public class DriveCommands {
       Drive drive,
       Supplier<Double> xSupplier,
       Supplier<Double> ySupplier,
-      Supplier<Double> omegaSupplier) {
+      Supplier<Double> omegaSupplier,
+      Trigger interuptButton) {
     return Commands.run(
-        () -> {
-          // Get linear velocity
-          Translation2d linearVelocity =
-              getLinearVelocityFromJoysticks(xSupplier.get(), ySupplier.get());
+            () -> {
+              // Get linear velocity
+              Translation2d linearVelocity =
+                  getLinearVelocityFromJoysticks(xSupplier.get(), ySupplier.get());
 
-          // Apply rotation deadband
-          double omega = omegaSupplier.get();
+              // Apply rotation deadband
+              double omega = omegaSupplier.get();
 
-          // Square rotation value for more precise control
-          // omega = Math.copySign(omega * omega, omega);
-
-          // Convert to field relative speeds & send command
-          ChassisSpeeds speeds =
-              new ChassisSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec());
-          boolean isFlipped =
-              DriverStation.getAlliance().isPresent()
-                  && DriverStation.getAlliance().get() == Alliance.Red;
-          drive.runVelocity(
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  speeds,
-                  isFlipped
-                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                      : drive.getRotation()));
-        },
-        drive);
+              // Convert to field relative speeds & send command
+              ChassisSpeeds speeds =
+                  new ChassisSpeeds(
+                      linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                      linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                      omega * drive.getMaxAngularSpeedRadPerSec());
+              boolean isFlipped =
+                  DriverStation.getAlliance().isPresent()
+                      && DriverStation.getAlliance().get() == Alliance.Red;
+              drive.runVelocity(
+                  ChassisSpeeds.fromFieldRelativeSpeeds(
+                      speeds,
+                      isFlipped
+                          ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                          : drive.getRotation()));
+            },
+            drive)
+        .onlyWhile(interuptButton.negate());
   }
 
   public static Command POVDrive(
-      Drive drive, Supplier<Double> xSupplier, Supplier<Double> ySupplier) {
+      Drive drive,
+      Supplier<Double> xSupplier,
+      Supplier<Double> ySupplier,
+      Supplier<Double> omegaSupplier) {
     return Commands.run(
         () -> {
           // Get linear velocity
@@ -142,7 +142,7 @@ public class DriveCommands {
               new ChassisSpeeds(
                   linearVelocity.getX() * DrivetrainConstants.kPOVDriveSpeed.in(MetersPerSecond),
                   linearVelocity.getY() * DrivetrainConstants.kPOVDriveSpeed.in(MetersPerSecond),
-                  0);
+                  omegaSupplier.get() * drive.getMaxAngularSpeedRadPerSec());
           drive.runVelocity(speeds);
         },
         drive);
