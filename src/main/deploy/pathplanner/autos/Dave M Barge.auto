@@ -11,15 +11,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Set L1 Mode"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "StartR - EF (L1)"
+            "pathName": "Start M Barge - Score EF (AA)"
           }
         },
         {
@@ -31,31 +25,13 @@
         {
           "type": "named",
           "data": {
-            "name": "L1 Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "EF - Source (L1)"
+            "name": "AA Left"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake L1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score CD L1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L1 Score"
+            "name": "Score"
           }
         },
         {
@@ -68,6 +44,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Chads",
+  "folder": "Daves",
   "choreoAuto": false
 }

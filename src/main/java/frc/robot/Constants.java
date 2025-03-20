@@ -405,12 +405,12 @@ public final class Constants {
 
   public final class ReefAlignConstants {
     public static final Pose2d kLeftReefPose =
-        new Pose2d(Meters.of(0.5), Meters.of(0.25), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Meters.of(0.45), Meters.of(0.25), new Rotation2d(Degrees.of(-90)));
     public static final Pose2d kRightReefPose =
-        new Pose2d(Meters.of(0.5), Meters.of(-0.25), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Meters.of(0.45), Meters.of(-0.25), new Rotation2d(Degrees.of(-90)));
 
     public static final Angle kSetpointRotTolerance = Degrees.of(1);
-    public static final Distance kSetpointTolerance = Inches.of(2);
+    public static final Distance kSetpointTolerance = Inches.of(0.25);
 
     public static final Time kNoTagDebounce = Seconds.of(3);
     public static final Time kAtPoseDebounce = Seconds.of(0.1);

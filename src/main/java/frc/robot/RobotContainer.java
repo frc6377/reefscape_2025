@@ -49,7 +49,6 @@ import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.vision.*;
-import java.util.Set;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -186,6 +185,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("ElvL2", elevator.L2().andThen(waitForElevator()));
     NamedCommands.registerCommand("ElvL3", elevator.L3().andThen(waitForElevator()));
     NamedCommands.registerCommand("ElvL4", elevator.L4().andThen(waitForElevator()));
+    NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
     NamedCommands.registerCommand(
         "Intake",
         new SequentialCommandGroup(
@@ -205,15 +205,12 @@ public class RobotContainer {
             Commands.runOnce(() -> elevatorNotL1 = false),
             Commands.waitUntil(intake.intakeHasCoralTrigger()),
             scoreL1.asProxy().until(isDoneScoring.debounce(1))));
-    NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
     NamedCommands.registerCommand(
         "Strafe", drive.strafe().until(coralScorer.scorerAlignedTrigger()));
     NamedCommands.registerCommand(
-        "Start R - E",
-        DriveCommands.GoToPose(Constants.DrivetrainConstants.SCORE_POSES.get("E"), Set.of(drive)));
+        "AA Left", new AlignToReefTagRelative(false, camera1Name, drive, vision).asProxy());
     NamedCommands.registerCommand(
-        "Start L - I",
-        DriveCommands.GoToPose(Constants.DrivetrainConstants.SCORE_POSES.get("I"), Set.of(drive)));
+        "AA Right", new AlignToReefTagRelative(true, camera1Name, drive, vision).asProxy());
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
