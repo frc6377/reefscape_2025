@@ -44,6 +44,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import org.jspecify.annotations.Nullable;
 
 public class DriveCommands {
   private DriveCommands() {}
@@ -70,7 +71,7 @@ public class DriveCommands {
     return joystickDriveAtAngle(drive, AxisX, AxisY, rotationTarget);
   }
 
-  public static Command GoToPose(Pose2d targetPose, Set<Subsystem> drive) {
+  public static Command GoToPose(@Nullable Pose2d targetPose, Set<Subsystem> drive) {
     return new DeferredCommand(
         () -> AutoBuilder.pathfindToPose(targetPose, PATH_CONSTRAINTS), drive);
   }

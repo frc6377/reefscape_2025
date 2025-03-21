@@ -401,7 +401,7 @@ public final class Constants {
             new Rotation3d(Degrees.of(0), Degrees.of(-45), Degrees.of(90)));
   }
 
-  public final class FeildConstants {
+  public final class FieldConstants {
     public static final Distance kFieldWidth = Inches.of(317);
     public static final Distance kFieldLength = Inches.of(690 + (7 / 8));
   }

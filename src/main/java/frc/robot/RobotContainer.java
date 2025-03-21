@@ -38,7 +38,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.FeildConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.Constants.SubsystemEnabled;
 import frc.robot.OI.Driver;
@@ -103,6 +103,8 @@ public class RobotContainer {
   private boolean coralStationMode = false;
   private Command scoreL1;
 
+  private Command locateCoral;
+
   private final Trigger coralOuttakeButton;
   private final Trigger coralHandoffCompleteTrigger;
   private final Trigger UpButtonTrigger;
@@ -152,10 +154,10 @@ public class RobotContainer {
               Constants.kAllianceColor.equals(Alliance.Blue)
                   ? new Pose2d(
                       Meters.of(2),
-                      FeildConstants.kFieldWidth.minus(Meters.of(2)),
+                      FieldConstants.kFieldWidth.minus(Meters.of(2)),
                       new Rotation2d())
                   : new Pose2d(
-                      FeildConstants.kFieldLength.minus(Meters.of(2)),
+                      FieldConstants.kFieldLength.minus(Meters.of(2)),
                       Meters.of(2),
                       new Rotation2d(Degrees.of(180)));
 
@@ -380,22 +382,23 @@ public class RobotContainer {
             () -> {
               SignalLogger.stop();
             }));
-
-    coralScorer
-        .scorerAlignedTrigger()
-        .and(coralScorer.hasCoralTrigger())
-        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
-        .and(elevator.elevatorAtCurrentSetpoint())
-        .whileTrue(
-            Commands.runEnd(
-                () -> {
-                  OI.Driver.setRumble(0.5);
-                  OI.Operator.setRumble(0.5);
-                },
-                () -> {
-                  OI.Driver.setRumble(0);
-                  OI.Operator.setRumble(0);
-                }));
+    if (coralScorer != null && elevator != null) {
+      coralScorer
+          .scorerAlignedTrigger()
+          .and(coralScorer.hasCoralTrigger())
+          .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
+          .and(elevator.elevatorAtCurrentSetpoint())
+          .whileTrue(
+              Commands.runEnd(
+                  () -> {
+                    OI.Driver.setRumble(0.5);
+                    OI.Operator.setRumble(0.5);
+                  },
+                  () -> {
+                    OI.Driver.setRumble(0);
+                    OI.Operator.setRumble(0);
+                  }));
+    }
 
     // Elevator Buttons
     if (elevator != null) {
@@ -441,11 +444,12 @@ public class RobotContainer {
       OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
       OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
 
-      Command locateCoral =
-          new LocateCoral(
-              sensors::getSensorState,
-              intake,
-              coralOuttakeButton.or(OI.getButton(OI.Driver.RTrigger)));
+      if (sensors != null && intake != null)
+        locateCoral =
+            new LocateCoral(
+                sensors::getSensorState,
+                intake,
+                coralOuttakeButton.or(OI.getButton(OI.Driver.RTrigger)));
 
       intake
           .intakeHasUnalignedCoralTrigger()
@@ -453,21 +457,6 @@ public class RobotContainer {
           .and(OI.getButton(OI.Driver.RTrigger).negate())
           .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
           .onTrue(locateCoral);
-
-      intake
-          .intakeHasCoralTrigger()
-          .and(() -> elevatorNotL1)
-          .and(coralOuttakeButton.negate())
-          .and(() -> !CommandScheduler.getInstance().isScheduled(locateCoral))
-          .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height))
-          .whileTrue(
-              Robot.isReal()
-                  ? intake
-                      .conveyerInCommand()
-                      .alongWith(coralScorer.intakeCommand())
-                      .until(coralHandoffCompleteTrigger)
-                  : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
-      coralOuttakeButton.whileTrue(intake.floorOuttake());
 
       OI.getButton(OI.Driver.LTrigger)
           .and(() -> !elevatorNotL1 && !intakeAlgeaMode)
@@ -488,7 +477,6 @@ public class RobotContainer {
           // .until(coralHandoffCompleteTrigger));
 
           if (elevator != null) {
-
             Trigger intakeButton =
                 intake
                     .intakeHasCoralTrigger()
@@ -522,7 +510,7 @@ public class RobotContainer {
     }
 
     // Scorer Buttons
-    if (coralScorer != null && intake != null) {
+    if (coralScorer != null && intake != null && mapleSimArenaSubsystem != null) {
       OI.getButton(OI.Driver.LScoreTrigger)
           .and(() -> !intakeAlgeaMode && elevatorNotL1)
           .whileTrue(
@@ -549,7 +537,7 @@ public class RobotContainer {
     // OI.getPOVButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
     // OI.getPOVButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
 
-    if (drive != null) {
+    if (drive != null && driveSimulation != null) {
       final Runnable resetGyro =
           Constants.currentMode == Constants.Mode.SIM
               ? () -> drive.setPose(driveSimulation.getSimulatedDriveTrainPose())
@@ -613,19 +601,19 @@ public class RobotContainer {
       //   }
       // }
 
-      // Button to update Setpoints of the elevator based on the Stream Deck nobs
-      // TODO: Fix axis input
-      if (elevator != null) {
-        OI.getButton(OI.StreamDeck.streamDeckButtons[1][31])
-            .onTrue(
-                elevator
-                    .tuneSetpoints(
-                        () -> OI.getAxisSupplier(OI.StreamDeck.Nob1).get(),
-                        () -> OI.getAxisSupplier(OI.StreamDeck.Nob2).get(),
-                        () -> OI.getAxisSupplier(OI.StreamDeck.Nob3).get(),
-                        () -> OI.getAxisSupplier(OI.StreamDeck.Nob4).get())
-                    .ignoringDisable(true));
-      }
+    }
+    // Button to update Setpoints of the elevator based on the Stream Deck nobs
+    // TODO: Fix axis input
+    if (elevator != null) {
+      OI.getButton(OI.StreamDeck.streamDeckButtons[1][31])
+          .onTrue(
+              elevator
+                  .tuneSetpoints(
+                      () -> OI.getAxisSupplier(OI.StreamDeck.Nob1).get(),
+                      () -> OI.getAxisSupplier(OI.StreamDeck.Nob2).get(),
+                      () -> OI.getAxisSupplier(OI.StreamDeck.Nob3).get(),
+                      () -> OI.getAxisSupplier(OI.StreamDeck.Nob4).get())
+                  .ignoringDisable(true));
     }
 
     if (Robot.isSimulation() && intake != null && drive != null && mapleSimArenaSubsystem != null) {
@@ -674,12 +662,13 @@ public class RobotContainer {
       }
 
       // POV Drive
-      OI.getButton(OI.Keyboard.M)
-          .whileTrue(
-              DriveCommands.POVDrive(
-                  drive,
-                  () -> OI.getAxisSupplier(OI.Keyboard.JL).get(),
-                  () -> OI.getAxisSupplier(OI.Keyboard.IK).get()));
+      if (drive != null)
+        OI.getButton(OI.Keyboard.M)
+            .whileTrue(
+                DriveCommands.POVDrive(
+                    drive,
+                    () -> OI.getAxisSupplier(OI.Keyboard.JL).get(),
+                    () -> OI.getAxisSupplier(OI.Keyboard.IK).get()));
     }
   }
 
@@ -776,18 +765,13 @@ public class RobotContainer {
     }
   }
 
-  public void startAuto() {
-    if (Constants.currentMode != Constants.Mode.SIM) return;
-
-    if (drive != null && driveSimulation != null)
-      driveSimulation.setSimulationWorldPose(drive.getPose());
-  }
-
   public void startSimAuto() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
-    intake.addGamePieceToIntakeSim();
-    driveSimulation.setSimulationWorldPose(drive.getPose());
+    if (drive != null && driveSimulation != null && intake != null) {
+      intake.addGamePieceToIntakeSim();
+      driveSimulation.setSimulationWorldPose(drive.getPose());
+    }
   }
 
   public void seedEncoders() {
