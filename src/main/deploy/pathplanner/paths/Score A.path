@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2456343910549479,
-        "y": 7.074343420759858
+        "x": 1.2160285010126541,
+        "y": 7.054196584282895
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.849346728119706,
-        "y": 6.245672345552962
+        "x": 1.797166645524849,
+        "y": 6.286213132282115
       },
       "isLocked": false,
       "linkedName": "Left Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 3.177864001939641,
-        "y": 4.130943666429062
+        "x": 3.202947416411117,
+        "y": 4.158084716884541
       },
       "prevControl": {
-        "x": 2.725234634193659,
-        "y": 4.743578005054016
+        "x": 2.7473282061368627,
+        "y": 4.749191608540467
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,17 +32,6 @@
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
-    {
-      "name": "Intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Intake"
-        }
-      }
-    },
     {
       "name": "ElvL4",
       "waypointRelativePos": 0.75,
@@ -56,10 +45,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.75,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

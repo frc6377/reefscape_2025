@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Zero Elv"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "StartR - F"
+            "pathName": "StartMR - E"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL4"
           }
         },
         {
@@ -19,7 +31,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Flow 1"
+            "pathName": "E - Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score D"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL4"
           }
         },
         {
@@ -31,19 +61,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Flow 2"
+            "pathName": "D - Source"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Flow 3"
+            "pathName": "Score C"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL4"
           }
         },
         {
@@ -53,21 +89,15 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Flow 4"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "ElvL0"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Kings",
   "choreoAuto": false
 }

@@ -24,6 +24,7 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.ironmaple.simulation.SimulatedArena;
@@ -43,11 +44,12 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   public static final Time period = Seconds.of(Robot.defaultPeriodSecs);
   public static final boolean isCompetition = false;
+  public static boolean isUsingVision = true;
 
   private Command autonomousCommand;
   private RobotContainer robotContainer;
 
-  // private double lastTime = Timer.getFPGATimestamp() * 1000;
+  private double lastTime = Timer.getFPGATimestamp() * 1000;
 
   public Robot() {
     // For TOF Sensor
@@ -127,9 +129,9 @@ public class Robot extends LoggedRobot {
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
 
-    // double newTime = Timer.getFPGATimestamp() * 1000;
-    // Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
-    // lastTime = newTime;
+    double newTime = Timer.getFPGATimestamp() * 1000;
+    Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
+    lastTime = newTime;
 
     // CommandScheduler.getInstance().printWatchdogEpochs();
   }
@@ -139,6 +141,7 @@ public class Robot extends LoggedRobot {
   public void disabledInit() {
     robotContainer.resetSimulationField();
     robotContainer.seedEncoders();
+    isUsingVision = false;
   }
 
   /** This function is called periodically when disabled. */
@@ -148,13 +151,13 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    isUsingVision = false;
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
-      if (Robot.isSimulation()) robotContainer.givePreLoad();
       autonomousCommand.schedule();
-      robotContainer.startAuto();
+      robotContainer.startSimAuto();
     }
   }
 
@@ -167,6 +170,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    isUsingVision = false;
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -183,6 +187,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
+    isUsingVision = true;
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
     CommandScheduler.getInstance().setActiveButtonLoop(robotContainer.getTestEventLoop());

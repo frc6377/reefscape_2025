@@ -124,7 +124,7 @@ public class IntakeSubsystem extends SubsystemBase {
     pivotMotor = new TalonFX(CANIDs.kPivotMotor);
     conveyorMotor = new TalonFX(CANIDs.kConveyorMotor);
     throughBoreEncoder =
-        new DutyCycleEncoder(DIOConstants.kthroughBoreEncoderID, 1, armZero.in(Rotations));
+        new DutyCycleEncoder(DIOConstants.kIntakePivotEncoderID, 1, kPivotZero.in(Rotations));
     this.sensors = sensors;
 
     intakeMotorConfig = new TalonFXConfiguration();
@@ -158,8 +158,8 @@ public class IntakeSubsystem extends SubsystemBase {
           new SingleJointedArmSim(
               DCMotor.getFalcon500(1),
               kGearing,
-              kMOI.in(KilogramSquareMeters),
-              kLength.in(Meters),
+              kPivotMOI.in(KilogramSquareMeters),
+              kPivotLength.in(Meters),
               kPivotExtendAngle.minus(Degrees.of(150)).in(Radians),
               kPivotRetractAngle.plus(Degrees.of(150)).in(Radians),
               false,

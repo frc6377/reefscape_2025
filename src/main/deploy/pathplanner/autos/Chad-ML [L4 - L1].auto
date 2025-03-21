@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartL - I"
+            "pathName": "StartML - J"
           }
         },
         {
@@ -31,31 +31,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "I - Source"
+            "pathName": "J - Source"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake"
+            "name": "Set L1 Mode"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake L1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score K"
+            "pathName": "Score KL L1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
+            "name": "L1 Score"
           }
         },
         {
@@ -68,6 +68,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "The Franks",
+  "folder": "Chads",
   "choreoAuto": false
 }

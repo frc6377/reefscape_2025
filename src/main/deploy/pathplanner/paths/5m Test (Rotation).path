@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3943542766672639,
-        "y": 6.378080466666099
+        "x": 1.392396733226432,
+        "y": 6.313211990583099
       },
       "isLocked": false,
       "linkedName": "5m Test Start"
@@ -20,8 +20,8 @@
         "y": 6.35
       },
       "prevControl": {
-        "x": 4.506588646174132,
-        "y": 6.396703870446303
+        "x": 4.505757895025807,
+        "y": 6.356926910462524
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,10 +33,10 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.75,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

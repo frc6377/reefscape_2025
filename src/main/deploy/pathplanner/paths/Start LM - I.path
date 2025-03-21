@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.9137333562515675,
-        "y": 4.940488590611099
+        "x": 6.73455154754342,
+        "y": 4.7782846588185475
       },
       "isLocked": false,
       "linkedName": "Start LM"
     },
     {
       "anchor": {
-        "x": 5.2065,
-        "y": 5.0097499999999995
+        "x": 5.239412841877079,
+        "y": 5.072012762727696
       },
       "prevControl": {
-        "x": 6.199336678976245,
-        "y": 4.982221933362316
+        "x": 6.217124213464316,
+        "y": 4.9580075474804
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.75,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
     "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,

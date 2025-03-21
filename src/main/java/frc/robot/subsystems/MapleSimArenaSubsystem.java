@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
@@ -14,8 +15,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -139,21 +138,28 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
   }
 
   public Pose3d getClosestScorePose() {
-    Pose3d[] scorePoseList =
-        DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Blue)
-            ? SimulationConstants.kBlueCoralScorePoses
-            : SimulationConstants.kRedCoralScorePoses;
-
     Pose3d closestScorePose = null;
     double closestDistance = Double.MAX_VALUE;
-    for (Pose3d scorePose : scorePoseList) {
-      double currentDistance =
-          robotCoralPose.getTranslation().getDistance(scorePose.getTranslation());
-      if (currentDistance <= SimulationConstants.kScoreDistance.in(Meters)
-          && currentDistance <= closestDistance
-          && !scoredCoralPoses.contains(scorePose)) {
-        closestDistance = currentDistance;
-        closestScorePose = scorePose;
+    for (Pose2d polePose : SimulationConstants.kBlueStickPoses) {
+      for (String levelKey : SimulationConstants.kCoralHeightMap.keySet()) {
+        Pose2d currentLevel = SimulationConstants.kCoralHeightMap.get(levelKey);
+        Pose3d currentPose =
+            new Pose3d(
+                polePose.getMeasureX(),
+                polePose.getMeasureY(),
+                currentLevel.getMeasureX(),
+                new Rotation3d(
+                    Degrees.zero(),
+                    currentLevel.getRotation().getMeasure(),
+                    polePose.getRotation().getMeasure()));
+        double currentDistance =
+            robotCoralPose.getTranslation().getDistance(currentPose.getTranslation());
+        if (currentDistance <= SimulationConstants.kScoreDistance.in(Meters)
+            && currentDistance < closestDistance
+            && !scoredCoralPoses.contains(currentPose)) {
+          closestDistance = currentDistance;
+          closestScorePose = currentPose;
+        }
       }
     }
 

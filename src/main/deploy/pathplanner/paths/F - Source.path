@@ -3,32 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.314739782827511,
-        "y": 3.0111717010357766
+        "x": 5.302171536275998,
+        "y": 3.014711304231577
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.10500423360985,
-        "y": 2.8265147144350573
+        "x": 5.444765409660208,
+        "y": 2.379792805896527
       },
       "isLocked": false,
       "linkedName": "Reef F"
-    },
-    {
-      "anchor": {
-        "x": 4.62706898643625,
-        "y": 2.416332945363156
-      },
-      "prevControl": {
-        "x": 4.83917758765091,
-        "y": 2.548658080128855
-      },
-      "nextControl": {
-        "x": 4.41496038522159,
-        "y": 2.2840078105974566
-      },
-      "isLocked": false,
-      "linkedName": null
     },
     {
       "anchor": {
@@ -36,40 +20,35 @@
         "y": 0.9680916092635675
       },
       "prevControl": {
-        "x": 1.4567385678693103,
-        "y": 1.0628638020773502
+        "x": 3.0699524960275424,
+        "y": 1.8748713089247884
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Right Coral Station Mid"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.016339656964658,
-      "rotationDegrees": -150.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
+      "name": "ElvL0",
       "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "Intake"
+          "name": "ElvL0"
         }
       }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.75,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 2979.381,
+    "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
