@@ -200,6 +200,13 @@ public final class Constants {
       OTHER
     }
 
+    public static enum IntakeModeEnum {
+      CORAL_STATION,
+      SCORE_L1,
+      ALGAE,
+      GROUND_INTAKE
+    }
+
     // Simulation
     public static final Distance kPivotLength = Feet.of(1);
     public static final Mass kPivotMass = Pounds.of(8);

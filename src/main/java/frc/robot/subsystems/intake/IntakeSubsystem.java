@@ -374,6 +374,10 @@ public class IntakeSubsystem extends SubsystemBase {
     return Math.signum(expectedSpeed) == Math.signum(conveyorMotor.get());
   }
 
+  public Trigger onGroundTrigger() {
+    return pivotAtSetpoint(kPivotExtendAngle);
+  }
+
   @Override
   public void periodic() {
     // Intake Rollers
