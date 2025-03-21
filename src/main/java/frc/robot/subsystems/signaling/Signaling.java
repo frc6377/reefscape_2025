@@ -24,7 +24,6 @@ public class Signaling extends SubsystemBase {
   private int patternTick;
   private long tagCount;
   private DisablePattern disablePattern = DisablePattern.ALLIANCE;
-
   private Vision visionSubsystem;
   private PowerDistribution pdp;
 
@@ -89,7 +88,7 @@ public class Signaling extends SubsystemBase {
   }
 
   private void setCandle(RGB rgb) {
-    setSection(rgb, 0, 8, true);
+    setSection(rgb, 0, 8);
   }
 
   public Command setToAlliance() {
@@ -118,16 +117,16 @@ public class Signaling extends SubsystemBase {
   }
 
   private void setFullStrip(final RGB rgb) {
-    setSection(rgb, 0, SignalingConstants.kNumLEDs);
-  }
-
-  private void setSection(
-      final RGB rgb, final int startID, final int count, final Boolean candleBool) {
-    candle.setLEDs(rgb.red, rgb.green, rgb.blue, 0, startID + (candleBool ? 0 : 9), count);
+    Logger.recordOutput("Signaling/LED Color", rgb.toHex());
+    setSection(rgb, 8, SignalingConstants.kNumLEDs);
   }
 
   private void setSection(final RGB rgb, final int startID, final int count) {
-    setSection(rgb, startID, count, false);
+    candle.setLEDs(rgb.red, rgb.green, rgb.blue, 0, startID, count);
+  }
+
+  private void setSectionStrip(final RGB rgb, final int startID, final int count) {
+    setSection(rgb, startID + 8, count);
   }
 
   private void updatePattern() {
@@ -184,7 +183,7 @@ public class Signaling extends SubsystemBase {
       PatternNode node = pattern[patternIndex];
       RGB color = node.color;
       Logger.recordOutput("Signaling/LED Color", color.toHex());
-      setSection(color, LEDIndex, node.repeat);
+      setSectionStrip(color, LEDIndex, node.repeat);
       LEDIndex += node.repeat;
       patternIndex++;
     }

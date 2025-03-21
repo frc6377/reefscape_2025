@@ -21,7 +21,6 @@ public class RGB {
   public static final RGB HOWDY_BROWN = new RGB(229, 218, 91);
   public static final RGB HOWDY_BROWN_TINT = new RGB(186, 138, 58);
   public static final RGB HOWDY_BROWN_SHADE = new RGB(78, 52, 18);
-  public static final RGB HOWDY_BROWN_3 = new RGB(148, 88, 5);
 
   public static RGB randomColor() {
     final IntSupplier rndValue = () -> (int) Math.round(Math.random() * (MAX_RGB_VALUE + 1));

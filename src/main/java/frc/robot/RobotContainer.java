@@ -299,13 +299,11 @@ public class RobotContainer {
             }));
     coralScorer
         .hasCoralTrigger()
-        .and(elevator.elevatorUpTrigger())
+        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
+        .and(elevator.elevatorAtCurrentSetpoint())
+        .onFalse(signaling.setColor(RGB.BLUE))
         .and(coralScorer.scorerAlignedTrigger().negate())
         .onTrue(signaling.setColor(RGB.YELLOW));
-    coralScorer
-        .hasCoralTrigger()
-        .and(elevator.elevatorUpTrigger())
-        .onFalse(signaling.setColor(RGB.BLUE));
     coralScorer
         .scorerAlignedTrigger()
         .and(coralScorer.hasCoralTrigger())
@@ -314,14 +312,14 @@ public class RobotContainer {
         .whileTrue(
             Commands.startEnd(
                 () -> {
+                  signaling.setColor(RGB.GREEN);
                   OI.Driver.setRumble(0.5);
                   OI.Operator.setRumble(0.5);
                 },
                 () -> {
                   OI.Driver.setRumble(0);
                   OI.Operator.setRumble(0);
-                }))
-        .onTrue(signaling.setColor(RGB.GREEN));
+                }));
 
     // Elevator Buttons
     OI.getButton(OI.Driver.A).onTrue(elevator.L0());
