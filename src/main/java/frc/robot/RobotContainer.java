@@ -403,11 +403,11 @@ public class RobotContainer {
     OI.getButton(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
 
     // Climber Buttons
-    // OI.getButton(OI.Operator.DPAD_UP)
-    //     .onTrue(climber.retract())
-    //     .toggleOnTrue(intake.movePivot(kPivotClimbingAngle));
-    // OI.getButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
-    // OI.getButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
+    OI.getButton(OI.Operator.DPAD_UP)
+        .onTrue(climber.retract())
+        .toggleOnTrue(intake.movePivot(Constants.IntakeConstants.kPivotClimbingAngle));
+    OI.getButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
+    OI.getButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
