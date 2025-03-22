@@ -440,20 +440,11 @@ public class Climber extends SubsystemBase {
     climbMechTargetLigament.setAngle(
         climberTargetAngle.minus(ClimberConstants.kClimberOffsetAngle).in(Degrees));
 
-    // if (isClimbingStateSim) {
-    //
-    // climberSimLifting.setInputVoltage(climberMotorFront.getMotorVoltage().getValue().in(Volts));
-    //   climberSimLifting.update(Robot.defaultPeriodSecs);
-    // } else {
-    //   climberSimNormal.setInputVoltage(climberMotorFront.getMotorVoltage().getValue().in(Volts));
-    //   climberSimNormal.update(Robot.defaultPeriodSecs);
-    // }
-
     simulator = getSimulator();
 
     /*
      * This is in an if statment because the simulator takes too many resources due to high gear
-     * ratio, so we only want to run it when climber is actively being used4
+     * ratio, so we only want to run it when climber is actively being used
      */
     // https://github.com/wpilibsuite/allwpilib/issues/6387
     if (this.getCurrentCommand() != null) {
@@ -476,17 +467,7 @@ public class Climber extends SubsystemBase {
     double endTime = Timer.getFPGATimestamp();
     Logger.recordOutput("Climber/Simulation Periodic Time (s)", (endTime - startTime));
 
-    // Logger.recordOutput("Climber/Climber Angle",
-    // Radians.of(simulator.getAngleRads()).in(Degrees));
-    // Logger.recordOutput("Climber/Climbing", isClimbingStateSim);
-    // if (climberMotorFront.getPosition().getValue().gt(ClimberConstants.kClimberAtCageSetpoint)) {
-    //   if (simulator == climberSimNormal) {
-    //     toggleClimbingSim();
-    //   }
-    // } else {
-    //   if (simulator == climberSimLifting) {
-    //     toggleClimbingSim();
-    //   }
-    // }
+    Logger.recordOutput("Climber/Climber Angle", Radians.of(simulator.getAngleRads()).in(Degrees));
+    Logger.recordOutput("Climber/Climbing", isClimbingStateSim);
   }
 }
