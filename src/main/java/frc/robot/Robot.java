@@ -142,7 +142,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    robotContainer.resetSimulationField();
+    // robotContainer.resetSimulationField();
     robotContainer.seedEncoders();
     isUsingVision = false;
   }
@@ -160,7 +160,7 @@ public class Robot extends LoggedRobot {
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
-      robotContainer.startSimAuto();
+      // robotContainer.startSimAuto();
     }
   }
 
@@ -217,6 +217,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void simulationPeriodic() {
     SimulatedArena.getInstance().simulationPeriodic();
-    robotContainer.displaySimFieldToAdvantageScope();
+    // robotContainer.displaySimFieldToAdvantageScope();
   }
 }
