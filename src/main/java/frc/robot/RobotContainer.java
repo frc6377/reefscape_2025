@@ -103,7 +103,7 @@ public class RobotContainer {
   private boolean coralStationMode = false;
   private Command scoreL1;
 
-  private Command locateCoral;
+  @Nullable private Command locateCoral;
 
   private final Trigger coralOuttakeButton;
   private final Trigger coralHandoffCompleteTrigger;
@@ -537,10 +537,14 @@ public class RobotContainer {
     // OI.getPOVButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
     // OI.getPOVButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
 
-    if (drive != null && driveSimulation != null) {
+    if (drive != null) {
       final Runnable resetGyro =
           Constants.currentMode == Constants.Mode.SIM
-              ? () -> drive.setPose(driveSimulation.getSimulatedDriveTrainPose())
+              ? () ->
+                  drive.setPose(
+                      driveSimulation != null
+                          ? driveSimulation.getSimulatedDriveTrainPose()
+                          : new Pose2d())
               : () ->
                   drive.setPose(
                       new Pose2d(
