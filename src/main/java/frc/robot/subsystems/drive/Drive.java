@@ -51,7 +51,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.Constants.FeildConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
@@ -419,7 +419,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
               .getTranslation()
               .rotateAround(
                   new Translation2d(
-                      FeildConstants.kFieldLength.div(2), FeildConstants.kFieldWidth.div(2)),
+                      FieldConstants.kFieldLength.div(2), FieldConstants.kFieldWidth.div(2)),
                   new Rotation2d(Degrees.of(180)));
 
       return new Pose2d(

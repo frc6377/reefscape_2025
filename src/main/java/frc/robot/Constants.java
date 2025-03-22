@@ -369,19 +369,18 @@ public final class Constants {
           "R", new Pose2d(Meters.of(1.225), Meters.of(0.968), new Rotation2d(Degrees.of(-126))));
     }
 
+    // Mech Poses for 3d visualization
     public static final Pose3d kIntakeStartPose =
         new Pose3d(
             Meters.of(0.191591),
             Meters.of(0.091696),
             Meters.of(0.242354),
             new Rotation3d(Degrees.of(0), Degrees.of(-90), Degrees.of(0)));
-
     public static final Pose3d kElvStage1Pose =
         new Pose3d(Meters.of(-0.0635), Meters.of(-0.236449), Meters.of(0.1016), new Rotation3d());
     public static final Pose3d kElvStage2Pose =
         new Pose3d(
             Meters.of(-0.063479), Meters.of(-0.236448), Meters.of(0.22065), new Rotation3d());
-
     public static final Pose3d kClimber1Pose =
         new Pose3d(
             Meters.of(0.16021),
@@ -394,7 +393,6 @@ public final class Constants {
             Meters.of(0.004064),
             Meters.of(0.133263),
             new Rotation3d(Degrees.of(-100), Degrees.of(0), Degrees.of(-90)));
-
     public static final Pose3d kCoralScorerPose =
         new Pose3d(
             Meters.of(0.037449),
@@ -403,7 +401,7 @@ public final class Constants {
             new Rotation3d(Degrees.of(0), Degrees.of(-45), Degrees.of(90)));
   }
 
-  public final class FeildConstants {
+  public final class FieldConstants {
     public static final Distance kFieldWidth = Inches.of(317);
     public static final Distance kFieldLength = Inches.of(690 + (7 / 8));
   }
@@ -473,5 +471,17 @@ public final class Constants {
           new Pose2d(Inches.of(544.903), Inches.of(152.030), new Rotation2d(Degrees.of(180))),
           new Pose2d(Inches.of(544.948), Inches.of(164.968), new Rotation2d(Degrees.of(180))),
         };
+  }
+
+  public static class SubsystemEnabled {
+    public static final boolean kDrivebase = true;
+    public static final boolean kVision = true;
+    public static final boolean kIntake = true;
+    public static final boolean kCoralScorer = true;
+    public static final boolean kElevator = true;
+    public static final boolean kAlgaeRemover = true;
+    public static final boolean kClimber = true;
+    public static final boolean kStreamDecks = true;
+    public static final boolean kSensors = true;
   }
 }
