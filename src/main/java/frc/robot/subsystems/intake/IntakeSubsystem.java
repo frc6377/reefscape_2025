@@ -356,17 +356,16 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command Idle(Supplier<Boolean> elevatorNotL1) {
-    return Commands.run(
-            () -> {
-              if (elevatorNotL1.get() == true) {
-                goToPivotPosition(kPivotRetractAngle);
-              } else {
-                goToPivotPosition(kPivotCoralStationAngle);
-              }
-              setIntakeMotor(0);
-              setConveyerMotor(0);
-              if (Robot.isSimulation()) intakeSim.stopIntake();
-            })
+    return run(() -> {
+          if (elevatorNotL1.get()) {
+            goToPivotPosition(kPivotRetractAngle);
+          } else {
+            goToPivotPosition(kPivotCoralStationAngle);
+          }
+          setIntakeMotor(0);
+          setConveyerMotor(0);
+          if (Robot.isSimulation()) intakeSim.stopIntake();
+        })
         .withName("IDLE");
   }
 
