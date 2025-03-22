@@ -33,7 +33,7 @@ public class AlignToReefTagRelative extends Command {
   private Trigger canSeeTagTrigger;
   private Trigger atPoseTrigger;
 
-  private String NTFolder = "Swerve/AlignToReefTagRelative/";
+  private static final String NTFolder = "Swerve/AlignToReefTagRelative/";
 
   public AlignToReefTagRelative(
       boolean isRightScore, String cameraName, Drive drivebase, Vision vision) {
@@ -78,11 +78,12 @@ public class AlignToReefTagRelative extends Command {
 
   @Override
   public void execute() {
-    Logger.recordOutput(NTFolder + "Target Pose", vision.tagToFeildRelative(0, targetPose));
-    Logger.recordOutput(NTFolder + "Camera Name", cameraName);
-    Logger.recordOutput(NTFolder + "Is Right Side", isRightScore);
-    Logger.recordOutput(NTFolder + "Tag ID", tagID);
-    Logger.recordOutput(NTFolder + "Tag Pose", tagPose);
+    Logger.recordOutput(
+        NTFolder + "Robot Info/Target Pose", vision.tagToFeildRelative(0, targetPose));
+    Logger.recordOutput(NTFolder + "Robot Info/Is Right Side", isRightScore);
+    Logger.recordOutput(NTFolder + "Tag Info/Camera Name", cameraName);
+    Logger.recordOutput(NTFolder + "Tag Info/Tag ID", tagID);
+    Logger.recordOutput(NTFolder + "Tag Info/Tag Pose", tagPose);
 
     double[] pose;
     double xSpeed, ySpeed, rotValue;
@@ -97,8 +98,8 @@ public class AlignToReefTagRelative extends Command {
       } else {
         Pose3d robotFeildPose = vision.getVisionPose(0);
         Pose2d robotPoseTagRelative = vision.feildToTagRelative(robotFeildPose, tagPose);
-        Logger.recordOutput(NTFolder + "Feild Relative Pose", robotFeildPose);
-        Logger.recordOutput(NTFolder + "Tag Relative Pose", robotPoseTagRelative);
+        Logger.recordOutput(NTFolder + "Robot Info/Feild Relative Pose", robotFeildPose);
+        Logger.recordOutput(NTFolder + "Robot Info/Tag Relative Pose", robotPoseTagRelative);
         pose = new double[0];
         xSpeed = xController.calculate(robotPoseTagRelative.getMeasureX().in(Meters));
         ySpeed = yController.calculate(robotPoseTagRelative.getMeasureY().in(Meters));
@@ -116,42 +117,47 @@ public class AlignToReefTagRelative extends Command {
     // outputChassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rotValue);
     outputChassisSpeeds = new ChassisSpeeds(-ySpeed, xSpeed, rotValue);
 
-    Logger.recordOutput(NTFolder + "ChassisSpeeds Output", outputChassisSpeeds);
+    Logger.recordOutput(NTFolder + "Robot Info/ChassisSpeeds Output", outputChassisSpeeds);
 
-    Logger.recordOutput(NTFolder + "positions", pose);
+    Logger.recordOutput(NTFolder + "LimeLight/positions", pose);
 
-    Logger.recordOutput(NTFolder + "X Speed", xSpeed);
-    Logger.recordOutput(NTFolder + "X Setpoint", xController.getSetpoint());
+    Logger.recordOutput(NTFolder + "PID/X Speed", xSpeed);
+    Logger.recordOutput(NTFolder + "PID/X Setpoint", xController.getSetpoint());
 
-    Logger.recordOutput(NTFolder + "Y Speed", ySpeed);
-    Logger.recordOutput(NTFolder + "Y Setpoint", yController.getSetpoint());
+    Logger.recordOutput(NTFolder + "PID/Y Speed", ySpeed);
+    Logger.recordOutput(NTFolder + "PID/Y Setpoint", yController.getSetpoint());
 
-    Logger.recordOutput(NTFolder + "Rot Value (Rads)", rotValue);
-    Logger.recordOutput(NTFolder + "Rot Setpoint (Rads)", rotController.getSetpoint());
+    Logger.recordOutput(NTFolder + "PID/Rot Value (Rads)", rotValue);
+    Logger.recordOutput(NTFolder + "PID/Rot Setpoint (Rads)", rotController.getSetpoint());
 
-    Logger.recordOutput(NTFolder + "Can See Tag Trigger", canSeeTagTrigger.getAsBoolean());
-    Logger.recordOutput(NTFolder + "At Pose Trigger", atPoseTrigger.getAsBoolean());
+    Logger.recordOutput(
+        NTFolder + "LimeLight/Can See Tag Trigger", canSeeTagTrigger.getAsBoolean());
+    Logger.recordOutput(NTFolder + "PID/At Pose Trigger", atPoseTrigger.getAsBoolean());
 
     drivebase.runVelocity(outputChassisSpeeds);
   }
 
   @Override
   public void end(boolean interrupted) {
-    Logger.recordOutput(NTFolder + "positions", new double[0]);
+    ChassisSpeeds outputChassisSpeeds = new ChassisSpeeds(0, 0, 0);
 
-    Logger.recordOutput(NTFolder + "X Speed", 0);
-    Logger.recordOutput(NTFolder + "X Setpoint", 0);
+    Logger.recordOutput(NTFolder + "Robot Info/ChassisSpeeds Output", outputChassisSpeeds);
+    Logger.recordOutput(NTFolder + "LimeLight/positions", new double[0]);
 
-    Logger.recordOutput(NTFolder + "Y Speed", 0);
-    Logger.recordOutput(NTFolder + "Y Setpoint", 0);
+    Logger.recordOutput(NTFolder + "PID/X Speed", 0.0);
+    Logger.recordOutput(NTFolder + "PID/X Setpoint", 0.0);
 
-    Logger.recordOutput(NTFolder + "Rot Value", 0);
-    Logger.recordOutput(NTFolder + "Rot Setpoint", 0);
+    Logger.recordOutput(NTFolder + "PID/Y Speed", 0.0);
+    Logger.recordOutput(NTFolder + "PID/Y Setpoint", 0.0);
 
-    Logger.recordOutput(NTFolder + "Can See Tag Trigger", canSeeTagTrigger.getAsBoolean());
-    Logger.recordOutput(NTFolder + "At Pose Trigger", atPoseTrigger.getAsBoolean());
+    Logger.recordOutput(NTFolder + "PID/Rot Value", 0.0);
+    Logger.recordOutput(NTFolder + "PID/Rot Setpoint", 0.0);
 
-    drivebase.runVelocity(new ChassisSpeeds(0, 0, 0));
+    Logger.recordOutput(
+        NTFolder + "LimeLight/Can See Tag Trigger", canSeeTagTrigger.getAsBoolean());
+    Logger.recordOutput(NTFolder + "PID/At Pose Trigger", atPoseTrigger.getAsBoolean());
+
+    drivebase.runVelocity(outputChassisSpeeds);
   }
 
   @Override

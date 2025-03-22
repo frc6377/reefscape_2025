@@ -5,12 +5,17 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -291,83 +296,44 @@ public final class Constants {
   }
 
   public final class DrivetrainConstants {
-    // PathPlanner config constants
-    public static final Mass ROBOT_MASS = Pounds.of(106.6);
-    public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(69.8548622056);
-    public static final double WHEEL_COF = 1.2;
-    public static final Time kStrafeTime = Seconds.of(0.5);
-    public static final LinearVelocity kStrafeSpeed = MetersPerSecond.of(0.5);
+    private static RobotConfig tryLoadConfig() {
+      try {
+        return RobotConfig.fromGUISettings();
+      } catch (Exception e) {
+        throw new RuntimeException("Failed to load RobotConfig from GUI settings", e);
+      }
+    }
+
+    public static final RobotConfig kRobotConfig = tryLoadConfig();
+
+    // Robot Properties (Mostly for sim)
+    public static final Mass kRobotMass = Kilograms.of(kRobotConfig.massKG);
+
     // POV Drive Constants
     public static final LinearVelocity kPOVDriveSpeed = MetersPerSecond.of(1);
 
-    public static final PathConstraints PATH_CONSTRAINTS =
+    // Strafe Constants
+    public static final Time kStrafeTime = Seconds.of(0.5);
+    public static final LinearVelocity kStrafeSpeed = MetersPerSecond.of(0.5);
+
+    // Constants from DriveCommands
+    public static final double kWheelRadiusMaxVelocity = 1; // Rad/Sec
+    public static final double kWheelRadiusRampRate = 0.05; // Rad/Sec^2
+
+    // Path Finder/Planner Stuff
+    public static final PathConstraints kPathConstraints =
         new PathConstraints(
             3.5,
             2,
             DegreesPerSecond.of(300).in(RadiansPerSecond),
             DegreesPerSecond.of(1200).in(RadiansPerSecond));
 
-    // Constants from DriveCommands
-    public static final double ANGLE_KP = 5;
-    public static final double ANGLE_KD = 0.01;
-    public static final double ANGLE_MAX_VELOCITY = 8.0;
-    public static final double ANGLE_MAX_ACCELERATION = 20.0;
-    public static final double FF_START_DELAY = 2.0; // Secs
-    public static final double FF_RAMP_RATE = 0.1; // Volts/Sec
-    public static final double WHEEL_RADIUS_MAX_VELOCITY = 1; // Rad/Sec
-    public static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
-
-    // Scoring Poses for PathFinder
-    public static final HashMap<String, Pose2d> SCORE_POSES =
-        new HashMap<String, Pose2d>(kPoleLetters.length);
-
-    static {
-      SCORE_POSES.put(
-          kPoleLetters[0],
-          new Pose2d(Meters.of(3.183), Meters.of(4.157), new Rotation2d(Degrees.of(90))));
-      SCORE_POSES.put(
-          kPoleLetters[1],
-          new Pose2d(Meters.of(3.184), Meters.of(3.828), new Rotation2d(Degrees.of(90))));
-      SCORE_POSES.put(
-          kPoleLetters[2],
-          new Pose2d(Meters.of(3.726), Meters.of(2.960), new Rotation2d(Degrees.of(150))));
-      SCORE_POSES.put(
-          kPoleLetters[3],
-          new Pose2d(Meters.of(4.004), Meters.of(2.797), new Rotation2d(Degrees.of(150))));
-      SCORE_POSES.put(
-          kPoleLetters[4],
-          new Pose2d(Meters.of(5.029), Meters.of(2.834), new Rotation2d(Degrees.of(-150))));
-      SCORE_POSES.put(
-          kPoleLetters[5],
-          new Pose2d(Meters.of(5.311), Meters.of(2.993), new Rotation2d(Degrees.of(-150))));
-      SCORE_POSES.put(
-          kPoleLetters[6],
-          new Pose2d(Meters.of(5.791), Meters.of(3.898), new Rotation2d(Degrees.of(-90))));
-      SCORE_POSES.put(
-          kPoleLetters[7],
-          new Pose2d(Meters.of(5.790), Meters.of(4.219), new Rotation2d(Degrees.of(-90))));
-      SCORE_POSES.put(
-          kPoleLetters[8],
-          new Pose2d(Meters.of(5.250), Meters.of(5.093), new Rotation2d(Degrees.of(-30))));
-      SCORE_POSES.put(
-          kPoleLetters[9],
-          new Pose2d(Meters.of(4.964), Meters.of(5.259), new Rotation2d(Degrees.of(-30))));
-      SCORE_POSES.put(
-          kPoleLetters[10],
-          new Pose2d(Meters.of(3.942), Meters.of(5.215), new Rotation2d(Degrees.of(30))));
-      SCORE_POSES.put(
-          kPoleLetters[11],
-          new Pose2d(Meters.of(3.667), Meters.of(5.062), new Rotation2d(Degrees.of(30))));
-    }
-
-    public static final HashMap<String, Pose2d> kSourcePoses = new HashMap<String, Pose2d>();
-
-    static {
-      kSourcePoses.put(
-          "L", new Pose2d(Meters.of(1.180), Meters.of(7.125), new Rotation2d(Degrees.of(126))));
-      kSourcePoses.put(
-          "R", new Pose2d(Meters.of(1.225), Meters.of(0.968), new Rotation2d(Degrees.of(-126))));
-    }
+    public static final PIDController kTranslationController = new PIDController(5, 0, 0);
+    public static final ProfiledPIDController kRotationController =
+        new ProfiledPIDController(5, 0.0, 0.01, new TrapezoidProfile.Constraints(8, 20));
+    public static final HolonomicDriveController kHolonomicDriveController =
+        new HolonomicDriveController(
+            kTranslationController, kTranslationController, kRotationController);
 
     public static final Pose3d kIntakeStartPose =
         new Pose3d(
@@ -375,13 +341,11 @@ public final class Constants {
             Meters.of(0.091696),
             Meters.of(0.242354),
             new Rotation3d(Degrees.of(0), Degrees.of(-90), Degrees.of(0)));
-
     public static final Pose3d kElvStage1Pose =
         new Pose3d(Meters.of(-0.0635), Meters.of(-0.236449), Meters.of(0.1016), new Rotation3d());
     public static final Pose3d kElvStage2Pose =
         new Pose3d(
             Meters.of(-0.063479), Meters.of(-0.236448), Meters.of(0.22065), new Rotation3d());
-
     public static final Pose3d kClimber1Pose =
         new Pose3d(
             Meters.of(0.16021),
@@ -394,7 +358,6 @@ public final class Constants {
             Meters.of(0.004064),
             Meters.of(0.133263),
             new Rotation3d(Degrees.of(-100), Degrees.of(0), Degrees.of(-90)));
-
     public static final Pose3d kCoralScorerPose =
         new Pose3d(
             Meters.of(0.037449),
@@ -404,10 +367,10 @@ public final class Constants {
   }
 
   public final class ReefAlignConstants {
-    public static final Pose2d kLeftReefPose =
-        new Pose2d(Meters.of(0.45), Meters.of(0.25), new Rotation2d(Degrees.of(-90)));
     public static final Pose2d kRightReefPose =
-        new Pose2d(Meters.of(0.45), Meters.of(-0.25), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Meters.of(0.475), Meters.of(0.193), new Rotation2d(Degrees.of(-90)));
+    public static final Pose2d kLeftReefPose =
+        new Pose2d(Meters.of(0.475), Meters.of(-0.137), new Rotation2d(Degrees.of(-90)));
 
     public static final Angle kSetpointRotTolerance = Degrees.of(1);
     public static final Distance kSetpointTolerance = Inches.of(0.25);

@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 5.0115,
-        "y": 2.7867499999999996
+        "x": 5.03483606557377,
+        "y": 2.820235655737705
       },
       "prevControl": {
-        "x": 4.8429840940741125,
-        "y": 2.602081677188594
+        "x": 4.8663201596478824,
+        "y": 2.6355673329262994
       },
       "nextControl": null,
       "isLocked": false,
@@ -66,8 +66,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.75,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 300.0,
     "maxAngularAcceleration": 1200.0,
     "nominalVoltage": 12.0,

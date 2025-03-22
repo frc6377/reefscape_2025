@@ -14,8 +14,6 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
-import static frc.robot.Constants.DrivetrainConstants.SCORE_POSES;
-import static frc.robot.Constants.DrivetrainConstants.kSourcePoses;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
@@ -51,7 +49,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.Constants.FeildConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
@@ -59,7 +56,6 @@ import frc.robot.util.LocalADStarAK;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Supplier;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
@@ -80,11 +76,11 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
   // PathPlanner config constants
-  private static RobotConfig PP_CONFIG;
+  private static final RobotConfig PP_CONFIG = DrivetrainConstants.kRobotConfig;
 
   public static final DriveTrainSimulationConfig mapleSimConfig =
       DriveTrainSimulationConfig.Default()
-          .withRobotMass(DrivetrainConstants.ROBOT_MASS)
+          .withRobotMass(DrivetrainConstants.kRobotMass)
           .withCustomModuleTranslations(getModuleTranslations())
           .withGyro(COTS.ofPigeon2())
           .withBumperSize(Meters.of(0.876), Meters.of(0.876))
@@ -98,7 +94,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                   Volts.of(TunerConstants.FrontLeft.SteerFrictionVoltage),
                   Meters.of(TunerConstants.FrontLeft.WheelRadius),
                   KilogramSquareMeters.of(TunerConstants.FrontLeft.SteerInertia),
-                  DrivetrainConstants.WHEEL_COF));
+                  DrivetrainConstants.kRobotConfig.wheelFrictionForce));
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
@@ -140,12 +136,6 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
-
-    try {
-      PP_CONFIG = RobotConfig.fromGUISettings();
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to load PathPlanner config", e);
-    }
 
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(
@@ -404,61 +394,6 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
-  }
-
-  public Pose2d getAllianceAdjustedPose(String poleLetter) {
-    Pose2d originalPose = SCORE_POSES.get(poleLetter);
-
-    if (originalPose == null) {
-      return null;
-    }
-
-    if (Constants.kAllianceColor.equals(Alliance.Red)) {
-      Translation2d flippedTranslation =
-          originalPose
-              .getTranslation()
-              .rotateAround(
-                  new Translation2d(
-                      FeildConstants.kFieldLength.div(2), FeildConstants.kFieldWidth.div(2)),
-                  new Rotation2d(Degrees.of(180)));
-
-      return new Pose2d(
-          flippedTranslation, originalPose.getRotation().rotateBy(new Rotation2d(Degrees.of(180))));
-    } else {
-      return originalPose;
-    }
-  }
-
-  public Supplier<Rotation2d> getAlignRotation() {
-    return () -> getClosestScorePose().getRotation();
-  }
-
-  public Pose2d getClosestScorePose() {
-    Pose2d closest_pose = new Pose2d();
-    double closest_pose_dist = Double.MAX_VALUE;
-
-    // Find the closest pose
-    Pose2d robotPose = getPose();
-    for (String PoleLetter : Constants.kPoleLetters) {
-      Pose2d currentPose = getAllianceAdjustedPose(PoleLetter);
-      double current_dist = robotPose.getTranslation().getDistance(currentPose.getTranslation());
-      if (current_dist < closest_pose_dist) {
-        closest_pose_dist = current_dist;
-        closest_pose = currentPose;
-      }
-    }
-    Logger.recordOutput("Odometry/Closest Score Pose", closest_pose);
-    return closest_pose;
-  }
-
-  public Pose2d getClosestSoursePose() {
-    double dist1 = getPose().getTranslation().getDistance(kSourcePoses.get("L").getTranslation());
-    double dist2 = getPose().getTranslation().getDistance(kSourcePoses.get("R").getTranslation());
-
-    Pose2d closestSource = dist1 < dist2 ? kSourcePoses.get("L") : kSourcePoses.get("R");
-
-    Logger.recordOutput("Odometry/Closest Source Pose", closestSource);
-    return closestSource;
   }
 
   /** Returns the current odometry rotation. */

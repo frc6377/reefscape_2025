@@ -429,14 +429,16 @@ public class RobotContainer {
             Robot.isReal()
                 ? Commands.runOnce(resetGyro, drive).ignoringDisable(true)
                 : Commands.runOnce(() -> resetSimulationField()));
+
+    // Auto Align Commands
     Command alignLeftCommand = new AlignToReefTagRelative(false, camera1Name, drive, vision);
     Command alignRightCommand = new AlignToReefTagRelative(true, camera1Name, drive, vision);
     OI.getButton(OI.Driver.RSB)
-        .whileTrue(alignLeftCommand)
-        .and(() -> !alignLeftCommand.isFinished());
+        .and(() -> !alignRightCommand.isFinished())
+        .whileTrue(alignRightCommand);
     OI.getButton(OI.Driver.LSB)
-        .whileTrue(alignRightCommand)
-        .and(() -> !alignRightCommand.isFinished());
+        .and(() -> !alignLeftCommand.isFinished())
+        .whileTrue(alignLeftCommand);
 
     UpButtonTrigger.or(DownButtonTrigger)
         .or(RightButtonTrigger)
@@ -445,11 +447,11 @@ public class RobotContainer {
             DriveCommands.POVDrive(
                 drive,
                 () ->
-                    (UpButtonTrigger.getAsBoolean() ? 1.0 : 0.0)
-                        + (DownButtonTrigger.getAsBoolean() ? -1.0 : 0.0),
+                    (UpButtonTrigger.getAsBoolean() ? 1 : 0.0)
+                        + (DownButtonTrigger.getAsBoolean() ? -1 : 0),
                 () ->
-                    (LeftButtonTrigger.getAsBoolean() ? 1.0 : 0.0)
-                        + (RightButtonTrigger.getAsBoolean() ? -1.0 : 0.0),
+                    (LeftButtonTrigger.getAsBoolean() ? 1 : 0.0)
+                        + (RightButtonTrigger.getAsBoolean() ? -1 : 0),
                 () -> 0.0));
 
     /* This is for creating the button mappings for logging what coral have been scored
