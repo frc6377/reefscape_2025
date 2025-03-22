@@ -144,16 +144,16 @@
     },
     {
       "anchor": {
-        "x": 5.150306797667981,
-        "y": 2.8920880097786936
+        "x": 5.0115,
+        "y": 2.7867499999999996
       },
       "prevControl": {
-        "x": 4.679945833396928,
-        "y": 2.5984354689711435
+        "x": 4.541139035728947,
+        "y": 2.4930974591924495
       },
       "nextControl": {
-        "x": 5.372339165029046,
-        "y": 3.030705739075463
+        "x": 5.2335323673610645,
+        "y": 2.925367729296769
       },
       "isLocked": false,
       "linkedName": "Reef E"
@@ -234,7 +234,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.5,
+    "maxVelocity": 3.75,
     "maxAcceleration": 2.0,
     "maxAngularVelocity": 300.0,
     "maxAngularAcceleration": 1200.0,

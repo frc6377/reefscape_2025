@@ -316,7 +316,11 @@ public class Climber extends SubsystemBase {
 
   public Command extendFully() {
     return runClimber(ClimberConstants.kClimberExtendedSetpoint, 1)
-        .alongWith(Commands.runOnce(() -> toggleClimbingSim()));
+        .alongWith(
+            Commands.runOnce(
+                () -> {
+                  if (Robot.isSimulation()) toggleClimbingSim();
+                }));
   }
 
   private void setServoAngle(Servo servo, double angle) {
@@ -393,6 +397,8 @@ public class Climber extends SubsystemBase {
     Logger.recordOutput(
         "Climber/Front/Absolute Encoder Position (Degrees)",
         Rotations.of(1 - climberFrontEncoder.get()).in(Degrees));
+    Logger.recordOutput(
+        "Climber/Front/Absolute Encoder Position (Rotations)", 1 - climberFrontEncoder.get());
     Logger.recordOutput(
         "Climber/Front/Motor/Current (Amps)",
         climberMotorFront.getStatorCurrent().getValue().in(Amps));

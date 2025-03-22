@@ -26,6 +26,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -42,6 +43,7 @@ import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgeaRemover;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
@@ -69,7 +71,7 @@ public class RobotContainer {
   private EventLoop testEventLoop = new EventLoop();
 
   // Subsystems
-  // private final Climber climber = new Climber();
+  private final Climber climber = new Climber();
   private final AlgeaRemover algeaRemover = new AlgeaRemover();
   private static final Sensors sensors = new Sensors();
   private final Drive drive;
@@ -94,10 +96,10 @@ public class RobotContainer {
           () ->
               sensors.getSensorState() == CoralEnum.NO_CORAL
                   || coralScorer.hasCoralTrigger().getAsBoolean());
-  private final Trigger UpButtonTrigger = OI.getPOVButton(OI.Driver.POV0);
-  private final Trigger DownButtonTrigger = OI.getPOVButton(OI.Driver.POV90);
-  private final Trigger RightButtonTrigger = OI.getPOVButton(OI.Driver.POV180);
-  private final Trigger LeftButtonTrigger = OI.getPOVButton(OI.Driver.POV270);
+  private final Trigger UpButtonTrigger = OI.getButton(OI.Driver.POV0);
+  private final Trigger DownButtonTrigger = OI.getButton(OI.Driver.POV90);
+  private final Trigger RightButtonTrigger = OI.getButton(OI.Driver.POV180);
+  private final Trigger LeftButtonTrigger = OI.getButton(OI.Driver.POV270);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -318,24 +320,24 @@ public class RobotContainer {
     OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
 
     // Intake Buttons
-    OI.getTrigger(OI.Driver.RTrigger)
+    OI.getButton(OI.Driver.RTrigger)
         .and(() -> !intakeAlgeaMode && !coralStationMode)
         .whileTrue(intake.floorIntake());
-    OI.getTrigger(OI.Driver.RTrigger)
+    OI.getButton(OI.Driver.RTrigger)
         .and(() -> !intakeAlgeaMode && coralStationMode)
         .whileTrue(intake.humanPlayerIntake());
-    OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
-    OI.getTrigger(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
+    OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
+    OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
     Command locateCoral =
         new LocateCoral(
             sensors::getSensorState,
             intake,
-            coralOuttakeButton.or(OI.getTrigger(OI.Driver.RTrigger)));
+            coralOuttakeButton.or(OI.getButton(OI.Driver.RTrigger)));
 
     intake
         .intakeHasUnalignedCoralTrigger()
         .and(coralOuttakeButton.negate())
-        .and(OI.getTrigger(OI.Driver.RTrigger).negate())
+        .and(OI.getButton(OI.Driver.RTrigger).negate())
         .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
         .onTrue(locateCoral);
 
@@ -379,33 +381,33 @@ public class RobotContainer {
                   Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
                 }));
     // OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB());
-    OI.getTrigger(OI.Driver.LTrigger)
+    OI.getButton(OI.Driver.LTrigger)
         .and(() -> !elevatorNotL1 && !intakeAlgeaMode)
         .whileTrue(scoreL1);
     intake.setDefaultCommand(intake.Idle());
 
     // Scorer Buttons
-    OI.getTrigger(OI.Driver.LScoreTrigger)
+    OI.getButton(OI.Driver.LScoreTrigger)
         .and(() -> !intakeAlgeaMode && elevatorNotL1)
         .whileTrue(
             Robot.isReal()
                 ? coralScorer.runScorer(OI.getAxisSupplier(OI.Driver.LeftTriggerAxis))
                 : mapleSimArenaSubsystem.scoreCoral());
-    OI.getTrigger(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
+    OI.getButton(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
     OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
 
     // Algae Remover
     OI.getButton(OI.Operator.LBumper).toggleOnTrue(algeaRemover.removeUpCommand());
     OI.getButton(OI.Operator.RBumper).toggleOnTrue(algeaRemover.removeDownCommand());
-    OI.getTrigger(OI.Operator.LTrigger).whileTrue(algeaRemover.upCommand());
-    OI.getTrigger(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
+    OI.getButton(OI.Operator.LTrigger).whileTrue(algeaRemover.upCommand());
+    OI.getButton(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
 
     // Climber Buttons
-    // OI.getPOVButton(OI.Operator.DPAD_UP)
+    // OI.getButton(OI.Operator.DPAD_UP)
     //     .onTrue(climber.retract())
     //     .toggleOnTrue(intake.movePivot(kPivotClimbingAngle));
-    // OI.getPOVButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
-    // OI.getPOVButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
+    // OI.getButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
+    // OI.getButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
@@ -413,7 +415,12 @@ public class RobotContainer {
             ? () -> drive.setPose(driveSimulation.getSimulatedDriveTrainPose())
             : () ->
                 drive.setPose(
-                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+                    new Pose2d(
+                        drive.getPose().getTranslation(),
+                        new Rotation2d(
+                            DriverStation.getAlliance().get() == Alliance.Blue
+                                ? Degrees.zero()
+                                : Degrees.of(180)))); // zero gyro
 
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -572,7 +579,7 @@ public class RobotContainer {
           .until(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
           .asProxy();
     } else {
-      return coralScorer.scoreAutoCommand().until(coralScorer.hasCoralTrigger().negate()).asProxy();
+      return coralScorer.scoreAutoCommand().until(coralScorer.hasCoralTrigger().negate());
     }
   }
 
@@ -594,7 +601,7 @@ public class RobotContainer {
   public void seedEncoders() {
     intake.seedEncoder();
     algeaRemover.seedEncoder();
-    // climber.seedEncoder();
+    climber.seedEncoder();
   }
 
   public void resetSimulationField() {
