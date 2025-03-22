@@ -384,7 +384,7 @@ public class RobotContainer {
     OI.getButton(OI.Driver.LTrigger)
         .and(() -> !elevatorNotL1 && !intakeAlgeaMode)
         .whileTrue(scoreL1);
-    intake.setDefaultCommand(intake.Idle());
+    intake.setDefaultCommand(intake.Idle(() -> elevatorNotL1));
 
     // Scorer Buttons
     OI.getButton(OI.Driver.LScoreTrigger)

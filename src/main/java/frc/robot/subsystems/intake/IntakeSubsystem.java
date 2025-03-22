@@ -51,6 +51,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.Robot;
 import frc.robot.Sensors;
+import java.util.function.Supplier;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -354,15 +355,17 @@ public class IntakeSubsystem extends SubsystemBase {
         .withName("L1ScoreModeB");
   }
 
-  public Command Idle() {
-    return startEnd(
-            () -> {
-              goToPivotPosition(kPivotRetractAngle);
-              setIntakeMotor(0);
-              setConveyerMotor(0);
-              if (Robot.isSimulation()) intakeSim.stopIntake();
-            },
-            () -> {})
+  public Command Idle(Supplier<Boolean> elevatorNotL1) {
+    return run(() -> {
+          if (elevatorNotL1.get()) {
+            goToPivotPosition(kPivotRetractAngle);
+          } else {
+            goToPivotPosition(kPivotCoralStationAngle);
+          }
+          setIntakeMotor(0);
+          setConveyerMotor(0);
+          if (Robot.isSimulation()) intakeSim.stopIntake();
+        })
         .withName("IDLE");
   }
 
