@@ -341,6 +341,7 @@ public class RobotContainer {
         .intakeHasUnalignedCoralTrigger()
         .and(coralOuttakeButton.negate())
         .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
+        .and(intake.pivotAtSetpoint())
         .onTrue(locateCoral);
 
     intake
