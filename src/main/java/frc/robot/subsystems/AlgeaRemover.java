@@ -87,6 +87,7 @@ public class AlgeaRemover extends SubsystemBase {
                       "Algea Mech [0]", 1, 0, 10, new Color8Bit(Color.kDarkViolet)));
       SmartDashboard.putData("Mech2Ds/algea remover mech", mech);
     }
+    Logger.recordOutput("Algea Remover/Absolute Setpoint (Degrees)", Degrees.zero().in(Degrees));
   }
 
   public void seedEncoder() {
@@ -102,6 +103,7 @@ public class AlgeaRemover extends SubsystemBase {
         .setReference(
             angle.in(Rotations) * AlgeaRemoverConstants.kAlegeaGearRatio, ControlType.kPosition);
 
+    Logger.recordOutput("Algea Remover/Absolute Setpoint (Degrees)", angle.in(Degrees));
     Logger.recordOutput(
         "Algea Remover/Setpoint (Rotations)",
         angle.in(Rotations) * AlgeaRemoverConstants.kAlegeaGearRatio);

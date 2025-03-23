@@ -14,7 +14,7 @@
     "Kings",
     "Chads"
   ],
-  "defaultMaxVel": 3.5,
+  "defaultMaxVel": 3.75,
   "defaultMaxAccel": 2.0,
   "defaultMaxAngVel": 300.0,
   "defaultMaxAngAccel": 1200.0,

@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -72,6 +73,7 @@ public class Climber extends SubsystemBase {
   private DCMotor simClimberGearbox;
   private SingleJointedArmSim climberSimNormal;
   private SingleJointedArmSim climberSimLifting;
+  private SingleJointedArmSim simulator;
   private Mechanism2d climbMech;
   private MechanismRoot2d climbMechRoot1;
   private MechanismRoot2d climbMechRoot2;
@@ -316,7 +318,11 @@ public class Climber extends SubsystemBase {
 
   public Command extendFully() {
     return runClimber(ClimberConstants.kClimberExtendedSetpoint, 1)
-        .alongWith(Commands.runOnce(() -> toggleClimbingSim()));
+        .alongWith(
+            Commands.runOnce(
+                () -> {
+                  if (Robot.isSimulation()) toggleClimbingSim();
+                }));
   }
 
   private void setServoAngle(Servo servo, double angle) {
@@ -382,6 +388,7 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
+    double startTime = Timer.getFPGATimestamp();
     // This method will be called once per scheduler run
     // Front
     Logger.recordOutput(
@@ -393,6 +400,8 @@ public class Climber extends SubsystemBase {
     Logger.recordOutput(
         "Climber/Front/Absolute Encoder Position (Degrees)",
         Rotations.of(1 - climberFrontEncoder.get()).in(Degrees));
+    Logger.recordOutput(
+        "Climber/Front/Absolute Encoder Position (Rotations)", 1 - climberFrontEncoder.get());
     Logger.recordOutput(
         "Climber/Front/Motor/Current (Amps)",
         climberMotorFront.getStatorCurrent().getValue().in(Amps));
@@ -418,17 +427,32 @@ public class Climber extends SubsystemBase {
     Logger.recordOutput(
         "Climber/Current Command",
         this.getCurrentCommand() != null ? this.getCurrentCommand().getName() : "None");
+
+    double endTime = Timer.getFPGATimestamp();
+    Logger.recordOutput("Climber/Periodic Time (s)", (endTime - startTime));
   }
 
   @Override
   public void simulationPeriodic() {
+
+    double startTime = Timer.getFPGATimestamp();
+
     climbMechTargetLigament.setAngle(
         climberTargetAngle.minus(ClimberConstants.kClimberOffsetAngle).in(Degrees));
 
-    SingleJointedArmSim simulator = getSimulator();
-    simulator.setInputVoltage(climberMotorFront.getMotorVoltage().getValue().in(Volts));
-    simulator.update(Robot.defaultPeriodSecs);
-    climberMotorFront.setPosition(Radians.of(simulator.getAngleRads()));
+    simulator = getSimulator();
+
+    /*
+     * This is in an if statment because the simulator takes too many resources due to high gear
+     * ratio, so we only want to run it when climber is actively being used
+     */
+    // https://github.com/wpilibsuite/allwpilib/issues/6387
+    if (this.getCurrentCommand() != null) {
+      simulator.setInputVoltage(climberMotorFront.getMotorVoltage().getValue().in(Volts));
+      simulator.update(Robot.defaultPeriodSecs);
+      climberMotorFront.setPosition(Radians.of(simulator.getAngleRads()));
+    }
+
     climbMechLigament1.setAngle(
         Radians.of(simulator.getAngleRads())
             .minus(ClimberConstants.kClimberOffsetAngle)
@@ -440,16 +464,10 @@ public class Climber extends SubsystemBase {
             .plus(Degrees.of(180))
             .in(Degrees));
 
+    double endTime = Timer.getFPGATimestamp();
+    Logger.recordOutput("Climber/Simulation Periodic Time (s)", (endTime - startTime));
+
     Logger.recordOutput("Climber/Climber Angle", Radians.of(simulator.getAngleRads()).in(Degrees));
     Logger.recordOutput("Climber/Climbing", isClimbingStateSim);
-    // if (climberMotorFront.getPosition().getValue().gt(ClimberConstants.kClimberAtCageSetpoint)) {
-    //   if (simulator == climberSimNormal) {
-    //     toggleClimbingSim();
-    //   }
-    // } else {
-    //   if (simulator == climberSimLifting) {
-    //     toggleClimbingSim();
-    //   }
-    // }
   }
 }

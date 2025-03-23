@@ -99,27 +99,29 @@ public final class Constants {
 
     static {
       kClimberPID0.setKP(100);
-      kClimberPID0.setKD(5);
-      kClimberPID0.setKV(10);
+      kClimberPID0.setKD(0);
+      kClimberPID0.setKV(0);
 
-      kClimberPID1.setKP(200);
+      kClimberPID1.setKP(100);
       kClimberPID1.setKD(5);
-      kClimberPID1.setKV(10);
-      kClimberPID1.setKG(1);
+      kClimberPID1.setKV(15.12);
+      kClimberPID1.setKG(.62);
+      kClimberPID1.setGravityType(GravityTypeValue.Arm_Cosine);
     }
 
     // Mech Constants
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
     public static final Current kClimberIdleCurrentLimit = Amps.of(20);
-    public static final Current kClimberClimbingCurrentLimit = Amps.of(70);
+    public static final Current kClimberClimbingCurrentLimit = Amps.of(120);
     public static final double kGearRatio = 126;
 
     // Motor Setpoints
-    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-333.3);
-    public static final Angle kClimberBackOffsetAngle = Degrees.of(148.1);
+    // 120 Degrees for climb
+    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-112.3 - 180);
+    public static final Angle kClimberBackOffsetAngle = Degrees.of(236.1 - 180);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(-50).plus(kClimberOffsetAngle);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(-63).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
     public static final Angle kClimberSensorTolerance = Degrees.of(4);
@@ -143,13 +145,14 @@ public final class Constants {
   public static class CoralScorerConstants {
     public static final double kIntakeSpeed = -0.5;
     public static final double kScoreSpeed = -0.2;
-    public static final double kScoreAutoSpeed = -0.1;
+    public static final double kScoreAutoSpeed = -0.2;
+    public static final double kScoreMax = -0.7;
     public static final double kReverseSpeed = 0.25;
 
     public static final Distance kSensorDistnace = Inches.of(1.5);
 
-    public static final Distance kAlignSensorDistnace = Inches.of(5);
-    public static final Time kAlignSensorDebounce = Seconds.of(0.06);
+    public static final Distance kAlignSensorDistnace = Inches.of(5.5);
+    public static final Time kAlignSensorDebounce = Seconds.of(0);
   }
 
   // Signaling Constants
@@ -224,7 +227,7 @@ public final class Constants {
     public static final Distance kL0Height = Inches.of(0);
     public static final Distance kL2Height = Inches.of(18);
     public static final Distance kL3Height = Inches.of(30.9);
-    public static final Distance kL4Height = Inches.of(54);
+    public static final Distance kL4Height = Inches.of(55);
 
     public static final HowdyPID kElevatorPID = new HowdyPID();
 
@@ -286,9 +289,9 @@ public final class Constants {
 
     // Algea Arm Setpoints (// 35 Degrees is breaking point)
     public static final Angle kEncoderOffset = Rotations.of(0);
-    public static final Angle kAlgeaStowed = Degrees.of(170);
-    public static final Angle kRemoveUpAngle = Degrees.of(105);
-    public static final Angle kRemoveDownAngle = Degrees.of(40);
+    public static final Angle kAlgeaStowed = Degrees.of(200);
+    public static final Angle kRemoveUpAngle = Degrees.of(100);
+    public static final Angle kRemoveDownAngle = Degrees.of(50);
 
     // Simulation Constants
     public static final DCMotor kAlgeaGearbox = DCMotor.getNEO(1);
