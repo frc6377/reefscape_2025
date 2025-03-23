@@ -4,11 +4,13 @@
 
 package frc.robot.subsystems.intake;
 
+import static frc.robot.Constants.CoralScorerConstants.kAlignSpeed;
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
 import static frc.robot.Constants.IntakeConstants.kIntakeHandoffSpeed;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.CoralScorer;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
@@ -58,6 +60,9 @@ public class PassToScorer extends Command {
     intakeSubsystem.setIntakeMotor(0);
     intakeSubsystem.setConveyerMotor(0);
     coralScorer.scoreCommand().end(interrupted);
+    Commands.run(() -> coralScorer.setScoreMotor(kAlignSpeed))
+        .andThen(Commands.waitSeconds(2))
+        .andThen(() -> coralScorer.stopMotor());
     Logger.recordOutput("Pass To Scorer Ended", true);
   }
 
