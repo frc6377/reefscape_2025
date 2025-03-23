@@ -98,20 +98,21 @@ public final class Constants {
 
     static {
       kClimberPID0.setKP(100);
-      kClimberPID0.setKD(5);
-      kClimberPID0.setKV(10);
+      kClimberPID0.setKD(0);
+      kClimberPID0.setKV(0);
 
-      kClimberPID1.setKP(200);
+      kClimberPID1.setKP(100);
       kClimberPID1.setKD(5);
-      kClimberPID1.setKV(10);
-      kClimberPID1.setKG(1);
+      kClimberPID1.setKV(15.12);
+      kClimberPID1.setKG(.62);
+      kClimberPID1.setGravityType(GravityTypeValue.Arm_Cosine);
     }
 
     // Mech Constants
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
     public static final Current kClimberIdleCurrentLimit = Amps.of(20);
-    public static final Current kClimberClimbingCurrentLimit = Amps.of(70);
+    public static final Current kClimberClimbingCurrentLimit = Amps.of(120);
     public static final double kGearRatio = 126;
 
     // Motor Setpoints
