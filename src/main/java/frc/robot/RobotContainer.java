@@ -28,6 +28,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -100,6 +101,8 @@ public class RobotContainer {
   private final Trigger DownButtonTrigger = OI.getButton(OI.Driver.POV90);
   private final Trigger RightButtonTrigger = OI.getButton(OI.Driver.POV180);
   private final Trigger LeftButtonTrigger = OI.getButton(OI.Driver.POV270);
+
+  private Timer automaticScoreTimer = new Timer();
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -296,21 +299,25 @@ public class RobotContainer {
               SignalLogger.stop();
             }));
 
-    coralScorer
-        .scorerAlignedTrigger()
-        .and(coralScorer.hasCoralTrigger())
-        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
-        .and(elevator.elevatorAtCurrentSetpoint())
-        .whileTrue(
-            Commands.runEnd(
-                () -> {
-                  OI.Driver.setRumble(0.5);
-                  OI.Operator.setRumble(0.5);
-                },
-                () -> {
-                  OI.Driver.setRumble(0);
-                  OI.Operator.setRumble(0);
-                }));
+    Trigger automaticScoreTrigger =
+        coralScorer
+            .scorerAlignedTrigger()
+            .and(coralScorer.hasCoralTrigger())
+            .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
+            .and(elevator.elevatorAtCurrentSetpoint());
+
+    automaticScoreTrigger.whileTrue(
+        Commands.runEnd(
+            () -> {
+              OI.Driver.setRumble(0.5);
+              OI.Operator.setRumble(0.5);
+            },
+            () -> {
+              OI.Driver.setRumble(0);
+              OI.Operator.setRumble(0);
+            }));
+
+    automaticScoreTrigger.onTrue(Commands.waitSeconds(0.5).andThen(automaticScore()));
 
     // Elevator Buttons
     OI.getButton(OI.Driver.A).onTrue(elevator.L0());
@@ -615,5 +622,13 @@ public class RobotContainer {
   public void displaySimFieldToAdvantageScope() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
     mapleSimArenaSubsystem.updateRobotCoralPose(elevator.getElevatorHeight());
+  }
+
+  public Command automaticScore() {
+    if (coralScorer.scorerAlignedTrigger().getAsBoolean()) {
+      return coralScorer.scoreCommand();
+    } else {
+      return Commands.none();
+    }
   }
 }
