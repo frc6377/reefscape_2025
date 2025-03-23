@@ -39,7 +39,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FeildConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
-import frc.robot.Constants.IntakeConstants.IntakeModeEnum;
 import frc.robot.OI.Driver;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -81,10 +80,10 @@ public class RobotContainer {
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
   private final IntakeSubsystem intake;
-  private IntakeModeEnum intakeMode = IntakeModeEnum.GROUND_INTAKE;
 
-  private boolean elevatorL1 = true;
-
+  private boolean elevatorNotL1 = true;
+  private boolean intakeAlgeaMode = false;
+  private boolean coralStationMode = false;
   private Command scoreL1;
 
   private SwerveDriveSimulation driveSimulation;
@@ -199,11 +198,11 @@ public class RobotContainer {
             intakeFloorAutoCommand(),
             Commands.waitUntil(coralHandoffCompleteTrigger)));
     NamedCommands.registerCommand("Score", scorerAutoCommand());
-    NamedCommands.registerCommand("Set L1 Mode", Commands.runOnce(() -> elevatorL1 = true));
+    NamedCommands.registerCommand("Set L1 Mode", Commands.runOnce(() -> elevatorNotL1 = false));
     NamedCommands.registerCommand(
         "L1 Score",
         new SequentialCommandGroup(
-            Commands.runOnce(() -> elevatorL1 = true),
+            Commands.runOnce(() -> elevatorNotL1 = false),
             Commands.waitUntil(intake.intakeHasCoralTrigger()),
             scoreL1.asProxy().until(isDoneScoring.debounce(1))));
     NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
@@ -322,15 +321,13 @@ public class RobotContainer {
 
     // Intake Buttons
     OI.getButton(OI.Driver.RTrigger)
-        .and(() -> intakeMode == IntakeModeEnum.GROUND_INTAKE)
+        .and(() -> !intakeAlgeaMode && !coralStationMode)
         .whileTrue(intake.floorIntake());
     OI.getButton(OI.Driver.RTrigger)
-        .and(() -> intakeMode == IntakeModeEnum.CORAL_STATION)
+        .and(() -> !intakeAlgeaMode && coralStationMode)
         .whileTrue(intake.humanPlayerIntake());
-    OI.getButton(OI.Driver.RTrigger)
-        .and(() -> intakeMode == IntakeModeEnum.ALGAE)
-        .whileTrue(intake.algaeIntake())
-        .whileFalse(intake.algaeHold());
+    OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
+    OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
     Command locateCoral =
         new LocateCoral(
             sensors::getSensorState,
@@ -340,13 +337,13 @@ public class RobotContainer {
     intake
         .intakeHasUnalignedCoralTrigger()
         .and(coralOuttakeButton.negate())
-        .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
         .and(intake.pivotAtSetpoint())
+        .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
         .onTrue(locateCoral);
 
     intake
         .intakeHasCoralTrigger()
-        .and(() -> !elevatorL1)
+        .and(() -> elevatorNotL1)
         .and(coralOuttakeButton.negate())
         .and(() -> !CommandScheduler.getInstance().isScheduled(locateCoral))
         .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height))
@@ -359,77 +356,44 @@ public class RobotContainer {
                 : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
     coralOuttakeButton.whileTrue(intake.floorOuttake());
 
-    Logger.recordOutput("Intake/Modes/L1 Score Mode", elevatorL1);
-    Logger.recordOutput("Intake/Modes/Algae Mode", intakeMode == IntakeModeEnum.ALGAE);
-    Logger.recordOutput(
-        "Intake/Modes/Coral Station Mode", intakeMode == IntakeModeEnum.CORAL_STATION);
+    Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
+    Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
+    Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
     OI.getButton(OI.Operator.Y)
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  elevatorL1 = !elevatorL1;
-                  switch (intakeMode) {
-                    case SCORE_L1:
-                      intakeMode = IntakeModeEnum.GROUND_INTAKE;
-                      break;
-                    default:
-                      intakeMode = IntakeModeEnum.SCORE_L1;
-                      break;
-                  }
-                  Logger.recordOutput("Intake/Modes/L1 Score Mode", elevatorL1);
+                  elevatorNotL1 = !elevatorNotL1;
+                  Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
                 }));
     OI.getButton(OI.Operator.X)
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  switch (intakeMode) {
-                    case ALGAE:
-                      intakeMode = IntakeModeEnum.GROUND_INTAKE;
-                      break;
-
-                    default:
-                      intakeMode = IntakeModeEnum.ALGAE;
-                      break;
-                  }
-                  Logger.recordOutput(
-                      "Intake/Modes/Algae Mode", intakeMode == IntakeModeEnum.ALGAE);
+                  intakeAlgeaMode = !intakeAlgeaMode;
+                  Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
                 }));
     OI.getButton(OI.Operator.B)
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  switch (intakeMode) {
-                    case CORAL_STATION:
-                      intakeMode = IntakeModeEnum.GROUND_INTAKE;
-                      break;
-
-                    default:
-                      intakeMode = IntakeModeEnum.CORAL_STATION;
-                      break;
-                  }
-                  Logger.recordOutput(
-                      "Intake/Modes/Coral Station Mode",
-                      intakeMode == IntakeModeEnum.CORAL_STATION);
+                  coralStationMode = !coralStationMode;
+                  Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
                 }));
     // OI.getButton(OI.Driver.X).whileTrue(intake.l1ScoreModeB());
     OI.getButton(OI.Driver.LTrigger)
-        .and(() -> intakeMode == IntakeModeEnum.SCORE_L1)
+        .and(() -> !elevatorNotL1 && !intakeAlgeaMode)
         .whileTrue(scoreL1);
     intake.setDefaultCommand(intake.Idle());
 
     // Scorer Buttons
     OI.getButton(OI.Driver.LScoreTrigger)
-        .and(
-            () ->
-                intakeMode == IntakeModeEnum.CORAL_STATION
-                    || intakeMode == IntakeModeEnum.GROUND_INTAKE)
+        .and(() -> !intakeAlgeaMode && elevatorNotL1)
         .whileTrue(
             Robot.isReal()
                 ? coralScorer.runScorer(OI.getAxisSupplier(OI.Driver.LeftTriggerAxis))
                 : mapleSimArenaSubsystem.scoreCoral());
-    OI.getButton(OI.Driver.LTrigger)
-        .and(() -> intakeMode == IntakeModeEnum.ALGAE)
-        .whileTrue(intake.algaeOuttake());
+    OI.getButton(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
     OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
 
     // Algae Remover
