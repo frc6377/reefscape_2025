@@ -5,6 +5,7 @@ import com.ctre.phoenix.led.FireAnimation;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -88,6 +89,7 @@ public class Signaling extends SubsystemBase {
   }
 
   private void setCandle(RGB rgb) {
+    SmartDashboard.putString("Signaling/CANdle Color", rgb.toHex());
     setSection(rgb, 0, 8);
   }
 
@@ -110,6 +112,19 @@ public class Signaling extends SubsystemBase {
 
   private void setRumble(double intensity) {
     OI.Driver.setRumble(intensity);
+    OI.Operator.setRumble(intensity);
+  }
+
+  public Command startSignal(RGB color) {
+    return startEnd(
+        () -> {
+          setFullStrip(color);
+          setRumble(1);
+        },
+        () -> {
+          resetLEDs();
+          setRumble(0);
+        });
   }
 
   private void resetLEDs() {
@@ -126,6 +141,9 @@ public class Signaling extends SubsystemBase {
   }
 
   private void setSectionStrip(final RGB rgb, final int startID, final int count) {
+    if (startID <= 1) {
+      Logger.recordOutput("Signaling/LED Color", rgb.toHex());
+    }
     setSection(rgb, startID + 8, count);
   }
 

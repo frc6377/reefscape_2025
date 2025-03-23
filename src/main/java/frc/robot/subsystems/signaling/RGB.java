@@ -45,7 +45,7 @@ public class RGB {
   public final int white;
 
   public String toHex() {
-    return String.format("#%02x%02x%02x", red, green, blue);
+    return String.format("%02x%02x%02x", red, green, blue);
   }
 
   @Override

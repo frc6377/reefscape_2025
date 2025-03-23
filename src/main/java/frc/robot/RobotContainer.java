@@ -311,17 +311,7 @@ public class RobotContainer {
         .and(coralScorer.hasCoralTrigger())
         .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
         .and(elevator.elevatorAtCurrentSetpoint())
-        .whileTrue(
-            Commands.startEnd(
-                () -> {
-                  signaling.setColor(RGB.GREEN);
-                  OI.Driver.setRumble(0.5);
-                  OI.Operator.setRumble(0.5);
-                },
-                () -> {
-                  OI.Driver.setRumble(0);
-                  OI.Operator.setRumble(0);
-                }));
+        .whileTrue(signaling.startSignal(RGB.GREEN));
 
     // Elevator Buttons
     OI.getButton(OI.Driver.A).onTrue(elevator.L0());
