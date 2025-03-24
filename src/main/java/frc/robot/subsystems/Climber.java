@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DIOConstants;
@@ -68,6 +69,8 @@ public class Climber extends SubsystemBase {
   private boolean isBackServoEngaged = false;
 
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
+
+  private Trigger hardStopTrigger;
 
   // for simulation
   private DCMotor simClimberGearbox;
@@ -126,6 +129,9 @@ public class Climber extends SubsystemBase {
     backConfigs.CurrentLimits = currentLimit;
     climberMotorFront.getConfigurator().apply(frontConfigs);
     climberMotorBack.getConfigurator().apply(backConfigs);
+
+    hardStopTrigger = new Trigger(() -> climberFrontEncoder.get() > ClimberConstants.kClimberFrontHardStopAngle.in(Rotations) || climberBackEncoder.get() > ClimberConstants.kClimberBackHardStopAngle.in(Rotations));
+    hardStopTrigger.whileTrue(Commands.run(() -> {climberMotorFront.stopMotor(); climberMotorBack.stopMotor();}));
 
     Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
     Logger.recordOutput("Climber/Back/isBackServoEngaged", isBackServoEngaged);

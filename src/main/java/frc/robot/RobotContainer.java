@@ -244,7 +244,7 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-    configureTestButtonBindsing();
+    configureTestButtonBindings();
   }
 
   public EventLoop getTestEventLoop() {
@@ -255,7 +255,7 @@ public class RobotContainer {
     return new Trigger(testEventLoop, t);
   }
 
-  private void configureTestButtonBindsing() {
+  private void configureTestButtonBindings() {
     // Elevator Test Buttons
     // testTrig(OI.getPOVButton(OI.Driver.DPAD_UP))
     //     .whileTrue(elevator.setElvPercent(OI.getAxisSupplier(OI.Driver.RightY).get()));
@@ -274,8 +274,8 @@ public class RobotContainer {
 
     // Climber Test Buttons
     // testTrig(OI.getPOVButton(OI.Operator.DPAD_RIGHT)).onTrue(climber.servoToZero());
-    // testTrig(OI.getButton(OI.Driver.LBumper)).onTrue(climber.engageServo());
-    // testTrig(OI.getButton(OI.Driver.RBumper)).onTrue(climber.disengageServo());
+    testTrig(OI.getButton(OI.Driver.LBumper)).onTrue(climber.engageServo());
+    testTrig(OI.getButton(OI.Driver.RBumper)).onTrue(climber.disengageServo());
     // testTrig(OI.getTrigger(OI.Driver.RTrigger)).whileTrue(climber.runRaw(Volts.of(3)));
     // testTrig(OI.getTrigger(OI.Driver.LTrigger)).whileTrue(climber.runRaw(Volts.of(-3)));
     // // testTrig(OI.getButton(OI.Driver.B)).onTrue(climber.extendToCage());
@@ -397,8 +397,8 @@ public class RobotContainer {
     OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
 
     // Algae Remover
-    OI.getButton(OI.Operator.LBumper).toggleOnTrue(algeaRemover.removeUpCommand());
-    OI.getButton(OI.Operator.RBumper).toggleOnTrue(algeaRemover.removeDownCommand());
+    // OI.getButton(OI.Operator.LBumper).toggleOnTrue(algeaRemover.removeUpCommand());
+    // OI.getButton(OI.Operator.RBumper).toggleOnTrue(algeaRemover.removeDownCommand());
     OI.getButton(OI.Operator.LTrigger).whileTrue(algeaRemover.upCommand());
     OI.getButton(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
 

@@ -124,6 +124,8 @@ public final class Constants {
     public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
     public static final Angle kClimberSensorTolerance = Degrees.of(4);
+    public static final Angle kClimberFrontHardStopAngle = Degrees.of(280);
+    public static final Angle kClimberBackHardStopAngle = Degrees.of(280);
     public static final Angle kClimberDisengageAngle = Degrees.of(-45).plus(kClimberOffsetAngle);
 
     // Servo Setpoints
