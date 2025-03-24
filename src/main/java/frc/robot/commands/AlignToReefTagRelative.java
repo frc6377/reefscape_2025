@@ -39,9 +39,9 @@ public class AlignToReefTagRelative extends Command {
 
   public AlignToReefTagRelative(
       boolean isRightScore, String cameraName, Drive drivebase, Vision vision) {
-    xController = new PIDController(0.2, 0, 0); // Vertical movement
-    yController = new PIDController(0.2, 0, 0); // Horitontal movement
-    rotController = new PIDController(1, 0, 0); // Rotation
+    xController = ReefAlignConstants.kTranslationXController;
+    yController = ReefAlignConstants.kTranslationYController;
+    rotController = ReefAlignConstants.kRotationController;
     this.isRightScore = isRightScore;
     this.cameraName = cameraName;
     this.drivebase = drivebase;
@@ -126,7 +126,7 @@ public class AlignToReefTagRelative extends Command {
 
     Logger.recordOutput(NTFolder + "Tag Relative/Robot Pose", pose);
     Logger.recordOutput(
-        NTFolder + "Feild Relative/Robot Pose", vision.tagToFeildRelative(tagID, pose));
+        NTFolder + "Field Relative/Robot Pose", vision.tagToFeildRelative(tagID, pose));
 
     Logger.recordOutput(NTFolder + "PID/X Output", xSpeed);
     Logger.recordOutput(NTFolder + "PID/X Setpoint", xController.getSetpoint());

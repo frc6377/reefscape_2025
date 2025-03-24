@@ -25,6 +25,7 @@ import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -86,14 +87,14 @@ public final class Constants {
   public static class CANIDs {
     // Rev Can Bus
     // 1-8 Motor ID is reserved by the drivebase
-    public static final int kClimberMotorFront = 17; // FIXME
-    public static final int kClimberMotorBack = 16; // FIXME
-    public static final int kScorerMotor = 15;
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
-    public static final int kIntakeMotor = 13;
     public static final int kPivotMotor = 12;
+    public static final int kIntakeMotor = 13;
     public static final int kConveyorMotor = 14;
+    public static final int kScorerMotor = 15;
+    public static final int kClimberMotorBack = 16;
+    public static final int kClimberMotorFront = 17;
     public static final int kAlgeaMotor = 18;
   }
 
@@ -113,10 +114,10 @@ public final class Constants {
   }
 
   public static class SensorIDs {
+    public static final int kScorerSensorID = 1;
     public static final int kSensor2ID = 2;
     public static final int kSensor3ID = 3;
     public static final int kSensor4ID = 4;
-    public static final int kScorerSensorID = 1;
     public static final int kAlignmentSensorID = 5;
   }
 
@@ -141,7 +142,7 @@ public final class Constants {
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
     public static final Current kClimberIdleCurrentLimit = Amps.of(20);
     public static final Current kClimberClimbingCurrentLimit = Amps.of(70);
-    public static final double kGearRatio = 126;
+    public static final double kGearRatio = Robot.isReal() ? 126 : 10;
 
     // Motor Setpoints
     // 120 Degrees for climb
@@ -319,6 +320,7 @@ public final class Constants {
     public static final Angle kAlgeaStartingAngle = Rotations.of(-0.25);
   }
 
+  @SuppressWarnings("unused")
   public final class DrivetrainConstants {
     private static final RobotConfig kMainBotConfig =
         new RobotConfig(
@@ -409,13 +411,23 @@ public final class Constants {
   }
 
   public final class ReefAlignConstants {
+    // Target Poses
     public static final Pose2d kRightReefPose =
         new Pose2d(Meters.of(0.475), Meters.of(0.193), new Rotation2d(Degrees.of(-90)));
     public static final Pose2d kLeftReefPose =
         new Pose2d(Meters.of(0.475), Meters.of(-0.137), new Rotation2d(Degrees.of(-90)));
 
+    // PID Controllers
+    public static final PIDController kTranslationXController = new PIDController(0.2, 0, 0);
+    public static final PIDController kTranslationYController = new PIDController(0.2, 0, 0);
+    public static final PIDController kRotationController = new PIDController(1, 0, 0);
+    // Tuned in sim (might work on real bot)
+    // public static final PIDController kTranslationXController = new PIDController(2.5, 0, 0.1);
+    // public static final PIDController kTranslationYController = new PIDController(5, 0, 0.5);
+    // public static final PIDController kRotationController = new PIDController(10, 0, 0);
+
     public static final Angle kSetpointRotTolerance = Degrees.of(1);
-    public static final Distance kSetpointTolerance = Inches.of(0.25);
+    public static final Distance kSetpointTolerance = Inches.of(0.1);
 
     public static final Time kNoTagDebounce = Seconds.of(3);
     public static final Time kAtPoseDebounce = Seconds.of(0.1);
