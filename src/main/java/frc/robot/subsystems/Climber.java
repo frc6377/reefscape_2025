@@ -151,7 +151,7 @@ public class Climber extends SubsystemBase {
               simClimberGearbox,
               ClimberConstants.kGearRatio,
               Math.pow(ClimberConstants.kClimberArmLength.in(Meters), 2)
-                  * DrivetrainConstants.kRobotMass.in(Kilograms),
+                  * DrivetrainConstants.kRobotConfig.massKG,
               ClimberConstants.kClimberArmLength.in(Meters),
               ClimberConstants.kClimberArmMinAngle.in(Radians),
               ClimberConstants.kClimberArmMaxAngle.in(Radians),

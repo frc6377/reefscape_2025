@@ -14,12 +14,13 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.Constants.DrivetrainConstants.kBumperSize;
+import static frc.robot.Constants.DrivetrainConstants.kRobotConfig;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -38,7 +39,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -75,26 +75,23 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
               Math.hypot(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
-  // PathPlanner config constants
-  private static final RobotConfig PP_CONFIG = DrivetrainConstants.kRobotConfig;
-
   public static final DriveTrainSimulationConfig mapleSimConfig =
       DriveTrainSimulationConfig.Default()
-          .withRobotMass(DrivetrainConstants.kRobotMass)
+          .withRobotMass(Kilograms.of(DrivetrainConstants.kRobotConfig.massKG))
           .withCustomModuleTranslations(getModuleTranslations())
           .withGyro(COTS.ofPigeon2())
-          .withBumperSize(Meters.of(0.876), Meters.of(0.876))
+          .withBumperSize(kBumperSize, kBumperSize)
           .withSwerveModule(
               new SwerveModuleSimulationConfig(
-                  DCMotor.getKrakenX60(1),
-                  DCMotor.getKrakenX60(1),
+                  DrivetrainConstants.kRobotConfig.moduleConfig.driveMotor,
+                  DrivetrainConstants.kRobotConfig.moduleConfig.driveMotor,
                   TunerConstants.FrontLeft.DriveMotorGearRatio,
                   TunerConstants.FrontLeft.SteerMotorGearRatio,
                   Volts.of(TunerConstants.FrontLeft.DriveFrictionVoltage),
                   Volts.of(TunerConstants.FrontLeft.SteerFrictionVoltage),
                   Meters.of(TunerConstants.FrontLeft.WheelRadius),
                   KilogramSquareMeters.of(TunerConstants.FrontLeft.SteerInertia),
-                  DrivetrainConstants.kRobotConfig.wheelFrictionForce));
+                  DrivetrainConstants.kRobotConfig.moduleConfig.wheelCOF));
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
@@ -144,7 +141,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(new PIDConstants(5, 0.0, 0), new PIDConstants(5, 0.0, 0)),
-        PP_CONFIG,
+        kRobotConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
 
@@ -178,7 +175,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                 null,
                 null,
                 null,
-                (state) -> SignalLogger.writeString("SwerveTurn/state", state.toString())),
+                (state) -> {
+                  SignalLogger.writeString("SwerveTurn/state", state.toString());
+                  Logger.recordOutput("Odometry/SysID Mode/Turn SysID", state.toString());
+                }),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterizationTurning(voltage.in(Volts)), null, this));
 
@@ -313,25 +313,31 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(6)).withTimeout(0).andThen(sysId.quasistatic(direction));
+    return run(() -> runCharacterization(6))
+        .withTimeout(0)
+        .andThen(sysId.quasistatic(direction))
+        .withName("sysIdQuasistatic");
   }
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return run(() -> runCharacterization(6))
         .withTimeout(0)
-        .andThen(sysId.dynamic(direction).withTimeout(3));
+        .andThen(sysId.dynamic(direction).withTimeout(3))
+        .withName("sysIdDynamic");
   }
 
   public Command sysIdQuasistaticTurning(SysIdRoutine.Direction direction) {
     return run(() -> runCharacterization(6))
         .withTimeout(0)
-        .andThen(sysIdTurning.quasistatic(direction).withTimeout(20));
+        .andThen(sysIdTurning.quasistatic(direction).withTimeout(20))
+        .withName("sysIdQuasistaticTurning");
   }
 
   public Command sysIdDynamicTurning(SysIdRoutine.Direction direction) {
     return run(() -> runCharacterization(6))
         .withTimeout(0)
-        .andThen(sysIdTurning.dynamic(direction).withTimeout(20));
+        .andThen(sysIdTurning.dynamic(direction).withTimeout(20))
+        .withName("sysIdDynamicTurning");
   }
 
   public Command setPoseScored(String pole, int levelIndex) {

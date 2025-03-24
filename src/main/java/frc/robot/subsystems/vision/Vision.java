@@ -13,6 +13,7 @@
 
 package frc.robot.subsystems.vision;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static frc.robot.subsystems.vision.VisionConstants.*;
@@ -85,6 +86,10 @@ public class Vision extends SubsystemBase {
     return inputs[cameraIndex].tagIds[tagIndex];
   }
 
+  public boolean cameraHasTag(int cameraIndex) {
+    return !(inputs[cameraIndex].tagIds.length == 0);
+  }
+
   public int getClosestTagID(int cameraIndex) {
     if (inputs[cameraIndex].tagIds.length == 0) return -1;
 
@@ -135,21 +140,32 @@ public class Vision extends SubsystemBase {
     return robotFeildPose.relativeTo(tagPose).toPose2d();
   }
 
-  public Pose2d tagToFeildRelative(int cameraIndex, Pose2d robotTagRelativePose) {
-    return getClosestTagPose(cameraIndex)
+  public Pose2d tagToFeildRelative(int TagID, Pose2d robotTagRelativePose) {
+    return getTagPose(TagID)
         .transformBy(
             new Transform3d(
-                new Translation3d(robotTagRelativePose.getX(), robotTagRelativePose.getY(), 0),
-                new Rotation3d(0, 0, robotTagRelativePose.getRotation().getRadians())))
+                new Translation3d(
+                    robotTagRelativePose.getMeasureX(),
+                    robotTagRelativePose.getMeasureY(),
+                    Meters.zero()),
+                new Rotation3d(
+                    Degrees.zero(),
+                    Degrees.zero(),
+                    robotTagRelativePose.getRotation().getMeasure())))
         .toPose2d();
   }
 
-  public Pose2d getSimulatedPose(int cameraIndex) {
-    return feildToTagRelative(getVisionPose(cameraIndex), getTagPose(getTagID(cameraIndex, 0)));
+  public Pose3d tagToFeildRelative3d(int TagID, Pose3d robotTagRelativePose) {
+    return getTagPose(TagID)
+        .transformBy(
+            new Transform3d(
+                robotTagRelativePose.getTranslation(), robotTagRelativePose.getRotation()));
   }
 
   @Override
   public void periodic() {
+    Logger.recordOutput("Vision/Camera 1 Pose", VisionConstants.robotToCamera0);
+
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + i, inputs[i]);

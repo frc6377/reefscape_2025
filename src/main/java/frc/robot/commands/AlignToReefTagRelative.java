@@ -4,12 +4,14 @@
 
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -39,14 +41,16 @@ public class AlignToReefTagRelative extends Command {
       boolean isRightScore, String cameraName, Drive drivebase, Vision vision) {
     xController = new PIDController(0.2, 0, 0); // Vertical movement
     yController = new PIDController(0.2, 0, 0); // Horitontal movement
-    rotController = new PIDController(5, 0, 0); // Rotation
+    rotController = new PIDController(1, 0, 0); // Rotation
     this.isRightScore = isRightScore;
     this.cameraName = cameraName;
     this.drivebase = drivebase;
     this.vision = vision;
     addRequirements(drivebase);
 
-    canSeeTagTrigger = new Trigger(() -> vision.getTagCount() > 0);
+    canSeeTagTrigger =
+        new Trigger(
+            () -> Robot.isReal() ? LimelightHelpers.getTV(cameraName) : vision.cameraHasTag(0));
     atPoseTrigger =
         new Trigger(
             () ->
@@ -55,12 +59,15 @@ public class AlignToReefTagRelative extends Command {
 
   @Override
   public void initialize() {
+    tagID =
+        (int)
+            (Robot.isReal()
+                ? LimelightHelpers.getFiducialID(cameraName)
+                : vision.getClosestTagID(0));
+    tagPose = vision.getTagPose(tagID);
+
     targetPose =
         isRightScore ? ReefAlignConstants.kRightReefPose : ReefAlignConstants.kLeftReefPose;
-
-    rotController.setSetpoint(targetPose.getRotation().getRadians());
-    rotController.setTolerance(ReefAlignConstants.kSetpointRotTolerance.in(Radians));
-    rotController.enableContinuousInput(-Math.PI, Math.PI);
 
     xController.setSetpoint(targetPose.getMeasureX().in(Meters));
     xController.setTolerance(ReefAlignConstants.kSetpointTolerance.in(Meters));
@@ -68,63 +75,63 @@ public class AlignToReefTagRelative extends Command {
     yController.setSetpoint(targetPose.getMeasureY().in(Meters));
     yController.setTolerance(ReefAlignConstants.kSetpointTolerance.in(Meters));
 
-    tagID =
-        (int)
-            (Robot.isReal()
-                ? LimelightHelpers.getFiducialID(cameraName)
-                : vision.getClosestTagID(0));
-    tagPose = vision.getTagPose(tagID);
+    rotController.setSetpoint(targetPose.getRotation().getMeasure().in(Radians));
+    rotController.setTolerance(ReefAlignConstants.kSetpointRotTolerance.in(Radians));
+
+    Logger.recordOutput(NTFolder + "Tag Relative/Robot Target Pose", targetPose);
+    Logger.recordOutput(
+        NTFolder + "Field Relative/Robot Target Pose",
+        vision.tagToFeildRelative(tagID, targetPose));
+    Logger.recordOutput(NTFolder + "Tag Info/Target Side", isRightScore ? "Right" : "Left");
+    Logger.recordOutput(NTFolder + "Tag Info/Camera Name", cameraName);
+    Logger.recordOutput(NTFolder + "Tag Info/Tag ID", tagID);
+    Logger.recordOutput(NTFolder + "Tag Info/Tag Pose", tagPose);
   }
 
   @Override
   public void execute() {
-    Logger.recordOutput(
-        NTFolder + "Robot Info/Target Pose", vision.tagToFeildRelative(0, targetPose));
-    Logger.recordOutput(NTFolder + "Robot Info/Is Right Side", isRightScore);
-    Logger.recordOutput(NTFolder + "Tag Info/Camera Name", cameraName);
-    Logger.recordOutput(NTFolder + "Tag Info/Tag ID", tagID);
-    Logger.recordOutput(NTFolder + "Tag Info/Tag Pose", tagPose);
-
-    double[] pose;
+    Pose2d pose;
     double xSpeed, ySpeed, rotValue;
     ChassisSpeeds outputChassisSpeeds;
 
+    Logger.recordOutput(
+        NTFolder + "Tag Info/Fiducial Tag ID",
+        Robot.isReal()
+            ? (int) LimelightHelpers.getFiducialID(cameraName)
+            : vision.getClosestTagID(0));
+    Logger.recordOutput(NTFolder + "Tag Info/LL Has Target", canSeeTagTrigger.getAsBoolean());
+
     if (canSeeTagTrigger.getAsBoolean()) {
+      // get pose from LL
       if (Robot.isReal()) {
-        pose = LimelightHelpers.getBotPose_TargetSpace(cameraName);
-        xSpeed = xController.calculate(pose[2]);
-        ySpeed = -yController.calculate(pose[0]);
-        rotValue = -rotController.calculate(pose[4]);
+        double[] postions = LimelightHelpers.getBotPose_TargetSpace(cameraName);
+        pose = new Pose2d(-postions[2], postions[0], new Rotation2d(Degrees.of(postions[4])));
       } else {
         Pose3d robotFeildPose = vision.getVisionPose(0);
-        Pose2d robotPoseTagRelative = vision.feildToTagRelative(robotFeildPose, tagPose);
-        Logger.recordOutput(NTFolder + "Robot Info/Feild Relative Pose", robotFeildPose);
-        Logger.recordOutput(NTFolder + "Robot Info/Tag Relative Pose", robotPoseTagRelative);
-        pose = new double[0];
-        xSpeed = xController.calculate(robotPoseTagRelative.getMeasureX().in(Meters));
-        ySpeed = yController.calculate(robotPoseTagRelative.getMeasureY().in(Meters));
-        Logger.recordOutput(
-            NTFolder + "Rot Input", robotPoseTagRelative.getRotation().getRadians());
-        rotValue = rotController.calculate(robotPoseTagRelative.getRotation().getRadians());
+        pose = vision.feildToTagRelative(robotFeildPose, tagPose);
       }
+
+      xSpeed = xController.calculate(pose.getMeasureX().in(Meters));
+      ySpeed = -yController.calculate(pose.getMeasureY().in(Meters));
+      rotValue = rotController.calculate(pose.getRotation().getMeasure().in(Radians));
     } else {
-      pose = new double[0];
+      pose = new Pose2d();
       xSpeed = 0.0;
       ySpeed = 0.0;
       rotValue = 0.0;
     }
 
     // outputChassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rotValue);
-    outputChassisSpeeds = new ChassisSpeeds(-ySpeed, xSpeed, rotValue);
+    outputChassisSpeeds = new ChassisSpeeds(ySpeed, xSpeed, rotValue);
 
-    Logger.recordOutput(NTFolder + "Robot Info/ChassisSpeeds Output", outputChassisSpeeds);
+    Logger.recordOutput(NTFolder + "Tag Relative/Robot Pose", pose);
+    Logger.recordOutput(
+        NTFolder + "Feild Relative/Robot Pose", vision.tagToFeildRelative(tagID, pose));
 
-    Logger.recordOutput(NTFolder + "LimeLight/positions", pose);
-
-    Logger.recordOutput(NTFolder + "PID/X Speed", xSpeed);
+    Logger.recordOutput(NTFolder + "PID/X Output", xSpeed);
     Logger.recordOutput(NTFolder + "PID/X Setpoint", xController.getSetpoint());
 
-    Logger.recordOutput(NTFolder + "PID/Y Speed", ySpeed);
+    Logger.recordOutput(NTFolder + "PID/Y Output", ySpeed);
     Logger.recordOutput(NTFolder + "PID/Y Setpoint", yController.getSetpoint());
 
     Logger.recordOutput(NTFolder + "PID/Rot Value (Rads)", rotValue);
@@ -139,29 +146,18 @@ public class AlignToReefTagRelative extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    ChassisSpeeds outputChassisSpeeds = new ChassisSpeeds(0, 0, 0);
-
-    Logger.recordOutput(NTFolder + "Robot Info/ChassisSpeeds Output", outputChassisSpeeds);
-    Logger.recordOutput(NTFolder + "LimeLight/positions", new double[0]);
-
-    Logger.recordOutput(NTFolder + "PID/X Speed", 0.0);
-    Logger.recordOutput(NTFolder + "PID/X Setpoint", 0.0);
-
-    Logger.recordOutput(NTFolder + "PID/Y Speed", 0.0);
-    Logger.recordOutput(NTFolder + "PID/Y Setpoint", 0.0);
-
-    Logger.recordOutput(NTFolder + "PID/Rot Value", 0.0);
-    Logger.recordOutput(NTFolder + "PID/Rot Setpoint", 0.0);
-
     Logger.recordOutput(
         NTFolder + "LimeLight/Can See Tag Trigger", canSeeTagTrigger.getAsBoolean());
     Logger.recordOutput(NTFolder + "PID/At Pose Trigger", atPoseTrigger.getAsBoolean());
 
+    ChassisSpeeds outputChassisSpeeds = new ChassisSpeeds(0, 0, 0);
+    Logger.recordOutput(NTFolder + "Robot Info/ChassisSpeeds Output", outputChassisSpeeds);
     drivebase.runVelocity(outputChassisSpeeds);
   }
 
   @Override
   public boolean isFinished() {
     return atPoseTrigger.getAsBoolean();
+    // || (int) LimelightHelpers.getFiducialID(cameraName) != tagID;
   }
 }

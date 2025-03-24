@@ -1,14 +1,30 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Inch;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Kilograms;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
+import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.controller.HolonomicDriveController;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -16,11 +32,19 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.measure.*;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.robot.subsystems.drive.Drive;
 import java.util.HashMap;
+import org.littletonrobotics.junction.Logger;
 import utilities.HowdyMM;
 import utilities.HowdyPID;
 
@@ -296,18 +320,32 @@ public final class Constants {
   }
 
   public final class DrivetrainConstants {
-    private static RobotConfig tryLoadConfig() {
-      try {
-        return RobotConfig.fromGUISettings();
-      } catch (Exception e) {
-        throw new RuntimeException("Failed to load RobotConfig from GUI settings", e);
-      }
-    }
-
-    public static final RobotConfig kRobotConfig = tryLoadConfig();
-
-    // Robot Properties (Mostly for sim)
-    public static final Mass kRobotMass = Kilograms.of(kRobotConfig.massKG);
+    private static final RobotConfig kMainBotConfig =
+        new RobotConfig(
+            Pounds.of(106.6),
+            KilogramSquareMeters.of(15.098568),
+            new ModuleConfig(
+                Inches.of(1.880006),
+                MetersPerSecond.of(4.4),
+                1.2,
+                DCMotor.getKrakenX60Foc(1),
+                Amps.of(70),
+                1),
+            Drive.getModuleTranslations());
+    private static final RobotConfig kSecondBotConfig =
+        new RobotConfig(
+            Pounds.of(67.35),
+            KilogramSquareMeters.of(9.539292),
+            new ModuleConfig(
+                Inches.of(1.947733),
+                MetersPerSecond.of(4.4), // TODO Check real max speed of second robot
+                1.2,
+                DCMotor.getFalcon500Foc(1),
+                Amps.of(70),
+                1),
+            Drive.getModuleTranslations());
+    public static final RobotConfig kRobotConfig = kSecondBotConfig;
+    public static final Distance kBumperSize = Meters.of(0.889);
 
     // POV Drive Constants
     public static final LinearVelocity kPOVDriveSpeed = MetersPerSecond.of(1);
@@ -318,7 +356,7 @@ public final class Constants {
 
     // Constants from DriveCommands
     public static final double kWheelRadiusMaxVelocity = 1; // Rad/Sec
-    public static final double kWheelRadiusRampRate = 0.05; // Rad/Sec^2
+    public static final double kWheelRadiusRampRate = 0.1; // Rad/Sec^2
 
     // Path Finder/Planner Stuff
     public static final PathConstraints kPathConstraints =
@@ -328,12 +366,8 @@ public final class Constants {
             DegreesPerSecond.of(300).in(RadiansPerSecond),
             DegreesPerSecond.of(1200).in(RadiansPerSecond));
 
-    public static final PIDController kTranslationController = new PIDController(5, 0, 0);
     public static final ProfiledPIDController kRotationController =
         new ProfiledPIDController(5, 0.0, 0.01, new TrapezoidProfile.Constraints(8, 20));
-    public static final HolonomicDriveController kHolonomicDriveController =
-        new HolonomicDriveController(
-            kTranslationController, kTranslationController, kRotationController);
 
     public static final Pose3d kIntakeStartPose =
         new Pose3d(
@@ -364,6 +398,14 @@ public final class Constants {
             Meters.of(-0.251632),
             Meters.of(0.547541),
             new Rotation3d(Degrees.of(0), Degrees.of(-45), Degrees.of(90)));
+
+    static {
+      Logger.recordOutput("Odometry/Mech Poses/Intake Pose", kIntakeStartPose);
+      Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", kElvStage1Pose);
+      Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", kElvStage2Pose);
+      Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", kClimber1Pose);
+      Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", kClimber2Pose);
+    }
   }
 
   public final class ReefAlignConstants {
