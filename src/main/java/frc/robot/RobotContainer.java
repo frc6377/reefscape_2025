@@ -20,6 +20,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
@@ -28,15 +29,23 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.FeildConstants;
+import frc.robot.MechVisualizer.Axis;
 import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.AlgeaRemover;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.CoralScorer;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -85,6 +94,9 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  // Mech Visualizer
+  public final MechVisualizer mechVisualizer = new MechVisualizer(DrivetrainConstants.kMechPoses);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -572,6 +584,25 @@ public class RobotContainer {
   //       .andThen(algeaRemover.upCommand())
   //       .asProxy();
   // }
+
+  public void updateMechVisualizer() {
+    // // Update Intake
+    // mechVisualizer.updateIndexRotation(0, Axis.Y, intake.getPivotAngle());
+
+    // // Update Elevator
+    // Distance elevatorHeight = elevator.getElevatorHeight();
+    // mechVisualizer.updateIndexTranslation(1, Axis.Z, elevatorHeight.div(2));
+    // mechVisualizer.updateIndexTranslation(2, Axis.Z, elevatorHeight);
+
+    // // Update Climber
+    // mechVisualizer.updateIndexRotation(3, Axis.Y, climber.getFrontArmAngle());
+    // mechVisualizer.updateIndexRotation(4, Axis.Y, climber.getBackArmAngle());
+
+    // // Update Algae Remover
+    // mechVisualizer.updateIndexRotation(0, Axis.X, algeaRemover.getAlgaeArmAngle());
+
+    Logger.recordOutput("Mech Visualizer", mechVisualizer.getMechPoses());
+  }
 
   public void startSimAuto() {
     if (Constants.currentMode != Constants.Mode.SIM) return;

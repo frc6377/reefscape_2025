@@ -237,6 +237,14 @@ public class Climber extends SubsystemBase {
     }
   }
 
+  public Angle getFrontArmAngle() {
+    return climberMotorFront.getPosition().getValue();
+  }
+
+  public Angle getBackArmAngle() {
+    return climberMotorBack.getPosition().getValue();
+  }
+
   public Command runRaw(Voltage voltage) {
     return startEnd(
         () -> {
