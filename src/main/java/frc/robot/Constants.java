@@ -371,6 +371,35 @@ public final class Constants {
     public static final ProfiledPIDController kRotationController =
         new ProfiledPIDController(5, 0.0, 0.01, new TrapezoidProfile.Constraints(8, 20));
 
+    public static final Pose3d[] kMechPoses =
+        new Pose3d[] {
+          // Intake
+          new Pose3d(
+              Meters.of(0.195051), Meters.of(0.091696), Meters.of(0.241039), new Rotation3d()),
+          // Elevator
+          new Pose3d(
+              Meters.of(-0.0635), Meters.of(-0.236448), Meters.of(0.117475), new Rotation3d()),
+          // Coral Scorer
+          new Pose3d(
+              Meters.of(-0.058686), Meters.of(-0.236449), Meters.of(0.201601), new Rotation3d()),
+          // Climber Back
+          new Pose3d(
+              Meters.of(-0.160211), Meters.of(0.010763), Meters.of(0.133263), new Rotation3d()),
+          // Climber Front
+          new Pose3d(
+              Meters.of(0.160211), Meters.of(0.010763), Meters.of(0.133263), new Rotation3d()),
+          // Algae Remover
+          new Pose3d(
+              Meters.of(-0.116593), Meters.of(-0.329488), Meters.of(0.9525), new Rotation3d()),
+        };
+
+    public static final Pose3d kRobotCoralPose =
+        new Pose3d(
+            Meters.of(0.037449),
+            Meters.of(-0.251632),
+            Meters.of(0.547541),
+            new Rotation3d(Degrees.of(0), Degrees.of(-45), Degrees.of(90)));
+
     public static final Pose3d kIntakeStartPose =
         new Pose3d(
             Meters.of(0.191591),
@@ -402,6 +431,7 @@ public final class Constants {
             new Rotation3d(Degrees.of(0), Degrees.of(-45), Degrees.of(90)));
 
     static {
+      Logger.recordOutput("Odometry/Mech Poses List", kMechPoses);
       Logger.recordOutput("Odometry/Mech Poses/Intake Pose", kIntakeStartPose);
       Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", kElvStage1Pose);
       Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", kElvStage2Pose);
