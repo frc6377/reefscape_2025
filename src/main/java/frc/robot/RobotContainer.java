@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.CoralScorerConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FeildConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
@@ -47,10 +48,20 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
-import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOSim;
+import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
+import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
-import frc.robot.subsystems.vision.*;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import java.util.Set;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -353,12 +364,18 @@ public class RobotContainer {
                     .conveyerInCommand()
                     .alongWith(coralScorer.intakeCommand())
                     .until(coralHandoffCompleteTrigger)
+                    .andThen(
+                        Commands.run(
+                                () -> coralScorer.setScoreMotor(CoralScorerConstants.kAlignSpeed))
+                            .andThen(Commands.waitSeconds(2))
+                            .andThen(() -> coralScorer.stopMotor()))
                 : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
     coralOuttakeButton.whileTrue(intake.floorOuttake());
 
     Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
     Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
     Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
+
     OI.getButton(OI.Operator.Y)
         .onTrue(
             Commands.runOnce(
