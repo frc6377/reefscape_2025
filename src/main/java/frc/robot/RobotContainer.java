@@ -102,8 +102,6 @@ public class RobotContainer {
   private final Trigger RightButtonTrigger = OI.getButton(OI.Driver.POV180);
   private final Trigger LeftButtonTrigger = OI.getButton(OI.Driver.POV270);
 
-  private Timer automaticScoreTimer = new Timer();
-
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
