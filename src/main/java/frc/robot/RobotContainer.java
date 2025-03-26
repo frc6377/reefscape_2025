@@ -314,7 +314,7 @@ public class RobotContainer {
               OI.Operator.setRumble(0);
             }));
 
-    automaticScoreTrigger.onTrue(Commands.waitSeconds(0.5).andThen(automaticScore()));
+    automaticScoreTrigger.debounce(0.5).onTrue(coralScorer.scoreCommand());
 
     // Elevator Buttons
     OI.getButton(OI.Driver.A).onTrue(elevator.L0());
@@ -619,13 +619,5 @@ public class RobotContainer {
   public void displaySimFieldToAdvantageScope() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
     mapleSimArenaSubsystem.updateRobotCoralPose(elevator.getElevatorHeight());
-  }
-
-  public Command automaticScore() {
-    if (coralScorer.scorerAlignedTrigger().getAsBoolean()) {
-      return coralScorer.scoreCommand();
-    } else {
-      return Commands.none();
-    }
-  }
+  } 
 }
