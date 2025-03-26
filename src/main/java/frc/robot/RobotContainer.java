@@ -301,7 +301,8 @@ public class RobotContainer {
             .scorerAlignedTrigger()
             .and(coralScorer.hasCoralTrigger())
             .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
-            .and(elevator.elevatorAtCurrentSetpoint());
+            .and(elevator.elevatorAtCurrentSetpoint())
+            .and(() -> DriverStation.isTeleopEnabled());
 
     automaticScoreTrigger.whileTrue(
         Commands.runEnd(
@@ -314,7 +315,7 @@ public class RobotContainer {
               OI.Operator.setRumble(0);
             }));
 
-    automaticScoreTrigger.debounce(0.5).onTrue(coralScorer.scoreCommand());
+    automaticScoreTrigger.debounce(0.5).onTrue(coralScorer.scoreCommand().until(coralScorer.hasCoralTrigger().negate()));  //TODO: Make sure this doesn't conflict with auto
 
     // Elevator Buttons
     OI.getButton(OI.Driver.A).onTrue(elevator.L0());
