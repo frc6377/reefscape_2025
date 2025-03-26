@@ -36,11 +36,16 @@ import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.ReefAlignConstants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.util.LimelightHelpers;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Set;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
   private DriveCommands() {}
@@ -66,6 +71,35 @@ public class DriveCommands {
     return new DeferredCommand(
             () -> AutoBuilder.pathfindThenFollowPath(targetPath, kPathConstraints), drive)
         .withName("Go To Path");
+  }
+
+  public static Command AlignToReef(boolean isRightScore, Drive drive, Vision vision) {
+    return new DeferredCommand(
+            () -> {
+              Pose2d TagPose =
+                  vision
+                      .convertLLPose(
+                          LimelightHelpers.getTargetPose3d_RobotSpace(VisionConstants.camera0Name))
+                      .toPose2d();
+              Pose2d TagRelativeTargetPose =
+                  isRightScore
+                      ? ReefAlignConstants.kRightReefPose
+                      : ReefAlignConstants.kLeftReefPose;
+              Pose2d targetPose =
+                  TagPose.transformBy(
+                      new Transform2d(
+                          TagRelativeTargetPose.getTranslation(),
+                          new Rotation2d(
+                              TagRelativeTargetPose.getRotation().getMeasure().times(-1))));
+              Pose2d fieldRelativePose = vision.robotToFeildRelative(drive.getPose(), targetPose);
+
+              Logger.recordOutput("Auto Align/Target Pose", targetPose);
+              Logger.recordOutput("Auto Align/fieldRelativePose", fieldRelativePose);
+              Logger.recordOutput("Auto Align/Testing", true);
+              return AutoBuilder.pathfindToPose(fieldRelativePose, kPathConstraints, 0.0);
+            },
+            Set.of(drive))
+        .withName("Align To Reef");
   }
 
   public static Command RunVelocity(Drive drive, LinearVelocity velocity, double timeSec) {

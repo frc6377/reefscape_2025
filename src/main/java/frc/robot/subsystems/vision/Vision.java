@@ -24,6 +24,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
@@ -33,6 +34,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
+import frc.robot.util.LimelightHelpers;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -140,6 +142,10 @@ public class Vision extends SubsystemBase {
     return robotFeildPose.relativeTo(tagPose).toPose2d();
   }
 
+  public Pose2d robotToFeildRelative(Pose2d robotPose, Pose2d pose) {
+    return robotPose.transformBy(new Transform2d(pose.getTranslation(), pose.getRotation()));
+  }
+
   public Pose2d tagToFeildRelative(int TagID, Pose2d robotTagRelativePose) {
     return getTagPose(TagID)
         .transformBy(
@@ -162,9 +168,23 @@ public class Vision extends SubsystemBase {
                 robotTagRelativePose.getTranslation(), robotTagRelativePose.getRotation()));
   }
 
+  public Pose3d convertLLPose(Pose3d pose) {
+    return new Pose3d(
+        pose.getMeasureZ().times(-1),
+        pose.getMeasureX(),
+        pose.getMeasureY().times(-1),
+        new Rotation3d(Degrees.zero(), Degrees.zero(), pose.getRotation().getMeasureY()));
+  }
+
   @Override
   public void periodic() {
     Logger.recordOutput("Vision/Camera 1 Pose", VisionConstants.robotToCamera0);
+    Logger.recordOutput(
+        "Auto Align/Tag Pose",
+        LimelightHelpers.getTargetPose3d_RobotSpace(VisionConstants.camera0Name));
+    Logger.recordOutput(
+        "Auto Align/Tag Pose (Converted)",
+        convertLLPose(LimelightHelpers.getTargetPose3d_RobotSpace(VisionConstants.camera0Name)));
 
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);

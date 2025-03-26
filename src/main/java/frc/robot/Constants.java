@@ -31,6 +31,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
@@ -43,7 +44,7 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import frc.robot.subsystems.drive.Drive;
+import frc.robot.generated.TunerConstants;
 import java.util.HashMap;
 import org.littletonrobotics.junction.Logger;
 import utilities.HowdyMM;
@@ -322,7 +323,7 @@ public final class Constants {
 
   @SuppressWarnings("unused")
   public final class DrivetrainConstants {
-    private static final RobotConfig kMainBotConfig =
+    public static final RobotConfig kMainBotConfig =
         new RobotConfig(
             Pounds.of(106.6),
             KilogramSquareMeters.of(15.098568),
@@ -333,8 +334,17 @@ public final class Constants {
                 DCMotor.getKrakenX60Foc(1),
                 Amps.of(70),
                 1),
-            Drive.getModuleTranslations());
-    private static final RobotConfig kSecondBotConfig =
+            new Translation2d[] {
+              new Translation2d(
+                  TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
+              new Translation2d(
+                  TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
+              new Translation2d(
+                  TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
+              new Translation2d(
+                  TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
+            });
+    public static final RobotConfig kSecondBotConfig =
         new RobotConfig(
             Pounds.of(67.35),
             KilogramSquareMeters.of(9.539292),
@@ -345,7 +355,16 @@ public final class Constants {
                 DCMotor.getFalcon500Foc(1),
                 Amps.of(70),
                 1),
-            Drive.getModuleTranslations());
+            new Translation2d[] {
+              new Translation2d(
+                  TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
+              new Translation2d(
+                  TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
+              new Translation2d(
+                  TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
+              new Translation2d(
+                  TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
+            });
     public static final RobotConfig kRobotConfig = kSecondBotConfig;
     public static final Distance kBumperSize = Meters.of(0.889);
 
@@ -364,7 +383,7 @@ public final class Constants {
     public static final PathConstraints kPathConstraints =
         new PathConstraints(
             3.5,
-            2,
+            2.5,
             DegreesPerSecond.of(300).in(RadiansPerSecond),
             DegreesPerSecond.of(1200).in(RadiansPerSecond));
 
@@ -443,9 +462,9 @@ public final class Constants {
   public final class ReefAlignConstants {
     // Target Poses
     public static final Pose2d kRightReefPose =
-        new Pose2d(Meters.of(0.475), Meters.of(0.193), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Meters.of(-0.475), Meters.of(0.193), new Rotation2d(Degrees.of(-90)));
     public static final Pose2d kLeftReefPose =
-        new Pose2d(Meters.of(0.475), Meters.of(-0.137), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Meters.of(-0.475), Meters.of(-0.137), new Rotation2d(Degrees.of(-90)));
 
     // PID Controllers
     public static final PIDController kTranslationXController = new PIDController(0.2, 0, 0);

@@ -39,6 +39,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -77,21 +78,21 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
   public static final DriveTrainSimulationConfig mapleSimConfig =
       DriveTrainSimulationConfig.Default()
-          .withRobotMass(Kilograms.of(DrivetrainConstants.kRobotConfig.massKG))
+          .withRobotMass(Pounds.of(106.6))
           .withCustomModuleTranslations(getModuleTranslations())
           .withGyro(COTS.ofPigeon2())
           .withBumperSize(kBumperSize, kBumperSize)
           .withSwerveModule(
               new SwerveModuleSimulationConfig(
-                  DrivetrainConstants.kRobotConfig.moduleConfig.driveMotor,
-                  DrivetrainConstants.kRobotConfig.moduleConfig.driveMotor,
+                  DCMotor.getKrakenX60Foc(1),
+                  DCMotor.getKrakenX60Foc(1),
                   TunerConstants.FrontLeft.DriveMotorGearRatio,
                   TunerConstants.FrontLeft.SteerMotorGearRatio,
                   Volts.of(TunerConstants.FrontLeft.DriveFrictionVoltage),
                   Volts.of(TunerConstants.FrontLeft.SteerFrictionVoltage),
                   Meters.of(TunerConstants.FrontLeft.WheelRadius),
                   KilogramSquareMeters.of(TunerConstants.FrontLeft.SteerInertia),
-                  DrivetrainConstants.kRobotConfig.moduleConfig.wheelCOF));
+                  1.2));
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;

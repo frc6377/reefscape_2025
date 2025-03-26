@@ -20,7 +20,6 @@ import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
@@ -31,17 +30,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.FeildConstants;
-import frc.robot.MechVisualizer.Axis;
 import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.AlgeaRemover;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.CoralScorer;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
 import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -435,9 +428,7 @@ public class RobotContainer {
     Command alignRightCommand =
         new AlignToReefTagRelative(true, VisionConstants.camera0Name, drive, vision)
             .withName("AlignToReefTagRelative");
-    OI.getButton(OI.Driver.RSB)
-        .and(() -> !alignRightCommand.isFinished())
-        .whileTrue(alignRightCommand);
+    OI.getButton(OI.Driver.RSB).onTrue(DriveCommands.AlignToReef(true, drive, vision));
     // OI.getButton(OI.Driver.LSB)
     //     .and(() -> !alignLeftCommand.isFinished())
     //     .whileTrue(alignLeftCommand);
