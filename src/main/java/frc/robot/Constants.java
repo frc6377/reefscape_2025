@@ -23,7 +23,9 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -323,6 +325,14 @@ public final class Constants {
 
   @SuppressWarnings("unused")
   public final class DrivetrainConstants {
+    public static final Translation2d[] kModuleOffsets =
+        new Translation2d[] {
+          new Translation2d(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
+          new Translation2d(
+              TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
+          new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
+          new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
+        };
     public static final RobotConfig kMainBotConfig =
         new RobotConfig(
             Pounds.of(106.6),
@@ -334,16 +344,7 @@ public final class Constants {
                 DCMotor.getKrakenX60Foc(1),
                 Amps.of(70),
                 1),
-            new Translation2d[] {
-              new Translation2d(
-                  TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
-              new Translation2d(
-                  TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
-              new Translation2d(
-                  TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
-              new Translation2d(
-                  TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
-            });
+            kModuleOffsets);
     public static final RobotConfig kSecondBotConfig =
         new RobotConfig(
             Pounds.of(67.35),
@@ -355,16 +356,7 @@ public final class Constants {
                 DCMotor.getFalcon500Foc(1),
                 Amps.of(70),
                 1),
-            new Translation2d[] {
-              new Translation2d(
-                  TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
-              new Translation2d(
-                  TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
-              new Translation2d(
-                  TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
-              new Translation2d(
-                  TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
-            });
+            kModuleOffsets);
     public static final RobotConfig kRobotConfig = kSecondBotConfig;
     public static final Distance kBumperSize = Meters.of(0.889);
 
@@ -383,12 +375,15 @@ public final class Constants {
     public static final PathConstraints kPathConstraints =
         new PathConstraints(
             3.5,
-            2.5,
+            2,
             DegreesPerSecond.of(300).in(RadiansPerSecond),
             DegreesPerSecond.of(1200).in(RadiansPerSecond));
+    public static final PPHolonomicDriveController KPPDriveController =
+        new PPHolonomicDriveController(new PIDConstants(5, 0, 0), new PIDConstants(0.1, 0, 0));
 
+    // For Drive At Angle Command
     public static final ProfiledPIDController kRotationController =
-        new ProfiledPIDController(5, 0.0, 0.01, new TrapezoidProfile.Constraints(8, 20));
+        new ProfiledPIDController(5, 0, 0.01, new TrapezoidProfile.Constraints(8, 20));
 
     public static final Pose3d[] kMechPoses =
         new Pose3d[] {
@@ -419,57 +414,22 @@ public final class Constants {
             Meters.of(0.547541),
             new Rotation3d(Degrees.of(0), Degrees.of(-45), Degrees.of(90)));
 
-    public static final Pose3d kIntakeStartPose =
-        new Pose3d(
-            Meters.of(0.191591),
-            Meters.of(0.091696),
-            Meters.of(0.242354),
-            new Rotation3d(Degrees.of(0), Degrees.of(-90), Degrees.of(0)));
-    public static final Pose3d kElvStage1Pose =
-        new Pose3d(Meters.of(-0.0635), Meters.of(-0.236449), Meters.of(0.1016), new Rotation3d());
-    public static final Pose3d kElvStage2Pose =
-        new Pose3d(
-            Meters.of(-0.063479), Meters.of(-0.236448), Meters.of(0.22065), new Rotation3d());
-    public static final Pose3d kClimber1Pose =
-        new Pose3d(
-            Meters.of(0.16021),
-            Meters.of(0.004064),
-            Meters.of(0.133263),
-            new Rotation3d(Degrees.of(79), Degrees.of(0), Degrees.of(-90)));
-    public static final Pose3d kClimber2Pose =
-        new Pose3d(
-            Meters.of(-0.160211),
-            Meters.of(0.004064),
-            Meters.of(0.133263),
-            new Rotation3d(Degrees.of(-100), Degrees.of(0), Degrees.of(-90)));
-    public static final Pose3d kCoralScorerPose =
-        new Pose3d(
-            Meters.of(0.037449),
-            Meters.of(-0.251632),
-            Meters.of(0.547541),
-            new Rotation3d(Degrees.of(0), Degrees.of(-45), Degrees.of(90)));
-
     static {
       Logger.recordOutput("Odometry/Mech Poses List", kMechPoses);
-      Logger.recordOutput("Odometry/Mech Poses/Intake Pose", kIntakeStartPose);
-      Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", kElvStage1Pose);
-      Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", kElvStage2Pose);
-      Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", kClimber1Pose);
-      Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", kClimber2Pose);
     }
   }
 
   public final class ReefAlignConstants {
     // Target Poses
     public static final Pose2d kRightReefPose =
-        new Pose2d(Meters.of(-0.475), Meters.of(0.193), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Meters.of(0.5), Meters.of(0.193), new Rotation2d(Degrees.of(90)));
     public static final Pose2d kLeftReefPose =
-        new Pose2d(Meters.of(-0.475), Meters.of(-0.137), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Meters.of(0.5), Meters.of(-0.137), new Rotation2d(Degrees.of(90)));
 
     // PID Controllers
-    public static final PIDController kTranslationXController = new PIDController(0.2, 0, 0);
-    public static final PIDController kTranslationYController = new PIDController(0.2, 0, 0);
-    public static final PIDController kRotationController = new PIDController(1, 0, 0);
+    public static final PIDController kTranslationXController = new PIDController(0.1, 0, 0);
+    public static final PIDController kTranslationYController = new PIDController(0.1, 0, 0);
+    public static final PIDController kRotationController = new PIDController(0.1, 0, 0);
     // Tuned in sim (might work on real bot)
     // public static final PIDController kTranslationXController = new PIDController(2.5, 0, 0.1);
     // public static final PIDController kTranslationYController = new PIDController(5, 0, 0.5);

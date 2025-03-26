@@ -127,8 +127,6 @@ public class Climber extends SubsystemBase {
 
     Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
     Logger.recordOutput("Climber/Back/isBackServoEngaged", isBackServoEngaged);
-    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", DrivetrainConstants.kClimber1Pose);
-    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", DrivetrainConstants.kClimber2Pose);
 
     // For simulation
     // simulates the entire simulation, not just one arm

@@ -19,7 +19,6 @@ import au.grapplerobotics.CanBridge;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -29,7 +28,6 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.util.LocalADStarAK;
 import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -57,8 +55,6 @@ public class Robot extends LoggedRobot {
   private double lastTime = Timer.getFPGATimestamp() * 1000;
 
   public Robot() {
-    Pathfinding.setPathfinder(new LocalADStarAK());
-
     // For TOF Sensor
     CanBridge.runTCP();
 
@@ -141,7 +137,7 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
     lastTime = newTime;
 
-    // CommandScheduler.getInstance().printWatchdogEpochs();
+    CommandScheduler.getInstance().printWatchdogEpochs();
   }
 
   /** This function is called once when the robot is disabled. */
@@ -149,7 +145,7 @@ public class Robot extends LoggedRobot {
   public void disabledInit() {
     robotContainer.resetSimulationField();
     robotContainer.seedEncoders();
-    isUsingVision = false;
+    isUsingVision = true;
   }
 
   /** This function is called periodically when disabled. */

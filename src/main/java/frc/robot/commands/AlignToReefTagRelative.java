@@ -108,7 +108,7 @@ public class AlignToReefTagRelative extends Command {
         pose = new Pose2d(-postions[2], postions[0], new Rotation2d(Degrees.of(postions[4])));
       } else {
         Pose3d robotFeildPose = vision.getVisionPose(0);
-        pose = vision.feildToTagRelative(robotFeildPose, tagPose);
+        pose = vision.feildToTagRelative(tagPose, robotFeildPose).toPose2d();
       }
 
       xSpeed = xController.calculate(pose.getMeasureX().in(Meters));

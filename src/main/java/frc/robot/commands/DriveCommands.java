@@ -13,12 +13,16 @@
 
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radians;
 import static frc.robot.Constants.DrivetrainConstants.kPathConstraints;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -37,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.ReefAlignConstants;
+import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -67,6 +72,63 @@ public class DriveCommands {
         .withName("Go To Pose");
   }
 
+  public static Command GoToPosePID(Pose2d targetPose, Supplier<Pose2d> robotPose, Drive drive) {
+    PIDController xController = ReefAlignConstants.kTranslationXController;
+    PIDController yController = ReefAlignConstants.kTranslationYController;
+    PIDController rotController = ReefAlignConstants.kRotationController;
+    Trigger xTrigger = new Trigger(() -> xController.atSetpoint()).debounce(0.05);
+    Trigger yTrigger = new Trigger(() -> yController.atSetpoint()).debounce(0.05);
+    Trigger rotTrigger = new Trigger(() -> rotController.atSetpoint()).debounce(0.05);
+    Trigger endTrigger =
+        new Trigger(
+            () ->
+                xController.atSetpoint() && yController.atSetpoint() && rotController.atSetpoint());
+
+    return Commands.sequence(
+            Commands.runOnce(
+                () -> {
+                  xController.setSetpoint(targetPose.getMeasureX().in(Meters));
+                  xController.setTolerance(ReefAlignConstants.kSetpointTolerance.in(Meters));
+
+                  yController.setSetpoint(targetPose.getMeasureY().in(Meters));
+                  yController.setTolerance(ReefAlignConstants.kSetpointTolerance.in(Meters));
+
+                  rotController.setSetpoint(targetPose.getRotation().getMeasure().in(Degrees));
+                  rotController.setTolerance(ReefAlignConstants.kSetpointRotTolerance.in(Degrees));
+                }),
+            Commands.run(
+                    () -> {
+                      double xSpeed =
+                          -xController.calculate(robotPose.get().getMeasureX().in(Meters));
+                      double ySpeed =
+                          -yController.calculate(robotPose.get().getMeasureY().in(Meters));
+                      double rotValue =
+                          rotController.calculate(
+                              robotPose.get().getRotation().getMeasure().in(Degrees));
+
+                      Logger.recordOutput("Auto Align/PID/X Output", xSpeed);
+                      Logger.recordOutput("Auto Align/PID/X Setpoint", xController.getSetpoint());
+                      Logger.recordOutput("Auto Align/PID/X At Setpoint", xController.atSetpoint());
+
+                      Logger.recordOutput("Auto Align/PID/Y Output", ySpeed);
+                      Logger.recordOutput("Auto Align/PID/Y Setpoint", yController.getSetpoint());
+                      Logger.recordOutput("Auto Align/PID/Y At Setpoint", yController.atSetpoint());
+
+                      Logger.recordOutput(
+                          "Auto Align/PID/Rot Value (Rads)", Degrees.of(rotValue).in(Radians));
+                      Logger.recordOutput(
+                          "Auto Align/PID/Rot Setpoint (Rads)",
+                          Degrees.of(rotController.getSetpoint()).in(Radians));
+                      Logger.recordOutput(
+                          "Auto Align/PID/Rot At Setpoint", rotController.atSetpoint());
+
+                      ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rotValue);
+                      drive.runVelocity(speeds);
+                    })
+                .until(endTrigger))
+        .withName("Go To Pose PID");
+  }
+
   public static Command GoToPath(PathPlannerPath targetPath, Set<Subsystem> drive) {
     return new DeferredCommand(
             () -> AutoBuilder.pathfindThenFollowPath(targetPath, kPathConstraints), drive)
@@ -77,10 +139,16 @@ public class DriveCommands {
     return new DeferredCommand(
             () -> {
               Pose2d TagPose =
-                  vision
-                      .convertLLPose(
-                          LimelightHelpers.getTargetPose3d_RobotSpace(VisionConstants.camera0Name))
-                      .toPose2d();
+                  Robot.isReal()
+                      ? vision
+                          .convertLLPose(
+                              LimelightHelpers.getTargetPose3d_RobotSpace(
+                                  VisionConstants.camera0Name))
+                          .toPose2d()
+                      : vision
+                          .poseToPoseRelative(
+                              vision.getTagPose(vision.getClosestTagID(0)), vision.getVisionPose(0))
+                          .toPose2d();
               Pose2d TagRelativeTargetPose =
                   isRightScore
                       ? ReefAlignConstants.kRightReefPose
@@ -91,12 +159,17 @@ public class DriveCommands {
                           TagRelativeTargetPose.getTranslation(),
                           new Rotation2d(
                               TagRelativeTargetPose.getRotation().getMeasure().times(-1))));
-              Pose2d fieldRelativePose = vision.robotToFeildRelative(drive.getPose(), targetPose);
+              Pose2d fieldRelativeTargetPose =
+                  vision.robotToFeildRelative(drive.getPose(), targetPose);
 
-              Logger.recordOutput("Auto Align/Target Pose", targetPose);
-              Logger.recordOutput("Auto Align/fieldRelativePose", fieldRelativePose);
-              Logger.recordOutput("Auto Align/Testing", true);
-              return AutoBuilder.pathfindToPose(fieldRelativePose, kPathConstraints, 0.0);
+              Logger.recordOutput("Auto Align/Tag Pose (RR)", TagPose);
+              Logger.recordOutput(
+                  "Auto Align/Tag Pose (FR)",
+                  vision.robotToFeildRelative(drive.getPose(), TagPose));
+              Logger.recordOutput("Auto Align/Target Pose (RR)", targetPose);
+              Logger.recordOutput("Auto Align/Target Pose (FR)", fieldRelativeTargetPose);
+              //   return GoToPosePID(fieldRelativeTargetPose, () -> drive.getPose(), drive);
+              return AutoBuilder.pathfindToPose(fieldRelativeTargetPose, kPathConstraints);
             },
             Set.of(drive))
         .withName("Align To Reef");

@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.FeildConstants;
-import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
@@ -424,14 +423,7 @@ public class RobotContainer {
                 : Commands.runOnce(() -> resetSimulationField()));
 
     // Auto Align Commands
-    // Command alignLeftCommand = new AlignToReefTagRelative(false, camera1Name, drive, vision);
-    Command alignRightCommand =
-        new AlignToReefTagRelative(true, VisionConstants.camera0Name, drive, vision)
-            .withName("AlignToReefTagRelative");
     OI.getButton(OI.Driver.RSB).onTrue(DriveCommands.AlignToReef(true, drive, vision));
-    // OI.getButton(OI.Driver.LSB)
-    //     .and(() -> !alignLeftCommand.isFinished())
-    //     .whileTrue(alignLeftCommand);
 
     UpButtonTrigger.or(DownButtonTrigger)
         .or(RightButtonTrigger)
@@ -490,13 +482,7 @@ public class RobotContainer {
               OI.getAxisSupplier(OI.Keyboard.WS),
               OI.getAxisSupplier(OI.Keyboard.ArrowLR),
               new Trigger(() -> false)));
-      // OI.getButton(OI.Keyboard.M)
-      //     .whileTrue(
-      //         DriveCommands.AlignToReef(
-      //             drive,
-      //             OI.getAxisSupplier(OI.Keyboard.AD),
-      //             OI.getAxisSupplier(OI.Keyboard.WS),
-      //             drive.getAlignRotation()));
+      OI.getButton(OI.Keyboard.M).onTrue(DriveCommands.AlignToReef(true, drive, vision));
 
       // Intake
       // OI.getButton(OI.Keyboard.ForwardSlash).whileTrue(intake.floorIntake());
@@ -509,10 +495,6 @@ public class RobotContainer {
 
       // Scorer
       // OI.getButton(OI.Keyboard.Period).whileTrue(mapleSimArenaSubsystem.scoreCoral());
-
-      OI.getButton(OI.Keyboard.Comma)
-          .whileTrue(alignRightCommand)
-          .and(() -> !alignRightCommand.isFinished());
     }
   }
 
@@ -614,6 +596,7 @@ public class RobotContainer {
 
     mapleSimArenaSubsystem.resetSimFeild().initialize();
     driveSimulation.setSimulationWorldPose(driveSimDefualtPose);
+    drive.setPose(driveSimDefualtPose);
     // intake.resetSim();
   }
 

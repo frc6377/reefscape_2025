@@ -28,7 +28,7 @@ import edu.wpi.first.units.measure.Distance;
 public class VisionConstants {
 
   // AprilTag layout
-  public static AprilTagFieldLayout aprilTagLayout =
+  public static final AprilTagFieldLayout kAprilTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
   public static final boolean kVisionAutoOnly = true;
@@ -38,12 +38,6 @@ public class VisionConstants {
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
-  //   public static final Transform3d robotToCamera0 =
-  //       new Transform3d(
-  //           Inches.of(8.5),
-  //           Inches.of(-12.789),
-  //           Inches.of(9.592),
-  //           new Rotation3d(Degrees.of(0), Degrees.of(-23), Degrees.of(-90)));
   // New pose for 14 degrees angle
   public static final Transform3d robotToCamera0 =
       new Transform3d(

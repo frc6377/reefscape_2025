@@ -27,8 +27,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -46,7 +44,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
-import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.Robot;
@@ -406,19 +403,6 @@ public class IntakeSubsystem extends SubsystemBase {
     Logger.recordOutput("Intake/Intake Has Coral Trigger", intakeHasCoralTrigger());
     Logger.recordOutput(
         "Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoralTrigger());
-
-    // Pose 3D of Intake
-    Logger.recordOutput(
-        "Odometry/Mech Poses/Intake Pose",
-        new Pose3d(
-            DrivetrainConstants.kIntakeStartPose.getTranslation(),
-            new Rotation3d(
-                0,
-                getPivotAngle()
-                    .times(-1)
-                    .plus(DrivetrainConstants.kIntakeStartPose.getRotation().getMeasureY())
-                    .in(Radians),
-                0)));
 
     // Log TOF Sensors
     for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID}) {

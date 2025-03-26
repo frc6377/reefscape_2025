@@ -20,8 +20,6 @@ import static frc.robot.Constants.DrivetrainConstants.kRobotConfig;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
@@ -39,7 +37,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -78,21 +75,21 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
   public static final DriveTrainSimulationConfig mapleSimConfig =
       DriveTrainSimulationConfig.Default()
-          .withRobotMass(Pounds.of(106.6))
+          .withRobotMass(Kilograms.of(kRobotConfig.massKG))
           .withCustomModuleTranslations(getModuleTranslations())
           .withGyro(COTS.ofPigeon2())
           .withBumperSize(kBumperSize, kBumperSize)
           .withSwerveModule(
               new SwerveModuleSimulationConfig(
-                  DCMotor.getKrakenX60Foc(1),
-                  DCMotor.getKrakenX60Foc(1),
+                  kRobotConfig.moduleConfig.driveMotor,
+                  kRobotConfig.moduleConfig.driveMotor,
                   TunerConstants.FrontLeft.DriveMotorGearRatio,
                   TunerConstants.FrontLeft.SteerMotorGearRatio,
                   Volts.of(TunerConstants.FrontLeft.DriveFrictionVoltage),
                   Volts.of(TunerConstants.FrontLeft.SteerFrictionVoltage),
                   Meters.of(TunerConstants.FrontLeft.WheelRadius),
                   KilogramSquareMeters.of(TunerConstants.FrontLeft.SteerInertia),
-                  1.2));
+                  kRobotConfig.moduleConfig.wheelCOF));
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
@@ -141,7 +138,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         this::setPose,
         this::getChassisSpeeds,
         this::runVelocity,
-        new PPHolonomicDriveController(new PIDConstants(5, 0.0, 0), new PIDConstants(5, 0.0, 0)),
+        DrivetrainConstants.KPPDriveController,
         kRobotConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
