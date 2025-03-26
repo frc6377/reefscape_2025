@@ -36,7 +36,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.CoralScorerConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FeildConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
@@ -364,11 +363,7 @@ public class RobotContainer {
                     .conveyerInCommand()
                     .alongWith(coralScorer.intakeCommand())
                     .until(coralHandoffCompleteTrigger)
-                    .andThen(
-                        Commands.run(
-                                () -> coralScorer.setScoreMotor(CoralScorerConstants.kAlignSpeed))
-                            .andThen(Commands.waitSeconds(2))
-                            .andThen(() -> coralScorer.stopMotor()))
+                    .andThen(coralScorer.alignCoralCommand())
                 : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
     coralOuttakeButton.whileTrue(intake.floorOuttake());
 
