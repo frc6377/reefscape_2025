@@ -619,5 +619,5 @@ public class RobotContainer {
   public void displaySimFieldToAdvantageScope() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
     mapleSimArenaSubsystem.updateRobotCoralPose(elevator.getElevatorHeight());
-  } 
+  }
 }
