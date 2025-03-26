@@ -60,9 +60,6 @@ public class PassToScorer extends Command {
     intakeSubsystem.setIntakeMotor(0);
     intakeSubsystem.setConveyerMotor(0);
     coralScorer.scoreCommand().end(interrupted);
-    Commands.run(() -> coralScorer.setScoreMotor(kAlignSpeed))
-        .andThen(Commands.waitSeconds(2))
-        .andThen(() -> coralScorer.stopMotor());
     Logger.recordOutput("Pass To Scorer Ended", true);
   }
 
