@@ -276,7 +276,7 @@ public final class Constants {
 
     // Mech Constants
     public static final double kAlgeaPercent = 0.1;
-    public static final int kAlegeaGearRatio = 80;
+    public static final int kAlegeaGearRatio = 16;
     public static final Angle ksetpointTolerance = Degrees.of(10);
 
     // Algea Arm Setpoints (// 35 Degrees is breaking point)
