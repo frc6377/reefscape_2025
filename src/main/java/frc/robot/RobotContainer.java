@@ -315,7 +315,15 @@ public class RobotContainer {
               OI.Operator.setRumble(0);
             }));
 
-    automaticScoreTrigger.debounce(0.5).onTrue(coralScorer.scoreCommand().until(coralScorer.hasCoralTrigger().negate()));  //TODO: Make sure this doesn't conflict with auto
+    automaticScoreTrigger
+        .debounce(0.5)
+        .onTrue(
+            coralScorer
+                .scoreCommand()
+                .until(
+                    coralScorer
+                        .hasCoralTrigger()
+                        .negate())); // TODO: Make sure this doesn't conflict with auto
 
     // Elevator Buttons
     OI.getButton(OI.Driver.A).onTrue(elevator.L0());
