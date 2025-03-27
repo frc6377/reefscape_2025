@@ -15,13 +15,11 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -29,29 +27,18 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FeildConstants;
-import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.AlgeaRemover;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.CoralScorer;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
 import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -68,15 +55,15 @@ public class RobotContainer {
   private EventLoop testEventLoop = new EventLoop();
 
   // Subsystems
-  private final Climber climber = new Climber();
-  private final AlgeaRemover algeaRemover = new AlgeaRemover();
-  private static final Sensors sensors = new Sensors();
+  // private final Climber climber = new Climber();
+  // private final AlgeaRemover algeaRemover = new AlgeaRemover();
+  // private static final Sensors sensors = new Sensors();
   private final Drive drive;
   private final Vision vision;
   private MapleSimArenaSubsystem mapleSimArenaSubsystem;
-  private final Elevator elevator = new Elevator();
-  private final CoralScorer coralScorer = new CoralScorer();
-  private final IntakeSubsystem intake;
+  // private final Elevator elevator = new Elevator();
+  // private final CoralScorer coralScorer = new CoralScorer();
+  // private final IntakeSubsystem intake;
 
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
@@ -88,11 +75,11 @@ public class RobotContainer {
 
   // Trigger Variables
   private final Trigger coralOuttakeButton = OI.getButton(OI.Driver.RBumper);
-  private final Trigger coralHandoffCompleteTrigger =
-      new Trigger(
-          () ->
-              sensors.getSensorState() == CoralEnum.NO_CORAL
-                  || coralScorer.hasCoralTrigger().getAsBoolean());
+  // private final Trigger coralHandoffCompleteTrigger =
+  //     new Trigger(
+  //         () ->
+  //             sensors.getSensorState() == CoralEnum.NO_CORAL
+  //                 || coralScorer.hasCoralTrigger().getAsBoolean());
   private final Trigger UpButtonTrigger = OI.getButton(OI.Driver.POV0);
   private final Trigger DownButtonTrigger = OI.getButton(OI.Driver.POV180);
   private final Trigger RightButtonTrigger = OI.getButton(OI.Driver.POV90);
@@ -118,7 +105,7 @@ public class RobotContainer {
                 drive,
                 // new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                 new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
-        intake = new IntakeSubsystem(sensors, null);
+        // intake = new IntakeSubsystem(sensors, null);
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -151,7 +138,7 @@ public class RobotContainer {
                 //     camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
                 new VisionIOPhotonVisionSim(
                     camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
-        intake = new IntakeSubsystem(sensors, driveSimulation);
+        // intake = new IntakeSubsystem(sensors, driveSimulation);
         break;
 
       default:
@@ -164,53 +151,54 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
-        intake = new IntakeSubsystem(sensors, null);
+        // intake = new IntakeSubsystem(sensors, null);
         break;
     }
 
-    scoreL1 = intake.l1ScoreModeA();
-    Trigger isDoneScoring = new Trigger(() -> (sensors.getSensorState() == CoralEnum.NO_CORAL));
+    // scoreL1 = intake.l1ScoreModeA();
+    // Trigger isDoneScoring = new Trigger(() -> (sensors.getSensorState() == CoralEnum.NO_CORAL));
 
-    // Register Named Commands
-    NamedCommands.registerCommand("ElvL0", elv0Command());
-    NamedCommands.registerCommand(
-        "ElvL2 DeadLine",
-        elevator.L2().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(1.75)));
-    NamedCommands.registerCommand(
-        "ElvL3 DeadLine",
-        elevator.L3().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(1.75)));
-    NamedCommands.registerCommand(
-        "ElvL4 DeadLine",
-        elevator.L4().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(1.75)));
-    NamedCommands.registerCommand("ElvL2", elevator.L2().andThen(waitForElevator()));
-    NamedCommands.registerCommand("ElvL3", elevator.L3().andThen(waitForElevator()));
-    NamedCommands.registerCommand("ElvL4", elevator.L4().andThen(waitForElevator()));
-    NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
-    NamedCommands.registerCommand(
-        "Intake",
-        new SequentialCommandGroup(
-            elv0Command(), intakeAutoCommand(), Commands.waitUntil(coralHandoffCompleteTrigger)));
-    NamedCommands.registerCommand("Intake L1", intakeAutoCommand());
-    NamedCommands.registerCommand(
-        "Intake Floor",
-        new SequentialCommandGroup(
-            elv0Command(),
-            intakeFloorAutoCommand(),
-            Commands.waitUntil(coralHandoffCompleteTrigger)));
-    NamedCommands.registerCommand("Score", scorerAutoCommand());
-    NamedCommands.registerCommand("Set L1 Mode", Commands.runOnce(() -> elevatorNotL1 = false));
-    NamedCommands.registerCommand(
-        "L1 Score",
-        new SequentialCommandGroup(
-            Commands.runOnce(() -> elevatorNotL1 = false),
-            Commands.waitUntil(intake.intakeHasCoralTrigger()),
-            scoreL1.asProxy().until(isDoneScoring.debounce(1))));
-    NamedCommands.registerCommand(
-        "Strafe", drive.strafe().until(coralScorer.scorerAlignedTrigger()));
-    NamedCommands.registerCommand(
-        "AA Left", new AlignToReefTagRelative(false, camera1Name, drive, vision).asProxy());
-    NamedCommands.registerCommand(
-        "AA Right", new AlignToReefTagRelative(true, camera1Name, drive, vision).asProxy());
+    // // Register Named Commands
+    // NamedCommands.registerCommand("ElvL0", elv0Command());
+    // NamedCommands.registerCommand(
+    //     "ElvL2 DeadLine",
+    //     elevator.L2().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(1.75)));
+    // NamedCommands.registerCommand(
+    //     "ElvL3 DeadLine",
+    //     elevator.L3().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(1.75)));
+    // NamedCommands.registerCommand(
+    //     "ElvL4 DeadLine",
+    //     elevator.L4().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(1.75)));
+    // NamedCommands.registerCommand("ElvL2", elevator.L2().andThen(waitForElevator()));
+    // NamedCommands.registerCommand("ElvL3", elevator.L3().andThen(waitForElevator()));
+    // NamedCommands.registerCommand("ElvL4", elevator.L4().andThen(waitForElevator()));
+    // NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
+    // NamedCommands.registerCommand(
+    //     "Intake",
+    //     new SequentialCommandGroup(
+    //         elv0Command(), intakeAutoCommand(),
+    // Commands.waitUntil(coralHandoffCompleteTrigger)));
+    // NamedCommands.registerCommand("Intake L1", intakeAutoCommand());
+    // NamedCommands.registerCommand(
+    //     "Intake Floor",
+    //     new SequentialCommandGroup(
+    //         elv0Command(),
+    //         intakeFloorAutoCommand(),
+    //         Commands.waitUntil(coralHandoffCompleteTrigger)));
+    // NamedCommands.registerCommand("Score", scorerAutoCommand());
+    // NamedCommands.registerCommand("Set L1 Mode", Commands.runOnce(() -> elevatorNotL1 = false));
+    // NamedCommands.registerCommand(
+    //     "L1 Score",
+    //     new SequentialCommandGroup(
+    //         Commands.runOnce(() -> elevatorNotL1 = false),
+    //         Commands.waitUntil(intake.intakeHasCoralTrigger()),
+    //         scoreL1.asProxy().until(isDoneScoring.debounce(1))));
+    // NamedCommands.registerCommand(
+    //     "Strafe", drive.strafe().until(coralScorer.scorerAlignedTrigger()));
+    // NamedCommands.registerCommand(
+    //     "AA Left", new AlignToReefTagRelative(false, camera1Name, drive, vision).asProxy());
+    // NamedCommands.registerCommand(
+    //     "AA Right", new AlignToReefTagRelative(true, camera1Name, drive, vision).asProxy());
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -293,110 +281,110 @@ public class RobotContainer {
               SignalLogger.stop();
             }));
 
-    coralScorer
-        .scorerAlignedTrigger()
-        .and(coralScorer.hasCoralTrigger())
-        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
-        .and(elevator.elevatorAtCurrentSetpoint())
-        .whileTrue(
-            Commands.runEnd(
-                () -> {
-                  OI.Driver.setRumble(0.5);
-                  OI.Operator.setRumble(0.5);
-                },
-                () -> {
-                  OI.Driver.setRumble(0);
-                  OI.Operator.setRumble(0);
-                }));
+    // coralScorer
+    //     .scorerAlignedTrigger()
+    //     .and(coralScorer.hasCoralTrigger())
+    //     .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
+    //     .and(elevator.elevatorAtCurrentSetpoint())
+    //     .whileTrue(
+    //         Commands.runEnd(
+    //             () -> {
+    //               OI.Driver.setRumble(0.5);
+    //               OI.Operator.setRumble(0.5);
+    //             },
+    //             () -> {
+    //               OI.Driver.setRumble(0);
+    //               OI.Operator.setRumble(0);
+    //             }));
 
-    // Elevator Buttons
-    OI.getButton(OI.Driver.A).onTrue(elevator.L0());
-    OI.getButton(OI.Driver.B).onTrue(elevator.L2());
-    OI.getButton(OI.Driver.X).onTrue(elevator.L3());
-    OI.getButton(OI.Driver.Y).onTrue(elevator.L4());
-    OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
+    // // Elevator Buttons
+    // OI.getButton(OI.Driver.A).onTrue(elevator.L0());
+    // OI.getButton(OI.Driver.B).onTrue(elevator.L2());
+    // OI.getButton(OI.Driver.X).onTrue(elevator.L3());
+    // OI.getButton(OI.Driver.Y).onTrue(elevator.L4());
+    // OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
 
-    // Intake Buttons
-    OI.getButton(OI.Driver.RTrigger)
-        .and(() -> !intakeAlgeaMode && !coralStationMode)
-        .whileTrue(intake.floorIntake());
-    OI.getButton(OI.Driver.RTrigger)
-        .and(() -> !intakeAlgeaMode && coralStationMode)
-        .whileTrue(intake.humanPlayerIntake());
-    OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
-    OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
-    Command locateCoral =
-        new LocateCoral(
-            sensors::getSensorState,
-            intake,
-            coralOuttakeButton.or(OI.getButton(OI.Driver.RTrigger)));
+    // // Intake Buttons
+    // OI.getButton(OI.Driver.RTrigger)
+    //     .and(() -> !intakeAlgeaMode && !coralStationMode)
+    //     .whileTrue(intake.floorIntake());
+    // OI.getButton(OI.Driver.RTrigger)
+    //     .and(() -> !intakeAlgeaMode && coralStationMode)
+    //     .whileTrue(intake.humanPlayerIntake());
+    // OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
+    // OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
+    // Command locateCoral =
+    //     new LocateCoral(
+    //         sensors::getSensorState,
+    //         intake,
+    //         coralOuttakeButton.or(OI.getButton(OI.Driver.RTrigger)));
 
-    intake
-        .intakeHasUnalignedCoralTrigger()
-        .and(coralOuttakeButton.negate())
-        .and(OI.getButton(OI.Driver.RTrigger).negate())
-        .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
-        .onTrue(locateCoral);
+    // intake
+    //     .intakeHasUnalignedCoralTrigger()
+    //     .and(coralOuttakeButton.negate())
+    //     .and(OI.getButton(OI.Driver.RTrigger).negate())
+    //     .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
+    //     .onTrue(locateCoral);
 
-    intake
-        .intakeHasCoralTrigger()
-        .and(() -> elevatorNotL1)
-        .and(coralOuttakeButton.negate())
-        .and(() -> !CommandScheduler.getInstance().isScheduled(locateCoral))
-        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height))
-        .whileTrue(
-            Robot.isReal()
-                ? intake
-                    .conveyerInCommand()
-                    .alongWith(coralScorer.intakeCommand())
-                    .until(coralHandoffCompleteTrigger)
-                : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
-    coralOuttakeButton.whileTrue(intake.floorOuttake());
+    // intake
+    //     .intakeHasCoralTrigger()
+    //     .and(() -> elevatorNotL1)
+    //     .and(coralOuttakeButton.negate())
+    //     .and(() -> !CommandScheduler.getInstance().isScheduled(locateCoral))
+    //     .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height))
+    //     .whileTrue(
+    //         Robot.isReal()
+    //             ? intake
+    //                 .conveyerInCommand()
+    //                 .alongWith(coralScorer.intakeCommand())
+    //                 .until(coralHandoffCompleteTrigger)
+    //             : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
+    // coralOuttakeButton.whileTrue(intake.floorOuttake());
 
-    Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
-    Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
-    Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
-    OI.getButton(OI.Operator.Y)
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  elevatorNotL1 = !elevatorNotL1;
-                  Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
-                }));
-    OI.getButton(OI.Operator.X)
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  intakeAlgeaMode = !intakeAlgeaMode;
-                  Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
-                }));
-    OI.getButton(OI.Operator.B)
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  coralStationMode = !coralStationMode;
-                  Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
-                }));
-    OI.getButton(OI.Driver.LTrigger)
-        .and(() -> !elevatorNotL1 && !intakeAlgeaMode)
-        .whileTrue(scoreL1);
-    intake.setDefaultCommand(intake.Idle());
+    // Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
+    // Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
+    // Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
+    // OI.getButton(OI.Operator.Y)
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               elevatorNotL1 = !elevatorNotL1;
+    //               Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
+    //             }));
+    // OI.getButton(OI.Operator.X)
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               intakeAlgeaMode = !intakeAlgeaMode;
+    //               Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
+    //             }));
+    // OI.getButton(OI.Operator.B)
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               coralStationMode = !coralStationMode;
+    //               Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
+    //             }));
+    // OI.getButton(OI.Driver.LTrigger)
+    //     .and(() -> !elevatorNotL1 && !intakeAlgeaMode)
+    //     .whileTrue(scoreL1);
+    // intake.setDefaultCommand(intake.Idle());
 
-    // Scorer Buttons
-    OI.getButton(OI.Driver.LScoreTrigger)
-        .and(() -> !intakeAlgeaMode && elevatorNotL1)
-        .whileTrue(
-            Robot.isReal()
-                ? coralScorer.runScorer(OI.getAxisSupplier(OI.Driver.LeftTriggerAxis))
-                : mapleSimArenaSubsystem.scoreCoral());
-    OI.getButton(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
-    OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
+    // // Scorer Buttons
+    // OI.getButton(OI.Driver.LScoreTrigger)
+    //     .and(() -> !intakeAlgeaMode && elevatorNotL1)
+    //     .whileTrue(
+    //         Robot.isReal()
+    //             ? coralScorer.runScorer(OI.getAxisSupplier(OI.Driver.LeftTriggerAxis))
+    //             : mapleSimArenaSubsystem.scoreCoral());
+    // OI.getButton(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
+    // OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
 
-    // Algae Remover
-    OI.getButton(OI.Operator.LBumper).toggleOnTrue(algeaRemover.removeUpCommand());
-    OI.getButton(OI.Operator.RBumper).toggleOnTrue(algeaRemover.removeDownCommand());
-    OI.getButton(OI.Operator.LTrigger).whileTrue(algeaRemover.upCommand());
-    OI.getButton(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
+    // // Algae Remover
+    // OI.getButton(OI.Operator.LBumper).toggleOnTrue(algeaRemover.removeUpCommand());
+    // OI.getButton(OI.Operator.RBumper).toggleOnTrue(algeaRemover.removeDownCommand());
+    // OI.getButton(OI.Operator.LTrigger).whileTrue(algeaRemover.upCommand());
+    // OI.getButton(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
 
     // Climber Buttons
     // OI.getButton(OI.Operator.DPAD_UP)
@@ -482,10 +470,10 @@ public class RobotContainer {
     //                 () -> OI.getAxisSupplier(OI.StreamDeck.Nob4).get())
     //             .ignoringDisable(true));
 
-    if (Robot.isSimulation()) {
-      new Trigger(() -> mapleSimArenaSubsystem.getRobotHasCoral())
-          .onFalse(Commands.runOnce(() -> intake.removePieceFromIntakeSim()));
-    }
+    // if (Robot.isSimulation()) {
+    //   new Trigger(() -> mapleSimArenaSubsystem.getRobotHasCoral())
+    //       .onFalse(Commands.runOnce(() -> intake.removePieceFromIntakeSim()));
+    // }
 
     // Temp Keyboard Buttons for sim with no controller
     if (usingKeyboard) {
@@ -506,13 +494,13 @@ public class RobotContainer {
       //             drive.getAlignRotation()));
 
       // Intake
-      OI.getButton(OI.Keyboard.ForwardSlash).whileTrue(intake.floorIntake());
+      // OI.getButton(OI.Keyboard.ForwardSlash).whileTrue(intake.floorIntake());
 
       // Elevator Buttons
-      OI.getButton(OI.Keyboard.Z).onTrue(elevator.L0());
-      OI.getButton(OI.Keyboard.X).onTrue(elevator.L2());
-      OI.getButton(OI.Keyboard.C).onTrue(elevator.L3());
-      OI.getButton(OI.Keyboard.V).onTrue(elevator.L4());
+      // OI.getButton(OI.Keyboard.Z).onTrue(elevator.L0());
+      // OI.getButton(OI.Keyboard.X).onTrue(elevator.L2());
+      // OI.getButton(OI.Keyboard.C).onTrue(elevator.L3());
+      // OI.getButton(OI.Keyboard.V).onTrue(elevator.L4());
 
       // Scorer
       OI.getButton(OI.Keyboard.Period).whileTrue(mapleSimArenaSubsystem.scoreCoral());
@@ -535,68 +523,69 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
-  public Command elv0Command() {
-    return elevator.L0().andThen(waitForElevator().withTimeout(0.5).andThen(elevator.limitHit()));
-  }
+  // public Command elv0Command() {
+  //   return
+  // elevator.L0().andThen(waitForElevator().withTimeout(0.5).andThen(elevator.limitHit()));
+  // }
 
-  public Command waitForElevator() {
-    return Commands.waitUntil(elevator.elevatorAtCurrentSetpoint());
-  }
+  // public Command waitForElevator() {
+  //   return Commands.waitUntil(elevator.elevatorAtCurrentSetpoint());
+  // }
 
-  public Command intakeAutoCommand() {
-    if (Robot.isSimulation()) {
-      return intake
-          .humanPlayerIntake()
-          .until(intake.pivotAtSetpoint(kPivotCoralStationAngle))
-          .andThen(() -> intake.addGamePieceToIntakeSim())
-          .asProxy();
-    } else {
-      return intake.humanPlayerIntake().until(intake.intakeHasCoralTrigger()).asProxy();
-    }
-  }
+  // public Command intakeAutoCommand() {
+  //   if (Robot.isSimulation()) {
+  //     return intake
+  //         .humanPlayerIntake()
+  //         .until(intake.pivotAtSetpoint(kPivotCoralStationAngle))
+  //         .andThen(() -> intake.addGamePieceToIntakeSim())
+  //         .asProxy();
+  //   } else {
+  //     return intake.humanPlayerIntake().until(intake.intakeHasCoralTrigger()).asProxy();
+  //   }
+  // }
 
-  public Command intakeFloorAutoCommand() {
-    if (Robot.isSimulation()) {
-      return intake
-          .floorIntake()
-          .onlyWhile(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
-          .asProxy();
-    } else {
-      return intake.floorIntake().until(intake.intakeHasCoralTrigger()).asProxy();
-    }
-  }
+  // public Command intakeFloorAutoCommand() {
+  //   if (Robot.isSimulation()) {
+  //     return intake
+  //         .floorIntake()
+  //         .onlyWhile(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
+  //         .asProxy();
+  //   } else {
+  //     return intake.floorIntake().until(intake.intakeHasCoralTrigger()).asProxy();
+  //   }
+  // }
 
-  public Command scorerAutoCommand() {
-    if (Robot.isSimulation()) {
-      return Commands.runOnce(() -> intake.removePieceFromIntakeSim())
-          .andThen(mapleSimArenaSubsystem.scoreCoral())
-          .until(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
-          .asProxy();
-    } else {
-      return coralScorer.scoreAutoCommand().until(coralScorer.hasCoralTrigger().negate());
-    }
-  }
+  // public Command scorerAutoCommand() {
+  //   if (Robot.isSimulation()) {
+  //     return Commands.runOnce(() -> intake.removePieceFromIntakeSim())
+  //         .andThen(mapleSimArenaSubsystem.scoreCoral())
+  //         .until(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
+  //         .asProxy();
+  //   } else {
+  //     return coralScorer.scoreAutoCommand().until(coralScorer.hasCoralTrigger().negate());
+  //   }
+  // }
 
-  public Command algeaRemoverAutoCommand() {
-    return algeaRemover
-        .removeUpCommand()
-        .until(algeaRemover.algeaArmAtSetpoint())
-        .andThen(algeaRemover.upCommand())
-        .asProxy();
-  }
+  // public Command algeaRemoverAutoCommand() {
+  //   return algeaRemover
+  //       .removeUpCommand()
+  //       .until(algeaRemover.algeaArmAtSetpoint())
+  //       .andThen(algeaRemover.upCommand())
+  //       .asProxy();
+  // }
 
   public void startSimAuto() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
-    intake.addGamePieceToIntakeSim();
+    // intake.addGamePieceToIntakeSim();
     driveSimulation.setSimulationWorldPose(drive.getPose());
   }
 
   public void seedEncoders() {
     if (Robot.isSimulation()) return;
-    intake.seedEncoder();
-    algeaRemover.seedEncoder();
-    climber.seedEncoder();
+    // intake.seedEncoder();
+    // algeaRemover.seedEncoder();
+    // climber.seedEncoder();
   }
 
   public void resetSimulationField() {
@@ -604,11 +593,11 @@ public class RobotContainer {
 
     mapleSimArenaSubsystem.resetSimFeild().initialize();
     driveSimulation.setSimulationWorldPose(driveSimDefualtPose);
-    intake.resetSim();
+    // intake.resetSim();
   }
 
   public void displaySimFieldToAdvantageScope() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
-    mapleSimArenaSubsystem.updateRobotCoralPose(elevator.getElevatorHeight());
+    // mapleSimArenaSubsystem.updateRobotCoralPose(elevator.getElevatorHeight());
   }
 }
