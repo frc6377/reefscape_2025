@@ -354,7 +354,7 @@ public final class Constants {
                 MetersPerSecond.of(4.4), // TODO Check real max speed of second robot
                 1.2,
                 DCMotor.getFalcon500Foc(1),
-                Amps.of(70),
+                Amps.of(60),
                 1),
             kModuleOffsets);
     public static final RobotConfig kRobotConfig = kSecondBotConfig;
@@ -374,12 +374,13 @@ public final class Constants {
     // Path Finder/Planner Stuff
     public static final PathConstraints kPathConstraints =
         new PathConstraints(
-            3.5,
+            3,
             2,
             DegreesPerSecond.of(300).in(RadiansPerSecond),
             DegreesPerSecond.of(1200).in(RadiansPerSecond));
     public static final PPHolonomicDriveController KPPDriveController =
-        new PPHolonomicDriveController(new PIDConstants(5, 0, 0), new PIDConstants(0.1, 0, 0));
+        new PPHolonomicDriveController(
+            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0));
 
     // For Drive At Angle Command
     public static final ProfiledPIDController kRotationController =
@@ -422,9 +423,9 @@ public final class Constants {
   public final class ReefAlignConstants {
     // Target Poses
     public static final Pose2d kRightReefPose =
-        new Pose2d(Meters.of(0.5), Meters.of(0.193), new Rotation2d(Degrees.of(90)));
+        new Pose2d(Meters.of(-0.5), Meters.of(0.193), new Rotation2d(Degrees.of(-90)));
     public static final Pose2d kLeftReefPose =
-        new Pose2d(Meters.of(0.5), Meters.of(-0.137), new Rotation2d(Degrees.of(90)));
+        new Pose2d(Meters.of(-0.5), Meters.of(-0.137), new Rotation2d(Degrees.of(-90)));
 
     // PID Controllers
     public static final PIDController kTranslationXController = new PIDController(0.1, 0, 0);

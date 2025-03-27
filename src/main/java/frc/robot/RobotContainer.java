@@ -18,6 +18,7 @@ import static edu.wpi.first.units.Units.Meters;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -203,6 +204,24 @@ public class RobotContainer {
     // NamedCommands.registerCommand(
     //     "AA Right",
     //     new AlignToReefTagRelative(true, VisionConstants.camera0Name, drive, vision).asProxy());
+
+    NamedCommands.registerCommand("ElvL0", Commands.none());
+    NamedCommands.registerCommand("ElvL2 DeadLine", Commands.none());
+    NamedCommands.registerCommand("ElvL3 DeadLine", Commands.none());
+    NamedCommands.registerCommand("ElvL4 DeadLine", Commands.none());
+    NamedCommands.registerCommand("ElvL2", Commands.none());
+    NamedCommands.registerCommand("ElvL3", Commands.none());
+    NamedCommands.registerCommand("ElvL4", Commands.none());
+    NamedCommands.registerCommand("Zero Elv", Commands.none());
+    NamedCommands.registerCommand("Intake", Commands.none());
+    NamedCommands.registerCommand("Intake L1", Commands.none());
+    NamedCommands.registerCommand("Intake Floor", Commands.none());
+    NamedCommands.registerCommand("Score", Commands.none());
+    NamedCommands.registerCommand("Set L1 Mode", Commands.none());
+    NamedCommands.registerCommand("L1 Score", Commands.none());
+    NamedCommands.registerCommand("Strafe", Commands.none());
+    NamedCommands.registerCommand("AA Left", Commands.none());
+    NamedCommands.registerCommand("AA Right", Commands.none());
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

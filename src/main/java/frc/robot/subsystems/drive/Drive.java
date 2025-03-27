@@ -133,13 +133,14 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     PhoenixOdometryThread.getInstance().start();
 
     // Configure AutoBuilder for PathPlanner
+    Logger.recordOutput("Drive Config", DrivetrainConstants.kRobotConfig.MOI);
     AutoBuilder.configure(
         this::getPose,
         this::setPose,
         this::getChassisSpeeds,
         this::runVelocity,
         DrivetrainConstants.KPPDriveController,
-        kRobotConfig,
+        DrivetrainConstants.kRobotConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
 
