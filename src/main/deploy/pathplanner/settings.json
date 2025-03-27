@@ -3,6 +3,7 @@
   "robotLength": 0.889,
   "holonomicMode": true,
   "pathFolders": [
+    "Buddy Push Paths",
     "Score - Source",
     "Source - Score",
     "Start - Score",
@@ -23,7 +24,7 @@
   "robotMass": 30.549,
   "robotMOI": 9.539,
   "robotTrackwidth": 0.546,
-  "driveWheelRadius": 0.048,
+  "driveWheelRadius": 0.0495,
   "driveGearing": 6.12,
   "maxDriveSpeed": 4.4,
   "driveMotorType": "falcon500FOC",
@@ -41,6 +42,7 @@
   "bumperOffsetY": 0.0,
   "robotFeatures": [
     "{\"name\":\"Elevator\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.035,\"y\":-0.267},\"size\":{\"width\":0.75,\"length\":0.075},\"borderRadius\":0.0,\"strokeWidth\":0.0125,\"filled\":false}}",
-    "{\"name\":\"Intake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.538,\"y\":0.1},\"size\":{\"width\":0.47,\"length\":0.191},\"borderRadius\":0.0,\"strokeWidth\":0.01,\"filled\":false}}"
+    "{\"name\":\"Intake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.538,\"y\":0.1},\"size\":{\"width\":0.47,\"length\":0.191},\"borderRadius\":0.0,\"strokeWidth\":0.01,\"filled\":false}}",
+    "{\"name\":\"Lime Light\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.242,\"y\":-0.2698312104},\"size\":{\"width\":0.075,\"length\":0.15},\"borderRadius\":0.01,\"strokeWidth\":0.01,\"filled\":false}}"
   ]
 }

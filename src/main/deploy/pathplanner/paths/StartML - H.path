@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.734674234153678,
-        "y": 4.760507143095145
+        "x": 7.733880868563336,
+        "y": 6.171869771039166
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.4456426813277385,
-        "y": 4.682706233285483
+        "x": 7.444849315737397,
+        "y": 6.094068861229504
       },
       "isLocked": false,
       "linkedName": "Start Mid Left"
@@ -48,7 +48,7 @@
   "folder": "Start - Score",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

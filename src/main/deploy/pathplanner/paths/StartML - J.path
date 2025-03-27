@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.734674234153678,
-        "y": 4.760507143095145
+        "x": 7.733880868563336,
+        "y": 6.171869771039166
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.662287896200072,
-        "y": 4.8805834812374504
+        "x": 6.66149453060973,
+        "y": 6.291946109181471
       },
       "isLocked": false,
       "linkedName": "Start Mid Left"
     },
     {
       "anchor": {
-        "x": 5.001958843255034,
-        "y": 5.236214142278068
+        "x": 4.9693200361876535,
+        "y": 5.259177603534518
       },
       "prevControl": {
-        "x": 6.00675637717507,
-        "y": 5.033688484507453
+        "x": 5.97411757010769,
+        "y": 5.056651945763903
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": "Start - Score",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

@@ -15,11 +15,11 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.DrivetrainConstants.kBumperSize;
-import static frc.robot.Constants.DrivetrainConstants.kRobotConfig;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
@@ -37,6 +37,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -73,23 +74,52 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
               Math.hypot(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
+  // Main Robot
+  // public static final RobotConfig PP_CONFIG =
+  //       new RobotConfig(
+  //           Pounds.of(106.6),
+  //           KilogramSquareMeters.of(15.098568),
+  //           new ModuleConfig(
+  //               Inches.of(1.880006),
+  //               MetersPerSecond.of(4.4),
+  //               1.2,
+  //               DCMotor.getKrakenX60Foc(1),
+  //               Amps.of(70),
+  //               1),
+  //           getModuleTranslations());
+
+  // Second Robot
+  // public static final RobotConfig PP_CONFIG =
+  //     new RobotConfig(
+  //         Pounds.of(67.35),
+  //         KilogramSquareMeters.of(9.539292),
+  //         new ModuleConfig(
+  //             Inches.of(1.947733),
+  //             MetersPerSecond.of(4.4), // TODO Check real max speed of second robot
+  //             1.2,
+  //             DCMotor.getFalcon500Foc(1),
+  //             Amps.of(60),
+  //             1),
+  //         getModuleTranslations());
+  public static RobotConfig PP_CONFIG;
+
   public static final DriveTrainSimulationConfig mapleSimConfig =
       DriveTrainSimulationConfig.Default()
-          .withRobotMass(Kilograms.of(kRobotConfig.massKG))
+          .withRobotMass(Kilograms.of(30))
           .withCustomModuleTranslations(getModuleTranslations())
           .withGyro(COTS.ofPigeon2())
           .withBumperSize(kBumperSize, kBumperSize)
           .withSwerveModule(
               new SwerveModuleSimulationConfig(
-                  kRobotConfig.moduleConfig.driveMotor,
-                  kRobotConfig.moduleConfig.driveMotor,
+                  DCMotor.getKrakenX60Foc(1),
+                  DCMotor.getKrakenX60Foc(1),
                   TunerConstants.FrontLeft.DriveMotorGearRatio,
                   TunerConstants.FrontLeft.SteerMotorGearRatio,
                   Volts.of(TunerConstants.FrontLeft.DriveFrictionVoltage),
                   Volts.of(TunerConstants.FrontLeft.SteerFrictionVoltage),
                   Meters.of(TunerConstants.FrontLeft.WheelRadius),
                   KilogramSquareMeters.of(TunerConstants.FrontLeft.SteerInertia),
-                  kRobotConfig.moduleConfig.wheelCOF));
+                  1.2));
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
@@ -132,15 +162,19 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
 
+    try {
+      PP_CONFIG = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to load RobotConfig from GUI settings", e);
+    }
     // Configure AutoBuilder for PathPlanner
-    Logger.recordOutput("Drive Config", DrivetrainConstants.kRobotConfig.MOI);
     AutoBuilder.configure(
         this::getPose,
         this::setPose,
         this::getChassisSpeeds,
         this::runVelocity,
         DrivetrainConstants.KPPDriveController,
-        DrivetrainConstants.kRobotConfig,
+        PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
 

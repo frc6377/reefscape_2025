@@ -31,7 +31,7 @@ public class VisionConstants {
   public static final AprilTagFieldLayout kAprilTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
-  public static final boolean kVisionAutoOnly = true;
+  public static final boolean kVisionUpdatesOdometry = true;
 
   // Camera names, must match names configured on coprocessor
   public static final String camera0Name = "limelight-lowcam";

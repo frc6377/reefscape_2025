@@ -22,9 +22,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.controller.PIDController;
@@ -33,7 +31,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
@@ -46,7 +43,6 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import frc.robot.generated.TunerConstants;
 import java.util.HashMap;
 import org.littletonrobotics.junction.Logger;
 import utilities.HowdyMM;
@@ -325,39 +321,6 @@ public final class Constants {
 
   @SuppressWarnings("unused")
   public final class DrivetrainConstants {
-    public static final Translation2d[] kModuleOffsets =
-        new Translation2d[] {
-          new Translation2d(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
-          new Translation2d(
-              TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
-          new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
-          new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
-        };
-    public static final RobotConfig kMainBotConfig =
-        new RobotConfig(
-            Pounds.of(106.6),
-            KilogramSquareMeters.of(15.098568),
-            new ModuleConfig(
-                Inches.of(1.880006),
-                MetersPerSecond.of(4.4),
-                1.2,
-                DCMotor.getKrakenX60Foc(1),
-                Amps.of(70),
-                1),
-            kModuleOffsets);
-    public static final RobotConfig kSecondBotConfig =
-        new RobotConfig(
-            Pounds.of(67.35),
-            KilogramSquareMeters.of(9.539292),
-            new ModuleConfig(
-                Inches.of(1.947733),
-                MetersPerSecond.of(4.4), // TODO Check real max speed of second robot
-                1.2,
-                DCMotor.getFalcon500Foc(1),
-                Amps.of(60),
-                1),
-            kModuleOffsets);
-    public static final RobotConfig kRobotConfig = kSecondBotConfig;
     public static final Distance kBumperSize = Meters.of(0.889);
 
     // POV Drive Constants
@@ -368,13 +331,13 @@ public final class Constants {
     public static final LinearVelocity kStrafeSpeed = MetersPerSecond.of(0.5);
 
     // Constants from DriveCommands
-    public static final double kWheelRadiusMaxVelocity = 1; // Rad/Sec
-    public static final double kWheelRadiusRampRate = 0.1; // Rad/Sec^2
+    public static final double kWheelRadiusMaxVelocity = 0.25; // Rad/Sec
+    public static final double kWheelRadiusRampRate = 0.05; // Rad/Sec^2
 
     // Path Finder/Planner Stuff
     public static final PathConstraints kPathConstraints =
         new PathConstraints(
-            3,
+            1,
             2,
             DegreesPerSecond.of(300).in(RadiansPerSecond),
             DegreesPerSecond.of(1200).in(RadiansPerSecond));
@@ -422,25 +385,19 @@ public final class Constants {
 
   public final class ReefAlignConstants {
     // Target Poses
-    public static final Pose2d kRightReefPose =
-        new Pose2d(Meters.of(-0.5), Meters.of(0.193), new Rotation2d(Degrees.of(-90)));
     public static final Pose2d kLeftReefPose =
-        new Pose2d(Meters.of(-0.5), Meters.of(-0.137), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Meters.of(-0.49), Meters.of(0.193), new Rotation2d(Degrees.of(-90)));
+    public static final Pose2d kRightReefPose =
+        new Pose2d(Meters.of(-0.49), Meters.of(-0.137), new Rotation2d(Degrees.of(-90)));
 
     // PID Controllers
-    public static final PIDController kTranslationXController = new PIDController(0.1, 0, 0);
-    public static final PIDController kTranslationYController = new PIDController(0.1, 0, 0);
+    public static final PIDController kTranslationXController = new PIDController(2.5, 0, 0.1);
+    public static final PIDController kTranslationYController = new PIDController(2.5, 0, 0.1);
     public static final PIDController kRotationController = new PIDController(0.1, 0, 0);
-    // Tuned in sim (might work on real bot)
-    // public static final PIDController kTranslationXController = new PIDController(2.5, 0, 0.1);
-    // public static final PIDController kTranslationYController = new PIDController(5, 0, 0.5);
-    // public static final PIDController kRotationController = new PIDController(10, 0, 0);
-
     public static final Angle kSetpointRotTolerance = Degrees.of(1);
     public static final Distance kSetpointTolerance = Inches.of(0.1);
 
-    public static final Time kNoTagDebounce = Seconds.of(3);
-    public static final Time kAtPoseDebounce = Seconds.of(0.1);
+    public static final Time kAtPoseDebounce = Seconds.of(0.05);
   }
 
   public final class FeildConstants {

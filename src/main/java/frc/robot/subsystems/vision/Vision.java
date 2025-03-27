@@ -19,18 +19,17 @@ import static edu.wpi.first.units.Units.Radians;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import frc.robot.util.LimelightHelpers;
 import java.util.LinkedList;
@@ -75,21 +74,10 @@ public class Vision extends SubsystemBase {
     return inputs[cameraIndex].latestTargetObservation.tx();
   }
 
-  public void getTarget(int cameraIndex) {}
-
   public Pose3d getVisionPose(int cameraIndex) {
     if (inputs[cameraIndex].poseObservations.length == 0 || inputs[cameraIndex].tagIds.length == 0)
       return new Pose3d();
     return inputs[cameraIndex].poseObservations[0].pose();
-  }
-
-  public int getTagID(int cameraIndex, int tagIndex) {
-    if (inputs[cameraIndex].tagIds.length <= 0) return -1;
-    return inputs[cameraIndex].tagIds[tagIndex];
-  }
-
-  public boolean cameraHasTag(int cameraIndex) {
-    return !(inputs[cameraIndex].tagIds.length == 0);
   }
 
   public int getClosestTagID(int cameraIndex) {
@@ -116,60 +104,6 @@ public class Vision extends SubsystemBase {
     Optional<Pose3d> tagPoseOptional = VisionConstants.kAprilTagLayout.getTagPose(tagID);
     if (tagPoseOptional.isEmpty()) return new Pose3d();
     return tagPoseOptional.get();
-  }
-
-  public Pose3d getClosestTagPose(int cameraIndex) {
-    if (inputs[cameraIndex].tagIds.length == 0) return new Pose3d();
-
-    Pose3d cameraPose = getVisionPose(cameraIndex);
-    Pose3d closestTagPose = new Pose3d();
-    double minDistance = Double.MAX_VALUE;
-
-    for (int tagId : inputs[cameraIndex].tagIds) {
-      Pose3d tagPose = getTagPose(tagId);
-      double distance = cameraPose.getTranslation().getDistance(tagPose.getTranslation());
-
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestTagPose = tagPose;
-      }
-    }
-
-    return closestTagPose;
-  }
-
-  public Pose3d poseToPoseRelative(Pose3d pose, Pose3d relativeTo) {
-    return pose.relativeTo(relativeTo);
-  }
-
-  public Pose2d robotToFeildRelative(Pose2d robotPose, Pose2d pose) {
-    return robotPose.transformBy(new Transform2d(pose.getTranslation(), pose.getRotation()));
-  }
-
-  public Pose3d feildToTagRelative(Pose3d tagPose, Pose3d pose) {
-    return pose.relativeTo(tagPose);
-  }
-
-  public Pose2d tagToFeildRelative(int TagID, Pose2d robotTagRelativePose) {
-    return getTagPose(TagID)
-        .transformBy(
-            new Transform3d(
-                new Translation3d(
-                    robotTagRelativePose.getMeasureX(),
-                    robotTagRelativePose.getMeasureY(),
-                    Meters.zero()),
-                new Rotation3d(
-                    Degrees.zero(),
-                    Degrees.zero(),
-                    robotTagRelativePose.getRotation().getMeasure())))
-        .toPose2d();
-  }
-
-  public Pose3d tagToFeildRelative3d(int TagID, Pose3d robotTagRelativePose) {
-    return getTagPose(TagID)
-        .transformBy(
-            new Transform3d(
-                robotTagRelativePose.getTranslation(), robotTagRelativePose.getRotation()));
   }
 
   public Pose3d convertLLPose(Pose3d pose) {
@@ -254,12 +188,12 @@ public class Vision extends SubsystemBase {
         }
 
         // Send vision observation
-        // if (Robot.isUsingVision || !VisionConstants.kVisionAutoOnly) {
-        //   consumer.accept(
-        //       observation.pose().toPose2d(),
-        //       observation.timestamp(),
-        //       VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
-        // }
+        if (Robot.isUsingVision && VisionConstants.kVisionUpdatesOdometry) {
+          consumer.accept(
+              observation.pose().toPose2d(),
+              observation.timestamp(),
+              VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+        }
       }
 
       // Log camera datadata

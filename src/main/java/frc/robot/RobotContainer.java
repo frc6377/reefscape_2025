@@ -15,6 +15,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -218,8 +219,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set L1 Mode", Commands.none());
     NamedCommands.registerCommand("L1 Score", Commands.none());
     NamedCommands.registerCommand("Strafe", Commands.none());
-    NamedCommands.registerCommand("AA Left", Commands.none());
-    NamedCommands.registerCommand("AA Right", Commands.none());
+    NamedCommands.registerCommand(
+        "AA Left", DriveCommands.AlignToReef(false, camera0Name, drive, vision));
+    NamedCommands.registerCommand(
+        "AA Right", DriveCommands.AlignToReef(true, camera0Name, drive, vision));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -302,7 +305,51 @@ public class RobotContainer {
               SignalLogger.stop();
             }));
 
-    // coralScorer
+    // Reset gyro / odometry, Runnable
+    final Runnable resetGyro =
+        () ->
+            drive.setPose(
+                new Pose2d(
+                    drive.getPose().getTranslation(),
+                    new Rotation2d(
+                        DriverStation.getAlliance().get() == Alliance.Blue
+                            ? Degrees.zero()
+                            : Degrees.of(180)))); // zero gyro
+
+    // Default command, normal field-relative drive
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            OI.getAxisSupplier(OI.Driver.LeftY),
+            OI.getAxisSupplier(OI.Driver.LeftX),
+            OI.getAxisSupplier(OI.Driver.RightX),
+            OI.getButton(OI.Driver.RSB)));
+    OI.getButton(OI.Driver.Back)
+        .onTrue(
+            Robot.isReal()
+                ? Commands.runOnce(resetGyro, drive).ignoringDisable(true)
+                : Commands.runOnce(() -> resetSimulationField()));
+
+    // Auto Align Commands
+    OI.getButton(OI.Driver.RSB).onTrue(DriveCommands.AlignToReef(true, camera0Name, drive, vision));
+    OI.getButton(OI.Driver.LSB)
+        .onTrue(DriveCommands.AlignToReef(false, camera0Name, drive, vision));
+
+    UpButtonTrigger.or(DownButtonTrigger)
+        .or(RightButtonTrigger)
+        .or(LeftButtonTrigger)
+        .whileTrue(
+            DriveCommands.POVDrive(
+                drive,
+                () ->
+                    (LeftButtonTrigger.getAsBoolean() ? 1 : 0.0)
+                        + (RightButtonTrigger.getAsBoolean() ? -1 : 0),
+                () ->
+                    (UpButtonTrigger.getAsBoolean() ? 1 : 0.0)
+                        + (DownButtonTrigger.getAsBoolean() ? -1 : 0),
+                () -> 0.0));
+
+    // // coralScorer
     //     .scorerAlignedTrigger()
     //     .and(coralScorer.hasCoralTrigger())
     //     .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
@@ -407,70 +454,12 @@ public class RobotContainer {
     // OI.getButton(OI.Operator.LTrigger).whileTrue(algeaRemover.upCommand());
     // OI.getButton(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
 
-    // Climber Buttons
+    // // Climber Buttons
     // OI.getButton(OI.Operator.DPAD_UP)
     //     .onTrue(climber.retract())
     //     .toggleOnTrue(intake.movePivot(kPivotClimbingAngle));
     // OI.getButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
     // OI.getButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
-
-    // Reset gyro / odometry, Runnable
-    final Runnable resetGyro =
-        () ->
-            drive.setPose(
-                new Pose2d(
-                    drive.getPose().getTranslation(),
-                    new Rotation2d(
-                        DriverStation.getAlliance().get() == Alliance.Blue
-                            ? Degrees.zero()
-                            : Degrees.of(180)))); // zero gyro
-
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            OI.getAxisSupplier(OI.Driver.LeftY),
-            OI.getAxisSupplier(OI.Driver.LeftX),
-            OI.getAxisSupplier(OI.Driver.RightX),
-            OI.getButton(OI.Driver.RSB)));
-    OI.getButton(OI.Driver.Back)
-        .onTrue(
-            Robot.isReal()
-                ? Commands.runOnce(resetGyro, drive).ignoringDisable(true)
-                : Commands.runOnce(() -> resetSimulationField()));
-
-    // Auto Align Commands
-    OI.getButton(OI.Driver.RSB).onTrue(DriveCommands.AlignToReef(true, drive, vision));
-
-    UpButtonTrigger.or(DownButtonTrigger)
-        .or(RightButtonTrigger)
-        .or(LeftButtonTrigger)
-        .whileTrue(
-            DriveCommands.POVDrive(
-                drive,
-                () ->
-                    (UpButtonTrigger.getAsBoolean() ? 1 : 0.0)
-                        + (DownButtonTrigger.getAsBoolean() ? -1 : 0),
-                () ->
-                    (LeftButtonTrigger.getAsBoolean() ? 1 : 0.0)
-                        + (RightButtonTrigger.getAsBoolean() ? -1 : 0),
-                () -> 0.0));
-
-    /* This is for creating the button mappings for logging what coral have been scored
-     * The Driverstation has a hard limit of 32 buttons so we use 2 different vjoy controllers
-     * to get the effective 64 buttons that we need for logging. this first 16 buttons of every controller are
-     * used for the front and back coral scored poses. */
-    // int rows = 3;
-    // for (int i = 0; i < Constants.kPoleLetters.length / 2; i++) {
-    //   for (int j = 0; j < rows; j++) {
-    //     OI.getButton(OI.StreamDeck.streamDeckButtons[0][i * rows + j])
-    //         .onChange(drive.setPoseScored(Constants.kPoleLetters[i], j));
-    //     OI.getButton(OI.StreamDeck.streamDeckButtons[1][i * rows + j])
-    //         .onChange(
-    //             drive.setPoseScored(
-    //                 Constants.kPoleLetters[i + Constants.kPoleLetters.length / 2], j));
-    //   }
-    // }
 
     // Button to update Setpoints of the elevator based on the Stream Deck nobs
     // TODO: Fix axis input
@@ -499,7 +488,8 @@ public class RobotContainer {
               OI.getAxisSupplier(OI.Keyboard.WS),
               OI.getAxisSupplier(OI.Keyboard.ArrowLR),
               new Trigger(() -> false)));
-      OI.getButton(OI.Keyboard.M).onTrue(DriveCommands.AlignToReef(true, drive, vision));
+      OI.getButton(OI.Keyboard.M)
+          .onTrue(DriveCommands.AlignToReef(true, camera0Name, drive, vision));
 
       // Intake
       // OI.getButton(OI.Keyboard.ForwardSlash).whileTrue(intake.floorIntake());

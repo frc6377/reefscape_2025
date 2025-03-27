@@ -41,10 +41,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.ReefAlignConstants;
-import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.LimelightHelpers;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -135,20 +133,14 @@ public class DriveCommands {
         .withName("Go To Path");
   }
 
-  public static Command AlignToReef(boolean isRightScore, Drive drive, Vision vision) {
+  public static Command AlignToReef(
+      boolean isRightScore, String cameraName, Drive drive, Vision vision) {
     return new DeferredCommand(
             () -> {
               Pose2d TagPose =
-                  Robot.isReal()
-                      ? vision
-                          .convertLLPose(
-                              LimelightHelpers.getTargetPose3d_RobotSpace(
-                                  VisionConstants.camera0Name))
-                          .toPose2d()
-                      : vision
-                          .poseToPoseRelative(
-                              vision.getTagPose(vision.getClosestTagID(0)), vision.getVisionPose(0))
-                          .toPose2d();
+                  vision
+                      .convertLLPose(LimelightHelpers.getTargetPose3d_RobotSpace(cameraName))
+                      .toPose2d();
               Pose2d TagRelativeTargetPose =
                   isRightScore
                       ? ReefAlignConstants.kRightReefPose
@@ -160,16 +152,22 @@ public class DriveCommands {
                           new Rotation2d(
                               TagRelativeTargetPose.getRotation().getMeasure().times(-1))));
               Pose2d fieldRelativeTargetPose =
-                  vision.robotToFeildRelative(drive.getPose(), targetPose);
+                  drive
+                      .getPose()
+                      .transformBy(
+                          new Transform2d(targetPose.getTranslation(), targetPose.getRotation()));
 
               Logger.recordOutput("Auto Align/Tag Pose (RR)", TagPose);
               Logger.recordOutput(
                   "Auto Align/Tag Pose (FR)",
-                  vision.robotToFeildRelative(drive.getPose(), TagPose));
+                  drive
+                      .getPose()
+                      .transformBy(
+                          new Transform2d(TagPose.getTranslation(), TagPose.getRotation())));
               Logger.recordOutput("Auto Align/Target Pose (RR)", targetPose);
               Logger.recordOutput("Auto Align/Target Pose (FR)", fieldRelativeTargetPose);
-              //   return GoToPosePID(fieldRelativeTargetPose, () -> drive.getPose(), drive);
-              return AutoBuilder.pathfindToPose(fieldRelativeTargetPose, kPathConstraints);
+              return GoToPosePID(fieldRelativeTargetPose, () -> drive.getPose(), drive);
+              //   return AutoBuilder.pathfindToPose(fieldRelativeTargetPose, kPathConstraints);
             },
             Set.of(drive))
         .withName("Align To Reef");
