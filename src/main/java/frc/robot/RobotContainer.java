@@ -324,6 +324,7 @@ public class RobotContainer {
             OI.getAxisSupplier(OI.Driver.LeftX),
             OI.getAxisSupplier(OI.Driver.RightX),
             OI.getButton(OI.Driver.RSB)));
+    // drive.setDefaultCommand(DriveCommands.AlignToReefTest(true, camera0Name, drive, vision));
     OI.getButton(OI.Driver.Back)
         .onTrue(
             Robot.isReal()

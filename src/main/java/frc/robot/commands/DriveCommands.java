@@ -42,7 +42,6 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.ReefAlignConstants;
-import frc.robot.OI;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.LimelightHelpers;
@@ -135,6 +134,38 @@ public class DriveCommands {
         .withName("Go To Path");
   }
 
+  public static Command AlignToReefTest(
+      boolean isRightScore, String cameraName, Drive drive, Vision vision) {
+    return Commands.run(
+        () -> {
+          Pose2d TagPose =
+              vision
+                  .convertLLPose(LimelightHelpers.getTargetPose3d_RobotSpace(cameraName))
+                  .toPose2d();
+          Pose2d TagRelativeTargetPose =
+              isRightScore ? ReefAlignConstants.kRightReefPose : ReefAlignConstants.kLeftReefPose;
+          Pose2d targetPose =
+              TagPose.transformBy(
+                  new Transform2d(
+                      TagRelativeTargetPose.getTranslation(),
+                      new Rotation2d(TagRelativeTargetPose.getRotation().getMeasure().times(-1))));
+          Pose2d fieldRelativeTargetPose =
+              drive
+                  .getPose()
+                  .transformBy(
+                      new Transform2d(targetPose.getTranslation(), targetPose.getRotation()));
+
+          Logger.recordOutput("Auto Align/Tag Pose (RR)", TagPose);
+          Logger.recordOutput(
+              "Auto Align/Tag Pose (FR)",
+              drive
+                  .getPose()
+                  .transformBy(new Transform2d(TagPose.getTranslation(), TagPose.getRotation())));
+          Logger.recordOutput("Auto Align/Target Pose (RR)", targetPose);
+          Logger.recordOutput("Auto Align/Target Pose (FR)", fieldRelativeTargetPose);
+        });
+  }
+
   public static Command AlignToReef(
       boolean isRightScore, String cameraName, Drive drive, Vision vision) {
     return new DeferredCommand(
@@ -151,13 +182,13 @@ public class DriveCommands {
                   TagPose.transformBy(
                       new Transform2d(
                           TagRelativeTargetPose.getTranslation(),
-                          new Rotation2d(
-                              TagRelativeTargetPose.getRotation().getMeasure().times(-1))));
+                          new Rotation2d(TagRelativeTargetPose.getRotation().getMeasure())));
               Pose2d fieldRelativeTargetPose =
                   drive
                       .getPose()
                       .transformBy(
-                          new Transform2d(targetPose.getTranslation(), targetPose.getRotation()));
+                          new Transform2d(
+                              targetPose.getTranslation(), targetPose.getRotation().times(-1)));
 
               Logger.recordOutput("Auto Align/Tag Pose (RR)", TagPose);
               Logger.recordOutput(
