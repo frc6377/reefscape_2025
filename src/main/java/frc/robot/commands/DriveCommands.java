@@ -18,6 +18,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.DrivetrainConstants.kPathConstraints;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -41,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.ReefAlignConstants;
+import frc.robot.OI;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.LimelightHelpers;
@@ -74,13 +76,13 @@ public class DriveCommands {
     PIDController xController = ReefAlignConstants.kTranslationXController;
     PIDController yController = ReefAlignConstants.kTranslationYController;
     PIDController rotController = ReefAlignConstants.kRotationController;
-    Trigger xTrigger = new Trigger(() -> xController.atSetpoint()).debounce(0.05);
-    Trigger yTrigger = new Trigger(() -> yController.atSetpoint()).debounce(0.05);
-    Trigger rotTrigger = new Trigger(() -> rotController.atSetpoint()).debounce(0.05);
     Trigger endTrigger =
         new Trigger(
-            () ->
-                xController.atSetpoint() && yController.atSetpoint() && rotController.atSetpoint());
+                () ->
+                    xController.atSetpoint()
+                        && yController.atSetpoint()
+                        && rotController.atSetpoint())
+            .debounce(ReefAlignConstants.kAtPoseDebounce.in(Seconds));
 
     return Commands.sequence(
             Commands.runOnce(
@@ -91,8 +93,9 @@ public class DriveCommands {
                   yController.setSetpoint(targetPose.getMeasureY().in(Meters));
                   yController.setTolerance(ReefAlignConstants.kSetpointTolerance.in(Meters));
 
-                  rotController.setSetpoint(targetPose.getRotation().getMeasure().in(Degrees));
+                  rotController.setSetpoint(targetPose.getRotation().getDegrees());
                   rotController.setTolerance(ReefAlignConstants.kSetpointRotTolerance.in(Degrees));
+                  rotController.enableContinuousInput(-180, 180);
                 }),
             Commands.run(
                     () -> {
@@ -101,8 +104,7 @@ public class DriveCommands {
                       double ySpeed =
                           -yController.calculate(robotPose.get().getMeasureY().in(Meters));
                       double rotValue =
-                          rotController.calculate(
-                              robotPose.get().getRotation().getMeasure().in(Degrees));
+                          rotController.calculate(robotPose.get().getRotation().getDegrees());
 
                       Logger.recordOutput("Auto Align/PID/X Output", xSpeed);
                       Logger.recordOutput("Auto Align/PID/X Setpoint", xController.getSetpoint());

@@ -386,18 +386,18 @@ public final class Constants {
   public final class ReefAlignConstants {
     // Target Poses
     public static final Pose2d kLeftReefPose =
-        new Pose2d(Meters.of(-0.49), Meters.of(0.193), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Inches.of(-19.29134), Inches.of(7.598425), new Rotation2d(Degrees.of(-90)));
     public static final Pose2d kRightReefPose =
-        new Pose2d(Meters.of(-0.49), Meters.of(-0.137), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Inches.of(-19.29134), Inches.of(-5.393701), new Rotation2d(Degrees.of(-90)));
 
     // PID Controllers
-    public static final PIDController kTranslationXController = new PIDController(2.5, 0, 0.1);
-    public static final PIDController kTranslationYController = new PIDController(2.5, 0, 0.1);
+    public static final PIDController kTranslationXController = new PIDController(1, 0, 0.1);
+    public static final PIDController kTranslationYController = new PIDController(1, 0, 0.1);
     public static final PIDController kRotationController = new PIDController(0.1, 0, 0);
     public static final Angle kSetpointRotTolerance = Degrees.of(1);
     public static final Distance kSetpointTolerance = Inches.of(0.1);
 
-    public static final Time kAtPoseDebounce = Seconds.of(0.05);
+    public static final Time kAtPoseDebounce = Seconds.of(0);
   }
 
   public final class FeildConstants {
