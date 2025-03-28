@@ -306,21 +306,34 @@ public class RobotContainer {
               SignalLogger.stop();
             }));
 
-    coralScorer
-        .scorerAlignedTrigger()
-        .and(coralScorer.hasCoralTrigger())
-        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
-        .and(elevator.elevatorAtCurrentSetpoint())
-        .whileTrue(
-            Commands.runEnd(
-                () -> {
-                  OI.Driver.setRumble(0.5);
-                  OI.Operator.setRumble(0.5);
-                },
-                () -> {
-                  OI.Driver.setRumble(0);
-                  OI.Operator.setRumble(0);
-                }));
+    Trigger automaticScoreTrigger =
+        coralScorer
+            .scorerAlignedTrigger()
+            .and(coralScorer.hasCoralTrigger())
+            .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
+            .and(elevator.elevatorAtCurrentSetpoint())
+            .and(() -> DriverStation.isTeleopEnabled());
+
+    automaticScoreTrigger.whileTrue(
+        Commands.runEnd(
+            () -> {
+              OI.Driver.setRumble(0.5);
+              OI.Operator.setRumble(0.5);
+            },
+            () -> {
+              OI.Driver.setRumble(0);
+              OI.Operator.setRumble(0);
+            }));
+
+    automaticScoreTrigger
+        .debounce(0.5)
+        .onTrue(
+            coralScorer
+                .scoreCommand()
+                .until(
+                    coralScorer
+                        .hasCoralTrigger()
+                        .negate())); // TODO: Make sure this doesn't conflict with auto
 
     // Elevator Buttons
     OI.getButton(OI.Driver.A).onTrue(elevator.L0());
