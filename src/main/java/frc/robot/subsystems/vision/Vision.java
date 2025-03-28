@@ -108,7 +108,7 @@ public class Vision extends SubsystemBase {
 
   public Pose3d convertLLPose(Pose3d pose) {
     return new Pose3d(
-        pose.getMeasureZ().times(-1),
+        pose.getMeasureZ().times(1),
         pose.getMeasureX(),
         pose.getMeasureY().times(-1),
         new Rotation3d(Degrees.zero(), Degrees.zero(), pose.getRotation().getMeasureY()));

@@ -324,7 +324,6 @@ public class RobotContainer {
             OI.getAxisSupplier(OI.Driver.LeftX),
             OI.getAxisSupplier(OI.Driver.RightX),
             OI.getButton(OI.Driver.RSB)));
-    // drive.setDefaultCommand(DriveCommands.AlignToReefTest(true, camera0Name, drive, vision));
     OI.getButton(OI.Driver.Back)
         .onTrue(
             Robot.isReal()
@@ -332,9 +331,10 @@ public class RobotContainer {
                 : Commands.runOnce(() -> resetSimulationField()));
 
     // Auto Align Commands
-    OI.getButton(OI.Driver.RSB).onTrue(DriveCommands.AlignToReef(true, camera0Name, drive, vision));
+    OI.getButton(OI.Driver.RSB)
+        .toggleOnTrue(DriveCommands.AlignToReefTest(true, camera0Name, drive, vision));
     OI.getButton(OI.Driver.LSB)
-        .onTrue(DriveCommands.AlignToReef(false, camera0Name, drive, vision));
+        .toggleOnTrue(DriveCommands.AlignToReefTest(false, camera0Name, drive, vision));
 
     UpButtonTrigger.or(DownButtonTrigger)
         .or(RightButtonTrigger)
