@@ -386,9 +386,9 @@ public final class Constants {
   public final class ReefAlignConstants {
     // Target Poses
     public static final Pose2d kLeftReefPose =
-        new Pose2d(Inches.of(-19.29134), Inches.of(7.598425), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Inches.of(19.29134), Inches.of(7.598425), new Rotation2d(Degrees.of(-90)));
     public static final Pose2d kRightReefPose =
-        new Pose2d(Inches.of(-19.29134), Inches.of(-5.393701), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Inches.of(19.29134), Inches.of(-5.393701), new Rotation2d(Degrees.of(-90)));
 
     // PID Controllers
     public static final PIDController kTranslationXController = new PIDController(1, 0, 0.1);
