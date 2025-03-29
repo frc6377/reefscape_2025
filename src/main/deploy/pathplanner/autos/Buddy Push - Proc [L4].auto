@@ -19,43 +19,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "E - Source"
+            "pathName": "E - Push Buddy"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score CD (AA)"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AA Right"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "D - Source"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score CD (AA)"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AA Left"
+            "pathName": "Buddy Back Away Proc"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Kings",
+  "folder": null,
   "choreoAuto": false
 }

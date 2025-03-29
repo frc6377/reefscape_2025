@@ -118,9 +118,6 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     Logger.recordOutput("Auto Align/LL Has Target", LimelightHelpers.getTV(camera0Name));
     Logger.recordOutput("Auto Align/LL Target ID", LimelightHelpers.getFiducialID(camera0Name));
-    Logger.recordOutput(
-        "Auto Align/Target Pose 3d",
-        convertLLPose(LimelightHelpers.getTargetPose3d_RobotSpace(camera0Name)));
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + i, inputs[i]);

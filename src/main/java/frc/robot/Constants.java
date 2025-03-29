@@ -391,11 +391,11 @@ public final class Constants {
         new Pose2d(Inches.of(19.29134), Inches.of(-5.393701), new Rotation2d(Degrees.of(-90)));
 
     // PID Controllers
-    public static final PIDController kTranslationXController = new PIDController(1, 0, 0.1);
-    public static final PIDController kTranslationYController = new PIDController(1, 0, 0.1);
+    public static final PIDController kTranslationXController = new PIDController(2, 0, 0.1);
+    public static final PIDController kTranslationYController = new PIDController(2, 0, 0.1);
     public static final PIDController kRotationController = new PIDController(0.1, 0, 0);
     public static final Angle kSetpointRotTolerance = Degrees.of(1);
-    public static final Distance kSetpointTolerance = Inches.of(0.1);
+    public static final Distance kSetpointTolerance = Inches.of(0.5);
 
     public static final Time kAtPoseDebounce = Seconds.of(0);
   }

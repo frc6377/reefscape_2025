@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.75,
-        "y": 1.901126230910006
+        "x": 7.5,
+        "y": 0.7439999999999998
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.638901876607881,
-        "y": 2.2379345313596204
+        "x": 6.5,
+        "y": 0.7439999999999998
       },
       "isLocked": false,
-      "linkedName": "Start Mid Right"
+      "linkedName": "Push Buddy End Proc"
     },
     {
       "anchor": {
-        "x": 5.03483606557377,
-        "y": 2.820235655737705
+        "x": 4.5,
+        "y": 0.7439999999999998
       },
       "prevControl": {
-        "x": 5.666765250358289,
-        "y": 2.6233613262657203
+        "x": 5.5,
+        "y": 0.7439999999999998
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef E"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -150.0
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Start - Score",
+  "folder": "Buddy Push Paths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

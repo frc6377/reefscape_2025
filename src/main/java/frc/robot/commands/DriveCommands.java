@@ -99,9 +99,9 @@ public class DriveCommands {
             Commands.run(
                     () -> {
                       double xSpeed =
-                          -xController.calculate(robotPose.get().getMeasureX().in(Meters));
+                          xController.calculate(robotPose.get().getMeasureX().in(Meters));
                       double ySpeed =
-                          -yController.calculate(robotPose.get().getMeasureY().in(Meters));
+                          yController.calculate(robotPose.get().getMeasureY().in(Meters));
                       double rotValue =
                           rotController.calculate(robotPose.get().getRotation().getDegrees());
 
@@ -122,7 +122,12 @@ public class DriveCommands {
                           "Auto Align/PID/Rot At Setpoint", rotController.atSetpoint());
 
                       ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rotValue);
-                      drive.runVelocity(speeds);
+
+                      // Convert to field Relative Speeds
+                      drive.runVelocity(
+                          ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
+
+                      //   drive.runVelocity(speeds);
                     })
                 .until(endTrigger))
         .withName("Go To Pose PID");
@@ -134,43 +139,6 @@ public class DriveCommands {
         .withName("Go To Path");
   }
 
-  public static Command AlignToReefTest(
-      boolean isRightScore, String cameraName, Drive drive, Vision vision) {
-    return Commands.run(
-        () -> {
-          Pose2d TagPose =
-              vision
-                  .convertLLPose(LimelightHelpers.getTargetPose3d_RobotSpace(cameraName))
-                  .toPose2d();
-          Pose2d tagPoseRotated =
-              TagPose.rotateAround(new Translation2d(), drive.getPose().getRotation().unaryMinus());
-          Pose2d tagPoseFieldRelative =
-              new Pose2d(
-                  tagPoseRotated.getMeasureX().plus(drive.getPose().getMeasureX()),
-                  tagPoseRotated.getMeasureY().times(-1).plus(drive.getPose().getMeasureY()),
-                  new Rotation2d(
-                      vision
-                          .getTagPose((int) LimelightHelpers.getFiducialID(cameraName))
-                          .getRotation()
-                          .getMeasureZ()));
-          Logger.recordOutput("Auto Align/Tag Pose (RR)", TagPose);
-          Logger.recordOutput("Auto Align/Tag Pose Rotated (RR)", tagPoseRotated);
-          Logger.recordOutput("Auto Align/Tag Pose (FF)", tagPoseFieldRelative);
-
-          Pose2d TargetOffset =
-              isRightScore ? ReefAlignConstants.kRightReefPose : ReefAlignConstants.kLeftReefPose;
-          Pose2d TargetOffsetRotated =
-              TargetOffset.rotateAround(new Translation2d(), tagPoseFieldRelative.getRotation());
-          Pose2d targetPose =
-              new Pose2d(
-                  tagPoseFieldRelative.getMeasureX().plus(TargetOffsetRotated.getMeasureX()),
-                  tagPoseFieldRelative.getMeasureY().plus(TargetOffsetRotated.getMeasureY()),
-                  tagPoseFieldRelative.getRotation().plus(TargetOffsetRotated.getRotation()));
-          Logger.recordOutput("Auto Align/Target Pose (FF)", targetPose);
-        },
-        drive);
-  }
-
   public static Command AlignToReef(
       boolean isRightScore, String cameraName, Drive drive, Vision vision) {
     return new DeferredCommand(
@@ -179,33 +147,40 @@ public class DriveCommands {
                   vision
                       .convertLLPose(LimelightHelpers.getTargetPose3d_RobotSpace(cameraName))
                       .toPose2d();
-              Pose2d TagRelativeTargetPose =
+              Pose2d tagPoseRotated =
+                  TagPose.rotateAround(
+                      new Translation2d(), drive.getPose().getRotation().unaryMinus());
+              Pose2d tagPoseFieldRelative =
+                  new Pose2d(
+                      tagPoseRotated.getMeasureX().plus(drive.getPose().getMeasureX()),
+                      tagPoseRotated.getMeasureY().times(-1).plus(drive.getPose().getMeasureY()),
+                      new Rotation2d(
+                          vision
+                              .getTagPose((int) LimelightHelpers.getFiducialID(cameraName))
+                              .getRotation()
+                              .getMeasureZ()));
+              Logger.recordOutput("Auto Align/Tag Pose (RR)", TagPose);
+              Logger.recordOutput("Auto Align/Tag Pose Rotated (RR)", tagPoseRotated);
+              Logger.recordOutput("Auto Align/Tag Pose (FF)", tagPoseFieldRelative);
+
+              Pose2d TargetOffset =
                   isRightScore
                       ? ReefAlignConstants.kRightReefPose
                       : ReefAlignConstants.kLeftReefPose;
+              Pose2d TargetOffsetRotated =
+                  TargetOffset.rotateAround(
+                      new Translation2d(), tagPoseFieldRelative.getRotation());
               Pose2d targetPose =
-                  TagPose.transformBy(
-                      new Transform2d(
-                          TagRelativeTargetPose.getTranslation(),
-                          new Rotation2d(TagRelativeTargetPose.getRotation().getMeasure())));
-              Pose2d fieldRelativeTargetPose =
-                  drive
-                      .getPose()
-                      .transformBy(
-                          new Transform2d(
-                              targetPose.getTranslation(), targetPose.getRotation().times(-1)));
-
-              Logger.recordOutput("Auto Align/Tag Pose (RR)", TagPose);
-              Logger.recordOutput(
-                  "Auto Align/Tag Pose (FR)",
-                  drive
-                      .getPose()
-                      .transformBy(
-                          new Transform2d(TagPose.getTranslation(), TagPose.getRotation())));
-              Logger.recordOutput("Auto Align/Target Pose (RR)", targetPose);
-              Logger.recordOutput("Auto Align/Target Pose (FR)", fieldRelativeTargetPose);
-              return GoToPosePID(fieldRelativeTargetPose, () -> drive.getPose(), drive);
-              //   return AutoBuilder.pathfindToPose(fieldRelativeTargetPose, kPathConstraints);
+                  new Pose2d(
+                      tagPoseFieldRelative.getMeasureX().plus(TargetOffsetRotated.getMeasureX()),
+                      tagPoseFieldRelative.getMeasureY().plus(TargetOffsetRotated.getMeasureY()),
+                      new Rotation2d(
+                          tagPoseFieldRelative
+                              .getRotation()
+                              .getMeasure()
+                              .plus(TargetOffset.getRotation().getMeasure())));
+              Logger.recordOutput("Auto Align/Target Pose (FF)", targetPose);
+              return GoToPosePID(targetPose, () -> drive.getPose(), drive);
             },
             Set.of(drive))
         .withName("Align To Reef");
