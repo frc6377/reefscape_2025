@@ -37,29 +37,48 @@ public class LocateCoral extends Command {
   @Override
   public void initialize() {
     intakeSubsystem.goToPivotPosition(kPivotCoralStationAngle);
-    intakeSubsystem.setIntakeMotor(IntakeConstants.kHoldSpeed);
+    if (!intakeSubsystem.onGroundTrigger().getAsBoolean()) {
+      intakeSubsystem.setIntakeMotor(IntakeConstants.kHoldSpeed);
+    }
     Logger.recordOutput("Locate Coral Running", true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    switch (state.get()) {
-      case CORAL_TOO_CLOSE:
-        intakeSubsystem.setConveyerMotor(kConveyorSpeed);
-        intakeSubsystem.goToPivotPosition(kPivotCoralStationAngle);
-        break;
-      case CORAL_TOO_FAR:
-        intakeSubsystem.setConveyerMotor(-kConveyorSpeed);
-        intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
-        break;
-      case IN_ELEVATOR:
-      case NO_CORAL:
-      case CORAL_ALIGNED:
-        intakeSubsystem.setConveyerMotor(0);
-        intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
-        break;
-      case OTHER:
+    if (intakeSubsystem.onGroundTrigger().getAsBoolean()) {
+      switch (state.get()) {
+        case CORAL_TOO_CLOSE:
+          intakeSubsystem.setConveyerMotor(kConveyorSpeed);
+          break;
+        case CORAL_TOO_FAR:
+          intakeSubsystem.setConveyerMotor(-kConveyorSpeed);
+          break;
+        case IN_ELEVATOR:
+        case NO_CORAL:
+        case CORAL_ALIGNED:
+          intakeSubsystem.setConveyerMotor(0);
+          break;
+        case OTHER:
+      }
+    } else {
+      switch (state.get()) {
+        case CORAL_TOO_CLOSE:
+          intakeSubsystem.setConveyerMotor(kConveyorSpeed);
+          intakeSubsystem.goToPivotPosition(kPivotCoralStationAngle);
+          break;
+        case CORAL_TOO_FAR:
+          intakeSubsystem.setConveyerMotor(-kConveyorSpeed);
+          intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
+          break;
+        case IN_ELEVATOR:
+        case NO_CORAL:
+        case CORAL_ALIGNED:
+          intakeSubsystem.setConveyerMotor(0);
+          intakeSubsystem.goToPivotPosition(kPivotRetractAngle);
+          break;
+        case OTHER:
+      }
     }
   }
 
