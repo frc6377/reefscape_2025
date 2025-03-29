@@ -24,6 +24,7 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -119,7 +120,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     // Switch thread to high priority to improve loop timing
-    // Threads.setCurrentThreadPriority(true, 99);
+    Threads.setCurrentThreadPriority(true, 99);
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled commands, running already-scheduled commands, removing
@@ -127,11 +128,11 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    robotContainer.updateMechVisualizer();
 
     // Return to normal thread priority
-    // Threads.setCurrentThreadPriority(false, 10);
+    Threads.setCurrentThreadPriority(false, 10);
 
+    // robotContainer.updateMechVisualizer();
     double newTime = Timer.getFPGATimestamp() * 1000;
     Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
     lastTime = newTime;

@@ -197,7 +197,7 @@ public final class Constants {
 
     // Pivot Arm Setpoints
     public static final Angle kPivotZero = Degrees.of(304);
-    public static final Angle kPivotRetractAngle = Degrees.of(134.5);
+    public static final Angle kPivotRetractAngle = Degrees.of(135);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(5);
     public static final Angle kPivotCoralStationAngle = Degrees.of(110);

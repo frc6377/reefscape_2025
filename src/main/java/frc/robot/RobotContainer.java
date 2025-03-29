@@ -123,9 +123,7 @@ public class RobotContainer {
                 new ModuleIOTalonFXReal(TunerConstants.FrontRight),
                 new ModuleIOTalonFXReal(TunerConstants.BackLeft),
                 new ModuleIOTalonFXReal(TunerConstants.BackRight));
-        this.vision =
-            new Vision(
-                drive, new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation));
+        this.vision = new Vision(drive);
         intake = new IntakeSubsystem(sensors, null);
         break;
       case SIM:
@@ -346,29 +344,13 @@ public class RobotContainer {
                         + (UpButtonTrigger.getAsBoolean() ? -1 : 0),
                 () -> 0.0));
 
-    coralScorer
-        .scorerAlignedTrigger()
-        .and(coralScorer.hasCoralTrigger())
-        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
-        .and(elevator.elevatorAtCurrentSetpoint())
-        .whileTrue(
-            Commands.runEnd(
-                () -> {
-                  OI.Driver.setRumble(0.5);
-                  OI.Operator.setRumble(0.5);
-                },
-                () -> {
-                  OI.Driver.setRumble(0);
-                  OI.Operator.setRumble(0);
-                }));
-
     Trigger automaticScoreTrigger =
-        coralScorer
-            .scorerAlignedTrigger()
+        new Trigger(() -> DriverStation.isTeleopEnabled())
+            .and(coralScorer.scorerAlignedTrigger())
             .and(coralScorer.hasCoralTrigger())
             .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
-            .and(elevator.elevatorAtCurrentSetpoint())
-            .and(() -> DriverStation.isTeleopEnabled());
+            .and(elevator.elevatorAtCurrentSetpoint());
+
     automaticScoreTrigger.whileTrue(
         Commands.runEnd(
             () -> {
