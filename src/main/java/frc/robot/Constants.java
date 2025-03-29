@@ -127,13 +127,14 @@ public final class Constants {
 
     static {
       kClimberPID0.setKP(100);
-      kClimberPID0.setKD(5);
-      kClimberPID0.setKV(10);
+      kClimberPID0.setKD(0);
+      kClimberPID0.setKV(0);
 
-      kClimberPID1.setKP(200);
+      kClimberPID1.setKP(100);
       kClimberPID1.setKD(5);
-      kClimberPID1.setKV(10);
-      kClimberPID1.setKG(1);
+      kClimberPID1.setKV(15.12);
+      kClimberPID1.setKG(.62);
+      kClimberPID1.setGravityType(GravityTypeValue.Arm_Cosine);
     }
 
     // Mech Constants
@@ -141,7 +142,7 @@ public final class Constants {
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
     public static final Current kClimberIdleCurrentLimit = Amps.of(20);
     public static final Current kClimberClimbingCurrentLimit = Amps.of(70);
-    public static final double kGearRatio = Robot.isReal() ? 126 : 10;
+    public static final double kGearRatio = 126;
 
     // Motor Setpoints
     // 120 Degrees for climb
@@ -175,6 +176,7 @@ public final class Constants {
     public static final double kScoreAutoSpeed = -0.2;
     public static final double kScoreMax = -0.7;
     public static final double kReverseSpeed = 0.25;
+    public static final double kAlignSpeed = -0.1;
 
     public static final Distance kSensorDistnace = Inches.of(1.5);
 
@@ -304,7 +306,7 @@ public final class Constants {
 
     // Mech Constants
     public static final double kAlgeaPercent = 0.1;
-    public static final int kAlegeaGearRatio = 80;
+    public static final int kAlegeaGearRatio = 16;
     public static final Angle ksetpointTolerance = Degrees.of(10);
 
     // Algea Arm Setpoints (// 35 Degrees is breaking point)

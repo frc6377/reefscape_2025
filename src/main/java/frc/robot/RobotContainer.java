@@ -46,7 +46,13 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
-import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOSim;
+import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
+import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.vision.*;
@@ -356,6 +362,33 @@ public class RobotContainer {
                   OI.Operator.setRumble(0);
                 }));
 
+    Trigger automaticScoreTrigger =
+        coralScorer
+            .scorerAlignedTrigger()
+            .and(coralScorer.hasCoralTrigger())
+            .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
+            .and(elevator.elevatorAtCurrentSetpoint())
+            .and(() -> DriverStation.isTeleopEnabled());
+    automaticScoreTrigger.whileTrue(
+        Commands.runEnd(
+            () -> {
+              OI.Driver.setRumble(0.5);
+              OI.Operator.setRumble(0.5);
+            },
+            () -> {
+              OI.Driver.setRumble(0);
+              OI.Operator.setRumble(0);
+            }));
+    automaticScoreTrigger
+        .debounce(0.5)
+        .onTrue(
+            coralScorer
+                .scoreCommand()
+                .until(
+                    coralScorer
+                        .hasCoralTrigger()
+                        .negate())); // TODO: Make sure this doesn't conflict with auto
+
     // Elevator Buttons
     OI.getButton(OI.Driver.A).onTrue(elevator.L0());
     OI.getButton(OI.Driver.B).onTrue(elevator.L2());
@@ -397,12 +430,14 @@ public class RobotContainer {
                     .conveyerInCommand()
                     .alongWith(coralScorer.intakeCommand())
                     .until(coralHandoffCompleteTrigger)
+                    .andThen(coralScorer.alignCoralCommand())
                 : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
     coralOuttakeButton.whileTrue(intake.floorOuttake());
 
     Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
     Logger.recordOutput("Intake/Modes/Algae Mode", intakeAlgeaMode);
     Logger.recordOutput("Intake/Modes/Coral Station Mode", coralStationMode);
+
     OI.getButton(OI.Operator.Y)
         .onTrue(
             Commands.runOnce(
@@ -427,7 +462,7 @@ public class RobotContainer {
     OI.getButton(OI.Driver.LTrigger)
         .and(() -> !elevatorNotL1 && !intakeAlgeaMode)
         .whileTrue(scoreL1);
-    intake.setDefaultCommand(intake.Idle());
+    intake.setDefaultCommand(intake.Idle(() -> elevatorNotL1));
 
     // Scorer Buttons
     OI.getButton(OI.Driver.LScoreTrigger)
