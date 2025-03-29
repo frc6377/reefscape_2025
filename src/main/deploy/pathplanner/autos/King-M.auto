@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartMR - E"
+            "pathName": "Start ML - IJ (AA)"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "E - Source"
+            "pathName": "I - Source"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score D"
+            "pathName": "Score K"
           }
         },
         {
@@ -61,7 +61,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "D - Source"
+            "pathName": "K - Source"
           }
         },
         {
@@ -73,7 +73,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score C"
+            "pathName": "Score L"
           }
         },
         {

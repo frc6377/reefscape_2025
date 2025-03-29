@@ -33,7 +33,7 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
 
   private List<Pose3d> scoredCoralPoses = new ArrayList<Pose3d>();
 
-  private Pose3d robotCoralPose = DrivetrainConstants.kCoralScorerPose;
+  private Pose3d robotCoralPose = DrivetrainConstants.kRobotCoralPose;
   private Pose3d closestScorePose = null;
 
   private boolean robotHasCoral = false;
@@ -96,8 +96,8 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
 
       Translation2d newCoralTranslation =
           new Translation2d(
-                  DrivetrainConstants.kCoralScorerPose.getMeasureX().plus(drivePose.getMeasureX()),
-                  DrivetrainConstants.kCoralScorerPose.getMeasureY().plus(drivePose.getMeasureY()))
+                  DrivetrainConstants.kRobotCoralPose.getMeasureX().plus(drivePose.getMeasureX()),
+                  DrivetrainConstants.kRobotCoralPose.getMeasureY().plus(drivePose.getMeasureY()))
               .rotateAround(
                   new Translation2d(drivePose.getMeasureX(), drivePose.getMeasureY()),
                   new Rotation2d(drivePose.getRotation().getMeasure()));
@@ -106,8 +106,8 @@ public class MapleSimArenaSubsystem extends SubsystemBase {
               new Translation3d(
                   newCoralTranslation.getMeasureX(),
                   newCoralTranslation.getMeasureY(),
-                  DrivetrainConstants.kCoralScorerPose.getMeasureZ().plus(elevatorHeight)),
-              DrivetrainConstants.kCoralScorerPose
+                  DrivetrainConstants.kRobotCoralPose.getMeasureZ().plus(elevatorHeight)),
+              DrivetrainConstants.kRobotCoralPose
                   .getRotation()
                   .plus(new Rotation3d(drivePose.getRotation())));
     } else {
