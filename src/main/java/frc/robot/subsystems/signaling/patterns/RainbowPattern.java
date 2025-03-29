@@ -4,18 +4,18 @@ import frc.robot.subsystems.signaling.RGB;
 
 public class RainbowPattern {
   private static final PatternNode[] pattern = {
-    new PatternNode(RGB.RED, 1),
-    new PatternNode(RGB.ORANGE, 1),
-    new PatternNode(RGB.YELLOW, 1),
-    new PatternNode(new RGB(255 / 2, 255, 0), 1),
-    new PatternNode(RGB.GREEN, 1),
-    new PatternNode(new RGB(0, 255, 255 / 2), 1),
-    new PatternNode(new RGB(0, 255, 255), 1),
-    new PatternNode(new RGB(0, 255 / 2, 255), 1),
-    new PatternNode(RGB.BLUE, 1),
-    new PatternNode(RGB.PURPLE, 1),
-    new PatternNode(new RGB(255, 0, 255), 1),
-    new PatternNode(new RGB(255, 0, 255 / 2), 1)
+    new PatternNode(RGB.RED, 10),
+    new PatternNode(RGB.ORANGE, 10),
+    new PatternNode(RGB.YELLOW, 10),
+    new PatternNode(new RGB(255 / 2, 255, 0), 10),
+    new PatternNode(RGB.GREEN, 10),
+    new PatternNode(new RGB(0, 255, 255 / 2), 10),
+    new PatternNode(new RGB(0, 255, 255), 10),
+    new PatternNode(new RGB(0, 255 / 2, 255), 10),
+    new PatternNode(RGB.BLUE, 10),
+    new PatternNode(RGB.PURPLE, 10),
+    new PatternNode(new RGB(255, 0, 255), 10),
+    new PatternNode(new RGB(255, 0, 255 / 2), 10)
   };
   private static int patternLength;
 

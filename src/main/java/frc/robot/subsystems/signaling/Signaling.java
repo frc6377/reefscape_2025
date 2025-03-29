@@ -24,7 +24,7 @@ public class Signaling extends SubsystemBase {
   private int tick;
   private int patternTick;
   private long tagCount;
-  private DisablePattern disablePattern = DisablePattern.ALLIANCE;
+  private DisablePattern disablePattern = DisablePattern.getRandom();
   private Vision visionSubsystem;
   private PowerDistribution pdp;
 
@@ -42,7 +42,7 @@ public class Signaling extends SubsystemBase {
 
     if (DriverStation.isDisabled()) {
       tagCount = visionSubsystem.getTagCount();
-
+      updatePattern();
       switch ((int) tagCount) {
         case 0:
           setCandle(RGB.RED);
@@ -141,7 +141,7 @@ public class Signaling extends SubsystemBase {
   }
 
   private void setSectionStrip(final RGB rgb, final int startID, final int count) {
-    if (startID <= 1) {
+    if (startID == 10) {
       Logger.recordOutput("Signaling/LED Color", rgb.toHex());
     }
     setSection(rgb, startID + 8, count);
