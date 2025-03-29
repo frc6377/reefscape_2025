@@ -75,32 +75,23 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
   // Main Robot
-  // public static final RobotConfig PP_CONFIG =
-  //       new RobotConfig(
-  //           Pounds.of(106.6),
-  //           KilogramSquareMeters.of(15.098568),
-  //           new ModuleConfig(
-  //               Inches.of(1.880006),
-  //               MetersPerSecond.of(4.4),
-  //               1.2,
-  //               DCMotor.getKrakenX60Foc(1),
-  //               Amps.of(70),
-  //               1),
-  //           getModuleTranslations());
+  // Weight: 48.35295 KG
+  // MOI: 15.098568
+  // Wheel Radius: TunerConstants
+  // Max Speed: 4.4 mps
+  // Wheel COF: 1.2
+  // Motor Type: KrakenX60 Foc
+  // Current Limit: TunerConstants
 
   // Second Robot
-  // public static final RobotConfig PP_CONFIG =
-  //     new RobotConfig(
-  //         Pounds.of(67.35),
-  //         KilogramSquareMeters.of(9.539292),
-  //         new ModuleConfig(
-  //             Inches.of(1.947733),
-  //             MetersPerSecond.of(4.4), // TODO Check real max speed of second robot
-  //             1.2,
-  //             DCMotor.getFalcon500Foc(1),
-  //             Amps.of(60),
-  //             1),
-  //         getModuleTranslations());
+  // Weight: ~ 30.54945 KG
+  // MOI: ~ 9.539292
+  // Wheel Radius: Tuner Constants
+  // Max Speed: ~ 4.4 mps
+  // Wheel COF: 1.2
+  // Motor Type: Falcon500 Foc
+  // Current Limit: TunerConstants
+
   public static RobotConfig PP_CONFIG;
 
   public static final DriveTrainSimulationConfig mapleSimConfig =
