@@ -51,6 +51,24 @@
           "data": {
             "name": "AA Left"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C - Source"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score AB (AA)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AA Right"
+          }
         }
       ]
     }

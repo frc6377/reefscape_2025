@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.03483606557377,
-        "y": 2.820235655737705
+        "x": 4.9693200361876535,
+        "y": 5.259177603534518
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.30478522476708,
-        "y": 1.7665738571313763
+        "x": 4.30731832349406,
+        "y": 6.787100858634627
       },
       "isLocked": false,
-      "linkedName": "Reef E"
+      "linkedName": "Reef J"
     },
     {
       "anchor": {
         "x": 5.5,
-        "y": 0.7439999999999998
+        "y": 7.256
       },
       "prevControl": {
-        "x": 4.290031873131077,
-        "y": 1.2022349920137367
+        "x": 5.031945584120116,
+        "y": 7.088016395207943
       },
       "nextControl": {
-        "x": 5.7752491459937225,
-        "y": 0.6397585845318011
+        "x": 5.936467988612288,
+        "y": 7.412647311970338
       },
       "isLocked": false,
       "linkedName": null
@@ -33,21 +33,21 @@
     {
       "anchor": {
         "x": 7.5,
-        "y": 0.7439999999999998
+        "y": 7.256
       },
       "prevControl": {
-        "x": 7.251751665390236,
-        "y": 0.7735425855923007
+        "x": 6.943235235699152,
+        "y": 7.240970107256356
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Push Buddy End Proc"
+      "linkedName": "Push Buddy End"
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 1.0,
-      "rotationDegrees": 180.0
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],
@@ -63,13 +63,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "Buddy Push Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -150.0
+    "rotation": -29.999999999999996
   },
   "useDefaultConstraints": true
 }
