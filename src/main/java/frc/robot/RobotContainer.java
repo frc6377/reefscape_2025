@@ -35,6 +35,7 @@ import frc.robot.Constants.FeildConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
+import frc.robot.subsystems.QuestNav.QuestNav;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
@@ -61,6 +62,7 @@ public class RobotContainer {
   // private static final Sensors sensors = new Sensors();
   private final Drive drive;
   private final Vision vision;
+  private final QuestNav questNav = new QuestNav();
   private MapleSimArenaSubsystem mapleSimArenaSubsystem;
   // private final Elevator elevator = new Elevator();
   // private final CoralScorer coralScorer = new CoralScorer();
@@ -99,14 +101,16 @@ public class RobotContainer {
         // Real robot, instantiate hardware IO implementations
         drive =
             new Drive(
-                new GyroIOPigeon2(),
+                new QuestNav(),
                 new ModuleIOTalonFXReal(TunerConstants.FrontLeft),
                 new ModuleIOTalonFXReal(TunerConstants.FrontRight),
                 new ModuleIOTalonFXReal(TunerConstants.BackLeft),
                 new ModuleIOTalonFXReal(TunerConstants.BackRight));
         this.vision =
             new Vision(
-                drive, new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation));
+                questNav,
+                drive,
+                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation));
         // intake = new IntakeSubsystem(sensors, null);
         break;
       case SIM:
@@ -128,13 +132,14 @@ public class RobotContainer {
 
         drive =
             new Drive(
-                new GyroIOSim(driveSimulation.getGyroSimulation()),
+                questNav,
                 new ModuleIOTalonFXSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
                 new ModuleIOTalonFXSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
                 new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
                 new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]));
         vision =
             new Vision(
+                questNav,
                 drive,
                 new VisionIOPhotonVisionSim(
                     VisionConstants.camera0Name,
@@ -147,12 +152,12 @@ public class RobotContainer {
         // Replayed robot, disable IO implementations
         drive =
             new Drive(
-                new GyroIO() {},
+                new QuestNav() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
+        vision = new Vision(questNav, drive, new VisionIO() {}, new VisionIO() {});
         // intake = new IntakeSubsystem(sensors, null);
         break;
     }
@@ -349,7 +354,6 @@ public class RobotContainer {
                     (DownButtonTrigger.getAsBoolean() ? 1 : 0.0)
                         + (UpButtonTrigger.getAsBoolean() ? -1 : 0),
                 () -> 0.0));
-
     // // coralScorer
     //     .scorerAlignedTrigger()
     //     .and(coralScorer.hasCoralTrigger())

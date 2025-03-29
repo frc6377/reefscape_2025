@@ -50,6 +50,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.QuestNav.QuestNav;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.LocalADStarAK;
 import java.util.HashMap;
@@ -122,13 +123,12 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                   1.2));
 
   static final Lock odometryLock = new ReentrantLock();
-  private final GyroIO gyroIO;
-  private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+  private final QuestNav questNav;
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
   private final SysIdRoutine sysIdTurning;
-  private final Alert gyroDisconnectedAlert =
-      new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
+  private final Alert questDisconnectedAlert =
+      new Alert("Disconnected Quest, using kinematics as fallback.", AlertType.kError);
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
   private Rotation2d rawGyroRotation = new Rotation2d();
@@ -145,12 +145,12 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   private HashMap<String, boolean[]> scoredPoses = new HashMap<String, boolean[]>();
 
   public Drive(
-      GyroIO gyroIO,
+      QuestNav questNav,
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
       ModuleIO brModuleIO) {
-    this.gyroIO = gyroIO;
+    this.questNav = questNav;
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
     modules[2] = new Module(blModuleIO, 2, TunerConstants.BackLeft);
@@ -222,8 +222,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   @Override
   public void periodic() {
     odometryLock.lock(); // Prevents odometry updates while reading data
-    gyroIO.updateInputs(gyroInputs);
-    Logger.processInputs("Drive/Gyro", gyroInputs);
+    Logger.recordOutput("Drive/Gyro", questNav.getPose().getRotation());
     for (var module : modules) {
       module.periodic();
     }
@@ -261,9 +260,9 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
       }
 
       // Update gyro angle
-      if (gyroInputs.connected) {
+      if (questNav.connected()) {
         // Use the real gyro angle
-        rawGyroRotation = gyroInputs.odometryYawPositions[i];
+        rawGyroRotation = questNav.getPose().getRotation();
       } else {
         // Use the angle delta from the kinematics and module deltas
         Twist2d twist = kinematics.toTwist2d(moduleDeltas);
@@ -276,7 +275,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     }
 
     // Update gyro alert
-    gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+    questDisconnectedAlert.set(!questNav.connected() && Constants.currentMode != Mode.SIM);
 
     int nameIndex = 0;
     for (boolean[] boolList : scoredPoses.values()) {
@@ -443,6 +442,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+    questNav.setPose(pose);
   }
 
   public Command strafe() {
