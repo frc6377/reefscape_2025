@@ -27,8 +27,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -46,7 +44,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
-import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
 import frc.robot.Robot;
@@ -236,7 +233,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Trigger intakeHasUnalignedCoralTrigger() {
     return new Trigger(
-        () -> sensors.getSensorState() != CoralEnum.NO_CORAL && !atSetpoint(kPivotRetractAngle));
+        () ->
+            sensors.getSensorState()
+                != CoralEnum.NO_CORAL); // && !atSetpoint(kPivotL1StowedAngle));
   }
 
   public Trigger intakeHasCoralTrigger() {
@@ -277,14 +276,29 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command floorIntake() {
-    return startEnd(
+    return runEnd(
             () -> {
               goToPivotPosition(kPivotExtendAngle);
-              setIntakeMotor(kIntakeSpeed);
               if (Robot.isSimulation()) intakeSim.startIntake();
+
+              switch (sensors.getSensorState()) {
+                case CORAL_TOO_CLOSE:
+                  setIntakeMotor(kIntakeHandoffSpeed);
+                  setConveyerMotor(kConveyorSpeed);
+                  break;
+                case CORAL_TOO_FAR:
+                  setIntakeMotor(kIntakeHandoffSpeed);
+                  setConveyerMotor(-kConveyorSpeed);
+                  break;
+                default:
+                  setIntakeMotor(kIntakeSpeed);
+                  setConveyerMotor(0);
+                  break;
+              }
             },
             () -> {
               goToPivotPosition(kPivotRetractAngle);
+              setConveyerMotor(0);
             })
         .withName("floorIntake");
   }
@@ -360,7 +374,7 @@ public class IntakeSubsystem extends SubsystemBase {
           if (elevatorNotL1.get()) {
             goToPivotPosition(kPivotRetractAngle);
           } else {
-            goToPivotPosition(kPivotCoralStationAngle);
+            goToPivotPosition(kPivotL1StowedAngle);
           }
           setIntakeMotor(0);
           setConveyerMotor(0);
@@ -398,9 +412,9 @@ public class IntakeSubsystem extends SubsystemBase {
     Logger.recordOutput("Intake/Pivot/Setpoint (Degrees)", pivotSetpoint.in(Degrees));
     Logger.recordOutput(
         "Intake/Pivot/Position (Degrees)", pivotMotor.getPosition().getValue().in(Degrees));
-    Logger.recordOutput(
-        "Intake/Pivot/Absolute Encoder (Degrees)",
-        Rotations.of(throughBoreEncoder.get()).in(Degrees));
+    // Logger.recordOutput(
+    //     "Intake/Pivot/Absolute Encoder (Degrees)",
+    //     Rotations.of(throughBoreEncoder.get()).in(Degrees));
     Logger.recordOutput("Intake/Pivot/At Setpoint", atSetpoint(pivotSetpoint));
 
     // States
@@ -409,19 +423,6 @@ public class IntakeSubsystem extends SubsystemBase {
     Logger.recordOutput("Intake/Intake Has Coral Trigger", intakeHasCoralTrigger());
     Logger.recordOutput(
         "Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoralTrigger());
-
-    // Pose 3D of Intake
-    Logger.recordOutput(
-        "Odometry/Mech Poses/Intake Pose",
-        new Pose3d(
-            DrivetrainConstants.kIntakeStartPose.getTranslation(),
-            new Rotation3d(
-                0,
-                getPivotAngle()
-                    .times(-1)
-                    .plus(DrivetrainConstants.kIntakeStartPose.getRotation().getMeasureY())
-                    .in(Radians),
-                0)));
 
     // Log TOF Sensors
     for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID}) {

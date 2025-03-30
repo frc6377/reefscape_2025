@@ -1,0 +1,37 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Start ProcM - EF (AA)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AA Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "E - Push Buddy"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Buddy Back Away Proc"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

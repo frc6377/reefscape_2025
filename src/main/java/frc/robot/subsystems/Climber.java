@@ -41,7 +41,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DIOConstants;
-import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.PWMIDs;
 import frc.robot.Robot;
 import java.util.function.BooleanSupplier;
@@ -129,8 +128,6 @@ public class Climber extends SubsystemBase {
 
     Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
     Logger.recordOutput("Climber/Back/isBackServoEngaged", isBackServoEngaged);
-    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", DrivetrainConstants.kClimber1Pose);
-    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", DrivetrainConstants.kClimber2Pose);
 
     // For simulation
     // simulates the entire simulation, not just one arm
@@ -152,8 +149,7 @@ public class Climber extends SubsystemBase {
           new SingleJointedArmSim(
               simClimberGearbox,
               ClimberConstants.kGearRatio,
-              Math.pow(ClimberConstants.kClimberArmLength.in(Meters), 2)
-                  * DrivetrainConstants.ROBOT_MASS.in(Kilograms),
+              Math.pow(ClimberConstants.kClimberArmLength.in(Meters), 2) * 30,
               ClimberConstants.kClimberArmLength.in(Meters),
               ClimberConstants.kClimberArmMinAngle.in(Radians),
               ClimberConstants.kClimberArmMaxAngle.in(Radians),
@@ -239,6 +235,14 @@ public class Climber extends SubsystemBase {
     }
   }
 
+  public Angle getFrontArmAngle() {
+    return climberMotorFront.getPosition().getValue();
+  }
+
+  public Angle getBackArmAngle() {
+    return climberMotorBack.getPosition().getValue();
+  }
+
   public Command runRaw(Voltage voltage) {
     return startEnd(
         () -> {
@@ -251,7 +255,7 @@ public class Climber extends SubsystemBase {
         });
   }
 
-  private Command runClimber(Angle position, int slot) {
+  public Command runClimber(Angle position, int slot) {
     return startEnd(
         () -> {
           if (position.gt(climberMotorFront.getPosition().getValue())

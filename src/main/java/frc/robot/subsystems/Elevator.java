@@ -18,9 +18,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -44,7 +41,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
-import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Robot;
 import java.util.function.Supplier;
@@ -85,9 +81,6 @@ public class Elevator extends SubsystemBase {
           .withReverseSoftLimitThreshold(
               heightToRotations(Constants.ElevatorConstants.kBottomLimit));
   public static final Slot0Configs loopCfg = kElevatorPID.getSlot0Configs();
-
-  private Pose3d elvPose3D1;
-  private Pose3d elvPose3D2;
 
   private Distance currentSetpoint = Meter.zero();
 
@@ -164,10 +157,6 @@ public class Elevator extends SubsystemBase {
       SmartDashboard.putData("Mech2Ds/Elevator Mech", mech);
     }
 
-    elvPose3D1 = DrivetrainConstants.kElvStage1Pose;
-    elvPose3D2 = DrivetrainConstants.kElvStage2Pose;
-    Logger.recordOutput("Odometry/Mech Poses/Elv 1 Pose", elvPose3D1);
-    Logger.recordOutput("Odometry/Mech Poses/Elv 2 Pose", elvPose3D2);
     Logger.recordOutput("Elevator/Elv/Setpoint (Inches)", 0.0);
     Logger.recordOutput("Elevator/Elv/Setpoint (Rotations)", 0.0);
   }
@@ -380,15 +369,6 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput(
         "Elevator/Current Command",
         this.getCurrentCommand() != null ? this.getCurrentCommand().getName() : "None");
-
-    Distance elvHeight = getElevatorHeight();
-    Logger.recordOutput(
-        "Odometry/Mech Poses/Elv 1 Pose",
-        elvPose3D1.plus(
-            new Transform3d(Meter.zero(), Meter.zero(), elvHeight.div(2), new Rotation3d())));
-    Logger.recordOutput(
-        "Odometry/Mech Poses/Elv 2 Pose",
-        elvPose3D2.plus(new Transform3d(Meter.zero(), Meter.zero(), elvHeight, new Rotation3d())));
 
     // Logger.recordOutput("Elevator/Setpoints/L0", getL0Setpoint().in(Inches));
     // Logger.recordOutput("Elevator/Setpoints/L2", getL2Setpoint().in(Inches));

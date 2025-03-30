@@ -1,21 +1,50 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Inch;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Kilograms;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.measure.*;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import java.util.HashMap;
+import org.littletonrobotics.junction.Logger;
 import utilities.HowdyMM;
 import utilities.HowdyPID;
 
@@ -57,14 +86,14 @@ public final class Constants {
   public static class CANIDs {
     // Rev Can Bus
     // 1-8 Motor ID is reserved by the drivebase
-    public static final int kClimberMotorFront = 17; // FIXME
-    public static final int kClimberMotorBack = 16; // FIXME
-    public static final int kScorerMotor = 15;
     public static final int kElevatorMotor1 = 10;
     public static final int kElevatorMotor2 = 11;
-    public static final int kIntakeMotor = 13;
     public static final int kPivotMotor = 12;
+    public static final int kIntakeMotor = 13;
     public static final int kConveyorMotor = 14;
+    public static final int kScorerMotor = 15;
+    public static final int kClimberMotorBack = 16;
+    public static final int kClimberMotorFront = 17;
     public static final int kAlgeaMotor = 18;
   }
 
@@ -84,10 +113,10 @@ public final class Constants {
   }
 
   public static class SensorIDs {
+    public static final int kScorerSensorID = 1;
     public static final int kSensor2ID = 2;
     public static final int kSensor3ID = 3;
     public static final int kSensor4ID = 4;
-    public static final int kScorerSensorID = 1;
     public static final int kAlignmentSensorID = 5;
   }
 
@@ -112,18 +141,18 @@ public final class Constants {
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
     public static final Current kClimberIdleCurrentLimit = Amps.of(20);
-    public static final Current kClimberClimbingCurrentLimit = Amps.of(120);
+    public static final Current kClimberClimbingCurrentLimit = Amps.of(70);
     public static final double kGearRatio = 126;
 
     // Motor Setpoints
     // 120 Degrees for climb
-    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-112.3 - 180);
-    public static final Angle kClimberBackOffsetAngle = Degrees.of(236.1 - 180);
+    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-120.3);
+    public static final Angle kClimberBackOffsetAngle = Degrees.of(-9.1);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(-63).plus(kClimberOffsetAngle);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(-55).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
-    public static final Angle kClimberSensorTolerance = Degrees.of(4);
+    public static final Angle kClimberSensorTolerance = Degrees.of(2);
     public static final Angle kClimberDisengageAngle = Degrees.of(-45).plus(kClimberOffsetAngle);
 
     // Servo Setpoints
@@ -143,7 +172,7 @@ public final class Constants {
   // Scorer Constants
   public static class CoralScorerConstants {
     public static final double kIntakeSpeed = -0.5;
-    public static final double kScoreSpeed = -0.2;
+    public static final double kScoreSpeed = -0.1;
     public static final double kScoreAutoSpeed = -0.2;
     public static final double kScoreMax = -0.7;
     public static final double kReverseSpeed = 0.25;
@@ -167,11 +196,12 @@ public final class Constants {
     public static final double kHoldSpeed = -0.2;
 
     // Pivot Arm Setpoints
-    public static final Angle kPivotZero = Degrees.of(76.05 - 4.47);
-    public static final Angle kPivotRetractAngle = Degrees.of(134.5);
+    public static final Angle kPivotZero = Degrees.of(304);
+    public static final Angle kPivotRetractAngle = Degrees.of(137);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
-    public static final Angle kPivotExtendAngle = Degrees.of(0);
+    public static final Angle kPivotExtendAngle = Degrees.of(7);
     public static final Angle kPivotCoralStationAngle = Degrees.of(110);
+    public static final Angle kPivotL1StowedAngle = Degrees.of(120);
     public static final Angle kPivotL1Score = Degrees.of(85);
     public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
     public static final Angle kPivotClimbingAngle = Degrees.of(75.5);
@@ -220,7 +250,7 @@ public final class Constants {
     public static final Distance kL0Height = Inches.of(0);
     public static final Distance kL2Height = Inches.of(18);
     public static final Distance kL3Height = Inches.of(30.9);
-    public static final Distance kL4Height = Inches.of(55);
+    public static final Distance kL4Height = Inches.of(54);
 
     public static final HowdyPID kElevatorPID = new HowdyPID();
 
@@ -292,117 +322,85 @@ public final class Constants {
     public static final Angle kAlgeaStartingAngle = Rotations.of(-0.25);
   }
 
+  @SuppressWarnings("unused")
   public final class DrivetrainConstants {
-    // PathPlanner config constants
-    public static final Mass ROBOT_MASS = Pounds.of(106.6);
-    public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(69.8548622056);
-    public static final double WHEEL_COF = 1.2;
-    public static final Time kStrafeTime = Seconds.of(0.5);
-    public static final LinearVelocity kStrafeSpeed = MetersPerSecond.of(0.5);
+    public static final Distance kBumperSize = Meters.of(0.889);
+
     // POV Drive Constants
     public static final LinearVelocity kPOVDriveSpeed = MetersPerSecond.of(1);
 
-    public static final PathConstraints PATH_CONSTRAINTS =
+    // Strafe Constants
+    public static final Time kStrafeTime = Seconds.of(0.5);
+    public static final LinearVelocity kStrafeSpeed = MetersPerSecond.of(0.5);
+
+    // Constants from DriveCommands
+    public static final double kWheelRadiusMaxVelocity = 0.25; // Rad/Sec
+    public static final double kWheelRadiusRampRate = 0.05; // Rad/Sec^2
+
+    // Path Finder/Planner Stuff
+    public static final PathConstraints kPathConstraints =
         new PathConstraints(
-            3.5,
+            1,
             2,
             DegreesPerSecond.of(300).in(RadiansPerSecond),
             DegreesPerSecond.of(1200).in(RadiansPerSecond));
+    public static final PPHolonomicDriveController KPPDriveController =
+        new PPHolonomicDriveController(
+            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0));
 
-    // Constants from DriveCommands
-    public static final double ANGLE_KP = 5;
-    public static final double ANGLE_KD = 0.01;
-    public static final double ANGLE_MAX_VELOCITY = 8.0;
-    public static final double ANGLE_MAX_ACCELERATION = 20.0;
-    public static final double FF_START_DELAY = 2.0; // Secs
-    public static final double FF_RAMP_RATE = 0.1; // Volts/Sec
-    public static final double WHEEL_RADIUS_MAX_VELOCITY = 1; // Rad/Sec
-    public static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+    // For Drive At Angle Command
+    public static final ProfiledPIDController kRotationController =
+        new ProfiledPIDController(5, 0, 0.01, new TrapezoidProfile.Constraints(8, 20));
 
-    // Scoring Poses for PathFinder
-    public static final HashMap<String, Pose2d> SCORE_POSES =
-        new HashMap<String, Pose2d>(kPoleLetters.length);
+    public static final Pose3d[] kMechPoses =
+        new Pose3d[] {
+          // Intake
+          new Pose3d(
+              Meters.of(0.195051), Meters.of(0.091696), Meters.of(0.241039), new Rotation3d()),
+          // Elevator
+          new Pose3d(
+              Meters.of(-0.0635), Meters.of(-0.236448), Meters.of(0.117475), new Rotation3d()),
+          // Coral Scorer
+          new Pose3d(
+              Meters.of(-0.058686), Meters.of(-0.236449), Meters.of(0.201601), new Rotation3d()),
+          // Climber Front
+          new Pose3d(
+              Meters.of(0.160211), Meters.of(0.010763), Meters.of(0.133263), new Rotation3d()),
+          // Climber Back
+          new Pose3d(
+              Meters.of(-0.160211), Meters.of(0.010763), Meters.of(0.133263), new Rotation3d()),
+          // Algae Remover
+          new Pose3d(
+              Meters.of(-0.116593), Meters.of(-0.329488), Meters.of(0.9525), new Rotation3d()),
+        };
 
-    static {
-      SCORE_POSES.put(
-          kPoleLetters[0],
-          new Pose2d(Meters.of(3.183), Meters.of(4.157), new Rotation2d(Degrees.of(90))));
-      SCORE_POSES.put(
-          kPoleLetters[1],
-          new Pose2d(Meters.of(3.184), Meters.of(3.828), new Rotation2d(Degrees.of(90))));
-      SCORE_POSES.put(
-          kPoleLetters[2],
-          new Pose2d(Meters.of(3.726), Meters.of(2.960), new Rotation2d(Degrees.of(150))));
-      SCORE_POSES.put(
-          kPoleLetters[3],
-          new Pose2d(Meters.of(4.004), Meters.of(2.797), new Rotation2d(Degrees.of(150))));
-      SCORE_POSES.put(
-          kPoleLetters[4],
-          new Pose2d(Meters.of(5.029), Meters.of(2.834), new Rotation2d(Degrees.of(-150))));
-      SCORE_POSES.put(
-          kPoleLetters[5],
-          new Pose2d(Meters.of(5.311), Meters.of(2.993), new Rotation2d(Degrees.of(-150))));
-      SCORE_POSES.put(
-          kPoleLetters[6],
-          new Pose2d(Meters.of(5.791), Meters.of(3.898), new Rotation2d(Degrees.of(-90))));
-      SCORE_POSES.put(
-          kPoleLetters[7],
-          new Pose2d(Meters.of(5.790), Meters.of(4.219), new Rotation2d(Degrees.of(-90))));
-      SCORE_POSES.put(
-          kPoleLetters[8],
-          new Pose2d(Meters.of(5.250), Meters.of(5.093), new Rotation2d(Degrees.of(-30))));
-      SCORE_POSES.put(
-          kPoleLetters[9],
-          new Pose2d(Meters.of(4.964), Meters.of(5.259), new Rotation2d(Degrees.of(-30))));
-      SCORE_POSES.put(
-          kPoleLetters[10],
-          new Pose2d(Meters.of(3.942), Meters.of(5.215), new Rotation2d(Degrees.of(30))));
-      SCORE_POSES.put(
-          kPoleLetters[11],
-          new Pose2d(Meters.of(3.667), Meters.of(5.062), new Rotation2d(Degrees.of(30))));
-    }
-
-    public static final HashMap<String, Pose2d> kSourcePoses = new HashMap<String, Pose2d>();
-
-    static {
-      kSourcePoses.put(
-          "L", new Pose2d(Meters.of(1.180), Meters.of(7.125), new Rotation2d(Degrees.of(126))));
-      kSourcePoses.put(
-          "R", new Pose2d(Meters.of(1.225), Meters.of(0.968), new Rotation2d(Degrees.of(-126))));
-    }
-
-    public static final Pose3d kIntakeStartPose =
-        new Pose3d(
-            Meters.of(0.191591),
-            Meters.of(0.091696),
-            Meters.of(0.242354),
-            new Rotation3d(Degrees.of(0), Degrees.of(-90), Degrees.of(0)));
-
-    public static final Pose3d kElvStage1Pose =
-        new Pose3d(Meters.of(-0.0635), Meters.of(-0.236449), Meters.of(0.1016), new Rotation3d());
-    public static final Pose3d kElvStage2Pose =
-        new Pose3d(
-            Meters.of(-0.063479), Meters.of(-0.236448), Meters.of(0.22065), new Rotation3d());
-
-    public static final Pose3d kClimber1Pose =
-        new Pose3d(
-            Meters.of(0.16021),
-            Meters.of(0.004064),
-            Meters.of(0.133263),
-            new Rotation3d(Degrees.of(79), Degrees.of(0), Degrees.of(-90)));
-    public static final Pose3d kClimber2Pose =
-        new Pose3d(
-            Meters.of(-0.160211),
-            Meters.of(0.004064),
-            Meters.of(0.133263),
-            new Rotation3d(Degrees.of(-100), Degrees.of(0), Degrees.of(-90)));
-
-    public static final Pose3d kCoralScorerPose =
+    public static final Pose3d kRobotCoralPose =
         new Pose3d(
             Meters.of(0.037449),
             Meters.of(-0.251632),
             Meters.of(0.547541),
             new Rotation3d(Degrees.of(0), Degrees.of(-45), Degrees.of(90)));
+
+    static {
+      Logger.recordOutput("Odometry/Mech Poses List", kMechPoses);
+    }
+  }
+
+  public final class ReefAlignConstants {
+    // Target Poses
+    public static final Pose2d kLeftReefPose =
+        new Pose2d(Inches.of(17), Inches.of(9), new Rotation2d(Degrees.of(-90)));
+    public static final Pose2d kRightReefPose =
+        new Pose2d(Inches.of(17), Inches.of(-8.393701), new Rotation2d(Degrees.of(-90)));
+
+    // PID Controllers
+    public static final PIDController kTranslationXController = new PIDController(2.5, 0, 0.1);
+    public static final PIDController kTranslationYController = new PIDController(2.5, 0, 0.1);
+    public static final PIDController kRotationController = new PIDController(0.1, 0, 0);
+    public static final Angle kSetpointRotTolerance = Degrees.of(1);
+    public static final Distance kSetpointTolerance = Inches.of(1);
+
+    public static final Time kAtPoseDebounce = Seconds.of(0);
   }
 
   public final class FeildConstants {

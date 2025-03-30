@@ -1,9 +1,9 @@
 {
   "hubs": [
     {
-      "x": 0,
-      "y": 32,
-      "width": 1512,
+      "x": -1,
+      "y": 33,
+      "width": 1323,
       "height": 950,
       "state": {
         "sidebar": {
@@ -34,15 +34,17 @@
             "/AdvantageKit/RealOutputs/Elevator/Motor2",
             "/AdvantageKit/RealOutputs/Algea",
             "/AdvantageKit/RealOutputs",
-            "/AdvantageKit/SystemStats",
             "/AdvantageKit/RadioStatus",
             "/AdvantageKit/Vision/Camera0",
             "/CameraPublisher/limelight-elvcam-processed/modes",
-            "/CameraPublisher/limelight-elvcam-processed/streams"
+            "/CameraPublisher/limelight-elvcam-processed/streams",
+            "/AdvantageKit",
+            "/AdvantageKit/RealOutputs/Swerve",
+            "/AdvantageKit/RealOutputs/Vision"
           ]
         },
         "tabs": {
-          "selected": 7,
+          "selected": 6,
           "tabs": [
             {
               "type": 0,
@@ -75,6 +77,15 @@
                     "visible": true,
                     "options": {
                       "color": "#2b66a2"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Swerve/Current Command",
+                    "logType": "String",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b"
                     }
                   }
                 ],
@@ -291,17 +302,17 @@
               },
               "controllerUUID": "puw4i9b7e0fznf83gxyhzfh50dkcsiih",
               "renderer": {
-                "cameraIndex": -1,
+                "cameraIndex": -7,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -4.65007203912746,
-                  2.302161175546832,
-                  -5.589245674181504
+                  -10.24986258343236,
+                  1.5747999999999986,
+                  -2.127265881179292
                 ],
                 "cameraTarget": [
-                  -3.9136220633462213,
-                  -0.08435207009898571,
-                  -0.5733056167991383
+                  0,
+                  0.5,
+                  0
                 ]
               },
               "controlsHeight": 200
@@ -382,28 +393,10 @@
                     "options": {
                       "color": "#2b66a2"
                     }
-                  },
-                  {
-                    "type": "independent",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/LoggedRobot/FullCycleMS",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#e5b31b"
-                    }
-                  },
-                  {
-                    "type": "independent",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/LoggedRobot/UserCodeMS",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#af2437"
-                    }
                   }
                 ],
                 "timeRange": "full",
-                "rangeMin": 5,
+                "rangeMin": 0,
                 "rangeMax": 100,
                 "stepSize": 0.1
               },
@@ -441,5 +434,5 @@
     }
   ],
   "satellites": [],
-  "version": "4.1.4"
+  "version": "4.1.5"
 }

@@ -45,7 +45,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   public static final Time period = Seconds.of(Robot.defaultPeriodSecs);
   public static final boolean isCompetition = false;
-  public static boolean isUsingVision = true;
+  public static boolean isUsingVision = false;
 
   public Alliance robotAlliance;
 
@@ -132,6 +132,7 @@ public class Robot extends LoggedRobot {
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
 
+    // robotContainer.updateMechVisualizer();
     double newTime = Timer.getFPGATimestamp() * 1000;
     Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
     lastTime = newTime;
@@ -142,9 +143,10 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
+    isUsingVision = true;
+
     robotContainer.resetSimulationField();
     robotContainer.seedEncoders();
-    isUsingVision = false;
   }
 
   /** This function is called periodically when disabled. */
@@ -155,6 +157,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     isUsingVision = false;
+
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
