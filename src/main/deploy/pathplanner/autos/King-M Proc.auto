@@ -5,15 +5,40 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Zero Elv"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Start ProcM - EF (AA)"
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AA Left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElvL4"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "AA Left"
+            "name": "Score"
           }
         },
         {
@@ -23,15 +48,40 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Score CD (AA)"
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AA Right"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElvL4"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "AA Right"
+            "name": "Score"
           }
         },
         {
@@ -41,15 +91,40 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Score CD (AA)"
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AA Left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElvL4"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "AA Left"
+            "name": "Score"
           }
         },
         {
@@ -59,15 +134,40 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Score AB (AA)"
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AA Right"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElvL4"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "AA Right"
+            "name": "Score"
           }
         }
       ]

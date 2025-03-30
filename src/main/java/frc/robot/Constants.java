@@ -146,13 +146,13 @@ public final class Constants {
 
     // Motor Setpoints
     // 120 Degrees for climb
-    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-112.3 - 180);
-    public static final Angle kClimberBackOffsetAngle = Degrees.of(236.1 - 180);
+    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-120.3);
+    public static final Angle kClimberBackOffsetAngle = Degrees.of(-9.1);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(-63).plus(kClimberOffsetAngle);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(-55).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
-    public static final Angle kClimberSensorTolerance = Degrees.of(4);
+    public static final Angle kClimberSensorTolerance = Degrees.of(2);
     public static final Angle kClimberDisengageAngle = Degrees.of(-45).plus(kClimberOffsetAngle);
 
     // Servo Setpoints
@@ -172,7 +172,7 @@ public final class Constants {
   // Scorer Constants
   public static class CoralScorerConstants {
     public static final double kIntakeSpeed = -0.5;
-    public static final double kScoreSpeed = -0.2;
+    public static final double kScoreSpeed = -0.1;
     public static final double kScoreAutoSpeed = -0.2;
     public static final double kScoreMax = -0.7;
     public static final double kReverseSpeed = 0.25;
@@ -197,10 +197,11 @@ public final class Constants {
 
     // Pivot Arm Setpoints
     public static final Angle kPivotZero = Degrees.of(304);
-    public static final Angle kPivotRetractAngle = Degrees.of(135);
+    public static final Angle kPivotRetractAngle = Degrees.of(137);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
-    public static final Angle kPivotExtendAngle = Degrees.of(5);
+    public static final Angle kPivotExtendAngle = Degrees.of(7);
     public static final Angle kPivotCoralStationAngle = Degrees.of(110);
+    public static final Angle kPivotL1StowedAngle = Degrees.of(120);
     public static final Angle kPivotL1Score = Degrees.of(85);
     public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
     public static final Angle kPivotClimbingAngle = Degrees.of(75.5);
@@ -249,7 +250,7 @@ public final class Constants {
     public static final Distance kL0Height = Inches.of(0);
     public static final Distance kL2Height = Inches.of(18);
     public static final Distance kL3Height = Inches.of(30.9);
-    public static final Distance kL4Height = Inches.of(55);
+    public static final Distance kL4Height = Inches.of(54);
 
     public static final HowdyPID kElevatorPID = new HowdyPID();
 
@@ -388,16 +389,16 @@ public final class Constants {
   public final class ReefAlignConstants {
     // Target Poses
     public static final Pose2d kLeftReefPose =
-        new Pose2d(Inches.of(19.29134), Inches.of(7.598425), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Inches.of(17), Inches.of(9), new Rotation2d(Degrees.of(-90)));
     public static final Pose2d kRightReefPose =
-        new Pose2d(Inches.of(19.29134), Inches.of(-5.393701), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Inches.of(17), Inches.of(-8.393701), new Rotation2d(Degrees.of(-90)));
 
     // PID Controllers
-    public static final PIDController kTranslationXController = new PIDController(2, 0, 0.1);
-    public static final PIDController kTranslationYController = new PIDController(2, 0, 0.1);
+    public static final PIDController kTranslationXController = new PIDController(2.5, 0, 0.1);
+    public static final PIDController kTranslationYController = new PIDController(2.5, 0, 0.1);
     public static final PIDController kRotationController = new PIDController(0.1, 0, 0);
     public static final Angle kSetpointRotTolerance = Degrees.of(1);
-    public static final Distance kSetpointTolerance = Inches.of(0.5);
+    public static final Distance kSetpointTolerance = Inches.of(1);
 
     public static final Time kAtPoseDebounce = Seconds.of(0);
   }

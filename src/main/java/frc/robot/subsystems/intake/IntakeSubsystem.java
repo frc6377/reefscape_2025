@@ -372,7 +372,7 @@ public class IntakeSubsystem extends SubsystemBase {
           if (elevatorNotL1.get()) {
             goToPivotPosition(kPivotRetractAngle);
           } else {
-            goToPivotPosition(kPivotCoralStationAngle);
+            goToPivotPosition(kPivotL1StowedAngle);
           }
           setIntakeMotor(0);
           setConveyerMotor(0);

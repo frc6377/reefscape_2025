@@ -255,7 +255,7 @@ public class Climber extends SubsystemBase {
         });
   }
 
-  private Command runClimber(Angle position, int slot) {
+  public Command runClimber(Angle position, int slot) {
     return startEnd(
         () -> {
           if (position.gt(climberMotorFront.getPosition().getValue())
