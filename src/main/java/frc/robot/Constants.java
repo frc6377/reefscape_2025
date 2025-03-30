@@ -66,6 +66,7 @@ public final class Constants {
     public static final int kPivotMotor = 12;
     public static final int kConveyorMotor = 14;
     public static final int kAlgeaMotor = 18;
+    public static final int kCANdle = 19;
   }
 
   public static class DIOConstants {
@@ -153,6 +154,13 @@ public final class Constants {
 
     public static final Distance kAlignSensorDistnace = Inches.of(5.5);
     public static final Time kAlignSensorDebounce = Seconds.of(0);
+  }
+
+  // Signaling Constants
+  public static class SignalingConstants {
+    public static final int kNumLEDs = 200;
+    public static final double kLEDBrightness = 0.2;
+    public static final double kPatternSpeed = 0.001;
   }
 
   // Intake Constants
