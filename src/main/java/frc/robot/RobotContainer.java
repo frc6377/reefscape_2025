@@ -25,6 +25,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -56,7 +57,10 @@ import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
 import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
+import frc.robot.subsystems.signaling.RGB;
+import frc.robot.subsystems.signaling.Signaling;
 import frc.robot.subsystems.vision.*;
+import java.util.Set;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -85,12 +89,12 @@ public class RobotContainer {
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
   private final IntakeSubsystem intake;
-
+  private final Signaling signaling;
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
   private boolean coralStationMode = false;
   private Command scoreL1;
-
+  private PowerDistribution pdp = new PowerDistribution();
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose;
 
@@ -176,7 +180,7 @@ public class RobotContainer {
         intake = new IntakeSubsystem(sensors, null);
         break;
     }
-
+    signaling = new Signaling(vision, pdp);
     scoreL1 = intake.l1ScoreModeA();
     Trigger isDoneScoring = new Trigger(() -> (sensors.getSensorState() == CoralEnum.NO_CORAL));
 
@@ -216,6 +220,7 @@ public class RobotContainer {
             scoreL1.asProxy().until(isDoneScoring.debounce(1))));
     NamedCommands.registerCommand(
         "Strafe", drive.strafe().until(coralScorer.scorerAlignedTrigger()));
+
     NamedCommands.registerCommand(
         "AA Left", DriveCommands.AlignToReef(true, camera0Name, drive, vision));
     NamedCommands.registerCommand(
@@ -305,6 +310,19 @@ public class RobotContainer {
             () -> {
               SignalLogger.stop();
             }));
+    coralScorer
+        .hasCoralTrigger()
+        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
+        .and(elevator.elevatorAtCurrentSetpoint())
+        .onFalse(signaling.setColor(RGB.BLUE))
+        .and(coralScorer.scorerAlignedTrigger().negate())
+        .onTrue(signaling.setColor(RGB.YELLOW));
+    coralScorer
+        .scorerAlignedTrigger()
+        .and(coralScorer.hasCoralTrigger())
+        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
+        .and(elevator.elevatorAtCurrentSetpoint())
+        .whileTrue(signaling.startSignal(RGB.GREEN));
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
