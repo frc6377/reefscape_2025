@@ -410,9 +410,9 @@ public class IntakeSubsystem extends SubsystemBase {
     Logger.recordOutput("Intake/Pivot/Setpoint (Degrees)", pivotSetpoint.in(Degrees));
     Logger.recordOutput(
         "Intake/Pivot/Position (Degrees)", pivotMotor.getPosition().getValue().in(Degrees));
-    // Logger.recordOutput(
-    //     "Intake/Pivot/Absolute Encoder (Degrees)",
-    //     Rotations.of(throughBoreEncoder.get()).in(Degrees));
+    Logger.recordOutput(
+        "Intake/Pivot/Absolute Encoder (Degrees)",
+        Rotations.of(throughBoreEncoder.get()).in(Degrees));
     Logger.recordOutput("Intake/Pivot/At Setpoint", atSetpoint(pivotSetpoint));
 
     // States

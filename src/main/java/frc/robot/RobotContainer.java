@@ -57,7 +57,6 @@ import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
 import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
-import frc.robot.subsystems.signaling.RGB;
 import frc.robot.subsystems.signaling.Signaling;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
@@ -79,21 +78,21 @@ public class RobotContainer {
   private EventLoop testEventLoop = new EventLoop();
 
   // Subsystems
-  private final Climber climber = new Climber();
-  private final AlgeaRemover algeaRemover = new AlgeaRemover();
-  private static final Sensors sensors = new Sensors();
   private final Drive drive;
   private final Vision vision;
   private MapleSimArenaSubsystem mapleSimArenaSubsystem;
+  private final IntakeSubsystem intake;
+  private static final Sensors sensors = new Sensors();
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
-  private final IntakeSubsystem intake;
-  private final Signaling signaling;
+  private final AlgeaRemover algeaRemover = new AlgeaRemover();
+  private final Climber climber = new Climber();
+  private PowerDistribution pdp = new PowerDistribution();
+  private final Signaling signaling = new Signaling(pdp);
   private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
   private boolean coralStationMode = false;
   private Command scoreL1;
-  private PowerDistribution pdp = new PowerDistribution();
   private SwerveDriveSimulation driveSimulation;
   private Pose2d driveSimDefualtPose;
 
@@ -179,7 +178,7 @@ public class RobotContainer {
         intake = new IntakeSubsystem(sensors, null);
         break;
     }
-    signaling = new Signaling(vision, pdp);
+
     scoreL1 = intake.l1ScoreModeA();
     Trigger isDoneScoring = new Trigger(() -> (sensors.getSensorState() == CoralEnum.NO_CORAL));
 
@@ -309,19 +308,6 @@ public class RobotContainer {
             () -> {
               SignalLogger.stop();
             }));
-    coralScorer
-        .hasCoralTrigger()
-        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
-        .and(elevator.elevatorAtCurrentSetpoint())
-        .onFalse(signaling.setColor(RGB.BLUE))
-        .and(coralScorer.scorerAlignedTrigger().negate())
-        .onTrue(signaling.setColor(RGB.YELLOW));
-    coralScorer
-        .scorerAlignedTrigger()
-        .and(coralScorer.hasCoralTrigger())
-        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
-        .and(elevator.elevatorAtCurrentSetpoint())
-        .whileTrue(signaling.startSignal(RGB.GREEN));
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =

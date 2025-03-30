@@ -15,9 +15,9 @@ import frc.robot.OI;
 import frc.robot.subsystems.signaling.patterns.AlliancePattern;
 import frc.robot.subsystems.signaling.patterns.PatternNode;
 import frc.robot.subsystems.signaling.patterns.RainbowPattern;
-import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.LimelightHelpers;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Signaling extends SubsystemBase {
@@ -25,17 +25,57 @@ public class Signaling extends SubsystemBase {
   private final CANdle candle = new CANdle(CANIDs.kCANdle);
   private int tick;
   private int patternTick;
-  private long tagCount;
   private DisablePattern disablePattern = DisablePattern.getRandom();
-  private Vision visionSubsystem;
   private PowerDistribution pdp;
 
-  public Signaling(Vision vision, PowerDistribution power) {
+  public enum LightState {
+    IDLE,
+    HAS_CORAL,
+    HANDOFF_DONE,
+    LL_HAS_TAG,
+    AUTO_ALIGNING,
+    ALGAE_MODE
+  };
+
+  public LightState currentState = LightState.IDLE;
+
+  public Supplier<Boolean> hasCoral;
+  public Supplier<Boolean> handoffComplete;
+  public Supplier<Boolean> LLHasTag;
+  public Supplier<Boolean> autoAligning;
+  public Supplier<Boolean> AlgaeMode;
+
+  public Signaling(PowerDistribution power) {
     tick = 0;
     patternTick = 0;
-    visionSubsystem = vision;
     pdp = power;
     candle.configBrightnessScalar(SignalingConstants.kLEDBrightness);
+  }
+
+  private void setState(LightState newState) {
+    switch (newState) {
+      case IDLE:
+        setColor(RGB.RED);
+        break;
+      case HAS_CORAL:
+        setColor(RGB.ORANGE);
+        break;
+      case HANDOFF_DONE:
+        setColor(RGB.YELLOW);
+        break;
+      case LL_HAS_TAG:
+        setColor(RGB.BLUE);
+        break;
+      case AUTO_ALIGNING:
+        setColor(RGB.GREEN);
+        break;
+      case ALGAE_MODE:
+        setColor(RGB.PURPLE);
+        break;
+      default:
+        break;
+    }
+    return;
   }
 
   @Override
@@ -51,17 +91,53 @@ public class Signaling extends SubsystemBase {
         Logger.recordOutput("Signaling/CANdle Color", "Green");
       }
     } else {
-      if (getProblem()) {
-        setCandle(RGB.RED);
-      } else {
-        if (DriverStation.isAutonomous()) {
-          setCandle(RGB.PURPLE);
-
-        } else if (DriverStation.isEStopped()) {
-          setCandle(RGB.RED);
-        } else if (DriverStation.isTest()) {
-          setCandle(RGB.BLUE);
-        }
+      switch (currentState) {
+        case IDLE:
+          if (AlgaeMode.get()) {
+            setState(LightState.ALGAE_MODE);
+          } else if (hasCoral.get()) {
+            setState(LightState.HAS_CORAL);
+          }
+          break;
+        case ALGAE_MODE:
+          if (!AlgaeMode.get()) {
+            setState(LightState.IDLE);
+          }
+          break;
+        case HAS_CORAL:
+          if (!hasCoral.get()) {
+            setState(LightState.IDLE);
+          }
+          if (handoffComplete.get()) {
+            setState(LightState.HANDOFF_DONE);
+          }
+          break;
+        case HANDOFF_DONE:
+          if (!handoffComplete.get()) {
+            setState(LightState.IDLE);
+          }
+          if (LLHasTag.get()) {
+            setState(LightState.LL_HAS_TAG);
+          }
+          break;
+        case LL_HAS_TAG:
+          if (!LLHasTag.get()) {
+            setState(LightState.HANDOFF_DONE);
+          }
+          if (autoAligning.get()) {
+            setState(LightState.AUTO_ALIGNING);
+          }
+          if (!handoffComplete.get()) {
+            setState(LightState.IDLE);
+          }
+          break;
+        case AUTO_ALIGNING:
+          if (!autoAligning.get()) {
+            setState(LightState.LL_HAS_TAG);
+          }
+          break;
+        default:
+          break;
       }
     }
     Logger.recordOutput("Signaling/Pattern", disablePattern.toString());
