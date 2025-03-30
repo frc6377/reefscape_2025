@@ -140,20 +140,21 @@ public final class Constants {
     // Mech Constants
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
-    public static final Current kClimberIdleCurrentLimit = Amps.of(20);
+    public static final Current kClimberIdleCurrentLimit = Amps.of(1);
     public static final Current kClimberClimbingCurrentLimit = Amps.of(70);
     public static final double kGearRatio = 126;
 
     // Motor Setpoints
     // 120 Degrees for climb
     public static final Angle kClimberFrontOffsetAngle = Degrees.of(-120.3);
-    public static final Angle kClimberBackOffsetAngle = Degrees.of(-9.1);
+    public static final Angle kClimberBackOffsetAngle = Degrees.of(-9.1 + 64);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(-55).plus(kClimberOffsetAngle);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(-65).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
     public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
     public static final Angle kClimberSensorTolerance = Degrees.of(2);
     public static final Angle kClimberDisengageAngle = Degrees.of(-45).plus(kClimberOffsetAngle);
+    public static final Angle kClimberDisengageOffset = Degrees.of(5);
 
     // Servo Setpoints
     public static final Angle kFrontServoEngageAngle = Degrees.of(45);

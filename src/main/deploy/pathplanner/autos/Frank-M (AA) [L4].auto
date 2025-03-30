@@ -13,19 +13,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start ProcM - EF (AA)"
+            "pathName": "Start M - GH (AA)"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AA Left"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AA Right"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElvL4"
+                }
+              }
+            ]
           }
         },
         {
@@ -33,17 +40,11 @@
           "data": {
             "name": "Score"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL0"
-          }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Daves",
+  "folder": " Franks",
   "choreoAuto": false
 }

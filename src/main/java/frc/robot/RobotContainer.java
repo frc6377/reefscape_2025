@@ -471,10 +471,11 @@ public class RobotContainer {
 
     // Climber Buttons
     OI.getButton(OI.Operator.DPAD_UP)
-        .onTrue(climber.retract())
-        .toggleOnTrue(intake.movePivot(IntakeConstants.kPivotClimbingAngle));
+        .onTrue(climber.retract().alongWith(intake.movePivot(IntakeConstants.kPivotClimbingAngle)));
     OI.getButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
-    OI.getButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
+    OI.getButton(OI.Operator.DPAD_DOWN)
+        .onTrue(
+            climber.extendFully().alongWith(intake.movePivot(IntakeConstants.kPivotRetractAngle)));
 
     // Button to update Setpoints of the elevator based on the Stream Deck nobs
     // TODO: Fix axis input
