@@ -60,7 +60,6 @@ import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.signaling.RGB;
 import frc.robot.subsystems.signaling.Signaling;
 import frc.robot.subsystems.vision.*;
-import java.util.Set;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;

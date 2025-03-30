@@ -16,6 +16,8 @@ import frc.robot.subsystems.signaling.patterns.AlliancePattern;
 import frc.robot.subsystems.signaling.patterns.PatternNode;
 import frc.robot.subsystems.signaling.patterns.RainbowPattern;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.util.LimelightHelpers;
 import org.littletonrobotics.junction.Logger;
 
 public class Signaling extends SubsystemBase {
@@ -41,20 +43,12 @@ public class Signaling extends SubsystemBase {
     // Update Light Pattern
 
     if (DriverStation.isDisabled()) {
-      tagCount = visionSubsystem.getTagCount();
-      switch ((int) tagCount) {
-        case 0:
-          setCandle(RGB.RED);
-          Logger.recordOutput("Signaling/CANdle Color", "Red");
-          break;
-        case 1:
-          setCandle(RGB.YELLOW);
-          Logger.recordOutput("Signaling/CANdle Color", "Yellow");
-          break;
-        default:
-          setCandle(RGB.GREEN);
-          Logger.recordOutput("Signaling/CANdle Color", "Green");
-          break;
+      if (LimelightHelpers.getTV(VisionConstants.camera0Name)) {
+        setCandle(RGB.RED);
+        Logger.recordOutput("Signaling/CANdle Color", "Red");
+      } else {
+        setCandle(RGB.GREEN);
+        Logger.recordOutput("Signaling/CANdle Color", "Green");
       }
     } else {
       if (getProblem()) {
