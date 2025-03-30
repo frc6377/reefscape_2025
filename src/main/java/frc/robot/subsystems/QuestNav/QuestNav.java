@@ -17,6 +17,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class QuestNav extends SubsystemBase {
   // Configure Network Tables topics (questnav/...) to communicate with the Quest HMD
@@ -153,7 +154,6 @@ public class QuestNav extends SubsystemBase {
     return runOnce(
         () -> {
           zeroPosition();
-          zeroHeading();
         });
   }
 
@@ -173,11 +173,17 @@ public class QuestNav extends SubsystemBase {
     return new Translation2d(questnavPosition[2], -questnavPosition[0]);
   }
 
+  @Override
+  public void periodic() {
+    Logger.recordOutput("Vision/QuestNav Pose", getPose());
+    Logger.recordOutput("Vision/QuestNav Starting Pose", startingPosition);
+  }
+
   private Pose2d getQuestNavPose() {
     var oculousPositionCompensated =
         new Translation2d(
             getQuestNavTranslation().minus(new Translation2d(0, 0.1651)).times(-1).getMeasureY(),
             getQuestNavTranslation().minus(new Translation2d(0, 0.1651)).getMeasureX()); // 6.5
-    return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getOculusYaw() + 90));
+    return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getOculusYaw()));
   }
 }

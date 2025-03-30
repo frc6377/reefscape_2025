@@ -337,7 +337,8 @@ public class RobotContainer {
         .toggleOnTrue(DriveCommands.AlignToReef(false, camera0Name, drive, vision));
     OI.getButton(OI.Driver.LSB)
         .toggleOnTrue(DriveCommands.AlignToReef(true, camera0Name, drive, vision));
-
+    
+    OI.getButton(OI.Driver.A).onTrue(questNav.resetPoseCommand());
     UpButtonTrigger.or(DownButtonTrigger)
         .or(RightButtonTrigger)
         .or(LeftButtonTrigger)
