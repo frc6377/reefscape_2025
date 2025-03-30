@@ -88,6 +88,15 @@ public class CoralScorer extends SubsystemBase {
         () -> scorerMotor.stopMotor());
   }
 
+  public Command alignCoralCommand() {
+    return startEnd(
+            () -> {
+              setScoreMotor(kAlignSpeed);
+            },
+            () -> stopMotor())
+        .withTimeout(2);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
