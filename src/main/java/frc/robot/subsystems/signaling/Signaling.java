@@ -42,7 +42,6 @@ public class Signaling extends SubsystemBase {
 
     if (DriverStation.isDisabled()) {
       tagCount = visionSubsystem.getTagCount();
-      updatePattern();
       switch ((int) tagCount) {
         case 0:
           setCandle(RGB.RED);
@@ -68,8 +67,6 @@ public class Signaling extends SubsystemBase {
           setCandle(RGB.RED);
         } else if (DriverStation.isTest()) {
           setCandle(RGB.BLUE);
-        } else {
-          setCandle(RGB.GREEN);
         }
       }
     }
@@ -90,7 +87,7 @@ public class Signaling extends SubsystemBase {
 
   private void setCandle(RGB rgb) {
     SmartDashboard.putString("Signaling/CANdle Color", rgb.toHex());
-    setSection(rgb, 0, 8);
+    setSection(rgb, 0, 100);
   }
 
   public Command setToAlliance() {
@@ -201,7 +198,7 @@ public class Signaling extends SubsystemBase {
       PatternNode node = pattern[patternIndex];
       RGB color = node.color;
       Logger.recordOutput("Signaling/LED Color", color.toHex());
-      setSectionStrip(color, LEDIndex, node.repeat);
+      setSectionStrip(color, LEDIndex + 9, node.repeat);
       LEDIndex += node.repeat;
       patternIndex++;
     }
