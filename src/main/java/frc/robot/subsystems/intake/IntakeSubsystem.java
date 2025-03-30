@@ -233,7 +233,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Trigger intakeHasUnalignedCoralTrigger() {
     return new Trigger(
-        () -> sensors.getSensorState() != CoralEnum.NO_CORAL && !atSetpoint(kPivotRetractAngle));
+        () -> sensors.getSensorState() != CoralEnum.NO_CORAL); //&& !atSetpoint(kPivotL1StowedAngle));
   }
 
   public Trigger intakeHasCoralTrigger() {
