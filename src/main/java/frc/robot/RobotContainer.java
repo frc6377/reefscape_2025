@@ -59,6 +59,7 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.signaling.Signaling;
 import frc.robot.subsystems.vision.*;
+import frc.robot.util.LimelightHelpers;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -178,6 +179,12 @@ public class RobotContainer {
         intake = new IntakeSubsystem(sensors, null);
         break;
     }
+
+    signaling.setHasCoral(() -> sensors.getSensorState() != CoralEnum.NO_CORAL);
+    signaling.setHandoffComplete(() -> coralScorer.hasCoral());
+    signaling.setLLHasTag(() -> LimelightHelpers.getTV(camera0Name));
+    signaling.setAutoAligning(() -> false);
+    signaling.setAlgaeMode(() -> intakeAlgeaMode);
 
     scoreL1 = intake.l1ScoreModeA();
     Trigger isDoneScoring = new Trigger(() -> (sensors.getSensorState() == CoralEnum.NO_CORAL));
@@ -371,15 +378,15 @@ public class RobotContainer {
               OI.Driver.setRumble(0);
               OI.Operator.setRumble(0);
             }));
-    automaticScoreTrigger
-        .debounce(0.5)
-        .onTrue(
-            coralScorer
-                .scoreCommand()
-                .until(
-                    coralScorer
-                        .hasCoralTrigger()
-                        .negate())); // TODO: Make sure this doesn't conflict with auto
+    // automaticScoreTrigger
+    //     .debounce(0.5)
+    //     .onTrue(
+    //         coralScorer
+    //             .scoreCommand()
+    //             .until(
+    //                 coralScorer
+    //                     .hasCoralTrigger()
+    //                     .negate())); // TODO: Make sure this doesn't conflict with auto
 
     // Elevator Buttons
     OI.getButton(OI.Driver.A).onTrue(elevator.L0());
@@ -405,6 +412,7 @@ public class RobotContainer {
 
     intake
         .intakeHasUnalignedCoralTrigger()
+        .and(coralScorer.hasCoralTrigger().negate())
         .and(coralOuttakeButton.negate())
         .and(OI.getButton(OI.Driver.RTrigger).negate())
         .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
@@ -475,10 +483,14 @@ public class RobotContainer {
     // Climber Buttons
     OI.getButton(OI.Operator.DPAD_UP)
         .onTrue(climber.retract().alongWith(intake.movePivot(IntakeConstants.kPivotClimbingAngle)));
-    OI.getButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
+    OI.getButton(OI.Operator.DPAD_LEFT)
+        .onTrue(
+            climber
+                .extendToCage()
+                .alongWith(intake.movePivot(IntakeConstants.kPivotClimbingAngle)));
     OI.getButton(OI.Operator.DPAD_DOWN)
         .onTrue(
-            climber.extendFully().alongWith(intake.movePivot(IntakeConstants.kPivotRetractAngle)));
+            climber.extendFully().alongWith(intake.movePivot(IntakeConstants.kPivotEndClimbAngle)));
 
     // Button to update Setpoints of the elevator based on the Stream Deck nobs
     // TODO: Fix axis input

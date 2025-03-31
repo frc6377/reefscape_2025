@@ -123,32 +123,44 @@ public final class Constants {
 
   public static class ClimberConstants {
     // PIDs
-    public static final HowdyPID kClimberPID0 = new HowdyPID();
-    public static final HowdyPID kClimberPID1 = new HowdyPID();
+    public static final HowdyPID kClimberFrontPID0 = new HowdyPID();
+    public static final HowdyPID kClimberBackPID0 = new HowdyPID();
+    public static final HowdyPID kClimberFrontPID1 = new HowdyPID();
+    public static final HowdyPID kClimberBackPID1 = new HowdyPID();
 
     static {
-      kClimberPID0.setKP(100);
-      kClimberPID0.setKD(0);
-      kClimberPID0.setKV(0);
+      kClimberFrontPID0.setKP(100);
+      kClimberFrontPID0.setKD(0);
+      kClimberFrontPID0.setKV(0);
 
-      kClimberPID1.setKP(100);
-      kClimberPID1.setKD(5);
-      kClimberPID1.setKV(15.12);
-      kClimberPID1.setKG(.62);
-      kClimberPID1.setGravityType(GravityTypeValue.Arm_Cosine);
+      kClimberBackPID0.setKP(50);
+      kClimberBackPID0.setKD(0);
+      kClimberBackPID0.setKV(0);
+
+      kClimberFrontPID1.setKP(100);
+      kClimberFrontPID1.setKD(5);
+      kClimberFrontPID1.setKV(15.12);
+      kClimberFrontPID1.setKG(.62);
+      kClimberFrontPID1.setGravityType(GravityTypeValue.Arm_Cosine);
+
+      kClimberBackPID1.setKP(50);
+      kClimberBackPID1.setKD(5);
+      kClimberBackPID1.setKV(15.12);
+      kClimberBackPID1.setKG(.62);
+      kClimberBackPID1.setGravityType(GravityTypeValue.Arm_Cosine);
     }
 
     // Mech Constants
     public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
-    public static final Current kClimberIdleCurrentLimit = Amps.of(1);
+    public static final Current kClimberIdleCurrentLimit = Amps.of(5);
     public static final Current kClimberClimbingCurrentLimit = Amps.of(70);
     public static final double kGearRatio = 126;
 
     // Motor Setpoints
     // 120 Degrees for climb
-    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-120.3);
-    public static final Angle kClimberBackOffsetAngle = Degrees.of(-9.1 + 64);
+    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-106);
+    public static final Angle kClimberBackOffsetAngle = Degrees.of(340);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
     public static final Angle kClimberExtendedSetpoint = Degrees.of(-65).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
@@ -208,12 +220,13 @@ public final class Constants {
     public static final Angle kPivotZero = Degrees.of(304);
     public static final Angle kPivotRetractAngle = Degrees.of(137);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
-    public static final Angle kPivotExtendAngle = Degrees.of(7);
+    public static final Angle kPivotExtendAngle = Degrees.of(12);
     public static final Angle kPivotCoralStationAngle = Degrees.of(110);
     public static final Angle kPivotL1StowedAngle = Degrees.of(120);
     public static final Angle kPivotL1Score = Degrees.of(85);
     public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
     public static final Angle kPivotClimbingAngle = Degrees.of(75.5);
+    public static final Angle kPivotEndClimbAngle = Degrees.of(130);
     public static final Angle kPivotTolerance = Degrees.of(5);
 
     public static final HowdyPID kPivotArmPID = new HowdyPID();
@@ -336,7 +349,7 @@ public final class Constants {
     public static final Distance kBumperSize = Meters.of(0.889);
 
     // POV Drive Constants
-    public static final LinearVelocity kPOVDriveSpeed = MetersPerSecond.of(1);
+    public static final LinearVelocity kPOVDriveSpeed = MetersPerSecond.of(0.25);
 
     // Strafe Constants
     public static final Time kStrafeTime = Seconds.of(0.5);

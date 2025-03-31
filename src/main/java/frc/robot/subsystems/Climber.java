@@ -99,6 +99,7 @@ public class Climber extends SubsystemBase {
     climberMotorFront = new TalonFX(CANIDs.kClimberMotorFront);
     climberMotorBack = new TalonFX(CANIDs.kClimberMotorBack);
     feedbackConfigs = new FeedbackConfigs().withSensorToMechanismRatio(ClimberConstants.kGearRatio);
+
     frontClimberServo = new Servo(PWMIDs.kFrontClimberServoID);
     backClimberServo = new Servo(PWMIDs.kBackClimberServoID);
     // Boolean to check if the climber is climbing of if it is just idle
@@ -109,18 +110,18 @@ public class Climber extends SubsystemBase {
 
     frontConfigs =
         new TalonFXConfiguration()
-            .withSlot0(ClimberConstants.kClimberPID0.getSlot0Configs())
-            .withSlot1(ClimberConstants.kClimberPID1.getSlot1Configs())
+            .withSlot0(ClimberConstants.kClimberFrontPID0.getSlot0Configs())
+            .withSlot1(ClimberConstants.kClimberFrontPID1.getSlot1Configs())
             .withMotorOutput(
                 climberOutputConfigsFront.withInverted(ClimberConstants.kClimberFrontInvert))
             .withFeedback(feedbackConfigs);
     backConfigs =
         new TalonFXConfiguration()
-            .withSlot0(ClimberConstants.kClimberPID0.getSlot0Configs())
-            .withSlot1(ClimberConstants.kClimberPID1.getSlot1Configs())
+            .withSlot0(ClimberConstants.kClimberBackPID0.getSlot0Configs())
+            .withSlot1(ClimberConstants.kClimberBackPID1.getSlot1Configs())
             .withMotorOutput(
                 climberOutputConfigsBack.withInverted(ClimberConstants.kClimberBackInvert))
-            .withFeedback(feedbackConfigs.withSensorToMechanismRatio(ClimberConstants.kGearRatio));
+            .withFeedback(feedbackConfigs);
 
     frontConfigs.CurrentLimits = currentLimit;
     backConfigs.CurrentLimits = currentLimit;
@@ -315,6 +316,7 @@ public class Climber extends SubsystemBase {
 
   public Command disengageClimberCommand() {
     return new SequentialCommandGroup(
+        runOnce(() -> setCurrentLimit(ClimberConstants.kClimberIdleCurrentLimit)),
         runClimber(getFrontArmAngle().minus(ClimberConstants.kClimberDisengageOffset), 0),
         disengageServo(),
         Commands.waitSeconds(1));
@@ -328,8 +330,7 @@ public class Climber extends SubsystemBase {
   }
 
   public Command extendToCage() {
-    return runClimber(ClimberConstants.kClimberAtCageSetpoint, 0)
-        .until(isClimberAtPosition(ClimberConstants.kClimberAtCageSetpoint));
+    return runClimber(ClimberConstants.kClimberAtCageSetpoint, 0);
   }
 
   public Command extendFully() {

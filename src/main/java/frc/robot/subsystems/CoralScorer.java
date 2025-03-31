@@ -44,6 +44,10 @@ public class CoralScorer extends SubsystemBase {
             kAlignmentSensorID, kAlignSensorDistnace, TOFSensorSimple.TOFType.LASER_CAN);
   }
 
+  public boolean hasCoral() {
+    return TOFSensor.getBeamBroke();
+  }
+
   public Trigger hasCoralTrigger() {
     return TOFSensor.getBeamBrokenTrigger();
   }

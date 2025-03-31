@@ -43,7 +43,27 @@ public class Signaling extends SubsystemBase {
   public Supplier<Boolean> handoffComplete;
   public Supplier<Boolean> LLHasTag;
   public Supplier<Boolean> autoAligning;
-  public Supplier<Boolean> AlgaeMode;
+  public Supplier<Boolean> algaeMode;
+
+  public void setHasCoral(Supplier<Boolean> hasCoral) {
+    this.hasCoral = hasCoral;
+  }
+
+  public void setHandoffComplete(Supplier<Boolean> handoffComplete) {
+    this.handoffComplete = handoffComplete;
+  }
+
+  public void setLLHasTag(Supplier<Boolean> lLHasTag) {
+    this.LLHasTag = lLHasTag;
+  }
+
+  public void setAutoAligning(Supplier<Boolean> autoAligning) {
+    this.autoAligning = autoAligning;
+  }
+
+  public void setAlgaeMode(Supplier<Boolean> algaeMode) {
+    this.algaeMode = algaeMode;
+  }
 
   public Signaling(PowerDistribution power) {
     tick = 0;
@@ -53,24 +73,25 @@ public class Signaling extends SubsystemBase {
   }
 
   private void setState(LightState newState) {
+    currentState = newState;
     switch (newState) {
       case IDLE:
-        setColor(RGB.RED);
+        setFullStrip(RGB.RED);
         break;
       case HAS_CORAL:
-        setColor(RGB.ORANGE);
+        setFullStrip(RGB.ORANGE);
         break;
       case HANDOFF_DONE:
-        setColor(RGB.YELLOW);
+        setFullStrip(RGB.WHITE);
         break;
       case LL_HAS_TAG:
-        setColor(RGB.BLUE);
+        setFullStrip(RGB.GREEN);
         break;
       case AUTO_ALIGNING:
-        setColor(RGB.GREEN);
+        setFullStrip(RGB.BLUE);
         break;
       case ALGAE_MODE:
-        setColor(RGB.PURPLE);
+        setFullStrip(RGB.PURPLE);
         break;
       default:
         break;
@@ -84,23 +105,23 @@ public class Signaling extends SubsystemBase {
 
     if (DriverStation.isDisabled()) {
       if (LimelightHelpers.getTV(VisionConstants.camera0Name)) {
-        setCandle(RGB.RED);
-        Logger.recordOutput("Signaling/CANdle Color", "Red");
-      } else {
         setCandle(RGB.GREEN);
         Logger.recordOutput("Signaling/CANdle Color", "Green");
+      } else {
+        setCandle(RGB.RED);
+        Logger.recordOutput("Signaling/CANdle Color", "Red");
       }
     } else {
       switch (currentState) {
         case IDLE:
-          if (AlgaeMode.get()) {
+          if (algaeMode.get()) {
             setState(LightState.ALGAE_MODE);
           } else if (hasCoral.get()) {
             setState(LightState.HAS_CORAL);
           }
           break;
         case ALGAE_MODE:
-          if (!AlgaeMode.get()) {
+          if (!algaeMode.get()) {
             setState(LightState.IDLE);
           }
           break;
@@ -140,6 +161,12 @@ public class Signaling extends SubsystemBase {
           break;
       }
     }
+    Logger.recordOutput("Signaling/HasCoral", hasCoral.get());
+    Logger.recordOutput("Signaling/handoffComplete", handoffComplete.get());
+    Logger.recordOutput("Signaling/LLHasTag", LLHasTag.get());
+    Logger.recordOutput("Signaling/autoAligning", autoAligning.get());
+    Logger.recordOutput("Signaling/algaeMode", algaeMode.get());
+    Logger.recordOutput("Signaling/State", currentState.name());
     Logger.recordOutput("Signaling/Pattern", disablePattern.toString());
   }
 
@@ -147,7 +174,7 @@ public class Signaling extends SubsystemBase {
     return (pdp.getVoltage() < 6) || (pdp.getTemperature() > 60);
   }
 
-  public Command setColor(RGB rgb) {
+  public Command setColorCommand(RGB rgb) {
     return runOnce(
         () -> {
           setFullStrip(rgb);
