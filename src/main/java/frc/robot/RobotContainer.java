@@ -404,6 +404,7 @@ public class RobotContainer {
         .whileTrue(intake.humanPlayerIntake());
     OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
     OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
+
     Command locateCoral =
         new LocateCoral(
             sensors::getSensorState,
@@ -432,6 +433,7 @@ public class RobotContainer {
                     .until(coralHandoffCompleteTrigger)
                     .andThen(coralScorer.alignCoralCommand())
                 : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
+
     coralOuttakeButton.whileTrue(intake.floorOuttake());
 
     Logger.recordOutput("Intake/Modes/L1 Score Mode", !elevatorNotL1);
