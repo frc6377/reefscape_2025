@@ -7,7 +7,6 @@ package frc.robot.subsystems.intake;
 import static frc.robot.Constants.IntakeConstants.kConveyorSpeed;
 import static frc.robot.Constants.IntakeConstants.kPivotCoralStationAngle;
 import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
-import static frc.robot.Constants.IntakeConstants.kPivotRetractAngle;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;

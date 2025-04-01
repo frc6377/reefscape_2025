@@ -240,7 +240,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public boolean intakeHasCoral() {
-    return sensors.getSensorState() != CoralEnum.NO_CORAL;// && atSetpoint(kPivotRetractAngle);
+    return sensors.getSensorState() != CoralEnum.NO_CORAL; // && atSetpoint(kPivotRetractAngle);
   }
 
   public Trigger intakeHasCoralTrigger() {
