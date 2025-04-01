@@ -44,7 +44,38 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Ground Intake Sweep"
+            "pathName": "E - CD (Sweep)"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AA Right"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElvL4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "D - CD (Sweep)"
           }
         },
         {
@@ -55,6 +86,37 @@
                 "type": "named",
                 "data": {
                   "name": "AA Left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElvL4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C - AB (Sweep)"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AA Right"
                 }
               },
               {

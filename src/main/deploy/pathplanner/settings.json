@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "Buddy Push Paths",
+    "Sweep Paths",
     "Score - Source",
     "Source - Score",
     "Start - Score",

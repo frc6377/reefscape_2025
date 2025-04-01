@@ -249,14 +249,14 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     autoChooser.addOption(
         "Drive SysID Turning (All)",
-        drive
-            .sysIdQuasistaticTurning(SysIdRoutine.Direction.kForward)
-            .andThen(Commands.waitSeconds(0.5))
-            .andThen(drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kReverse))
-            .andThen(Commands.waitSeconds(0.5))
-            .andThen(drive.sysIdDynamicTurning(SysIdRoutine.Direction.kForward))
-            .andThen(Commands.waitSeconds(0.5))
-            .andThen(drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse)));
+        new SequentialCommandGroup(
+            drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kForward),
+            Commands.waitSeconds(0.5),
+            drive.sysIdQuasistaticTurning(SysIdRoutine.Direction.kReverse),
+            Commands.waitSeconds(0.5),
+            drive.sysIdDynamicTurning(SysIdRoutine.Direction.kForward),
+            Commands.waitSeconds(0.5),
+            drive.sysIdDynamicTurning(SysIdRoutine.Direction.kReverse)));
 
     // Configure the button bindings
     configureButtonBindings();

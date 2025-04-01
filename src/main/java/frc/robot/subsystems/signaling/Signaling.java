@@ -45,6 +45,13 @@ public class Signaling extends SubsystemBase {
   public Supplier<Boolean> autoAligning;
   public Supplier<Boolean> algaeMode;
 
+  public Signaling(PowerDistribution power) {
+    tick = 0;
+    patternTick = 0;
+    pdp = power;
+    candle.configBrightnessScalar(SignalingConstants.kLEDBrightness);
+  }
+
   public void setHasCoral(Supplier<Boolean> hasCoral) {
     this.hasCoral = hasCoral;
   }
@@ -63,13 +70,6 @@ public class Signaling extends SubsystemBase {
 
   public void setAlgaeMode(Supplier<Boolean> algaeMode) {
     this.algaeMode = algaeMode;
-  }
-
-  public Signaling(PowerDistribution power) {
-    tick = 0;
-    patternTick = 0;
-    pdp = power;
-    candle.configBrightnessScalar(SignalingConstants.kLEDBrightness);
   }
 
   private void setState(LightState newState) {

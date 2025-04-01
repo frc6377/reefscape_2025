@@ -17,9 +17,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "ElvL4"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AA Right"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElvL4"
+                }
+              }
+            ]
           }
         },
         {
@@ -43,13 +56,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score K"
+            "pathName": "Score KL (AA)"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "ElvL4"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AA Left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElvL4"
+                }
+              }
+            ]
           }
         },
         {
@@ -73,13 +99,69 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score L"
+            "pathName": "Score KL (AA)"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AA Right"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElvL4"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4"
+            "name": "Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L - Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score A (AA)"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AA Left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElvL4"
+                }
+              }
+            ]
           }
         },
         {

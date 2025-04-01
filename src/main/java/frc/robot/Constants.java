@@ -422,8 +422,6 @@ public final class Constants {
     public static final PIDController kRotationController = new PIDController(0.1, 0, 0);
     public static final Angle kSetpointRotTolerance = Degrees.of(1);
     public static final Distance kSetpointTolerance = Inches.of(1);
-
-    public static final Time kAtPoseDebounce = Seconds.of(0);
   }
 
   public final class FeildConstants {

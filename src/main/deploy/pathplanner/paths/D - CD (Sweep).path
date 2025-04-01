@@ -1,0 +1,82 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.018625531639518,
+        "y": 2.815484153465194
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.475232957856003,
+        "y": 1.6047124642264308
+      },
+      "isLocked": false,
+      "linkedName": "Reef D"
+    },
+    {
+      "anchor": {
+        "x": 1.8018844345868643,
+        "y": 0.8152269266419501
+      },
+      "prevControl": {
+        "x": 2.40004873988468,
+        "y": 0.28400243184941754
+      },
+      "nextControl": {
+        "x": -0.0673790194688102,
+        "y": 2.475303472868614
+      },
+      "isLocked": false,
+      "linkedName": "Ground Intake Proc Side"
+    },
+    {
+      "anchor": {
+        "x": 3.8306384070444914,
+        "y": 2.5094863115730925
+      },
+      "prevControl": {
+        "x": 2.9812574483580514,
+        "y": 2.9699549788135586
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Reef CD (AA)"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5433388157894735,
+      "rotationDegrees": 145.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake Floor",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 1200.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 150.0
+  },
+  "reversed": false,
+  "folder": "Sweep Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 150.0
+  },
+  "useDefaultConstraints": true
+}
