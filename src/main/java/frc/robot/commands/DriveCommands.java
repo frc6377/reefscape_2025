@@ -42,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.ReefAlignConstants;
+import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
 import java.text.DecimalFormat;
@@ -121,7 +122,10 @@ public class DriveCommands {
                       Logger.recordOutput(
                           "Auto Align/PID/Rot At Setpoint", rotController.atSetpoint());
 
-                      ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rotValue);
+                      ChassisSpeeds speeds =
+                          Robot.isReal()
+                              ? new ChassisSpeeds(xSpeed, ySpeed, rotValue)
+                              : new ChassisSpeeds(xSpeed, ySpeed, -rotValue);
 
                       // Convert to field Relative Speeds
                       drive.runVelocity(
@@ -142,23 +146,28 @@ public class DriveCommands {
       boolean isRightScore, String cameraName, Drive drive, Vision vision) {
     return new DeferredCommand(
             () -> {
-              Pose2d TagPose =
-                  vision
-                      .convertLLPose(LimelightHelpers.getTargetPose3d_RobotSpace(cameraName))
-                      .toPose2d();
-              Pose2d tagPoseRotated =
-                  TagPose.rotateAround(
-                      new Translation2d(), drive.getPose().getRotation().unaryMinus());
-              Pose2d tagPoseFieldRelative =
-                  new Pose2d(
-                      tagPoseRotated.getMeasureX().plus(drive.getPose().getMeasureX()),
-                      tagPoseRotated.getMeasureY().times(-1).plus(drive.getPose().getMeasureY()),
-                      new Rotation2d(
-                          vision
-                              .getTagPose((int) LimelightHelpers.getFiducialID(cameraName))
-                              .getRotation()
-                              .getMeasureZ()));
-              Logger.recordOutput("Auto Align/Tag Pose (RR)", TagPose);
+              Pose2d tagPoseFieldRelative;
+              if (Robot.isReal()) {
+                Pose2d TagPose =
+                    vision
+                        .convertLLPose(LimelightHelpers.getTargetPose3d_RobotSpace(cameraName))
+                        .toPose2d();
+                Pose2d tagPoseRotated =
+                    TagPose.rotateAround(
+                        new Translation2d(), drive.getPose().getRotation().unaryMinus());
+                tagPoseFieldRelative =
+                    new Pose2d(
+                        tagPoseRotated.getMeasureX().plus(drive.getPose().getMeasureX()),
+                        tagPoseRotated.getMeasureY().times(-1).plus(drive.getPose().getMeasureY()),
+                        new Rotation2d(
+                            vision
+                                .getTagPose((int) LimelightHelpers.getFiducialID(cameraName))
+                                .getRotation()
+                                .getMeasureZ()));
+                Logger.recordOutput("Auto Align/Tag Pose (RR)", TagPose);
+              } else {
+                tagPoseFieldRelative = vision.getTagPose(vision.getClosestTagID(0)).toPose2d();
+              }
               Logger.recordOutput("Auto Align/Tag Pose (FF)", tagPoseFieldRelative);
 
               Pose2d TargetOffset =

@@ -283,7 +283,6 @@ public class IntakeSubsystem extends SubsystemBase {
     return runEnd(
             () -> {
               goToPivotPosition(kPivotExtendAngle);
-              if (Robot.isSimulation()) intakeSim.startIntake();
 
               switch (sensors.getSensorState()) {
                 case CORAL_TOO_CLOSE:
@@ -299,6 +298,8 @@ public class IntakeSubsystem extends SubsystemBase {
                   setConveyerMotor(0);
                   break;
               }
+
+              if (Robot.isSimulation()) intakeSim.startIntake();
             },
             () -> {
               goToPivotPosition(kPivotRetractAngle);
