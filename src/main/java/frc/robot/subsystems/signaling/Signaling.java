@@ -5,7 +5,6 @@ import com.ctre.phoenix.led.FireAnimation;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -13,10 +12,9 @@ import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.SignalingConstants;
 import frc.robot.OI;
 import frc.robot.subsystems.signaling.patterns.AlliancePattern;
+import frc.robot.subsystems.signaling.patterns.FireflyPattern;
 import frc.robot.subsystems.signaling.patterns.PatternNode;
 import frc.robot.subsystems.signaling.patterns.RainbowPattern;
-import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.util.LimelightHelpers;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -25,7 +23,7 @@ public class Signaling extends SubsystemBase {
   private final CANdle candle = new CANdle(CANIDs.kCANdle);
   private int tick;
   private int patternTick;
-  private DisablePattern disablePattern = DisablePattern.getRandom();
+  private DisablePattern disablePattern = DisablePattern.FIREFLY;
   private PowerDistribution pdp;
 
   public enum LightState {
@@ -104,13 +102,14 @@ public class Signaling extends SubsystemBase {
     // Update Light Pattern
 
     if (DriverStation.isDisabled()) {
-      if (LimelightHelpers.getTV(VisionConstants.camera0Name)) {
-        setCandle(RGB.GREEN);
-        Logger.recordOutput("Signaling/CANdle Color", "Green");
-      } else {
-        setCandle(RGB.RED);
-        Logger.recordOutput("Signaling/CANdle Color", "Red");
-      }
+      updatePattern();
+      // if (LimelightHelpers.getTV(VisionConstants.camera0Name)) {
+      //   setCandle(RGB.GREEN);
+      //   Logger.recordOutput("Signaling/CANdle Color", "Green");
+      // } else {
+      //   setCandle(RGB.RED);
+      //   Logger.recordOutput("Signaling/CANdle Color", "Red");
+      // }
     } else {
       switch (currentState) {
         case IDLE:
@@ -183,7 +182,7 @@ public class Signaling extends SubsystemBase {
   }
 
   private void setCandle(RGB rgb) {
-    SmartDashboard.putString("Signaling/CANdle Color", rgb.toHex());
+    Logger.recordOutput("Signaling/CANdle Color", rgb.toHex());
     setSection(rgb, 0, 100);
   }
 
@@ -209,11 +208,11 @@ public class Signaling extends SubsystemBase {
     OI.Operator.setRumble(intensity);
   }
 
-  public Command startSignal(RGB color) {
+  public Command startSignal(RGB color, double rumble) {
     return startEnd(
         () -> {
           setFullStrip(color);
-          setRumble(1);
+          setRumble(rumble);
         },
         () -> {
           resetLEDs();
@@ -278,6 +277,11 @@ public class Signaling extends SubsystemBase {
         patternLength = AlliancePattern.getPatternLength();
         getLEDIndex(pattern, patternLength);
         break;
+      case FIREFLY:
+        pattern = FireflyPattern.getPattern();
+        patternLength = FireflyPattern.getPatternLength();
+        getLEDIndex(pattern, patternLength);
+        break;
       default:
         pattern = AlliancePattern.getPattern();
         patternLength = AlliancePattern.getPatternLength();
@@ -301,7 +305,7 @@ public class Signaling extends SubsystemBase {
     }
   }
 
-  public void randomizePattern() {
+  private void randomizePattern() {
     disablePattern = DisablePattern.getRandom();
   }
 
@@ -309,7 +313,8 @@ public class Signaling extends SubsystemBase {
     RAINBOW,
     ALLIANCE,
     FIRE,
-    SWEEP;
+    SWEEP,
+    FIREFLY;
 
     public static DisablePattern getRandom() {
       DisablePattern[] allPatterns = DisablePattern.values();
