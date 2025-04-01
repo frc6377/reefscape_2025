@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DIOConstants;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.PWMIDs;
 import frc.robot.Robot;
 import java.util.function.BooleanSupplier;
@@ -82,7 +83,7 @@ public class Climber extends SubsystemBase {
   private boolean isClimbingStateSim;
 
   public Climber() {
-    currentLimit.StatorCurrentLimit = 120;
+    currentLimit.StatorCurrentLimit = 1;
     currentLimit.StatorCurrentLimitEnable = true;
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
     climberFrontEncoder =
@@ -149,7 +150,8 @@ public class Climber extends SubsystemBase {
           new SingleJointedArmSim(
               simClimberGearbox,
               ClimberConstants.kGearRatio,
-              Math.pow(ClimberConstants.kClimberArmLength.in(Meters), 2) * 30,
+              Math.pow(ClimberConstants.kClimberArmLength.in(Meters), 2)
+                  * DrivetrainConstants.kRobotMass.in(Kilograms),
               ClimberConstants.kClimberArmLength.in(Meters),
               ClimberConstants.kClimberArmMinAngle.in(Radians),
               ClimberConstants.kClimberArmMaxAngle.in(Radians),

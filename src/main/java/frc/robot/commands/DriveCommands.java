@@ -159,7 +159,6 @@ public class DriveCommands {
                               .getRotation()
                               .getMeasureZ()));
               Logger.recordOutput("Auto Align/Tag Pose (RR)", TagPose);
-              Logger.recordOutput("Auto Align/Tag Pose Rotated (RR)", tagPoseRotated);
               Logger.recordOutput("Auto Align/Tag Pose (FF)", tagPoseFieldRelative);
 
               Pose2d TargetOffset =

@@ -323,6 +323,7 @@ public final class Constants {
 
   @SuppressWarnings("unused")
   public final class DrivetrainConstants {
+    public static final Mass kRobotMass = Pounds.of(106.6);
     public static final Distance kBumperSize = Meters.of(0.889);
 
     // POV Drive Constants
