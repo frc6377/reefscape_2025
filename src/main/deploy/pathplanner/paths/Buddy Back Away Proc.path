@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.5,
+        "y": 0.7439999999999998
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.5,
+        "y": 0.7439999999999999
+      },
+      "isLocked": false,
+      "linkedName": "Push Buddy End Proc"
+    },
+    {
+      "anchor": {
+        "x": 4.5,
+        "y": 0.7439999999999998
+      },
+      "prevControl": {
+        "x": 5.5,
+        "y": 0.7439999999999998
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 1200.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": "Buddy Push Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}

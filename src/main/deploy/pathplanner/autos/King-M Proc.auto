@@ -5,93 +5,69 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Start ProcM - EF (AA)"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "Zero Elv"
+            "name": "AA Left"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "StartML - I"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
+            "pathName": "E - Source"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "I - Source"
+            "pathName": "Score CD (AA)"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake"
+            "name": "AA Right"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score K"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
+            "pathName": "D - Source"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "K - Source"
+            "pathName": "Score CD (AA)"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake"
+            "name": "AA Left"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score L"
+            "pathName": "C - Source"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score AB (AA)"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL0"
+            "name": "AA Right"
           }
         }
       ]

@@ -26,33 +26,28 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 
 public class VisionConstants {
-  // AprilTag layout
-  public static AprilTagFieldLayout aprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
-  public static final boolean kVisionAutoOnly = true;
+  // AprilTag layout
+  public static final AprilTagFieldLayout kAprilTagLayout =
+      AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+
+  public static final boolean kVisionUpdatesOdometry = true;
 
   // Camera names, must match names configured on coprocessor
-  public static final String camera0Name = "limelight-elvcam";
-  public static final String camera1Name = "limelight-lowcam";
+  public static final String camera0Name = "limelight-lowcam";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
+  // New pose for 14 degrees angle
   public static final Transform3d robotToCamera0 =
       new Transform3d(
-          Inches.of(-6.871),
-          Inches.of(-9.31),
-          Inches.of(39.96),
-          new Rotation3d(Degrees.of(0), Degrees.of(5.42), Degrees.of(180)));
-  public static final Transform3d robotToCamera1 =
-      new Transform3d(
-          Inches.of(8.5),
-          Inches.of(-12.789),
-          Inches.of(9.592),
-          new Rotation3d(Degrees.of(0), Degrees.of(-23), Degrees.of(-90)));
+          Inches.of(8.500177),
+          Inches.of(-10.623276),
+          Inches.of(9.536276),
+          new Rotation3d(Degrees.of(0), Degrees.of(-14), Degrees.of(-90)));
 
   // Basic filtering thresholds
-  public static final int minTags = 2;
+  public static final int minTags = 1;
   public static final double maxAmbiguity = 0.1; // Lower Better
   public static final double maxZError = 0.5; // / Lower Better
 
@@ -66,7 +61,6 @@ public class VisionConstants {
   public static double[] cameraStdDevFactors =
       new double[] {
         1.0, // Camera 0
-        1.0, // Camera 1
       };
 
   // Multipliers to apply for MegaTag 2 observations

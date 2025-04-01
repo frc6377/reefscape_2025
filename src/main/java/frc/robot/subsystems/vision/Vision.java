@@ -13,6 +13,7 @@
 
 package frc.robot.subsystems.vision;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static frc.robot.subsystems.vision.VisionConstants.*;
@@ -22,6 +23,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
@@ -31,8 +33,10 @@ import frc.robot.Robot;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import utilities.LimelightHelpers;
 
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
@@ -70,8 +74,50 @@ public class Vision extends SubsystemBase {
     return inputs[cameraIndex].latestTargetObservation.tx();
   }
 
+  public Pose3d getVisionPose(int cameraIndex) {
+    if (inputs[cameraIndex].poseObservations.length == 0 || inputs[cameraIndex].tagIds.length == 0)
+      return new Pose3d();
+    return inputs[cameraIndex].poseObservations[0].pose();
+  }
+
+  public int getClosestTagID(int cameraIndex) {
+    if (inputs[cameraIndex].tagIds.length == 0) return -1;
+
+    Pose3d cameraPose = getVisionPose(cameraIndex);
+    int closestTagID = -1;
+    double minDistance = Double.MAX_VALUE;
+
+    for (int tagId : inputs[cameraIndex].tagIds) {
+      Pose3d tagPose = getTagPose(tagId);
+      double distance = cameraPose.getTranslation().getDistance(tagPose.getTranslation());
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestTagID = tagId;
+      }
+    }
+
+    return closestTagID;
+  }
+
+  public Pose3d getTagPose(int tagID) {
+    Optional<Pose3d> tagPoseOptional = VisionConstants.kAprilTagLayout.getTagPose(tagID);
+    if (tagPoseOptional.isEmpty()) return new Pose3d();
+    return tagPoseOptional.get();
+  }
+
+  public Pose3d convertLLPose(Pose3d pose) {
+    return new Pose3d(
+        pose.getMeasureZ(),
+        pose.getMeasureX(),
+        pose.getMeasureY().times(-1),
+        new Rotation3d(Degrees.zero(), Degrees.zero(), pose.getRotation().getMeasureY()));
+  }
+
   @Override
   public void periodic() {
+    Logger.recordOutput("Auto Align/LL Has Target", LimelightHelpers.getTV(camera0Name));
+    Logger.recordOutput("Auto Align/LL Target ID", LimelightHelpers.getFiducialID(camera0Name));
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + i, inputs[i]);
@@ -96,7 +142,7 @@ public class Vision extends SubsystemBase {
 
       // Add tag poses
       for (int tagId : inputs[cameraIndex].tagIds) {
-        var tagPose = aprilTagLayout.getTagPose(tagId);
+        var tagPose = kAprilTagLayout.getTagPose(tagId);
         if (tagPose.isPresent()) {
           tagPoses.add(tagPose.get());
         }
@@ -108,15 +154,15 @@ public class Vision extends SubsystemBase {
         currentTagCount = observation.tagCount();
 
         boolean rejectPose =
-            observation.tagCount() < minTags // Must have enough tags
+            currentTagCount < minTags // Must have enough tags
                 || observation.ambiguity() > maxAmbiguity // Cannot be high ambiguity
                 || Math.abs(observation.pose().getZ()) > maxZError // Must have realistic Z cord
 
                 // Must be within the field boundaries
                 || observation.pose().getX() < 0.0
-                || observation.pose().getX() > aprilTagLayout.getFieldLength()
+                || observation.pose().getX() > kAprilTagLayout.getFieldLength()
                 || observation.pose().getY() < 0.0
-                || observation.pose().getY() > aprilTagLayout.getFieldWidth();
+                || observation.pose().getY() > kAprilTagLayout.getFieldWidth();
 
         // Add pose to log
         robotPoses.add(observation.pose());
@@ -130,8 +176,7 @@ public class Vision extends SubsystemBase {
         if (rejectPose) continue;
 
         // Calculate standard deviations
-        double stdDevFactor =
-            Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+        double stdDevFactor = Math.pow(observation.averageTagDistance(), 2.0) / currentTagCount;
         double linearStdDev = linearStdDevBaseline.in(Meters) * stdDevFactor;
         double angularStdDev = angularStdDevBaseline.in(Radians) * stdDevFactor;
         if (observation.type() == PoseObservationType.MEGATAG_2) {
@@ -144,7 +189,7 @@ public class Vision extends SubsystemBase {
         }
 
         // Send vision observation
-        if (Robot.isUsingVision && VisionConstants.kVisionAutoOnly) {
+        if (Robot.isUsingVision && VisionConstants.kVisionUpdatesOdometry) {
           consumer.accept(
               observation.pose().toPose2d(),
               observation.timestamp(),

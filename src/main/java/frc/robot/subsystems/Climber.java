@@ -83,7 +83,7 @@ public class Climber extends SubsystemBase {
   private boolean isClimbingStateSim;
 
   public Climber() {
-    currentLimit.StatorCurrentLimit = 120;
+    currentLimit.StatorCurrentLimit = 1;
     currentLimit.StatorCurrentLimitEnable = true;
     climberTargetAngle = ClimberConstants.kClimberRetractedSetpoint;
     climberFrontEncoder =
@@ -129,8 +129,6 @@ public class Climber extends SubsystemBase {
 
     Logger.recordOutput("Climber/Front/isFrontServoEngaged", isFrontServoEngaged);
     Logger.recordOutput("Climber/Back/isBackServoEngaged", isBackServoEngaged);
-    Logger.recordOutput("Odometry/Mech Poses/Climber 1 Pose", DrivetrainConstants.kClimber1Pose);
-    Logger.recordOutput("Odometry/Mech Poses/Climber 2 Pose", DrivetrainConstants.kClimber2Pose);
 
     // For simulation
     // simulates the entire simulation, not just one arm
@@ -153,7 +151,7 @@ public class Climber extends SubsystemBase {
               simClimberGearbox,
               ClimberConstants.kGearRatio,
               Math.pow(ClimberConstants.kClimberArmLength.in(Meters), 2)
-                  * DrivetrainConstants.ROBOT_MASS.in(Kilograms),
+                  * DrivetrainConstants.kRobotMass.in(Kilograms),
               ClimberConstants.kClimberArmLength.in(Meters),
               ClimberConstants.kClimberArmMinAngle.in(Radians),
               ClimberConstants.kClimberArmMaxAngle.in(Radians),
@@ -237,6 +235,14 @@ public class Climber extends SubsystemBase {
       climberMotorBack.setPosition(
           currentBack - 1 + ClimberConstants.kClimberOffsetAngle.in(Rotations));
     }
+  }
+
+  public Angle getFrontArmAngle() {
+    return climberMotorFront.getPosition().getValue();
+  }
+
+  public Angle getBackArmAngle() {
+    return climberMotorBack.getPosition().getValue();
   }
 
   public Command runRaw(Voltage voltage) {

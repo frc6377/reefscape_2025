@@ -112,6 +112,10 @@ public class AlgeaRemover extends SubsystemBase {
         angle.in(Degrees) * AlgeaRemoverConstants.kAlegeaGearRatio);
   }
 
+  public Angle getAlgaeArmAngle() {
+    return Rotations.of(algeaEncoder.get());
+  }
+
   public Trigger algeaArmAtSetpoint() {
     return new Trigger(
             () ->
