@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "Buddy Push Paths",
+    "Sweep Paths",
     "Score - Source",
     "Source - Score",
     "Start - Score",
@@ -11,9 +12,10 @@
   ],
   "autoFolders": [
     " Franks",
+    "Buddy Push",
     "Chads",
-    "Kings",
     "Daves",
+    "Kings",
     "Tests"
   ],
   "defaultMaxVel": 4.0,

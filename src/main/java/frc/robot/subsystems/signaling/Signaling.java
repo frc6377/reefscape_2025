@@ -1,0 +1,328 @@
+package frc.robot.subsystems.signaling;
+
+import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.FireAnimation;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.CANIDs;
+import frc.robot.Constants.SignalingConstants;
+import frc.robot.OI;
+import frc.robot.subsystems.signaling.patterns.AlliancePattern;
+import frc.robot.subsystems.signaling.patterns.FireflyPattern;
+import frc.robot.subsystems.signaling.patterns.PatternNode;
+import frc.robot.subsystems.signaling.patterns.RainbowPattern;
+import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
+
+public class Signaling extends SubsystemBase {
+
+  private final CANdle candle = new CANdle(CANIDs.kCANdle);
+  private int tick;
+  private int patternTick;
+  private DisablePattern disablePattern = DisablePattern.FIREFLY;
+  private PowerDistribution pdp;
+
+  public enum LightState {
+    IDLE,
+    HAS_CORAL,
+    HANDOFF_DONE,
+    LL_HAS_TAG,
+    AUTO_ALIGNING,
+    ALGAE_MODE
+  };
+
+  public LightState currentState = LightState.IDLE;
+
+  public Supplier<Boolean> hasCoral;
+  public Supplier<Boolean> handoffComplete;
+  public Supplier<Boolean> LLHasTag;
+  public Supplier<Boolean> autoAligning;
+  public Supplier<Boolean> algaeMode;
+
+  public Signaling(PowerDistribution power) {
+    tick = 0;
+    patternTick = 0;
+    pdp = power;
+    candle.configBrightnessScalar(SignalingConstants.kLEDBrightness);
+  }
+
+  public void setHasCoral(Supplier<Boolean> hasCoral) {
+    this.hasCoral = hasCoral;
+  }
+
+  public void setHandoffComplete(Supplier<Boolean> handoffComplete) {
+    this.handoffComplete = handoffComplete;
+  }
+
+  public void setLLHasTag(Supplier<Boolean> lLHasTag) {
+    this.LLHasTag = lLHasTag;
+  }
+
+  public void setAutoAligning(Supplier<Boolean> autoAligning) {
+    this.autoAligning = autoAligning;
+  }
+
+  public void setAlgaeMode(Supplier<Boolean> algaeMode) {
+    this.algaeMode = algaeMode;
+  }
+
+  private void setState(LightState newState) {
+    currentState = newState;
+    switch (newState) {
+      case IDLE:
+        setFullStrip(RGB.RED);
+        break;
+      case HAS_CORAL:
+        setFullStrip(RGB.ORANGE);
+        break;
+      case HANDOFF_DONE:
+        setFullStrip(RGB.WHITE);
+        break;
+      case LL_HAS_TAG:
+        setFullStrip(RGB.GREEN);
+        break;
+      case AUTO_ALIGNING:
+        setFullStrip(RGB.BLUE);
+        break;
+      case ALGAE_MODE:
+        setFullStrip(RGB.PURPLE);
+        break;
+      default:
+        break;
+    }
+    return;
+  }
+
+  @Override
+  public void periodic() {
+    // Update Light Pattern
+
+    if (DriverStation.isDisabled()) {
+      updatePattern();
+      // if (LimelightHelpers.getTV(VisionConstants.camera0Name)) {
+      //   setCandle(RGB.GREEN);
+      //   Logger.recordOutput("Signaling/CANdle Color", "Green");
+      // } else {
+      //   setCandle(RGB.RED);
+      //   Logger.recordOutput("Signaling/CANdle Color", "Red");
+      // }
+    } else {
+      switch (currentState) {
+        case IDLE:
+          if (algaeMode.get()) {
+            setState(LightState.ALGAE_MODE);
+          } else if (hasCoral.get()) {
+            setState(LightState.HAS_CORAL);
+          }
+          break;
+        case ALGAE_MODE:
+          if (!algaeMode.get()) {
+            setState(LightState.IDLE);
+          }
+          break;
+        case HAS_CORAL:
+          if (!hasCoral.get()) {
+            setState(LightState.IDLE);
+          }
+          if (handoffComplete.get()) {
+            setState(LightState.HANDOFF_DONE);
+          }
+          break;
+        case HANDOFF_DONE:
+          if (!handoffComplete.get()) {
+            setState(LightState.IDLE);
+          }
+          if (LLHasTag.get()) {
+            setState(LightState.LL_HAS_TAG);
+          }
+          break;
+        case LL_HAS_TAG:
+          if (!LLHasTag.get()) {
+            setState(LightState.HANDOFF_DONE);
+          }
+          if (autoAligning.get()) {
+            setState(LightState.AUTO_ALIGNING);
+          }
+          if (!handoffComplete.get()) {
+            setState(LightState.IDLE);
+          }
+          break;
+        case AUTO_ALIGNING:
+          if (!autoAligning.get()) {
+            setState(LightState.LL_HAS_TAG);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+    Logger.recordOutput("Signaling/HasCoral", hasCoral.get());
+    Logger.recordOutput("Signaling/handoffComplete", handoffComplete.get());
+    Logger.recordOutput("Signaling/LLHasTag", LLHasTag.get());
+    Logger.recordOutput("Signaling/autoAligning", autoAligning.get());
+    Logger.recordOutput("Signaling/algaeMode", algaeMode.get());
+    Logger.recordOutput("Signaling/State", currentState.name());
+    Logger.recordOutput("Signaling/Pattern", disablePattern.toString());
+  }
+
+  private boolean getProblem() {
+    return (pdp.getVoltage() < 6) || (pdp.getTemperature() > 60);
+  }
+
+  public Command setColorCommand(RGB rgb) {
+    return runOnce(
+        () -> {
+          setFullStrip(rgb);
+          Logger.recordOutput("Signaling/LED Color", rgb.toHex());
+        });
+  }
+
+  private void setCandle(RGB rgb) {
+    Logger.recordOutput("Signaling/CANdle Color", rgb.toHex());
+    setSection(rgb, 0, 100);
+  }
+
+  public Command setToAlliance() {
+    return startEnd(
+        () -> {
+          setFullStrip(getColorFromAlliance(Constants.kAllianceColor));
+        },
+        this::resetLEDs);
+  }
+
+  public RGB getColorFromAlliance(Alliance alliance) {
+    if (alliance == Alliance.Red) {
+      return RGB.RED;
+    } else if (alliance == Alliance.Blue) {
+      return RGB.BLUE;
+    }
+    return RGB.BLUE;
+  }
+
+  private void setRumble(double intensity) {
+    OI.Driver.setRumble(intensity);
+    OI.Operator.setRumble(intensity);
+  }
+
+  public Command startSignal(RGB color, double rumble) {
+    return startEnd(
+        () -> {
+          setFullStrip(color);
+          setRumble(rumble);
+        },
+        () -> {
+          resetLEDs();
+          setRumble(0);
+        });
+  }
+
+  private void resetLEDs() {
+    setFullStrip(RGB.BLACK);
+  }
+
+  private void setFullStrip(final RGB rgb) {
+    Logger.recordOutput("Signaling/LED Color", rgb.toHex());
+    setSection(rgb, 8, SignalingConstants.kNumLEDs);
+  }
+
+  private void setSection(final RGB rgb, final int startID, final int count) {
+    candle.setLEDs(rgb.red, rgb.green, rgb.blue, 0, startID, count);
+  }
+
+  private void setSectionStrip(final RGB rgb, final int startID, final int count) {
+    if (startID == 10) {
+      Logger.recordOutput("Signaling/LED Color", rgb.toHex());
+    }
+    setSection(rgb, startID + 8, count);
+  }
+
+  private void updatePattern() {
+    PatternNode[] pattern;
+    int patternLength;
+
+    tick++;
+    if (tick > SignalingConstants.kPatternSpeed * 50) {
+      tick = 0;
+      patternTick++;
+    } else {
+      return;
+    }
+    switch (disablePattern) {
+      case FIRE:
+        candle.animate(
+            new FireAnimation(
+                1.0,
+                SignalingConstants.kPatternSpeed,
+                SignalingConstants.kNumLEDs,
+                0.5,
+                0.5,
+                false,
+                8));
+      case RAINBOW:
+        pattern = RainbowPattern.getPattern();
+        patternLength = RainbowPattern.getPatternLength();
+        getLEDIndex(pattern, patternLength);
+        break;
+      case SWEEP:
+        pattern = RainbowPattern.getPattern();
+        patternLength = RainbowPattern.getPatternLength();
+        getLEDIndex(pattern, patternLength);
+        break;
+      case ALLIANCE:
+        pattern = AlliancePattern.getPattern();
+        patternLength = AlliancePattern.getPatternLength();
+        getLEDIndex(pattern, patternLength);
+        break;
+      case FIREFLY:
+        pattern = FireflyPattern.getPattern();
+        patternLength = FireflyPattern.getPatternLength();
+        getLEDIndex(pattern, patternLength);
+        break;
+      default:
+        pattern = AlliancePattern.getPattern();
+        patternLength = AlliancePattern.getPatternLength();
+        getLEDIndex(pattern, patternLength);
+        break;
+    }
+  }
+
+  private void getLEDIndex(PatternNode[] pattern, int patternLength) {
+    int patternIndex = 0;
+    patternTick %= patternLength;
+    int LEDIndex = -patternTick - 1;
+    while (LEDIndex < SignalingConstants.kNumLEDs) {
+      patternIndex %= pattern.length;
+      PatternNode node = pattern[patternIndex];
+      RGB color = node.color;
+      Logger.recordOutput("Signaling/LED Color", color.toHex());
+      setSectionStrip(color, LEDIndex + 9, node.repeat);
+      LEDIndex += node.repeat;
+      patternIndex++;
+    }
+  }
+
+  private void randomizePattern() {
+    disablePattern = DisablePattern.getRandom();
+  }
+
+  private enum DisablePattern {
+    RAINBOW,
+    ALLIANCE,
+    FIRE,
+    SWEEP,
+    FIREFLY;
+
+    public static DisablePattern getRandom() {
+      DisablePattern[] allPatterns = DisablePattern.values();
+      return allPatterns[(int) (Math.random() * allPatterns.length)];
+    }
+  }
+
+  public void clearLEDs() {
+    setFullStrip(RGB.BLACK);
+  }
+}

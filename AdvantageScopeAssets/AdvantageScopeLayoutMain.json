@@ -1,8 +1,8 @@
 {
   "hubs": [
     {
-      "x": -1,
-      "y": 33,
+      "x": 0,
+      "y": 32,
       "width": 1323,
       "height": 950,
       "state": {
@@ -40,11 +40,12 @@
             "/CameraPublisher/limelight-elvcam-processed/streams",
             "/AdvantageKit",
             "/AdvantageKit/RealOutputs/Swerve",
-            "/AdvantageKit/RealOutputs/Vision"
+            "/AdvantageKit/RealOutputs/Vision",
+            "/AdvantageKit/RealOutputs/Odometry"
           ]
         },
         "tabs": {
-          "selected": 6,
+          "selected": 3,
           "tabs": [
             {
               "type": 0,
@@ -163,44 +164,10 @@
                   },
                   {
                     "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Intake Pose",
-                    "logType": "Pose3d",
-                    "visible": true,
-                    "options": {}
-                  },
-                  {
-                    "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Elv 1 Pose",
-                    "logType": "Pose3d",
-                    "visible": true,
-                    "options": {}
-                  },
-                  {
-                    "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Elv 2 Pose",
-                    "logType": "Pose3d",
-                    "visible": true,
-                    "options": {}
-                  },
-                  {
-                    "type": "vision",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera0/TagPoses",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses List",
                     "logType": "Pose3d[]",
                     "visible": true,
-                    "options": {
-                      "color": "#00ff00",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "vision",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera1/TagPoses",
-                    "logType": "Pose3d[]",
-                    "visible": true,
-                    "options": {
-                      "color": "#00ffff",
-                      "size": "normal"
-                    }
+                    "options": {}
                   },
                   {
                     "type": "ghost",
@@ -214,22 +181,8 @@
                   },
                   {
                     "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Intake Pose",
-                    "logType": "Pose3d",
-                    "visible": true,
-                    "options": {}
-                  },
-                  {
-                    "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Elv 1 Pose",
-                    "logType": "Pose3d",
-                    "visible": true,
-                    "options": {}
-                  },
-                  {
-                    "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Elv 2 Pose",
-                    "logType": "Pose3d",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses List",
+                    "logType": "Pose3d[]",
                     "visible": true,
                     "options": {}
                   },
@@ -288,13 +241,6 @@
                       "model": "2025 KitBot",
                       "color": "#00ffff"
                     }
-                  },
-                  {
-                    "type": "axes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Low Camera Pose",
-                    "logType": "Pose3d",
-                    "visible": true,
-                    "options": {}
                   }
                 ],
                 "game": "2025 Field (Welded)",
@@ -315,7 +261,7 @@
                   0
                 ]
               },
-              "controlsHeight": 200
+              "controlsHeight": 236
             },
             {
               "type": 9,
@@ -434,5 +380,5 @@
     }
   ],
   "satellites": [],
-  "version": "4.1.5"
+  "version": "4.1.6"
 }

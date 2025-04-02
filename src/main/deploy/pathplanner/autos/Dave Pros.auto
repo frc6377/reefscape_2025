@@ -7,49 +7,43 @@
         {
           "type": "named",
           "data": {
-            "name": "Set L1 Mode"
+            "name": "Zero Elv"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "StartL - IJ (L1)"
+            "pathName": "Start Proc - EF (AA)"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L1 Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "IJ - Source L1"
+            "name": "ElvL4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score KL L1"
+            "name": "AA Left"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L1 Score"
+            "name": "Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElvL0"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Chads",
+  "folder": "Daves",
   "choreoAuto": false
 }

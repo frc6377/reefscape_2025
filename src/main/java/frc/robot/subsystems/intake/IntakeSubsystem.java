@@ -231,15 +231,21 @@ public class IntakeSubsystem extends SubsystemBase {
     return new Trigger(() -> atSetpoint(pivotSetpoint));
   }
 
+  public boolean intakeHasUnalignedCoral() {
+    return sensors.getSensorState() != CoralEnum.NO_CORAL && !atSetpoint(kPivotRetractAngle);
+  }
+
   public Trigger intakeHasUnalignedCoralTrigger() {
-    return new Trigger(
-        () -> sensors.getSensorState() != CoralEnum.NO_CORAL && !atSetpoint(kPivotRetractAngle));
+    return new Trigger(() -> intakeHasCoral());
+  }
+
+  public boolean intakeHasCoral() {
+    return sensors.getSensorState() != CoralEnum.NO_CORAL; // && atSetpoint(kPivotRetractAngle);
   }
 
   public Trigger intakeHasCoralTrigger() {
     if (Robot.isSimulation()) return new Trigger(() -> intakeSim.getGamePiecesAmount() > 0);
-    return new Trigger(
-        () -> sensors.getSensorState() != CoralEnum.NO_CORAL && atSetpoint(kPivotRetractAngle));
+    return new Trigger(() -> intakeHasCoral());
   }
 
   // Belt Commands
@@ -274,14 +280,30 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command floorIntake() {
-    return startEnd(
+    return runEnd(
             () -> {
               goToPivotPosition(kPivotExtendAngle);
-              setIntakeMotor(kIntakeSpeed);
+
+              switch (sensors.getSensorState()) {
+                case CORAL_TOO_CLOSE:
+                  setIntakeMotor(kIntakeHandoffSpeed);
+                  setConveyerMotor(kConveyorSpeed);
+                  break;
+                case CORAL_TOO_FAR:
+                  setIntakeMotor(kIntakeHandoffSpeed);
+                  setConveyerMotor(-kConveyorSpeed);
+                  break;
+                default:
+                  setIntakeMotor(kIntakeSpeed);
+                  setConveyerMotor(0);
+                  break;
+              }
+
               if (Robot.isSimulation()) intakeSim.startIntake();
             },
             () -> {
               goToPivotPosition(kPivotRetractAngle);
+              setConveyerMotor(0);
             })
         .withName("floorIntake");
   }
@@ -357,7 +379,7 @@ public class IntakeSubsystem extends SubsystemBase {
           if (elevatorNotL1.get()) {
             goToPivotPosition(kPivotRetractAngle);
           } else {
-            goToPivotPosition(kPivotCoralStationAngle);
+            goToPivotPosition(kPivotL1StowedAngle);
           }
           setIntakeMotor(0);
           setConveyerMotor(0);
@@ -402,10 +424,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // States
     Logger.recordOutput("Intake/States/Intake State", intakeState.toString());
-
-    Logger.recordOutput("Intake/Intake Has Coral Trigger", intakeHasCoralTrigger());
-    Logger.recordOutput(
-        "Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoralTrigger());
+    Logger.recordOutput("Intake/Intake Has Coral Trigger", intakeHasCoral());
+    Logger.recordOutput("Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoral());
 
     // Log TOF Sensors
     for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID}) {

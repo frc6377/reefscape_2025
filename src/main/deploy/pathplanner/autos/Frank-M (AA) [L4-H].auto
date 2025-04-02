@@ -13,31 +13,32 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartL - I"
+            "pathName": "Start M - GH (AA)"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "ElvL4"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AA Right"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElvL4"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "I - Source"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
           }
         }
       ]
