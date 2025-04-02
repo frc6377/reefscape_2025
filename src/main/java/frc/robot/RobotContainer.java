@@ -45,6 +45,7 @@ import frc.robot.subsystems.AlgeaRemover;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.EverybotClimber;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -76,6 +77,7 @@ public class RobotContainer {
 
   // Subsystems
   private final Climber climber = new Climber();
+  private final EverybotClimber everybotClimber = new EverybotClimber();
   private final AlgeaRemover algeaRemover = new AlgeaRemover();
   private static final Sensors sensors = new Sensors();
   private final Drive drive;
@@ -471,6 +473,9 @@ public class RobotContainer {
     OI.getButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
     OI.getButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
 
+    // Everybot Climber Buttons
+    OI.getButton(OI.Operator.DPAD_UP).onTrue(everybotClimber.climberUp());
+    OI.getButton(OI.Operator.DPAD_DOWN).onTrue(everybotClimber.climberDown());
     // Button to update Setpoints of the elevator based on the Stream Deck nobs
     // TODO: Fix axis input
     // OI.getButton(OI.StreamDeck.streamDeckButtons[1][31])

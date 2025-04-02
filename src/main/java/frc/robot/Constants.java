@@ -321,7 +321,14 @@ public final class Constants {
     public static final Angle kAlgeaStartingAngle = Rotations.of(-0.25);
   }
 
-  @SuppressWarnings("unused")
+  public static class EverybotClimberConstants {
+    public static final int kClimberMotorID = 0;
+    public static final int kClimberMotorCurrentLimit = 60;
+    public static final double kClimberMotorVoltageComp = 12;
+    public static final double kClimberSpeedDown = -0.5;
+    public static final double kClimberSpeedUp = 0.5;
+  }
+
   public final class DrivetrainConstants {
     public static final Mass kRobotMass = Pounds.of(106.6);
     public static final Distance kBumperSize = Meters.of(0.889);
