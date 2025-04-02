@@ -20,8 +20,7 @@ public class RGB {
   public static final RGB HOWDY_BROWN_TINT = new RGB(186, 138, 58);
   public static final RGB HOWDY_BROWN_SHADE = new RGB(78, 52, 18);
 
-  public static final RGB FIRE_FLY_GREEN = new RGB(211, 224, 85);
-  public static final RGB FIRE_FLY_GREEN_MAX = new RGB(237, 255, 111);
+  public static final RGB FIRE_FLY_GREEN = new RGB(254, 254, 0);
 
   public static final RGB[] RainbowThing =
       new RGB[] {RED, ORANGE, YELLOW, GREEN, HOWDY_BLUE, PURPLE};

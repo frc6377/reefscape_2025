@@ -143,7 +143,7 @@ public final class Constants {
       kClimberFrontPID1.setKG(.62);
       kClimberFrontPID1.setGravityType(GravityTypeValue.Arm_Cosine);
 
-      kClimberBackPID1.setKP(50);
+      kClimberBackPID1.setKP(75);
       kClimberBackPID1.setKD(5);
       kClimberBackPID1.setKV(15.12);
       kClimberBackPID1.setKG(.62);
@@ -185,10 +185,10 @@ public final class Constants {
 
   // Scorer Constants
   public static class CoralScorerConstants {
-    public static final double kIntakeSpeed = -0.5;
-    public static final double kScoreSpeed = -0.1;
+    public static final double kHandoffSpeed = -0.5;
+    public static final double kScoreSpeed = -0.3;
+    public static final double kScoreL4Speed = -0.1;
     public static final double kScoreAutoSpeed = -0.2;
-    public static final double kScoreMax = -0.7;
     public static final double kReverseSpeed = 0.25;
     public static final double kAlignSpeed = -0.1;
 
@@ -412,7 +412,7 @@ public final class Constants {
   public final class ReefAlignConstants {
     // Target Poses
     public static final Pose2d kLeftReefPose =
-        new Pose2d(Inches.of(17), Inches.of(9), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Inches.of(17), Inches.of(6), new Rotation2d(Degrees.of(-90)));
     public static final Pose2d kRightReefPose =
         new Pose2d(Inches.of(17), Inches.of(-8.393701), new Rotation2d(Degrees.of(-90)));
 

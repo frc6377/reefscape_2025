@@ -69,16 +69,16 @@ public class CoralScorer extends SubsystemBase {
     return startEnd(() -> setScoreMotor(kScoreSpeed), () -> stopMotor());
   }
 
+  public Command scoreL4Command() {
+    return startEnd(() -> setScoreMotor(kScoreL4Speed), () -> stopMotor());
+  }
+
   public Command scoreAutoCommand() {
     return startEnd(() -> setScoreMotor(kScoreAutoSpeed), () -> stopMotor());
   }
 
-  public Command scoreMaxSpeedCommand() {
-    return startEnd(() -> setScoreMotor(kScoreMax), () -> stopMotor());
-  }
-
   public Command intakeCommand() {
-    return startEnd(() -> setScoreMotor(kIntakeSpeed), () -> stopMotor());
+    return startEnd(() -> setScoreMotor(kHandoffSpeed), () -> stopMotor());
   }
 
   // Made a command to spin counter clockwise

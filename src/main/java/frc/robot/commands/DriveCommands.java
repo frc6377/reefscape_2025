@@ -187,7 +187,8 @@ public class DriveCommands {
                               .getMeasure()
                               .plus(TargetOffset.getRotation().getMeasure())));
               Logger.recordOutput("Auto Align/Target Pose (FF)", targetPose);
-              return GoToPosePID(targetPose, () -> drive.getPose(), drive);
+              return GoToPosePID(targetPose, () -> drive.getPose(), drive)
+                  .andThen(() -> drive.setPose(targetPose));
             },
             Set.of(drive))
         .withName("Align To Reef");

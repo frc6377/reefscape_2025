@@ -57,7 +57,12 @@
       "name": "Intake Floor",
       "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake Floor"
+        }
+      }
     }
   ],
   "globalConstraints": {

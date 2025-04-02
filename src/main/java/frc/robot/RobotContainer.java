@@ -99,6 +99,7 @@ public class RobotContainer {
 
   // Trigger Variables
   private final Trigger coralOuttakeButton = OI.getButton(OI.Driver.RBumper);
+  private final Trigger coralIntakeButton = OI.getButton(OI.Driver.RTrigger);
   private final Trigger coralHandoffCompleteTrigger =
       new Trigger(
           () ->
@@ -396,26 +397,23 @@ public class RobotContainer {
     OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
 
     // Intake Buttons
-    OI.getButton(OI.Driver.RTrigger)
+    coralIntakeButton
         .and(() -> !intakeAlgeaMode && !coralStationMode)
         .whileTrue(intake.floorIntake());
-    OI.getButton(OI.Driver.RTrigger)
+    coralIntakeButton
         .and(() -> !intakeAlgeaMode && coralStationMode)
         .whileTrue(intake.humanPlayerIntake());
-    OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
-    OI.getButton(OI.Driver.RTrigger).and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
+    coralIntakeButton.and(() -> intakeAlgeaMode).whileTrue(intake.algaeIntake());
+    coralIntakeButton.and(() -> intakeAlgeaMode).whileFalse(intake.algaeHold());
 
     Command locateCoral =
-        new LocateCoral(
-            sensors::getSensorState,
-            intake,
-            coralOuttakeButton.or(OI.getButton(OI.Driver.RTrigger)));
+        new LocateCoral(sensors::getSensorState, intake, coralOuttakeButton.or(coralIntakeButton));
 
     intake
         .intakeHasUnalignedCoralTrigger()
         .and(coralScorer.hasCoralTrigger().negate())
         .and(coralOuttakeButton.negate())
-        .and(OI.getButton(OI.Driver.RTrigger).negate())
+        .and(coralIntakeButton.negate())
         .and(() -> !CommandScheduler.getInstance().isScheduled(scoreL1))
         .onTrue(locateCoral);
 
@@ -423,6 +421,7 @@ public class RobotContainer {
         .intakeHasCoralTrigger()
         .and(() -> elevatorNotL1)
         .and(coralOuttakeButton.negate())
+        .and(coralIntakeButton.negate())
         .and(() -> !CommandScheduler.getInstance().isScheduled(locateCoral))
         .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height))
         .whileTrue(
@@ -431,7 +430,7 @@ public class RobotContainer {
                     .conveyerInCommand()
                     .alongWith(coralScorer.intakeCommand())
                     .until(coralHandoffCompleteTrigger)
-                    .andThen(coralScorer.alignCoralCommand())
+                // .andThen(coralScorer.alignCoralCommand())
                 : Commands.runOnce(() -> mapleSimArenaSubsystem.setRobotHasCoral(true)));
 
     coralOuttakeButton.whileTrue(intake.floorOuttake());
@@ -469,10 +468,7 @@ public class RobotContainer {
     // Scorer Buttons
     OI.getButton(OI.Driver.LScoreTrigger)
         .and(() -> !intakeAlgeaMode && elevatorNotL1)
-        .whileTrue(
-            Robot.isReal()
-                ? coralScorer.runScorer(OI.getAxisSupplier(OI.Driver.LeftTriggerAxis))
-                : mapleSimArenaSubsystem.scoreCoral());
+        .whileTrue(coralScorer.runScorer(OI.getAxisSupplier(OI.Driver.LeftTriggerAxis)));
     OI.getButton(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
     OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
 
@@ -480,7 +476,7 @@ public class RobotContainer {
     OI.getButton(OI.Operator.LBumper).toggleOnTrue(algeaRemover.removeUpCommand());
     OI.getButton(OI.Operator.RBumper).toggleOnTrue(algeaRemover.removeDownCommand());
     OI.getButton(OI.Operator.LTrigger).whileTrue(algeaRemover.upCommand());
-    OI.getButton(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
+    coralIntakeButton.whileTrue(algeaRemover.downCommand());
 
     // Climber Buttons
     OI.getButton(OI.Operator.DPAD_UP)
@@ -492,7 +488,7 @@ public class RobotContainer {
                 .alongWith(intake.movePivot(IntakeConstants.kPivotClimbingAngle)));
     OI.getButton(OI.Operator.DPAD_DOWN)
         .onTrue(
-            climber.extendFully().alongWith(intake.movePivot(IntakeConstants.kPivotEndClimbAngle)));
+            climber.extendFully().alongWith(intake.movePivot(IntakeConstants.kPivotClimbingAngle)));
 
     // Button to update Setpoints of the elevator based on the Stream Deck nobs
     // TODO: Fix axis input
@@ -585,7 +581,7 @@ public class RobotContainer {
           .until(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
           .asProxy();
     } else {
-      return coralScorer.scoreAutoCommand().until(coralScorer.hasCoralTrigger().negate());
+      return coralScorer.scoreAutoCommand().until(coralScorer.hasCoralTrigger().negate()).asProxy();
     }
   }
 
