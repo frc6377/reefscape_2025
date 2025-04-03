@@ -607,7 +607,7 @@ public class RobotContainer {
     mechVisualizer.updateIndexRotation(4, Axis.Y, climber.getBackArmAngle());
 
     // // Update Algae Remover
-    mechVisualizer.updateIndexRotation(0, Axis.X, algeaRemover.getAlgaeArmAngle());
+    mechVisualizer.updateIndexRotation(5, Axis.X, algeaRemover.getAlgaeArmAngle());
 
     Logger.recordOutput("Mech Visualizer", mechVisualizer.getMechPoses());
   }

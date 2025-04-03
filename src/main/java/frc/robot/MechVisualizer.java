@@ -41,12 +41,16 @@ public class MechVisualizer {
     switch (axis) {
       case X:
         newRotation = new Rotation3d(value, oldRotation.getMeasureY(), oldRotation.getMeasureZ());
+        break;
       case Y:
         newRotation = new Rotation3d(oldRotation.getMeasureX(), value, oldRotation.getMeasureZ());
+        break;
       case Z:
         newRotation = new Rotation3d(oldRotation.getMeasureX(), oldRotation.getMeasureY(), value);
+        break;
       default:
         newRotation = oldRotation;
+        break;
     }
 
     mechPoses[index] = new Pose3d(mechPoses[index].getTranslation(), newRotation);
@@ -63,12 +67,16 @@ public class MechVisualizer {
     switch (axis) {
       case X:
         newTranslation = new Translation3d(value, oldPose.getMeasureY(), oldPose.getMeasureZ());
+        break;
       case Y:
         newTranslation = new Translation3d(oldPose.getMeasureX(), value, oldPose.getMeasureZ());
+        break;
       case Z:
         newTranslation = new Translation3d(oldPose.getMeasureX(), oldPose.getMeasureY(), value);
+        break;
       default:
         newTranslation = oldPose.getTranslation();
+        break;
     }
 
     mechPoses[index] = new Pose3d(newTranslation, oldPose.getRotation());
