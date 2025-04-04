@@ -45,7 +45,6 @@ import frc.robot.Constants.ReefAlignConstants;
 import frc.robot.MechVisualizer.Axis;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.AlgeaRemover;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
@@ -88,7 +87,7 @@ public class RobotContainer {
   private static final Sensors sensors = new Sensors();
   private final Elevator elevator = new Elevator();
   private final CoralScorer coralScorer = new CoralScorer();
-  private final AlgeaRemover algeaRemover = new AlgeaRemover();
+  //   private final AlgeaRemover algeaRemover = new AlgeaRemover();
   private final Climber climber = new Climber();
   private PowerDistribution pdp = new PowerDistribution();
   private final Signaling signaling = new Signaling(pdp);
@@ -106,7 +105,7 @@ public class RobotContainer {
       new Trigger(
           () ->
               sensors.getSensorState() == CoralEnum.NO_CORAL
-                  || coralScorer.hasCoralTrigger().getAsBoolean());
+                  || coralScorer.hasCoralTrigger().debounce(0.25).getAsBoolean());
   private final Trigger UpButtonTrigger = OI.getButton(OI.Driver.POV0);
   private final Trigger DownButtonTrigger = OI.getButton(OI.Driver.POV180);
   private final Trigger RightButtonTrigger = OI.getButton(OI.Driver.POV90);
@@ -236,11 +235,15 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "AA Left (TimeOut)",
         DriveCommands.AlignToReef(false, camera0Name, drive, vision)
-            .raceWith(Commands.waitSeconds(ReefAlignConstants.kAutonTimeOut.in(Seconds))));
+            .raceWith(Commands.waitSeconds(ReefAlignConstants.kAutonTimeOut.in(Seconds)))
+            .andThen(
+                DriveCommands.POVDrive(drive, () -> 0.0, () -> -1.0, () -> 0.0).withTimeout(0.25)));
     NamedCommands.registerCommand(
         "AA Right (TimeOut)",
         DriveCommands.AlignToReef(true, camera0Name, drive, vision)
-            .raceWith(Commands.waitSeconds(ReefAlignConstants.kAutonTimeOut.in(Seconds))));
+            .raceWith(Commands.waitSeconds(ReefAlignConstants.kAutonTimeOut.in(Seconds)))
+            .andThen(
+                DriveCommands.POVDrive(drive, () -> 0.0, () -> -1.0, () -> 0.0).withTimeout(0.25)));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -483,10 +486,10 @@ public class RobotContainer {
     OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
 
     // Algae Remover
-    OI.getButton(OI.Operator.LBumper).toggleOnTrue(algeaRemover.removeUpCommand());
-    OI.getButton(OI.Operator.RBumper).toggleOnTrue(algeaRemover.removeDownCommand());
-    OI.getButton(OI.Operator.LTrigger).whileTrue(algeaRemover.upCommand());
-    coralIntakeButton.whileTrue(algeaRemover.downCommand());
+    // OI.getButton(OI.Operator.LBumper).toggleOnTrue(algeaRemover.removeUpCommand());
+    // OI.getButton(OI.Operator.RBumper).toggleOnTrue(algeaRemover.removeDownCommand());
+    // OI.getButton(OI.Operator.LTrigger).whileTrue(algeaRemover.upCommand());
+    // coralIntakeButton.whileTrue(algeaRemover.downCommand());
 
     // Climber Buttons
     OI.getButton(OI.Operator.DPAD_UP)
@@ -596,11 +599,12 @@ public class RobotContainer {
   }
 
   public Command algeaRemoverAutoCommand() {
-    return algeaRemover
-        .removeUpCommand()
-        .until(algeaRemover.algeaArmAtSetpoint())
-        .andThen(algeaRemover.upCommand())
-        .asProxy();
+    return Commands.none();
+    // return algeaRemover
+    //     .removeUpCommand()
+    //     .until(algeaRemover.algeaArmAtSetpoint())
+    //     .andThen(algeaRemover.upCommand())
+    //     .asProxy();
   }
 
   public void updateMechVisualizer() {
@@ -617,7 +621,7 @@ public class RobotContainer {
     mechVisualizer.updateIndexRotation(4, Axis.Y, climber.getBackArmAngle());
 
     // // Update Algae Remover
-    mechVisualizer.updateIndexRotation(5, Axis.X, algeaRemover.getAlgaeArmAngle());
+    // mechVisualizer.updateIndexRotation(5, Axis.X, algeaRemover.getAlgaeArmAngle());
 
     Logger.recordOutput("Mech Visualizer", mechVisualizer.getMechPoses());
   }
@@ -632,7 +636,7 @@ public class RobotContainer {
   public void seedEncoders() {
     if (Robot.isSimulation()) return;
     intake.seedEncoder();
-    algeaRemover.seedEncoder();
+    // algeaRemover.seedEncoder();
     climber.seedEncoder();
   }
 

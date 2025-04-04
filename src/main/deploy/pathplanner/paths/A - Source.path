@@ -20,7 +20,7 @@
         "y": 7.120142450578242
       },
       "prevControl": {
-        "x": 1.9951018900619661,
+        "x": 1.9951018900619664,
         "y": 5.9557561511458035
       },
       "nextControl": null,
@@ -31,19 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "ElvL0",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ElvL0"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
