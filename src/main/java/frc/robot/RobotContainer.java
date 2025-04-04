@@ -560,8 +560,7 @@ public class RobotContainer {
     return Commands.waitUntil(elevator.elevatorAtCurrentSetpoint());
   }
 
-  public Command 
-  intakeAutoCommand() {
+  public Command intakeAutoCommand() {
     if (Robot.isSimulation()) {
       return intake
           .humanPlayerIntake()
