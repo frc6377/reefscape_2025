@@ -160,7 +160,7 @@ public final class Constants {
     // Motor Setpoints
     // 120 Degrees for climb
     public static final Angle kClimberFrontOffsetAngle = Degrees.of(-106);
-    public static final Angle kClimberBackOffsetAngle = Degrees.of(340);
+    public static final Angle kClimberBackOffsetAngle = Degrees.of(30);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
     public static final Angle kClimberExtendedSetpoint = Degrees.of(-65).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
@@ -188,7 +188,7 @@ public final class Constants {
     public static final double kHandoffSpeed = -0.5;
     public static final double kScoreSpeed = -0.3;
     public static final double kScoreL4Speed = -0.1;
-    public static final double kScoreAutoSpeed = -0.2;
+    public static final double kScoreAutoSpeed = -0.1;
     public static final double kReverseSpeed = 0.25;
     public static final double kAlignSpeed = -0.1;
 
@@ -210,7 +210,7 @@ public final class Constants {
     public static final boolean kEnableStateMachineSim = false;
 
     public static final double kIntakeSpeed = -1;
-    public static final double kOuttakeSpeed = 0.2;
+    public static final double kOuttakeSpeed = 0.1;
     public static final double kIntakeHandoffSpeed = -0.75;
     public static final double kConveyorSpeed = 0.45;
     public static final double kPivotSpeed = 0.2;
@@ -220,7 +220,7 @@ public final class Constants {
     public static final Angle kPivotZero = Degrees.of(304);
     public static final Angle kPivotRetractAngle = Degrees.of(137);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
-    public static final Angle kPivotExtendAngle = Degrees.of(12);
+    public static final Angle kPivotExtendAngle = Degrees.of(10);
     public static final Angle kPivotCoralStationAngle = Degrees.of(110);
     public static final Angle kPivotL1StowedAngle = Degrees.of(120);
     public static final Angle kPivotL1Score = Degrees.of(85);
@@ -412,14 +412,14 @@ public final class Constants {
   public final class ReefAlignConstants {
     // Target Poses
     public static final Pose2d kLeftReefPose =
-        new Pose2d(Inches.of(17), Inches.of(6), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Inches.of(18.5), Inches.of(-4), new Rotation2d(Degrees.of(-90)));
     public static final Pose2d kRightReefPose =
-        new Pose2d(Inches.of(17), Inches.of(-8.393701), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Inches.of(18.5), Inches.of(9), new Rotation2d(Degrees.of(-90)));
 
     // PID Controllers
-    public static final PIDController kTranslationXController = new PIDController(2.5, 0, 0.1);
-    public static final PIDController kTranslationYController = new PIDController(2.5, 0, 0.1);
-    public static final PIDController kRotationController = new PIDController(0.1, 0, 0);
+    public static final PIDController kTranslationXController = new PIDController(3, 0, 0.1);
+    public static final PIDController kTranslationYController = new PIDController(3, 0, 0.1);
+    public static final PIDController kRotationController = new PIDController(0.2, 0, 0);
     public static final Angle kSetpointRotTolerance = Degrees.of(1);
     public static final Distance kSetpointTolerance = Inches.of(1);
     public static final Time kAtPoseDebounce = Seconds.of(0);

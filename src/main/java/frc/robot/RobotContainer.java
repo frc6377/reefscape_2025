@@ -228,9 +228,9 @@ public class RobotContainer {
         "Strafe", drive.strafe().until(coralScorer.scorerAlignedTrigger()));
 
     NamedCommands.registerCommand(
-        "AA Left", DriveCommands.AlignToReef(true, camera0Name, drive, vision));
+        "AA Left", DriveCommands.AlignToReef(false, camera0Name, drive, vision));
     NamedCommands.registerCommand(
-        "AA Right", DriveCommands.AlignToReef(false, camera0Name, drive, vision));
+        "AA Right", DriveCommands.AlignToReef(true, camera0Name, drive, vision));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -344,9 +344,9 @@ public class RobotContainer {
 
     // Auto Align Commands
     OI.getButton(OI.Driver.RSB)
-        .toggleOnTrue(DriveCommands.AlignToReef(false, camera0Name, drive, vision));
-    OI.getButton(OI.Driver.LSB)
         .toggleOnTrue(DriveCommands.AlignToReef(true, camera0Name, drive, vision));
+    OI.getButton(OI.Driver.LSB)
+        .toggleOnTrue(DriveCommands.AlignToReef(false, camera0Name, drive, vision));
 
     UpButtonTrigger.or(DownButtonTrigger)
         .or(RightButtonTrigger)

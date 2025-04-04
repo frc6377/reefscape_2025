@@ -24,8 +24,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
@@ -289,23 +287,35 @@ public class Climber extends SubsystemBase {
   }
 
   public Command runClimber(Angle position, int slot) {
-    return startEnd(
-            () -> {
-              if (position.gt(climberMotorFront.getPosition().getValue())
-                  && (isFrontServoEngaged || isBackServoEngaged)) {
-                Alert alert =
-                    new Alert("Attempted motor output against servo ratchet", AlertType.kError);
-                alert.set(true);
-                alert.close();
-              } else {
-                climberTargetAngle = position;
-                climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
-                climberMotorBack.setControl(new PositionVoltage(position).withSlot(slot));
-                Logger.recordOutput("Climber/Climber Position Setpoint", position.in(Degrees));
-              }
-            },
-            () -> {})
+    return new SequentialCommandGroup(
+            runOnce(
+                () -> {
+                  climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
+                  Logger.recordOutput("Climber/Climber Position Setpoint", position.in(Degrees));
+                }),
+            Commands.waitSeconds(0.5),
+            startEnd(
+                () -> climberMotorBack.setControl(new PositionVoltage(position).withSlot(slot)),
+                () -> {}))
         .until(isClimberAtPosition(position));
+
+    // return startEnd(
+    //         () -> {
+    //           if (position.gt(climberMotorFront.getPosition().getValue())
+    //               && (isFrontServoEngaged || isBackServoEngaged)) {
+    //             Alert alert =
+    //                 new Alert("Attempted motor output against servo ratchet", AlertType.kError);
+    //             alert.set(true);
+    //             alert.close();
+    //           } else {
+    //             climberTargetAngle = position;
+    //             climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
+    //             climberMotorBack.setControl(new PositionVoltage(position).withSlot(slot));
+    //             Logger.recordOutput("Climber/Climber Position Setpoint", position.in(Degrees));
+    //           }
+    //         },
+    //         () -> {})
+    //     .until(isClimberAtPosition(position));
   }
 
   public Command climberToZero() {
