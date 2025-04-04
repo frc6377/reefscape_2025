@@ -7,12 +7,6 @@
         {
           "type": "named",
           "data": {
-            "name": "Zero Elv"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Set L1 Mode"
           }
         },
@@ -25,31 +19,26 @@
         {
           "type": "named",
           "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElvL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "L1 Score"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "EF - Source (L1)"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake L1"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "EF - Source (L1)"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake L1"
+                }
+              }
+            ]
           }
         },
         {
@@ -65,9 +54,34 @@
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CD - Source [L1]"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake L1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score CD L1"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "ElvL0"
+            "name": "L1 Score"
           }
         }
       ]

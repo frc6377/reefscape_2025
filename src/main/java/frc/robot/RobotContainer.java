@@ -192,7 +192,6 @@ public class RobotContainer {
     Trigger isDoneScoring = new Trigger(() -> (sensors.getSensorState() == CoralEnum.NO_CORAL));
 
     // // Register Named Commands
-    NamedCommands.registerCommand("ElvL0", elv0Command());
     NamedCommands.registerCommand(
         "ElvL2 DeadLine",
         elevator.L2().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(1.75)));
@@ -202,17 +201,18 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "ElvL4 DeadLine",
         elevator.L4().andThen(waitForElevator()).withDeadline(Commands.waitSeconds(1.75)));
+    NamedCommands.registerCommand("ElvL0", elevator.L0().andThen(waitForElevator()));
     NamedCommands.registerCommand("ElvL2", elevator.L2().andThen(waitForElevator()));
     NamedCommands.registerCommand("ElvL3", elevator.L3().andThen(waitForElevator()));
     NamedCommands.registerCommand("ElvL4", elevator.L4().andThen(waitForElevator()));
     NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
     NamedCommands.registerCommand(
-        "Intake", new SequentialCommandGroup(elv0Command(), intakeAutoCommand()));
+        "Intake", new SequentialCommandGroup(elevator.L0(), intakeAutoCommand()));
     NamedCommands.registerCommand("Intake L1", intakeAutoCommand());
     NamedCommands.registerCommand(
         "Intake Floor",
         new SequentialCommandGroup(
-            elv0Command(),
+            elevator.L0(),
             intakeFloorAutoCommand(),
             Commands.waitUntil(coralHandoffCompleteTrigger)));
     NamedCommands.registerCommand("Score", scorerAutoCommand());
@@ -556,15 +556,12 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
-  public Command elv0Command() {
-    return elevator.L0().andThen(waitForElevator().withTimeout(0.5).andThen(elevator.limitHit()));
-  }
-
   public Command waitForElevator() {
     return Commands.waitUntil(elevator.elevatorAtCurrentSetpoint());
   }
 
-  public Command intakeAutoCommand() {
+  public Command 
+  intakeAutoCommand() {
     if (Robot.isSimulation()) {
       return intake
           .humanPlayerIntake()
