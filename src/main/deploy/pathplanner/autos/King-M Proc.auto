@@ -21,22 +21,9 @@
           "data": {
             "commands": [
               {
-                "type": "race",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "AA Left"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.0
-                      }
-                    }
-                  ]
+                  "name": "AA Left (TimeOut)"
                 }
               },
               {
@@ -55,15 +42,28 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "E - Source"
+            "name": "ElvL0"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Intake"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "E - Source"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
           }
         },
         {
@@ -73,26 +73,19 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Handoff Complete"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "race",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "AA Right"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.0
-                      }
-                    }
-                  ]
+                  "name": "AA Right (TimeOut)"
                 }
               },
               {
@@ -111,15 +104,28 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "D - Source"
+            "name": "ElvL0"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Intake"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "D - Source"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
           }
         },
         {
@@ -129,26 +135,19 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Handoff Complete"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "race",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "AA Left"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.0
-                      }
-                    }
-                  ]
+                  "name": "AA Left (TimeOut)"
                 }
               },
               {
@@ -167,15 +166,28 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "C - Source"
+            "name": "ElvL0"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Intake"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "C - Source"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
           }
         },
         {
@@ -185,26 +197,19 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Handoff Complete"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "race",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "AA Right"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.0
-                      }
-                    }
-                  ]
+                  "name": "AA Right (TimeOut)"
                 }
               },
               {

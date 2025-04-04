@@ -15,6 +15,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -40,6 +41,7 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FeildConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
+import frc.robot.Constants.ReefAlignConstants;
 import frc.robot.MechVisualizer.Axis;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -206,9 +208,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("ElvL4", elevator.L4().andThen(waitForElevator()));
     NamedCommands.registerCommand("Zero Elv", elevator.limitHit());
     NamedCommands.registerCommand(
-        "Intake",
-        new SequentialCommandGroup(
-            elv0Command(), intakeAutoCommand(), Commands.waitUntil(coralHandoffCompleteTrigger)));
+        "Intake", new SequentialCommandGroup(elv0Command(), intakeAutoCommand()));
     NamedCommands.registerCommand("Intake L1", intakeAutoCommand());
     NamedCommands.registerCommand(
         "Intake Floor",
@@ -225,12 +225,22 @@ public class RobotContainer {
             Commands.waitUntil(intake.intakeHasCoralTrigger()),
             scoreL1.asProxy().until(isDoneScoring.debounce(1))));
     NamedCommands.registerCommand(
-        "Strafe", drive.strafe().until(coralScorer.scorerAlignedTrigger()));
+        "Handoff Complete", Commands.waitUntil(coralHandoffCompleteTrigger));
 
+    NamedCommands.registerCommand(
+        "Strafe", drive.strafe().until(coralScorer.scorerAlignedTrigger()));
     NamedCommands.registerCommand(
         "AA Left", DriveCommands.AlignToReef(false, camera0Name, drive, vision));
     NamedCommands.registerCommand(
         "AA Right", DriveCommands.AlignToReef(true, camera0Name, drive, vision));
+    NamedCommands.registerCommand(
+        "AA Left (TimeOut)",
+        DriveCommands.AlignToReef(false, camera0Name, drive, vision)
+            .raceWith(Commands.waitSeconds(ReefAlignConstants.kAutonTimeOut.in(Seconds))));
+    NamedCommands.registerCommand(
+        "AA Right (TimeOut)",
+        DriveCommands.AlignToReef(true, camera0Name, drive, vision)
+            .raceWith(Commands.waitSeconds(ReefAlignConstants.kAutonTimeOut.in(Seconds))));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

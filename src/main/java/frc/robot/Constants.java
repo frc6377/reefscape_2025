@@ -423,6 +423,8 @@ public final class Constants {
     public static final Angle kSetpointRotTolerance = Degrees.of(1);
     public static final Distance kSetpointTolerance = Inches.of(1);
     public static final Time kAtPoseDebounce = Seconds.of(0);
+
+    public static final Time kAutonTimeOut = Seconds.of(2);
   }
 
   public final class FeildConstants {

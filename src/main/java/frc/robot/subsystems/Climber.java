@@ -413,7 +413,6 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double startTime = Timer.getFPGATimestamp();
     // This method will be called once per scheduler run
     // Front
     Logger.recordOutput(
@@ -452,9 +451,6 @@ public class Climber extends SubsystemBase {
     Logger.recordOutput(
         "Climber/Current Command",
         this.getCurrentCommand() != null ? this.getCurrentCommand().getName() : "None");
-
-    double endTime = Timer.getFPGATimestamp();
-    Logger.recordOutput("Climber/Periodic Time (s)", (endTime - startTime));
   }
 
   @Override
