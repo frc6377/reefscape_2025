@@ -218,14 +218,14 @@ public final class Constants {
 
     // Pivot Arm Setpoints
     public static final Angle kPivotZero = Degrees.of(308);
-    public static final Angle kPivotRetractAngle = Degrees.of(137);
+    public static final Angle kPivotRetractAngle = Degrees.of(139);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(8);
     public static final Angle kPivotCoralStationAngle = Degrees.of(110);
     public static final Angle kPivotL1StowedAngle = Degrees.of(120);
     public static final Angle kPivotL1Score = Degrees.of(85);
     public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
-    public static final Angle kPivotClimbingAngle = Degrees.of(75.5);
+    public static final Angle kPivotClimbingAngle = Degrees.of(95);
     public static final Angle kPivotEndClimbAngle = Degrees.of(130);
     public static final Angle kPivotTolerance = Degrees.of(5);
 
@@ -412,7 +412,7 @@ public final class Constants {
   public final class ReefAlignConstants {
     // Target Poses
     public static final Pose2d kLeftReefPose =
-        new Pose2d(Inches.of(18.5), Inches.of(-4), new Rotation2d(Degrees.of(-90)));
+        new Pose2d(Inches.of(18.5), Inches.of(-6), new Rotation2d(Degrees.of(-90)));
     public static final Pose2d kRightReefPose =
         new Pose2d(Inches.of(18.5), Inches.of(9), new Rotation2d(Degrees.of(-90)));
 

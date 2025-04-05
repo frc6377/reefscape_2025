@@ -13,7 +13,7 @@ import utilities.TOFSensorSimple.TOFType;
 
 public class Sensors {
   private TOFSensorSimple sensor2 =
-      new TOFSensorSimple(kSensor2ID, Inches.of(2), TOFType.LASER_CAN);
+      new TOFSensorSimple(kSensor2ID, Inches.of(1.5), TOFType.LASER_CAN);
   private TOFSensorSimple sensor3 =
       new TOFSensorSimple(kSensor3ID, Inches.of(2.5), TOFType.LASER_CAN);
   private TOFSensorSimple sensor4 =
