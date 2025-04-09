@@ -45,7 +45,6 @@ import frc.robot.subsystems.AlgeaRemover;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.EverybotClimber;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -77,7 +76,6 @@ public class RobotContainer {
 
   // Subsystems
   private final Climber climber = new Climber();
-  private final EverybotClimber everybotClimber = new EverybotClimber();
   private final AlgeaRemover algeaRemover = new AlgeaRemover();
   private static final Sensors sensors = new Sensors();
   private final Drive drive;
@@ -467,15 +465,10 @@ public class RobotContainer {
     OI.getButton(OI.Operator.RTrigger).whileTrue(algeaRemover.downCommand());
 
     // Climber Buttons
-    OI.getButton(OI.Operator.DPAD_UP)
-        .onTrue(climber.retract())
-        .toggleOnTrue(intake.movePivot(IntakeConstants.kPivotClimbingAngle));
-    OI.getButton(OI.Operator.DPAD_LEFT).onTrue(climber.extendToCage());
-    OI.getButton(OI.Operator.DPAD_DOWN).onTrue(climber.extendFully());
+    OI.getButton(OI.Operator.DPAD_UP).whileTrue(climber.climberUp());
+    OI.getButton(OI.Operator.DPAD_DOWN).whileTrue(climber.climberDown());
+    OI.getButton(OI.Operator.DPAD_LEFT).whileTrue(climber.climb());
 
-    // Everybot Climber Buttons
-    OI.getButton(OI.Operator.DPAD_UP).onTrue(everybotClimber.climberUp());
-    OI.getButton(OI.Operator.DPAD_DOWN).onTrue(everybotClimber.climberDown());
     // Button to update Setpoints of the elevator based on the Stream Deck nobs
     // TODO: Fix axis input
     // OI.getButton(OI.StreamDeck.streamDeckButtons[1][31])
@@ -588,10 +581,6 @@ public class RobotContainer {
     mechVisualizer.updateIndexTranslation(1, Axis.Z, elevatorHeight.div(2));
     mechVisualizer.updateIndexTranslation(2, Axis.Z, elevatorHeight);
 
-    // // Update Climber
-    mechVisualizer.updateIndexRotation(3, Axis.Y, climber.getFrontArmAngle());
-    mechVisualizer.updateIndexRotation(4, Axis.Y, climber.getBackArmAngle());
-
     // // Update Algae Remover
     mechVisualizer.updateIndexRotation(0, Axis.X, algeaRemover.getAlgaeArmAngle());
 
@@ -609,7 +598,6 @@ public class RobotContainer {
     if (Robot.isSimulation()) return;
     intake.seedEncoder();
     algeaRemover.seedEncoder();
-    climber.seedEncoder();
   }
 
   public void resetSimulationField() {
