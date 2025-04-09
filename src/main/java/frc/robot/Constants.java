@@ -1,7 +1,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
@@ -20,7 +19,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -118,55 +116,6 @@ public final class Constants {
     public static final int kSensor3ID = 3;
     public static final int kSensor4ID = 4;
     public static final int kAlignmentSensorID = 5;
-  }
-
-  public static class ClimberConstants {
-    // PIDs
-    public static final HowdyPID kClimberPID0 = new HowdyPID();
-    public static final HowdyPID kClimberPID1 = new HowdyPID();
-
-    static {
-      kClimberPID0.setKP(100);
-      kClimberPID0.setKD(0);
-      kClimberPID0.setKV(0);
-
-      kClimberPID1.setKP(100);
-      kClimberPID1.setKD(5);
-      kClimberPID1.setKV(15.12);
-      kClimberPID1.setKG(.62);
-      kClimberPID1.setGravityType(GravityTypeValue.Arm_Cosine);
-    }
-
-    // Mech Constants
-    public static final InvertedValue kClimberFrontInvert = InvertedValue.CounterClockwise_Positive;
-    public static final InvertedValue kClimberBackInvert = InvertedValue.Clockwise_Positive;
-    public static final Current kClimberIdleCurrentLimit = Amps.of(20);
-    public static final Current kClimberClimbingCurrentLimit = Amps.of(70);
-    public static final double kGearRatio = 126;
-
-    // Motor Setpoints
-    // 120 Degrees for climb
-    public static final Angle kClimberFrontOffsetAngle = Degrees.of(-112.3 - 180);
-    public static final Angle kClimberBackOffsetAngle = Degrees.of(236.1 - 180);
-    public static final Angle kClimberOffsetAngle = Degrees.of(180);
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(-63).plus(kClimberOffsetAngle);
-    public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
-    public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
-    public static final Angle kClimberSensorTolerance = Degrees.of(4);
-    public static final Angle kClimberDisengageAngle = Degrees.of(-45).plus(kClimberOffsetAngle);
-
-    // Servo Setpoints
-    public static final Angle kFrontServoEngageAngle = Degrees.of(45);
-    public static final Angle kBackServoEngageAngle = Degrees.of(45);
-    public static final Angle kFrontServoDisengageAngle = Degree.of(0);
-    public static final Angle kBackServoDisengageAngle = Degree.of(90);
-
-    // Sim Constants
-    public static final int KClimberMotorsCount = 2;
-    public static final Distance kClimberArmLength = Inches.of(6);
-    public static final Mass kClimberMass = Pounds.of(0.5);
-    public static final Angle kClimberArmMinAngle = Degrees.of(0);
-    public static final Angle kClimberArmMaxAngle = Degrees.of(250).plus(kClimberOffsetAngle);
   }
 
   // Scorer Constants
@@ -321,7 +270,36 @@ public final class Constants {
     public static final Angle kAlgeaStartingAngle = Rotations.of(-0.25);
   }
 
-  @SuppressWarnings("unused")
+  public static class ClimberConstants {
+    public static final int kClimberMotorID = 0;
+    public static final int kClimberMotorCurrentLimit = 60;
+    public static final double kClimberMotorVoltageComp = 12;
+    public static final double kClimberSpeedDown = -0.5;
+    public static final double kClimberSpeedUp = 0.5;
+    public static final Angle kTolerance = Degrees.of(1);
+
+    // Setpoints
+    public static final Angle kClimberMinAngle = Degrees.of(-90);
+    public static final Angle kClimberMaxAngle = Degrees.of(90);
+    public static final Angle kClimberStartAngle = Degrees.of(1);
+    public static final Angle kClimberClimbAngle = Degrees.of(-30);
+
+    // PID
+    public static final double kP = 0.1;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kFF = 0.0;
+
+    // Simulation Constants
+    public static final DCMotor kGearbox = DCMotor.getNEO(1);
+    public static final double kGearing = 100;
+    public static final Distance kClimberArmLength = Meters.of(0.5);
+    public static final MomentOfInertia kClimberMOI =
+        KilogramSquareMeters.of(
+            SingleJointedArmSim.estimateMOI(
+                kClimberArmLength.in(Meters), DrivetrainConstants.kRobotMass.in(Kilograms)));
+  }
+
   public final class DrivetrainConstants {
     public static final Mass kRobotMass = Pounds.of(106.6);
     public static final Distance kBumperSize = Meters.of(0.889);
