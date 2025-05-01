@@ -162,9 +162,9 @@ public final class Constants {
     public static final Angle kClimberFrontOffsetAngle = Degrees.of(-106);
     public static final Angle kClimberBackOffsetAngle = Degrees.of(30);
     public static final Angle kClimberOffsetAngle = Degrees.of(180);
-    public static final Angle kClimberExtendedSetpoint = Degrees.of(-65).plus(kClimberOffsetAngle);
+    public static final Angle kClimberExtendedSetpoint = Degrees.of(-40).plus(kClimberOffsetAngle);
     public static final Angle kClimberAtCageSetpoint = Degrees.of(-10).plus(kClimberOffsetAngle);
-    public static final Angle kClimberRetractedSetpoint = Degrees.of(90).plus(kClimberOffsetAngle);
+    public static final Angle kClimberRetractedSetpoint = Degrees.of(100).plus(kClimberOffsetAngle);
     public static final Angle kClimberSensorTolerance = Degrees.of(2);
     public static final Angle kClimberDisengageAngle = Degrees.of(-45).plus(kClimberOffsetAngle);
     public static final Angle kClimberDisengageOffset = Degrees.of(5);
@@ -215,6 +215,7 @@ public final class Constants {
     public static final double kConveyorSpeed = 0.45;
     public static final double kPivotSpeed = 0.2;
     public static final double kHoldSpeed = -0.2;
+    public static final double kIntakeAlgaeScoreSpeed = -0.25;
 
     // Pivot Arm Setpoints
     public static final Angle kPivotZero = Degrees.of(308);
@@ -224,8 +225,8 @@ public final class Constants {
     public static final Angle kPivotCoralStationAngle = Degrees.of(110);
     public static final Angle kPivotL1StowedAngle = Degrees.of(120);
     public static final Angle kPivotL1Score = Degrees.of(85);
-    public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(55);
-    public static final Angle kPivotClimbingAngle = Degrees.of(95);
+    public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(65);
+    public static final Angle kPivotClimbingAngle = Degrees.of(110);
     public static final Angle kPivotEndClimbAngle = Degrees.of(130);
     public static final Angle kPivotTolerance = Degrees.of(5);
 

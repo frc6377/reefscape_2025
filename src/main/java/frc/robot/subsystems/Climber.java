@@ -287,16 +287,12 @@ public class Climber extends SubsystemBase {
   }
 
   public Command runClimber(Angle position, int slot) {
-    return new SequentialCommandGroup(
-            runOnce(
-                () -> {
-                  climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
-                  Logger.recordOutput("Climber/Climber Position Setpoint", position.in(Degrees));
-                }),
-            Commands.waitSeconds(0.5),
-            startEnd(
-                () -> climberMotorBack.setControl(new PositionVoltage(position).withSlot(slot)),
-                () -> {}))
+    return runOnce(
+            () -> {
+              climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
+              climberMotorBack.setControl(new PositionVoltage(position).withSlot(slot));
+              Logger.recordOutput("Climber/Climber Position Setpoint", position.in(Degrees));
+            })
         .until(isClimberAtPosition(position));
 
     // return startEnd(

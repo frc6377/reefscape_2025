@@ -202,14 +202,18 @@ public class Elevator extends SubsystemBase {
     return Meters.of(elevatorMech.getLength());
   }
 
-  public Trigger elevatorAtSetpoint(Distance setpoint) {
+  // public boolean elevatorAtSetpoint(Distance setpoint) {
+  //   return getElevatorHeight().isNear(setpoint, kSetpointTolerance);
+  // }
+
+  public Trigger elevatorAtSetpointTrigger(Distance setpoint) {
     return new Trigger(() -> getElevatorHeight().isNear(setpoint, kSetpointTolerance))
-        .debounce(0.5);
+        .debounce(0.25);
   }
 
-  public Trigger elevatorAtCurrentSetpoint() {
+  public Trigger elevatorAtCurrentSetpointTrigger() {
     return new Trigger(() -> getElevatorHeight().isNear(currentSetpoint, kSetpointTolerance))
-        .debounce(0.5);
+        .debounce(0.25);
   }
 
   private void disableSoftLimits() {
@@ -297,7 +301,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public Trigger elevatorUpTrigger() {
-    return elevatorAtSetpoint(getL0Setpoint()).negate().debounce(0.2);
+    return elevatorAtSetpointTrigger(getL0Setpoint()).negate().debounce(0.2);
   }
 
   public Command L0() {

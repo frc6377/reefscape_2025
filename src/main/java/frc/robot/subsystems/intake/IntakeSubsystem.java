@@ -350,7 +350,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(
             () -> {
               goToPivotPosition(kPivotAlgaeIntakeAngle);
-              setIntakeMotor(kIntakeSpeed);
+              setIntakeMotor(kIntakeAlgaeScoreSpeed);
             },
             () -> {})
         .withName("algaeOuttake");

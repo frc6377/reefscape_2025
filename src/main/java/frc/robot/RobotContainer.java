@@ -379,8 +379,8 @@ public class RobotContainer {
         new Trigger(() -> DriverStation.isTeleopEnabled())
             .and(coralScorer.scorerAlignedTrigger())
             .and(coralScorer.hasCoralTrigger())
-            .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height).negate())
-            .and(elevator.elevatorAtCurrentSetpoint());
+            .and(elevator.elevatorAtSetpointTrigger(ElevatorConstants.kL0Height).negate())
+            .and(elevator.elevatorAtCurrentSetpointTrigger());
 
     automaticScoreTrigger.whileTrue(
         Commands.runEnd(
@@ -436,7 +436,7 @@ public class RobotContainer {
         .and(coralOuttakeButton.negate())
         .and(coralIntakeButton.negate())
         .and(() -> !CommandScheduler.getInstance().isScheduled(locateCoral))
-        .and(elevator.elevatorAtSetpoint(ElevatorConstants.kL0Height))
+        .and(elevator.elevatorAtSetpointTrigger(ElevatorConstants.kL0Height))
         .whileTrue(
             Robot.isReal()
                 ? intake
@@ -557,7 +557,7 @@ public class RobotContainer {
   }
 
   public Command waitForElevator() {
-    return Commands.waitUntil(elevator.elevatorAtCurrentSetpoint());
+    return Commands.waitUntil(elevator.elevatorAtCurrentSetpointTrigger());
   }
 
   public Command intakeAutoCommand() {
