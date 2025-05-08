@@ -1,7 +1,9 @@
 package frc.robot.subsystems.signaling;
 
-import com.ctre.phoenix.led.CANdle;
-import com.ctre.phoenix.led.FireAnimation;
+import com.ctre.phoenix6.configs.LEDConfigs;
+import com.ctre.phoenix6.controls.SolidColor;
+import com.ctre.phoenix6.hardware.CANdle;
+import com.ctre.phoenix6.signals.RGBWColor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -47,7 +49,9 @@ public class Signaling extends SubsystemBase {
     tick = 0;
     patternTick = 0;
     pdp = power;
-    candle.configBrightnessScalar(SignalingConstants.kLEDBrightness);
+    candle
+        .getConfigurator()
+        .apply(new LEDConfigs().withBrightnessScalar(SignalingConstants.kLEDBrightness));
   }
 
   public void setHasCoral(Supplier<Boolean> hasCoral) {
@@ -230,7 +234,9 @@ public class Signaling extends SubsystemBase {
   }
 
   private void setSection(final RGB rgb, final int startID, final int count) {
-    candle.setLEDs(rgb.red, rgb.green, rgb.blue, 0, startID, count);
+    candle.setControl(
+        new SolidColor(startID, startID + count)
+            .withColor(new RGBWColor(rgb.red, rgb.green, rgb.blue)));
   }
 
   private void setSectionStrip(final RGB rgb, final int startID, final int count) {
@@ -253,15 +259,6 @@ public class Signaling extends SubsystemBase {
     }
     switch (disablePattern) {
       case FIRE:
-        candle.animate(
-            new FireAnimation(
-                1.0,
-                SignalingConstants.kPatternSpeed,
-                SignalingConstants.kNumLEDs,
-                0.5,
-                0.5,
-                false,
-                8));
       case RAINBOW:
         pattern = RainbowPattern.getPattern();
         patternLength = RainbowPattern.getPatternLength();

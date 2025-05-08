@@ -35,7 +35,10 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -67,7 +70,7 @@ public class Elevator extends SubsystemBase {
 
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
-      new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
+      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
   private static Mechanism2d mech = new Mechanism2d(2, 2);
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
@@ -161,11 +164,20 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Elevator/Elv/Setpoint (Rotations)", 0.0);
   }
 
+  private void motorStateLog(String state) {
+    Logger.recordOutput("state", state);
+    new WaitCommand(0.04)
+        .andThen(new InstantCommand(() -> Logger.recordOutput("state", "blank"), new Subsystem[0]))
+        .schedule();
+  }
+
   public void setElvCurrentFOC(double amps) {
+    motorStateLog("Current FOC was set");
     elevatorMotor1.setControl(new TorqueCurrentFOC(amps));
   }
 
   public void setElvVoltage(Voltage voltage) {
+    motorStateLog("Voltage was set");
     elevatorMotor1.setControl(new VoltageOut(voltage));
   }
 
@@ -201,10 +213,6 @@ public class Elevator extends SubsystemBase {
     if (Robot.isReal()) return getElevatorHeight();
     return Meters.of(elevatorMech.getLength());
   }
-
-  // public boolean elevatorAtSetpoint(Distance setpoint) {
-  //   return getElevatorHeight().isNear(setpoint, kSetpointTolerance);
-  // }
 
   public Trigger elevatorAtSetpointTrigger(Distance setpoint) {
     return new Trigger(() -> getElevatorHeight().isNear(setpoint, kSetpointTolerance))
@@ -248,17 +256,23 @@ public class Elevator extends SubsystemBase {
   public Command elevatorUpOrDown(Supplier<Double> upPower) {
     return runEnd(
         () -> {
+          motorStateLog("Percent was set");
           elevatorMotor1.set(upPower.get() * kElvRawOutput);
         },
-        () -> elevatorMotor1.set(0));
+        () -> {
+          motorStateLog("Percent was set");
+          elevatorMotor1.set(0);
+        });
   }
 
   public Command setElvPercent(double percentPower) {
     return runEnd(
         () -> {
+          motorStateLog("Percent was set");
           elevatorMotor1.set(percentPower);
         },
         () -> {
+          motorStateLog("Percent was set");
           elevatorMotor1.set(0);
         });
   }
@@ -276,6 +290,7 @@ public class Elevator extends SubsystemBase {
         () -> {
           // elevatorMotor1.setPosition(ChineseRemander());
           elevatorMotor1.setPosition(0);
+          motorStateLog("Position Set");
         });
   }
 
@@ -292,9 +307,10 @@ public class Elevator extends SubsystemBase {
         () -> {
           Angle adjustedSetpoint = heightToRotations(heightLevel);
           MotionMagicVoltage control = new MotionMagicVoltage(adjustedSetpoint);
-          control.EnableFOC = true;
+          // control.EnableFOC = true;
           elevatorMotor1.setControl(control);
           currentSetpoint = heightLevel;
+          motorStateLog("Motion Magic Voltage was set");
           Logger.recordOutput("Elevator/Elv/Setpoint (Inches)", heightLevel.in(Inches));
           Logger.recordOutput("Elevator/Elv/Setpoint (Rotations)", adjustedSetpoint.in(Rotations));
         });

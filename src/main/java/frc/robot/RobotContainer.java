@@ -23,6 +23,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.networktables.StringTopic;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -79,6 +82,9 @@ public class RobotContainer {
 
   private EventLoop testEventLoop = new EventLoop();
 
+  private StringTopic englishLog =
+      NetworkTableInstance.getDefault().getStringTopic("Elevator Note");
+
   // Subsystems
   private final Drive drive;
   private final Vision vision;
@@ -119,6 +125,8 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    englishLog.publish(PubSubOption.sendAll(true));
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -618,7 +626,6 @@ public class RobotContainer {
 
     // // Update Algae Remover
     // mechVisualizer.updateIndexRotation(5, Axis.X, algeaRemover.getAlgaeArmAngle());
-
     Logger.recordOutput("Mech Visualizer", mechVisualizer.getMechPoses());
   }
 

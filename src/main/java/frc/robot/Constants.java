@@ -86,8 +86,8 @@ public final class Constants {
   public static class CANIDs {
     // Rev Can Bus
     // 1-8 Motor ID is reserved by the drivebase
-    public static final int kElevatorMotor1 = 10;
-    public static final int kElevatorMotor2 = 11;
+    public static final int kElevatorMotor1 = 11;
+    public static final int kElevatorMotor2 = 10;
     public static final int kPivotMotor = 12;
     public static final int kIntakeMotor = 13;
     public static final int kConveyorMotor = 14;
