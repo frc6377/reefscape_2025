@@ -104,7 +104,6 @@ public class Elevator extends SubsystemBase {
     elevatorConfig1 = new TalonFXConfiguration();
     elevatorConfig1.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     elevatorConfig1.Slot0 = ElevatorConstants.kElevatorPID.getSlot0Configs();
-    ElevatorConstants.kElevatorPID.createTunableNumbers("Elevator PID", this);
     elevatorConfig1.SoftwareLimitSwitch = elvSoftLimit;
     elevatorConfig1.CurrentLimits = currentLimit;
     elevatorConfig1.MotorOutput = invertMotor;

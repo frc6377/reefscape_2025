@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.ironmaple.simulation.SimulatedArena;
@@ -44,15 +43,13 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  */
 public class Robot extends LoggedRobot {
   public static final Time period = Seconds.of(Robot.defaultPeriodSecs);
-  public static final boolean isCompetition = false;
+  public static final boolean isCompetition = true;
   public static boolean isUsingVision = false;
 
   public Alliance robotAlliance;
 
   private Command autonomousCommand;
   private RobotContainer robotContainer;
-
-  private double lastTime = Timer.getFPGATimestamp() * 1000;
 
   public Robot() {
     // For TOF Sensor
@@ -84,12 +81,17 @@ public class Robot extends LoggedRobot {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
         Logger.addDataReceiver(new WPILOGWriter());
-        Logger.addDataReceiver(new NT4Publisher());
+        if (!isCompetition) {
+          Logger.addDataReceiver(new NT4Publisher());
+        }
         break;
 
       case SIM:
         // Running a physics simulator, log to NT
-        Logger.addDataReceiver(new NT4Publisher());
+        Logger.addDataReceiver(new WPILOGWriter());
+        if (!isCompetition) {
+          Logger.addDataReceiver(new NT4Publisher());
+        }
         break;
 
       case REPLAY:
@@ -128,17 +130,11 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    robotContainer.updateMechVisualizer();
+    // robotContainer.updateMechVisualizer();
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
-
-    // robotContainer.updateMechVisualizer();
-    double newTime = Timer.getFPGATimestamp() * 1000;
-    Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
-    lastTime = newTime;
-
-    // CommandScheduler.getInstance().printWatchdogEpochs();
+    CommandScheduler.getInstance().printWatchdogEpochs();
   }
 
   /** This function is called once when the robot is disabled. */

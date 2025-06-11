@@ -332,11 +332,14 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    SmartDashboard.putData(
-        Commands.runOnce(
-            () -> {
-              SignalLogger.stop();
-            }));
+    if (!Robot.isCompetition) {
+      SmartDashboard.putData(
+          Commands.runOnce(
+                  () -> {
+                    SignalLogger.stop();
+                  })
+              .withName("End Signal Logger"));
+    }
 
     // Reset gyro / odometry, Runnable
     final Runnable resetGyro =
