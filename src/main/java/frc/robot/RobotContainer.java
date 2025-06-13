@@ -78,7 +78,7 @@ import utilities.LimelightHelpers;
 @SuppressWarnings("unused")
 public class RobotContainer {
   // Change the raw boolean to true to pick keyboard during simulation
-  private final boolean usingKeyboard = true && Robot.isSimulation();
+  private final boolean usingKeyboard = true && Constants.currentMode == Constants.Mode.SIM;
 
   private EventLoop testEventLoop = new EventLoop();
 
@@ -526,7 +526,7 @@ public class RobotContainer {
     //                 () -> OI.getAxisSupplier(OI.StreamDeck.Nob4).get())
     //             .ignoringDisable(true));
 
-    if (Robot.isSimulation()) {
+    if (Constants.currentMode == Constants.Mode.SIM) {
       new Trigger(() -> mapleSimArenaSubsystem.getRobotHasCoral())
           .onFalse(Commands.runOnce(() -> intake.removePieceFromIntakeSim()));
     }
@@ -572,7 +572,7 @@ public class RobotContainer {
   }
 
   public Command intakeAutoCommand() {
-    if (Robot.isSimulation()) {
+    if (Constants.currentMode == Constants.Mode.SIM) {
       return intake
           .humanPlayerIntake()
           .until(intake.pivotAtSetpoint(IntakeConstants.kPivotCoralStationAngle))
@@ -584,7 +584,7 @@ public class RobotContainer {
   }
 
   public Command intakeFloorAutoCommand() {
-    if (Robot.isSimulation()) {
+    if (Constants.currentMode == Constants.Mode.SIM) {
       return intake
           .floorIntake()
           .onlyWhile(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
@@ -595,7 +595,7 @@ public class RobotContainer {
   }
 
   public Command scorerAutoCommand() {
-    if (Robot.isSimulation()) {
+    if (Constants.currentMode == Constants.Mode.SIM) {
       return Commands.runOnce(() -> intake.removePieceFromIntakeSim())
           .andThen(mapleSimArenaSubsystem.scoreCoral())
           .until(() -> !mapleSimArenaSubsystem.getRobotHasCoral())
@@ -640,7 +640,7 @@ public class RobotContainer {
   }
 
   public void seedEncoders() {
-    if (Robot.isSimulation()) return;
+    if (Constants.currentMode == Constants.Mode.SIM) return;
     intake.seedEncoder();
     // algeaRemover.seedEncoder();
     climber.seedEncoder();
