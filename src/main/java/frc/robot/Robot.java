@@ -17,6 +17,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import au.grapplerobotics.CanBridge;
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.unmanaged.Unmanaged;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import edu.wpi.first.net.WebServer;
@@ -24,9 +25,12 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.IterativeRobotBase;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import java.lang.reflect.Field;
 import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -42,6 +46,8 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  * project.
  */
 public class Robot extends LoggedRobot {
+  private static final double loopOverrunWarningTimeout = 0.2;
+
   public static final Time period = Seconds.of(Robot.defaultPeriodSecs);
   public static final boolean isCompetition = true;
   public static boolean isUsingVision = false;
@@ -57,6 +63,22 @@ public class Robot extends LoggedRobot {
 
     // For Elastic Layouts
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+
+    // IF Not Compitition
+    if (!isCompetition) {
+      // Don't start the Debug Server During Comp
+      Unmanaged.setPhoenixDiagnosticsStartTime(-1);
+
+      // Setup CTRE's Logger
+      SignalLogger.setPath("/media/sda1/SysID_Logs/");
+      SignalLogger.start();
+
+      // Disable Joystick Warning If Not Comp
+      DriverStation.silenceJoystickConnectionWarning(true);
+    } else {
+      // Disable automatic Hoot logging
+      SignalLogger.enableAutoLogging(false);
+    }
 
     // Record metadata
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
@@ -103,12 +125,19 @@ public class Robot extends LoggedRobot {
         break;
     }
 
+    // Adjust loop overrun warning timeout
+    try {
+      Field watchdogField = IterativeRobotBase.class.getDeclaredField("m_watchdog");
+      watchdogField.setAccessible(true);
+      Watchdog watchdog = (Watchdog) watchdogField.get(this);
+      watchdog.setTimeout(loopOverrunWarningTimeout);
+    } catch (Exception e) {
+      DriverStation.reportWarning("Failed to disable loop overrun warnings.", false);
+    }
+    CommandScheduler.getInstance().setPeriod(loopOverrunWarningTimeout);
+
     // Start AdvantageKit logger
     Logger.start();
-    SignalLogger.setPath("/media/sda1/SysID_Logs/");
-    SignalLogger.start();
-
-    DriverStation.silenceJoystickConnectionWarning(true);
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
@@ -130,12 +159,11 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    // robotContainer.updateMechVisualizer();
+    if (!isCompetition) robotContainer.updateMechVisualizer();
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
     CommandScheduler.getInstance().printWatchdogEpochs();
-    System.out.println("End Of Loop");
   }
 
   /** This function is called once when the robot is disabled. */
