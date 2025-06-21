@@ -270,7 +270,7 @@ public final class Constants {
 
   // Elevator Constants
   public static class ElevatorConstants {
-    public static final Distance kL0Height = Inches.of(0);
+    public static final Distance kL0Height = Inches.of(0.5);
     public static final Distance kL2Height = Inches.of(18);
     public static final Distance kL3Height = Inches.of(30.9);
     public static final Distance kL4Height = Inches.of(54);
@@ -288,7 +288,7 @@ public final class Constants {
     public static final HowdyMM kElevatorMM =
         new HowdyMM(RotationsPerSecond.of(200), RotationsPerSecondPerSecond.of(250));
 
-    public static final Distance kSetpointTolerance = Inches.of(1.75);
+    public static final Distance kSetpointTolerance = Inches.of(1.25);
 
     // Mech Constants
     public static final Distance kElevatorDrumRadius = Inches.of(0.375);
