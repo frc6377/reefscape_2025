@@ -97,7 +97,7 @@ public class RobotContainer {
   private final Climber climber = new Climber();
   private PowerDistribution pdp = new PowerDistribution();
   private final Signaling signaling = new Signaling(pdp);
-  private boolean elevatorNotL1 = true;
+  private boolean elevatorNotL1 = false;
   private boolean intakeAlgeaMode = false;
   private boolean coralStationMode = false;
   private Command scoreL1;
@@ -364,10 +364,10 @@ public class RobotContainer {
                 : Commands.runOnce(() -> resetSimulationField()));
 
     // Auto Align Commands
-    OI.getButton(OI.Driver.RSB)
-        .toggleOnTrue(DriveCommands.AlignToReef(true, camera0Name, drive, vision));
-    OI.getButton(OI.Driver.LSB)
-        .toggleOnTrue(DriveCommands.AlignToReef(false, camera0Name, drive, vision));
+    // OI.getButton(OI.Driver.RSB)
+    //     .toggleOnTrue(DriveCommands.AlignToReef(true, camera0Name, drive, vision));
+    // OI.getButton(OI.Driver.LSB)
+    //     .toggleOnTrue(DriveCommands.AlignToReef(false, camera0Name, drive, vision));
 
     UpButtonTrigger.or(DownButtonTrigger)
         .or(RightButtonTrigger)
