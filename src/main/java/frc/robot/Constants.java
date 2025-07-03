@@ -226,7 +226,7 @@ public final class Constants {
     public static final Angle kPivotL1StowedAngle = Degrees.of(120);
     public static final Angle kPivotL1Score = Degrees.of(85);
     public static final Angle kPivotAlgaeIntakeAngle = Degrees.of(65);
-    public static final Angle kPivotClimbingAngle = Degrees.of(110);
+    public static final Angle kPivotClimbingAngle = Degrees.of(120);
     public static final Angle kPivotEndClimbAngle = Degrees.of(130);
     public static final Angle kPivotTolerance = Degrees.of(5);
 

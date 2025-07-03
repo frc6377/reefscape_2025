@@ -287,12 +287,14 @@ public class Climber extends SubsystemBase {
   }
 
   public Command runClimber(Angle position, int slot) {
-    return runOnce(
-            () -> {
-              climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
-              climberMotorBack.setControl(new PositionVoltage(position).withSlot(slot));
-              Logger.recordOutput("Climber/Climber Position Setpoint", position.in(Degrees));
-            })
+    return new SequentialCommandGroup(
+            runOnce(
+                () -> {
+                  climberMotorFront.setControl(new PositionVoltage(position).withSlot(slot));
+                  climberMotorBack.setControl(new PositionVoltage(position).withSlot(slot));
+                  Logger.recordOutput("Climber/Climber Position Setpoint", position.in(Degrees));
+                }),
+            run(() -> {}))
         .until(isClimberAtPosition(position));
 
     // return startEnd(
@@ -332,9 +334,10 @@ public class Climber extends SubsystemBase {
 
   public Command retract() {
     return new SequentialCommandGroup(
-        disengageClimberCommand().onlyIf(isServoEngaged()),
-        runClimber(ClimberConstants.kClimberRetractedSetpoint, 0),
-        engageServo());
+            disengageClimberCommand().onlyIf(isServoEngaged()),
+            runClimber(ClimberConstants.kClimberRetractedSetpoint, 0),
+            engageServo())
+        .withName("Climb Retract");
   }
 
   public Command extendToCage() {
@@ -444,6 +447,9 @@ public class Climber extends SubsystemBase {
     Logger.recordOutput("Climber/Back/Servo/Percent Out", backClimberServo.get());
     Logger.recordOutput("Climber/Back/Servo/Position (Degrees)", backClimberServo.getAngle());
 
+    Logger.recordOutput(
+        "Climber/Is At Retract Pose",
+        isClimberAtPosition(ClimberConstants.kClimberRetractedSetpoint).getAsBoolean());
     Logger.recordOutput(
         "Climber/Current Command",
         this.getCurrentCommand() != null ? this.getCurrentCommand().getName() : "None");
