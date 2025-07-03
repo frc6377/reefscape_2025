@@ -353,6 +353,8 @@ public final class Constants {
     // POV Drive Constants
     public static final LinearVelocity kPOVDriveSpeed = MetersPerSecond.of(0.25);
 
+    public static final double LowGearFactor = 0.5;
+
     // Strafe Constants
     public static final Time kStrafeTime = Seconds.of(0.5);
     public static final LinearVelocity kStrafeSpeed = MetersPerSecond.of(0.5);

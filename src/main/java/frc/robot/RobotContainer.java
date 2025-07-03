@@ -14,6 +14,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
@@ -356,7 +357,10 @@ public class RobotContainer {
             OI.getAxisSupplier(OI.Driver.LeftY),
             OI.getAxisSupplier(OI.Driver.LeftX),
             OI.getAxisSupplier(OI.Driver.RightX),
-            OI.getButton(OI.Driver.RSB)));
+            OI.getButton(OI.Driver.RSB),
+            () ->
+                elevator.getElevatorHeight().in(Inches)
+                    > Constants.ElevatorConstants.kL2Height.in(Inches) + 5));
     OI.getButton(OI.Driver.Back)
         .onTrue(
             Robot.isReal()
@@ -537,7 +541,8 @@ public class RobotContainer {
               OI.getAxisSupplier(OI.Keyboard.AD),
               OI.getAxisSupplier(OI.Keyboard.WS),
               OI.getAxisSupplier(OI.Keyboard.ArrowLR),
-              new Trigger(() -> false)));
+              new Trigger(() -> false),
+              () -> false));
       OI.getButton(OI.Keyboard.M)
           .onTrue(DriveCommands.AlignToReef(true, camera0Name, drive, vision));
 

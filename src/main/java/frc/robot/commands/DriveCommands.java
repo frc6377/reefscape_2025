@@ -19,6 +19,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Seconds;
+import static frc.robot.Constants.DrivetrainConstants.LowGearFactor;
 import static frc.robot.Constants.DrivetrainConstants.kPathConstraints;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -213,15 +214,18 @@ public class DriveCommands {
       Supplier<Double> xSupplier,
       Supplier<Double> ySupplier,
       Supplier<Double> omegaSupplier,
-      Trigger interuptButton) {
+      Trigger interuptButton,
+      Supplier<Boolean> isLowGear) {
     return Commands.run(
             () -> {
               // Get linear velocity
+              double lowGearTransform = (isLowGear.get() ? LowGearFactor : 1);
               Translation2d linearVelocity =
-                  getLinearVelocityFromJoysticks(xSupplier.get(), ySupplier.get());
+                  getLinearVelocityFromJoysticks(
+                      xSupplier.get() * lowGearTransform, ySupplier.get() * lowGearTransform);
 
               // Apply rotation deadband
-              double omega = omegaSupplier.get();
+              double omega = omegaSupplier.get() * lowGearTransform;
 
               // Convert to field relative speeds & send command
               ChassisSpeeds speeds =
