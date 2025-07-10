@@ -323,7 +323,7 @@ public final class Constants {
   @SuppressWarnings("unused")
   public final class DrivetrainConstants {
     // Quest Nav Headset Pose
-    public static final Transform2d robotToQuest =
+    public static final Transform2d kRobotToQuest =
         new Transform2d(Inches.of(10), Inches.of(-10), new Rotation2d(Degrees.of(-90)));
 
     public static final Distance kBumperSize = Meters.of(0.889);

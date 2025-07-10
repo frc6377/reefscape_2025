@@ -15,6 +15,7 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.DrivetrainConstants.kBumperSize;
+import static frc.robot.Constants.DrivetrainConstants.kRobotToQuest;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
@@ -26,6 +27,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -226,11 +228,25 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   public void periodic() {
     // Quest Nav Stuff
     questNav.commandPeriodic();
-    Logger.recordOutput("Drive/QuestNav Pose", questNav.getPose());
-    Logger.recordOutput(
-        "Drive/QuestNav Pose (Robot)",
-        questNav.getPose().transformBy(DrivetrainConstants.robotToQuest.inverse()));
+    Pose2d questNavPose = questNav.getPose();
+    Pose2d questNavBotPose = questNavPose.transformBy(kRobotToQuest.inverse());
+    Logger.recordOutput("Drive/QuestNav Pose", questNavPose);
+    Logger.recordOutput("Drive/QuestNav Pose (Robot)", questNavBotPose);
     Logger.recordOutput("Drive/QuestNav Connected", questNav.isConnected());
+    if (questNav.isConnected() && questNav.isTracking()) {
+      Matrix<N3, N1> QUESTNAV_STD_DEVS =
+          VecBuilder.fill(
+              0.02, // Trust down to 2cm in X direction
+              0.02, // Trust down to 2cm in Y direction
+              0.035 // Trust down to 2 degrees rotational
+              );
+
+      // Get timestamp from the QuestNav instance
+      double timestamp = questNav.getDataTimestamp();
+
+      // Add the measurement to our estimator
+      // poseEstimator.addVisionMeasurement(questNavBotPose, timestamp, QUESTNAV_STD_DEVS);
+    }
 
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
@@ -452,7 +468,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   }
 
   public void resetQuestNav() {
-    questNav.setPose(new Pose2d());
+    questNav.setPose(getPose().transformBy(kRobotToQuest));
   }
 
   /** Resets the current odometry pose. */
