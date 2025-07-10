@@ -35,7 +35,6 @@ import frc.robot.Constants.FeildConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
-import frc.robot.subsystems.QuestNav.QuestNav;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
@@ -63,7 +62,6 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private MapleSimArenaSubsystem mapleSimArenaSubsystem;
-  private QuestNav questNav = new QuestNav();
   // private final Elevator elevator = new Elevator();
   // private final CoralScorer coralScorer = new CoralScorer();
   // private final IntakeSubsystem intake;
@@ -337,8 +335,8 @@ public class RobotContainer {
         .toggleOnTrue(DriveCommands.AlignToReef(false, camera0Name, drive, vision));
     OI.getButton(OI.Driver.LSB)
         .toggleOnTrue(DriveCommands.AlignToReef(true, camera0Name, drive, vision));
-    
-    OI.getButton(OI.Driver.A).onTrue(questNav.resetPoseCommand());
+
+    OI.getButton(OI.Driver.A).onTrue(Commands.runOnce(() -> drive.resetQuestNav()));
     UpButtonTrigger.or(DownButtonTrigger)
         .or(RightButtonTrigger)
         .or(LeftButtonTrigger)

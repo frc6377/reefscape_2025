@@ -31,6 +31,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
@@ -321,6 +322,10 @@ public final class Constants {
 
   @SuppressWarnings("unused")
   public final class DrivetrainConstants {
+    // Quest Nav Headset Pose
+    public static final Transform2d robotToQuest =
+        new Transform2d(Inches.of(10), Inches.of(-10), new Rotation2d(Degrees.of(-90)));
+
     public static final Distance kBumperSize = Meters.of(0.889);
 
     // POV Drive Constants

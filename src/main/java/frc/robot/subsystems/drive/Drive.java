@@ -52,6 +52,7 @@ import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.LocalADStarAK;
+import gg.questnav.questnav.QuestNav;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -73,6 +74,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
           Math.max(
               Math.hypot(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
+
+  public static final QuestNav questNav = new QuestNav();
 
   // Main Robot
   // public static final RobotConfig PP_CONFIG =
@@ -221,6 +224,14 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
   @Override
   public void periodic() {
+    // Quest Nav Stuff
+    questNav.commandPeriodic();
+    Logger.recordOutput("Drive/QuestNav Pose", questNav.getPose());
+    Logger.recordOutput(
+        "Drive/QuestNav Pose (Robot)",
+        questNav.getPose().transformBy(DrivetrainConstants.robotToQuest.inverse()));
+    Logger.recordOutput("Drive/QuestNav Connected", questNav.isConnected());
+
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
@@ -438,6 +449,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();
+  }
+
+  public void resetQuestNav() {
+    questNav.setPose(new Pose2d());
   }
 
   /** Resets the current odometry pose. */
