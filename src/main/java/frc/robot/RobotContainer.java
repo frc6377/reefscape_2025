@@ -106,7 +106,7 @@ public class RobotContainer {
   private Pose2d driveSimDefualtPose;
 
   // Trigger Variables
-  private final Trigger coralOuttakeButton = OI.getButton(OI.Driver.RBumper);
+  private final Trigger coralOuttakeButton = OI.getButton(OI.Driver.X);
   private final Trigger coralIntakeButton = OI.getButton(OI.Driver.RTrigger);
   private final Trigger coralHandoffCompleteTrigger =
       new Trigger(
@@ -368,10 +368,10 @@ public class RobotContainer {
                 : Commands.runOnce(() -> resetSimulationField()));
 
     // Auto Align Commands
-    // OI.getButton(OI.Driver.RSB)
-    //     .toggleOnTrue(DriveCommands.AlignToReef(true, camera0Name, drive, vision));
-    // OI.getButton(OI.Driver.LSB)
-    //     .toggleOnTrue(DriveCommands.AlignToReef(false, camera0Name, drive, vision));
+    OI.getButton(OI.Driver.RBumper)
+        .toggleOnTrue(DriveCommands.AlignToReef(true, camera0Name, drive, vision));
+    OI.getButton(OI.Driver.LBumper)
+        .toggleOnTrue(DriveCommands.AlignToReef(false, camera0Name, drive, vision));
 
     UpButtonTrigger.or(DownButtonTrigger)
         .or(RightButtonTrigger)
@@ -415,10 +415,10 @@ public class RobotContainer {
     //                     .negate())); // TODO: Make sure this doesn't conflict with auto
 
     // Elevator Buttons
-    OI.getButton(OI.Driver.A).onTrue(elevator.L0());
-    OI.getButton(OI.Driver.B).onTrue(elevator.L2());
-    OI.getButton(OI.Driver.X).onTrue(elevator.L3());
-    OI.getButton(OI.Driver.Y).onTrue(elevator.L4());
+    OI.getButton(OI.Driver.POV180).onTrue(elevator.L0());
+    OI.getButton(OI.Driver.POV90).onTrue(elevator.L2());
+    OI.getButton(OI.Driver.POV270).onTrue(elevator.L3());
+    OI.getButton(OI.Driver.POV0).onTrue(elevator.L4());
     OI.getButton(OI.Driver.Start).onTrue(elevator.limitHit());
 
     // Intake Buttons
@@ -495,7 +495,7 @@ public class RobotContainer {
         .and(() -> !intakeAlgeaMode && elevatorNotL1)
         .whileTrue(coralScorer.runScorer(OI.getAxisSupplier(OI.Driver.LeftTriggerAxis)));
     OI.getButton(OI.Driver.LTrigger).and(() -> intakeAlgeaMode).whileTrue(intake.algaeOuttake());
-    OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.reverseCommand());
+    OI.getButton(OI.Driver.B).whileTrue(coralScorer.reverseCommand());
 
     // Algae Remover
     // OI.getButton(OI.Operator.LBumper).toggleOnTrue(algeaRemover.removeUpCommand());
