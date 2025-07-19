@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.HowdyTempWarning;
 import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -51,6 +52,7 @@ public class Robot extends LoggedRobot {
 
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+  private HowdyTempWarning howdyTempWarning;
 
   private double lastTime = Timer.getFPGATimestamp() * 1000;
 
@@ -111,6 +113,7 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
+    howdyTempWarning = new HowdyTempWarning();
 
     // DO THIS AFTER CONFIGURATION OF YOUR DESIRED PATHFINDER
     PathfindingCommand.warmupCommand().schedule();
@@ -129,6 +132,7 @@ public class Robot extends LoggedRobot {
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
     robotContainer.updateMechVisualizer();
+    howdyTempWarning.checkTemps();
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);

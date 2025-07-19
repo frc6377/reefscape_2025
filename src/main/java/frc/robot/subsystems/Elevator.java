@@ -351,6 +351,11 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Logger.recordOutput(
+        "Motor Temps/Elevator 1", elevatorMotor1.getDeviceTemp().getValue().in(Fahrenheit));
+    Logger.recordOutput(
+        "Motor Temps/Elevator 2", elevatorMotor2.getDeviceTemp().getValue().in(Fahrenheit));
+
     Logger.recordOutput("Elevator/Motor1/Percent Out", elevatorMotor1.get());
     Logger.recordOutput(
         "Elevator/Motor1/Voltage (Volts)", elevatorMotor1.getMotorVoltage().getValue().in(Volts));
@@ -361,9 +366,6 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput(
         "Elevator/Motor1/Stator Current (Amps)",
         elevatorMotor1.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput(
-        "Elevator/Motor1/Temp (Fahrenheit)",
-        elevatorMotor1.getDeviceTemp().getValue().in(Fahrenheit));
 
     Logger.recordOutput("Elevator/Motor2/Percent Out", elevatorMotor2.get());
     Logger.recordOutput(
@@ -381,9 +383,6 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput(
         "Elevator/Motor1/Stall Current (Amps)",
         elevatorMotor2.getMotorStallCurrent().getValueAsDouble());
-    Logger.recordOutput(
-        "Elevator/Motor2/Temp (Fahrenheit)",
-        elevatorMotor2.getDeviceTemp().getValue().in(Fahrenheit));
 
     Logger.recordOutput("Elevator/Elv/Height (Inches)", getElevatorHeight().in(Inches));
     Logger.recordOutput(

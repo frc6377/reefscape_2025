@@ -5,6 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Fahrenheit;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
@@ -398,6 +399,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Motor Temps
+    Logger.recordOutput(
+        "Motor Temps/Intake Roller Motor", intakeMotor.getDeviceTemp().getValue().in(Fahrenheit));
+    Logger.recordOutput(
+        "Motor Temps/Intake Conveyor Motor",
+        conveyorMotor.getDeviceTemp().getValue().in(Fahrenheit));
+    Logger.recordOutput(
+        "Motor Temps/Pivot Motor", pivotMotor.getDeviceTemp().getValue().in(Fahrenheit));
+
     // Intake Rollers
     Logger.recordOutput("Intake/Rollers/Motor Output", intakeMotor.get());
     Logger.recordOutput(

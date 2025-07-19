@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Fahrenheit;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
@@ -409,6 +410,13 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Logger.recordOutput(
+        "Motor Temps/Climber Motor Front",
+        climberMotorFront.getDeviceTemp().getValue().in(Fahrenheit));
+    Logger.recordOutput(
+        "Motor Temps/Climber Motor Back",
+        climberMotorBack.getDeviceTemp().getValue().in(Fahrenheit));
+
     // This method will be called once per scheduler run
     // Front
     Logger.recordOutput(
