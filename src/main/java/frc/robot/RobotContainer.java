@@ -98,7 +98,7 @@ public class RobotContainer {
   private final Climber climber = new Climber();
   private PowerDistribution pdp = new PowerDistribution();
   private final Signaling signaling = new Signaling(pdp);
-  private boolean elevatorNotL1 = false;
+  private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
   private boolean coralStationMode = false;
   private Command scoreL1;
@@ -373,19 +373,19 @@ public class RobotContainer {
     OI.getButton(OI.Driver.LBumper)
         .toggleOnTrue(DriveCommands.AlignToReef(false, camera0Name, drive, vision));
 
-    UpButtonTrigger.or(DownButtonTrigger)
-        .or(RightButtonTrigger)
-        .or(LeftButtonTrigger)
-        .whileTrue(
-            DriveCommands.POVDrive(
-                drive,
-                () ->
-                    (LeftButtonTrigger.getAsBoolean() ? 1 : 0.0)
-                        + (RightButtonTrigger.getAsBoolean() ? -1 : 0),
-                () ->
-                    (DownButtonTrigger.getAsBoolean() ? 1 : 0.0)
-                        + (UpButtonTrigger.getAsBoolean() ? -1 : 0),
-                () -> 0.0));
+    // UpButtonTrigger.or(DownButtonTrigger)
+    //     .or(RightButtonTrigger)
+    //     .or(LeftButtonTrigger)
+    //     .whileTrue(
+    //         DriveCommands.POVDrive(
+    //             drive,
+    //             () ->
+    //                 (LeftButtonTrigger.getAsBoolean() ? 1 : 0.0)
+    //                     + (RightButtonTrigger.getAsBoolean() ? -1 : 0),
+    //             () ->
+    //                 (DownButtonTrigger.getAsBoolean() ? 1 : 0.0)
+    //                     + (UpButtonTrigger.getAsBoolean() ? -1 : 0),
+    //             () -> 0.0));
 
     Trigger automaticScoreTrigger =
         new Trigger(() -> DriverStation.isTeleopEnabled())

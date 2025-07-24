@@ -218,7 +218,7 @@ public final class Constants {
     public static final double kIntakeAlgaeScoreSpeed = -0.25;
 
     // Pivot Arm Setpoints
-    public static final Angle kPivotZero = Degrees.of(365);
+    public static final Angle kPivotZero = Degrees.of(6);
     public static final Angle kPivotRetractAngle = Degrees.of(139);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(8);
