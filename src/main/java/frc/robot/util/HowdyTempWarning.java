@@ -23,7 +23,9 @@ public class HowdyTempWarning {
       boolean motorTooHot = 120 < MotorTempsTable.getEntry(key).getDouble(Double.NaN);
       Logger.recordOutput("Motor Temp Bool/" + key, motorTooHot);
       if (motorTooHot) {
-        DriverStation.reportWarning("Motor Temp at " + key + " is too high stop and wait", null);
+        DriverStation.reportWarning("Motor Temp at " + key + " is too high stop and wait", false);
+        // robot isn't competition run 'DriverStation.reportWarning("Motor Temp at " + key + " is
+        // way too high forcing stop", null);' to crash code when motor temp is dangerously high
       }
     }
   }
