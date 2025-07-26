@@ -227,6 +227,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
       }
     }
 
+    // Log Temp
+
     // Log empty setpoint states when disabled
     if (DriverStation.isDisabled()) {
       Logger.recordOutput("Swerve/SwerveStates/Setpoints", new SwerveModuleState[] {});
