@@ -7,6 +7,8 @@ package frc.robot.util;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Robot;
+
 import java.util.Set;
 import org.littletonrobotics.junction.Logger;
 
@@ -21,11 +23,14 @@ public class HowdyTempWarning {
     MotorTemps = MotorTempsTable.getKeys();
     for (String key : MotorTemps) {
       boolean motorTooHot = 120 < MotorTempsTable.getEntry(key).getDouble(Double.NaN);
+      //TODO: set value to actual maximum safe operating temp
+      boolean tempDangerous = 140 < MotorTempsTable.getEntry(key).getDouble(Double.NaN);
       Logger.recordOutput("Motor Temp Bool/" + key, motorTooHot);
       if (motorTooHot) {
         DriverStation.reportWarning("Motor Temp at " + key + " is too high stop and wait", false);
-        // robot isn't competition run 'DriverStation.reportWarning("Motor Temp at " + key + " is
-        // way too high forcing stop", null);' to crash code when motor temp is dangerously high
+      }
+      if (!Robot.isCompetition && tempDangerous) {
+        DriverStation.reportError("Motor Temp at " + key + " is exceeding safe operating temperature forcing stop", null);
       }
     }
   }
