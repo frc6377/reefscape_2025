@@ -282,6 +282,9 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         this.getCurrentCommand() != null ? this.getCurrentCommand().getName() : "None");
   }
 
+  public ChassisSpeeds getFieldRelativeVelocity() {
+    return ChassisSpeeds.fromRobotRelativeSpeeds(getChassisSpeeds(), getRotation());
+  }
   /**
    * Runs the drive at the desired velocity.
    *
