@@ -209,7 +209,7 @@ public final class Constants {
   public static class IntakeConstants {
     public static final boolean kEnableStateMachineSim = false;
 
-    public static final double kIntakeSpeed = -1;
+    public static final double kIntakeSpeed = -0.25;
     public static final double kOuttakeSpeed = 0.1;
     public static final double kIntakeHandoffSpeed = -0.75;
     public static final double kConveyorSpeed = 0.45;

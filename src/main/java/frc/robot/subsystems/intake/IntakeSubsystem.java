@@ -117,8 +117,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     intakeMotorConfig = new TalonFXConfiguration();
     intakeMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
-    intakeMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-    intakeMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+    intakeMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 60;
+    intakeMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -60;
     intakeMotor.getConfigurator().apply(intakeMotorConfig);
 
     conveyorMotorConfig = new TalonFXConfiguration();
@@ -412,6 +412,8 @@ public class IntakeSubsystem extends SubsystemBase {
     Logger.recordOutput("Intake/Rollers/Motor Output", intakeMotor.get());
     Logger.recordOutput(
         "Intake/Rollers/Motor Voltage (Volts)", intakeMotor.getMotorVoltage().getValue().in(Volts));
+    Logger.recordOutput(
+        "Intake/Rollers/Motor Torque Current", intakeMotor.getTorqueCurrent().getValueAsDouble());
 
     // Convayor
     Logger.recordOutput("Intake/Conveyor/Motor Output", conveyorMotor.get());

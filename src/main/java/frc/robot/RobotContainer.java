@@ -373,19 +373,19 @@ public class RobotContainer {
     OI.getButton(OI.Driver.LBumper)
         .toggleOnTrue(DriveCommands.AlignToReef(false, camera0Name, drive, vision));
 
-    UpButtonTrigger.or(DownButtonTrigger)
-        .or(RightButtonTrigger)
-        .or(LeftButtonTrigger)
-        .whileTrue(
-            DriveCommands.POVDrive(
-                drive,
-                () ->
-                    (LeftButtonTrigger.getAsBoolean() ? 1 : 0.0)
-                        + (RightButtonTrigger.getAsBoolean() ? -1 : 0),
-                () ->
-                    (DownButtonTrigger.getAsBoolean() ? 1 : 0.0)
-                        + (UpButtonTrigger.getAsBoolean() ? -1 : 0),
-                () -> 0.0));
+    // UpButtonTrigger.or(DownButtonTrigger)
+    //     .or(RightButtonTrigger)
+    //     .or(LeftButtonTrigger)
+    //     .whileTrue(
+    //         DriveCommands.POVDrive(
+    //             drive,
+    //             () ->
+    //                 (LeftButtonTrigger.getAsBoolean() ? 1 : 0.0)
+    //                     + (RightButtonTrigger.getAsBoolean() ? -1 : 0),
+    //             () ->
+    //                 (DownButtonTrigger.getAsBoolean() ? 1 : 0.0)
+    //                     + (UpButtonTrigger.getAsBoolean() ? -1 : 0),
+    //             () -> 0.0));
 
     Trigger automaticScoreTrigger =
         new Trigger(() -> DriverStation.isTeleopEnabled())
