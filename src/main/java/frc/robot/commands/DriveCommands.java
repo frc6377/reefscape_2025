@@ -22,9 +22,6 @@ import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.DrivetrainConstants.LowGearFactor;
 import static frc.robot.Constants.DrivetrainConstants.kPathConstraints;
 
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.therekrab.autopilot.APTarget;
@@ -80,37 +77,50 @@ public class DriveCommands {
   }
 
   public Command GoToPoseAutopilot(APTarget targetPose, Supplier<Pose2d> robotPose, Drive drive) {
-    return Commands.run(
+    PIDController rotController = ReefAlignConstants.kRotationController;
+    return Commands.sequence(
+        Commands.runOnce(
             () -> {
-              ChassisSpeeds fieldRelativChassisSpeeds = drive.getFieldRelativeVelocity();
-              Translation2d velocities =
-                  new Translation2d(
-                      fieldRelativChassisSpeeds.vxMetersPerSecond,
-                      fieldRelativChassisSpeeds.vyMetersPerSecond);
-              Pose2d pose = drive.getPose();
+              rotController.setSetpoint(targetPose.getReference().getRotation().getDegrees());
+              rotController.setTolerance(ReefAlignConstants.kSetpointRotTolerance.in(Degrees));
+              rotController.enableContinuousInput(-180, 180);
+            }),
+        Commands.run(
+                () -> {
+                  ChassisSpeeds fieldRelativChassisSpeeds = drive.getFieldRelativeVelocity();
+                  Translation2d velocities =
+                      new Translation2d(
+                          fieldRelativChassisSpeeds.vxMetersPerSecond,
+                          fieldRelativChassisSpeeds.vyMetersPerSecond);
+                  Pose2d pose = drive.getPose();
 
-              APResult output =
-                  Constants.autopilotConstants.kAutopilot.calculate(pose, velocities, targetPose);
+                  APResult output =
+                      Constants.autopilotConstants.kAutopilot.calculate(
+                          pose, velocities, targetPose);
 
-              /* these speeds are field relative */
-              LinearVelocity veloX = output.vx();
-              LinearVelocity veloY = output.vy();
-              Rotation2d headingReference = output.targetAngle();
+                  /* these speeds are field relative */
+                  LinearVelocity veloX = output.vx();
+                  LinearVelocity veloY = output.vy();
+                  Rotation2d headingReference = output.targetAngle();
+                  rotController.setSetpoint(headingReference.getDegrees());
+                  double rotValue =
+                      rotController.calculate(robotPose.get().getRotation().getDegrees());
+                  ChassisSpeeds speeds =
+                      new ChassisSpeeds(veloX, veloY, DegreesPerSecond.of(rotValue));
 
-              SwerveRequest.FieldCentricFacingAngle m_request =
-                  new SwerveRequest.FieldCentricFacingAngle()
-                      .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
-                      .withDriveRequestType(DriveRequestType.Velocity)
-                      .withHeadingPID(4, 0, 0); /* change theese values for your robot */
+                  // Logging
+                  Logger.recordOutput("Drive/Autopilot/Velocity X", veloX);
+                  Logger.recordOutput("Drive/Autopilot/Velocity Y", veloY);
+                  Logger.recordOutput("Drive/Autopilot/Target Rotation", headingReference);
+                  Logger.recordOutput("Drive/Autopilot/Rotation PID output", rotValue);
+                  Logger.recordOutput("Drive/Autopilot/Chasis Speed", speeds);
 
-            //   drive.setControl(
-            //       m_request
-            //           .withVelocityX(veloX)
-            //           .withVelocityY(veloY)
-            //           .withTargetDirection(headingReference));
-            })
-        .until(() -> Constants.autopilotConstants.kAutopilot.atTarget(drive.getPose(), targetPose))
-        .finallyDo(drive::stop);
+                  drive.runVelocity(
+                      ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
+                })
+            .until(
+                () -> Constants.autopilotConstants.kAutopilot.atTarget(drive.getPose(), targetPose))
+            .finallyDo(drive::stop));
   }
 
   public static Command GoToPosePID(Pose2d targetPose, Supplier<Pose2d> robotPose, Drive drive) {
