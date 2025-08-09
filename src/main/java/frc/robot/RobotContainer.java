@@ -98,7 +98,7 @@ public class RobotContainer {
   private final Climber climber = new Climber();
   private PowerDistribution pdp = new PowerDistribution();
   private final Signaling signaling = new Signaling(pdp);
-  private boolean elevatorNotL1 = false;
+  private boolean elevatorNotL1 = true;
   private boolean intakeAlgeaMode = false;
   private boolean coralStationMode = false;
   private Command scoreL1;

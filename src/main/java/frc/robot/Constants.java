@@ -209,16 +209,16 @@ public final class Constants {
   public static class IntakeConstants {
     public static final boolean kEnableStateMachineSim = false;
 
-    public static final double kIntakeSpeed = -0.25;
-    public static final double kOuttakeSpeed = 0.1;
+    public static final double kIntakeSpeed = -1;
+    public static final double kOuttakeSpeed = 0.5;
     public static final double kIntakeHandoffSpeed = -0.75;
     public static final double kConveyorSpeed = 0.45;
     public static final double kPivotSpeed = 0.2;
-    public static final double kHoldSpeed = -0.2;
+    public static final double kHoldSpeed = -0.4;
     public static final double kIntakeAlgaeScoreSpeed = -0.25;
 
     // Pivot Arm Setpoints
-    public static final Angle kPivotZero = Degrees.of(365);
+    public static final Angle kPivotZero = Degrees.of(6);
     public static final Angle kPivotRetractAngle = Degrees.of(139);
     public static final Angle kPivotOuttakeAngle = Degrees.of(87);
     public static final Angle kPivotExtendAngle = Degrees.of(8);
