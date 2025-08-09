@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.ReefAlignConstants;
 import frc.robot.Robot;
@@ -72,7 +73,27 @@ public class DriveCommands {
             () -> AutoBuilder.pathfindToPose(targetPose, kPathConstraints), drive)
         .withName("Go To Pose");
   }
-
+  public Command GoToPoseAutopilot(Pose2d targetPose, Supplier<Pose2d> robotPose, Drive drive) {
+    return Commands.run(() -> {
+        ChassisSpeeds fieldRelativChassisSpeeds = drive.getFieldRelativeVelocity();
+        Translation2d velocities = new Translation2d(fieldRelativChassisSpeeds.vxMetersPerSecond, fieldRelativChassisSpeeds.vyMetersPerSecond);
+        Pose2d pose = drive.getPose();
+    
+        Transform2d output = Constants.kAutopilot.calculate(pose, velocities, targetPose);
+    
+        /* these speeds are field relative */
+        double veloX = output.getX();
+        double veloY = output.getY();
+        Rotation2d headingReference = output.getRotation();
+    
+        drive.setControl(m_fieldRelativeRequest
+            .withVelocityX(veloX)
+            .withVelocityY(veloY)
+            .withTargetDirection(headingReference));
+      })
+          .until(() -> Constants.kAutopilot.atTarget(drive.getPose(), targetPose))
+          .finallyDo(this::stop);
+  }
   public static Command GoToPosePID(Pose2d targetPose, Supplier<Pose2d> robotPose, Drive drive) {
     PIDController xController = ReefAlignConstants.kTranslationXController;
     PIDController yController = ReefAlignConstants.kTranslationYController;
