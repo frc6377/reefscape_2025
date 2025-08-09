@@ -76,7 +76,8 @@ public class DriveCommands {
         .withName("Go To Pose");
   }
 
-  public Command GoToPoseAutopilot(APTarget targetPose, Supplier<Pose2d> robotPose, Drive drive) {
+  public static Command GoToPoseAutopilot(
+      APTarget targetPose, Supplier<Pose2d> robotPose, Drive drive) {
     PIDController rotController = ReefAlignConstants.kRotationController;
     return Commands.sequence(
         Commands.runOnce(
@@ -238,7 +239,7 @@ public class DriveCommands {
                               .getMeasure()
                               .plus(TargetOffset.getRotation().getMeasure())));
               Logger.recordOutput("Auto Align/Target Pose (FF)", targetPose);
-              return GoToPosePID(targetPose, () -> drive.getPose(), drive);
+              return GoToPoseAutopilot(new APTarget(targetPose), () -> drive.getPose(), drive);
             },
             Set.of(drive))
         .withName("Align To Reef");
