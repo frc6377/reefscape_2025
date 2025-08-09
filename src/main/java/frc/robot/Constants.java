@@ -200,7 +200,7 @@ public final class Constants {
     public static final double kIntakeHandoffSpeed = -0.75;
     public static final double kConveyorSpeed = 0.45;
     public static final double kPivotSpeed = 0.2;
-    public static final double kHoldSpeed = -0.2;
+    public static final double kHoldSpeed = -0.4;
     public static final double kIntakeAlgaeScoreSpeed = -0.25;
 
     // Pivot Arm Setpoints
