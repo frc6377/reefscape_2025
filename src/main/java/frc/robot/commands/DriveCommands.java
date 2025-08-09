@@ -22,11 +22,13 @@ import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.DrivetrainConstants.LowGearFactor;
 import static frc.robot.Constants.DrivetrainConstants.kPathConstraints;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.therekrab.autopilot.APTarget;
 import com.therekrab.autopilot.Autopilot.APResult;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -77,7 +79,7 @@ public class DriveCommands {
         .withName("Go To Pose");
   }
 
-  public Command GoToPoseAutopilot(Pose2d targetPose, Supplier<Pose2d> robotPose, Drive drive) {
+  public Command GoToPoseAutopilot(APTarget targetPose, Supplier<Pose2d> robotPose, Drive drive) {
     return Commands.run(
             () -> {
               ChassisSpeeds fieldRelativChassisSpeeds = drive.getFieldRelativeVelocity();
@@ -86,24 +88,29 @@ public class DriveCommands {
                       fieldRelativChassisSpeeds.vxMetersPerSecond,
                       fieldRelativChassisSpeeds.vyMetersPerSecond);
               Pose2d pose = drive.getPose();
-              APTarget target = new APTarget(targetPose)
-              .withEntryAngle(Rotation2d.kZero);
 
-              Transform2d output = Constants.autopilotConstants.kAutopilot.calculate(pose, velocities, target);
+              APResult output =
+                  Constants.autopilotConstants.kAutopilot.calculate(pose, velocities, targetPose);
 
               /* these speeds are field relative */
-              double veloX = output.getX();
-              double veloY = output.getY();
-              Rotation2d headingReference = output.getRotation();
+              LinearVelocity veloX = output.vx();
+              LinearVelocity veloY = output.vy();
+              Rotation2d headingReference = output.targetAngle();
 
-              drive.setControl(
-                  m_fieldRelativeRequest
-                      .withVelocityX(veloX)
-                      .withVelocityY(veloY)
-                      .withTargetDirection(headingReference));
+              SwerveRequest.FieldCentricFacingAngle m_request =
+                  new SwerveRequest.FieldCentricFacingAngle()
+                      .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
+                      .withDriveRequestType(DriveRequestType.Velocity)
+                      .withHeadingPID(4, 0, 0); /* change theese values for your robot */
+
+            //   drive.setControl(
+            //       m_request
+            //           .withVelocityX(veloX)
+            //           .withVelocityY(veloY)
+            //           .withTargetDirection(headingReference));
             })
-        .until(() -> Constants.autopilotConstants.kAutopilot.atTarget(drive.getPose(), target))
-        .finallyDo(this::stop);
+        .until(() -> Constants.autopilotConstants.kAutopilot.atTarget(drive.getPose(), targetPose))
+        .finallyDo(drive::stop);
   }
 
   public static Command GoToPosePID(Pose2d targetPose, Supplier<Pose2d> robotPose, Drive drive) {
