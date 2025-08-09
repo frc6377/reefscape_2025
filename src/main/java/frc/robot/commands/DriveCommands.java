@@ -24,6 +24,9 @@ import static frc.robot.Constants.DrivetrainConstants.kPathConstraints;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.therekrab.autopilot.APTarget;
+import com.therekrab.autopilot.Autopilot.APResult;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -73,27 +76,36 @@ public class DriveCommands {
             () -> AutoBuilder.pathfindToPose(targetPose, kPathConstraints), drive)
         .withName("Go To Pose");
   }
+
   public Command GoToPoseAutopilot(Pose2d targetPose, Supplier<Pose2d> robotPose, Drive drive) {
-    return Commands.run(() -> {
-        ChassisSpeeds fieldRelativChassisSpeeds = drive.getFieldRelativeVelocity();
-        Translation2d velocities = new Translation2d(fieldRelativChassisSpeeds.vxMetersPerSecond, fieldRelativChassisSpeeds.vyMetersPerSecond);
-        Pose2d pose = drive.getPose();
-    
-        Transform2d output = Constants.kAutopilot.calculate(pose, velocities, targetPose);
-    
-        /* these speeds are field relative */
-        double veloX = output.getX();
-        double veloY = output.getY();
-        Rotation2d headingReference = output.getRotation();
-    
-        drive.setControl(m_fieldRelativeRequest
-            .withVelocityX(veloX)
-            .withVelocityY(veloY)
-            .withTargetDirection(headingReference));
-      })
-          .until(() -> Constants.kAutopilot.atTarget(drive.getPose(), targetPose))
-          .finallyDo(this::stop);
+    return Commands.run(
+            () -> {
+              ChassisSpeeds fieldRelativChassisSpeeds = drive.getFieldRelativeVelocity();
+              Translation2d velocities =
+                  new Translation2d(
+                      fieldRelativChassisSpeeds.vxMetersPerSecond,
+                      fieldRelativChassisSpeeds.vyMetersPerSecond);
+              Pose2d pose = drive.getPose();
+              APTarget target = new APTarget(targetPose)
+              .withEntryAngle(Rotation2d.kZero);
+
+              Transform2d output = Constants.autopilotConstants.kAutopilot.calculate(pose, velocities, target);
+
+              /* these speeds are field relative */
+              double veloX = output.getX();
+              double veloY = output.getY();
+              Rotation2d headingReference = output.getRotation();
+
+              drive.setControl(
+                  m_fieldRelativeRequest
+                      .withVelocityX(veloX)
+                      .withVelocityY(veloY)
+                      .withTargetDirection(headingReference));
+            })
+        .until(() -> Constants.autopilotConstants.kAutopilot.atTarget(drive.getPose(), target))
+        .finallyDo(this::stop);
   }
+
   public static Command GoToPosePID(Pose2d targetPose, Supplier<Pose2d> robotPose, Drive drive) {
     PIDController xController = ReefAlignConstants.kTranslationXController;
     PIDController yController = ReefAlignConstants.kTranslationYController;
