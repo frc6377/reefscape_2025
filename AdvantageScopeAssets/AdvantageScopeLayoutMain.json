@@ -1,10 +1,10 @@
 {
   "hubs": [
     {
-      "x": -1,
-      "y": 33,
-      "width": 1323,
-      "height": 950,
+      "x": -7,
+      "y": -7,
+      "width": 1934,
+      "height": 1046,
       "state": {
         "sidebar": {
           "width": 321,
@@ -39,12 +39,12 @@
             "/CameraPublisher/limelight-elvcam-processed/modes",
             "/CameraPublisher/limelight-elvcam-processed/streams",
             "/AdvantageKit",
-            "/AdvantageKit/RealOutputs/Swerve",
-            "/AdvantageKit/RealOutputs/Vision"
+            "/AdvantageKit/RealOutputs/Odometry",
+            "/AdvantageKit/RealOutputs/Mech Visualizer"
           ]
         },
         "tabs": {
-          "selected": 6,
+          "selected": 3,
           "tabs": [
             {
               "type": 0,
@@ -163,44 +163,45 @@
                   },
                   {
                     "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Intake Pose",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Mech Visualizer/0",
                     "logType": "Pose3d",
                     "visible": true,
                     "options": {}
                   },
                   {
                     "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Elv 1 Pose",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Mech Visualizer/1",
                     "logType": "Pose3d",
                     "visible": true,
                     "options": {}
                   },
                   {
                     "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Elv 2 Pose",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Mech Visualizer/2",
                     "logType": "Pose3d",
                     "visible": true,
                     "options": {}
                   },
                   {
-                    "type": "vision",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera0/TagPoses",
-                    "logType": "Pose3d[]",
+                    "type": "component",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Mech Visualizer/3",
+                    "logType": "Pose3d",
                     "visible": true,
-                    "options": {
-                      "color": "#00ff00",
-                      "size": "normal"
-                    }
+                    "options": {}
                   },
                   {
-                    "type": "vision",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera1/TagPoses",
-                    "logType": "Pose3d[]",
+                    "type": "component",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Mech Visualizer/4",
+                    "logType": "Pose3d",
                     "visible": true,
-                    "options": {
-                      "color": "#00ffff",
-                      "size": "normal"
-                    }
+                    "options": {}
+                  },
+                  {
+                    "type": "component",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Mech Visualizer/5",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {}
                   },
                   {
                     "type": "ghost",
@@ -302,20 +303,20 @@
               },
               "controllerUUID": "puw4i9b7e0fznf83gxyhzfh50dkcsiih",
               "renderer": {
-                "cameraIndex": -7,
+                "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -10.24986258343236,
-                  1.5747999999999986,
-                  -2.127265881179292
+                  0.6579181736715286,
+                  10.104932873663113,
+                  10.457896390918586
                 ],
                 "cameraTarget": [
-                  0,
-                  0.5,
-                  0
+                  0.08972178905562962,
+                  1.6456287918905366,
+                  0.3402223834890514
                 ]
               },
-              "controlsHeight": 200
+              "controlsHeight": 408
             },
             {
               "type": 9,

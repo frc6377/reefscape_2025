@@ -260,6 +260,9 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command limitHit() {
+    if (Robot.isSimulation()) {
+      return Commands.none();
+    }
     return runOnce(this::disableSoftLimits)
         .andThen(setElvPercent(-0.2).until(elvLimitSwitch::get))
         .andThen(zeroMotorEncoder())

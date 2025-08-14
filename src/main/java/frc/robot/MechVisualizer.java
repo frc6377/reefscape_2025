@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -41,10 +43,13 @@ public class MechVisualizer {
     switch (axis) {
       case X:
         newRotation = new Rotation3d(value, oldRotation.getMeasureY(), oldRotation.getMeasureZ());
+        break;
       case Y:
-        newRotation = new Rotation3d(oldRotation.getMeasureX(), value, oldRotation.getMeasureZ());
+        newRotation = new Rotation3d(Degrees.zero(), value, Degrees.zero());
+        break;
       case Z:
         newRotation = new Rotation3d(oldRotation.getMeasureX(), oldRotation.getMeasureY(), value);
+        break;
       default:
         newRotation = oldRotation;
     }
@@ -63,10 +68,13 @@ public class MechVisualizer {
     switch (axis) {
       case X:
         newTranslation = new Translation3d(value, oldPose.getMeasureY(), oldPose.getMeasureZ());
+        break;
       case Y:
         newTranslation = new Translation3d(oldPose.getMeasureX(), value, oldPose.getMeasureZ());
+        break;
       case Z:
         newTranslation = new Translation3d(oldPose.getMeasureX(), oldPose.getMeasureY(), value);
+        break;
       default:
         newTranslation = oldPose.getTranslation();
     }

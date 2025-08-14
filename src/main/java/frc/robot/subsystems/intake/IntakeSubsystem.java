@@ -143,7 +143,7 @@ public class IntakeSubsystem extends SubsystemBase {
       simPivotMotor.Orientation = ChassisReference.CounterClockwise_Positive;
       pivotSim =
           new SingleJointedArmSim(
-              DCMotor.getFalcon500(1),
+              DCMotor.getKrakenX60(1),
               kGearing,
               kPivotMOI.in(KilogramSquareMeters),
               kPivotLength.in(Meters),
@@ -223,7 +223,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Angle getPivotAngle() {
-    if (Robot.isSimulation()) return Radians.of(pivotSim.getAngleRads());
+    // if (Robot.isSimulation()) return Radians.of(pivotSim.getAngleRads());
     return pivotMotor.getPosition().getValue();
   }
 
