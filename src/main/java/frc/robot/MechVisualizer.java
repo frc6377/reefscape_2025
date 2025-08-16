@@ -23,7 +23,7 @@ public class MechVisualizer {
 
   public MechVisualizer(Pose3d[] startingList) {
     originalPoseList = startingList;
-    mechPoses = startingList;
+    mechPoses = startingList.clone();
   }
 
   public void updateIndexPose(int index, Pose3d newPose) {
