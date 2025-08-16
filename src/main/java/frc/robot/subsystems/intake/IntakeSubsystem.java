@@ -336,6 +336,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command humanPlayerIntake() {
     if (Robot.isSimulation()) {
       return run(() -> {
+            goToPivotPosition(kPivotCoralStationAngle);
             intakeSim.startIntake();
           })
           .until(intakeHasCoralTrigger());
