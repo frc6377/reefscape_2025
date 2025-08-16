@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import java.util.HashMap;
-import org.littletonrobotics.junction.Logger;
 import utilities.HowdyMM;
 import utilities.HowdyPID;
 
@@ -392,10 +391,6 @@ public final class Constants {
             Meters.of(-0.251632),
             Meters.of(0.547541),
             new Rotation3d(Degrees.of(0), Degrees.of(-45), Degrees.of(90)));
-
-    static {
-      Logger.recordOutput("Odometry/Mech Poses List", kMechPoses);
-    }
   }
 
   public final class autopilotConstants {
