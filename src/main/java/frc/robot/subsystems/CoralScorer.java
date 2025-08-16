@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Fahrenheit;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.CoralScorerConstants.*;
@@ -44,6 +45,10 @@ public class CoralScorer extends SubsystemBase {
             kAlignmentSensorID, kAlignSensorDistnace, TOFSensorSimple.TOFType.LASER_CAN);
   }
 
+  public boolean hasCoral() {
+    return TOFSensor.getBeamBroke();
+  }
+
   public Trigger hasCoralTrigger() {
     return TOFSensor.getBeamBrokenTrigger();
   }
@@ -65,16 +70,16 @@ public class CoralScorer extends SubsystemBase {
     return startEnd(() -> setScoreMotor(kScoreSpeed), () -> stopMotor());
   }
 
+  public Command scoreL4Command() {
+    return startEnd(() -> setScoreMotor(kScoreL4Speed), () -> stopMotor());
+  }
+
   public Command scoreAutoCommand() {
     return startEnd(() -> setScoreMotor(kScoreAutoSpeed), () -> stopMotor());
   }
 
-  public Command scoreMaxSpeedCommand() {
-    return startEnd(() -> setScoreMotor(kScoreMax), () -> stopMotor());
-  }
-
   public Command intakeCommand() {
-    return startEnd(() -> setScoreMotor(kIntakeSpeed), () -> stopMotor());
+    return startEnd(() -> setScoreMotor(kHandoffSpeed), () -> stopMotor());
   }
 
   // Made a command to spin counter clockwise
@@ -99,6 +104,9 @@ public class CoralScorer extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Logger.recordOutput(
+        "Motor Temps/Coral Scorer", scorerMotor.getDeviceTemp().getValue().in(Fahrenheit));
+
     // This method will be called once per scheduler run
     Logger.recordOutput("CoralScorer/Motor/Output", scorerMotor.get());
     Logger.recordOutput(

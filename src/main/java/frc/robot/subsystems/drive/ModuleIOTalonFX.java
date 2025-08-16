@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Fahrenheit;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -187,6 +188,12 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
     Logger.recordOutput(
         "Swerve/SysID Values/" + turnTalon.getDeviceID() + "/MotorVoltage",
         turnTalon.getMotorVoltage().getValueAsDouble());
+    Logger.recordOutput(
+        "Motor Temps/Module " + constants.EncoderId + " Drive Motor",
+        driveTalon.getDeviceTemp().getValue().in(Fahrenheit));
+    Logger.recordOutput(
+        "Motor Temps/Module " + constants.EncoderId + " Drive Motor",
+        turnTalon.getDeviceTemp().getValue().in(Fahrenheit));
   }
 
   @Override

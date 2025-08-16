@@ -3,35 +3,47 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.733880868563336,
-        "y": 6.171869771039166
+        "x": 1.1480432510206986,
+        "y": 7.120142450578242
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.735429853132757,
-        "y": 6.2471480195204
+        "x": 1.6715579766325008,
+        "y": 6.290479850724181
       },
       "isLocked": false,
-      "linkedName": "Start Mid Left"
+      "linkedName": "Left Coral Station Mid"
     },
     {
       "anchor": {
-        "x": 5.239412841877079,
-        "y": 5.072012762727696
+        "x": 2.8381565185045106,
+        "y": 3.7655597279705786
       },
       "prevControl": {
-        "x": 5.484744434082124,
-        "y": 5.0239252397499286
+        "x": 2.5298218610520764,
+        "y": 4.408474932367879
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef I"
+      "linkedName": "Reef AB (AA)"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "ElvL4",
+      "waypointRelativePos": 0.75,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ElvL4"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
@@ -42,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -29.999999999999996
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": "Start - Score",
+  "folder": "Source - Score",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 126.0
   },
   "useDefaultConstraints": true
 }

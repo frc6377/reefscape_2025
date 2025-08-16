@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.8489204744030894,
+        "y": 2.9219579815169756
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.6650972812660032,
+        "y": 2.077987057457695
+      },
+      "isLocked": false,
+      "linkedName": "Reef CD (L1)"
+    },
+    {
+      "anchor": {
+        "x": 1.17,
+        "y": 0.905
+      },
+      "prevControl": {
+        "x": 2.81027321279453,
+        "y": 2.308241631293198
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Right Coral Station Mid"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 1200.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -126.0
+  },
+  "reversed": false,
+  "folder": "Score - Source",
+  "idealStartingState": {
+    "velocity": 0.0,
+    "rotation": 59.99999999999999
+  },
+  "useDefaultConstraints": true
+}

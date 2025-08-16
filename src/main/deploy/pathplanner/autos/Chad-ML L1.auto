@@ -5,15 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Set L1 Mode"
+            "pathName": "Start - IJ L1"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "StartL - IJ (L1)"
+            "name": "Set L1 Mode"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Intake"
+            "name": "Intake L1"
           }
         },
         {

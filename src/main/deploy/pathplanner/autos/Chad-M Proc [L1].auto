@@ -1,0 +1,93 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Set L1 Mode"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Start ProcM - EF (L1)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L1 Score"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "EF - Source (L1)"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake L1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score CD L1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L1 Score"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CD - Source [L1]"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake L1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score CD L1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L1 Score"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Chads",
+  "choreoAuto": false
+}

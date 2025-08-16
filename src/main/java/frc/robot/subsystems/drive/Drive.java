@@ -227,6 +227,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
       }
     }
 
+    // Log Temp
+
     // Log empty setpoint states when disabled
     if (DriverStation.isDisabled()) {
       Logger.recordOutput("Swerve/SwerveStates/Setpoints", new SwerveModuleState[] {});
@@ -278,6 +280,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     Logger.recordOutput(
         "Swerve/Current Command",
         this.getCurrentCommand() != null ? this.getCurrentCommand().getName() : "None");
+  }
+
+  public ChassisSpeeds getFieldRelativeVelocity() {
+    return ChassisSpeeds.fromRobotRelativeSpeeds(getChassisSpeeds(), getRotation());
   }
 
   /**

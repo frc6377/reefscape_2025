@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.444849315737397,
-        "y": 6.094068861229504
+        "x": 6.749853732806111,
+        "y": 5.8681351515008515
       },
       "isLocked": false,
       "linkedName": "Start Mid Left"
     },
     {
       "anchor": {
-        "x": 5.771133447353976,
-        "y": 4.2264591321343685
+        "x": 5.117,
+        "y": 5.138
       },
       "prevControl": {
-        "x": 6.591053510200805,
-        "y": 4.445858562279307
+        "x": 5.713499999999999,
+        "y": 5.38025
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef H"
+      "linkedName": "Reef J"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": -120.15721729486235
   },
   "reversed": false,
   "folder": "Start - Score",

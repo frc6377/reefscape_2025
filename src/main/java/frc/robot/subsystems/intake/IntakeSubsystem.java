@@ -5,6 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Fahrenheit;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
@@ -116,8 +117,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     intakeMotorConfig = new TalonFXConfiguration();
     intakeMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
-    intakeMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-    intakeMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+    intakeMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 60;
+    intakeMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -60;
     intakeMotor.getConfigurator().apply(intakeMotorConfig);
 
     conveyorMotorConfig = new TalonFXConfiguration();
@@ -231,15 +232,21 @@ public class IntakeSubsystem extends SubsystemBase {
     return new Trigger(() -> atSetpoint(pivotSetpoint));
   }
 
+  public boolean intakeHasUnalignedCoral() {
+    return sensors.getSensorState() != CoralEnum.NO_CORAL && !atSetpoint(kPivotRetractAngle);
+  }
+
   public Trigger intakeHasUnalignedCoralTrigger() {
-    return new Trigger(
-        () -> sensors.getSensorState() != CoralEnum.NO_CORAL && !atSetpoint(kPivotRetractAngle));
+    return new Trigger(() -> intakeHasCoral());
+  }
+
+  public boolean intakeHasCoral() {
+    return sensors.getSensorState() != CoralEnum.NO_CORAL; // && atSetpoint(kPivotRetractAngle);
   }
 
   public Trigger intakeHasCoralTrigger() {
     if (Robot.isSimulation()) return new Trigger(() -> intakeSim.getGamePiecesAmount() > 0);
-    return new Trigger(
-        () -> sensors.getSensorState() != CoralEnum.NO_CORAL && atSetpoint(kPivotRetractAngle));
+    return new Trigger(() -> intakeHasCoral());
   }
 
   // Belt Commands
@@ -274,14 +281,30 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command floorIntake() {
-    return startEnd(
+    return runEnd(
             () -> {
               goToPivotPosition(kPivotExtendAngle);
-              setIntakeMotor(kIntakeSpeed);
+
+              switch (sensors.getSensorState()) {
+                case CORAL_TOO_CLOSE:
+                  setIntakeMotor(kIntakeHandoffSpeed);
+                  setConveyerMotor(kConveyorSpeed);
+                  break;
+                case CORAL_TOO_FAR:
+                  setIntakeMotor(kIntakeHandoffSpeed);
+                  setConveyerMotor(-kConveyorSpeed);
+                  break;
+                default:
+                  setIntakeMotor(kIntakeSpeed);
+                  setConveyerMotor(0);
+                  break;
+              }
+
               if (Robot.isSimulation()) intakeSim.startIntake();
             },
             () -> {
               goToPivotPosition(kPivotRetractAngle);
+              setConveyerMotor(0);
             })
         .withName("floorIntake");
   }
@@ -328,7 +351,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(
             () -> {
               goToPivotPosition(kPivotAlgaeIntakeAngle);
-              setIntakeMotor(kIntakeSpeed);
+              setIntakeMotor(kIntakeAlgaeScoreSpeed);
             },
             () -> {})
         .withName("algaeOuttake");
@@ -357,7 +380,7 @@ public class IntakeSubsystem extends SubsystemBase {
           if (elevatorNotL1.get()) {
             goToPivotPosition(kPivotRetractAngle);
           } else {
-            goToPivotPosition(kPivotCoralStationAngle);
+            goToPivotPosition(kPivotL1StowedAngle);
           }
           setIntakeMotor(0);
           setConveyerMotor(0);
@@ -376,10 +399,21 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Motor Temps
+    Logger.recordOutput(
+        "Motor Temps/Intake Roller Motor", intakeMotor.getDeviceTemp().getValue().in(Fahrenheit));
+    Logger.recordOutput(
+        "Motor Temps/Intake Conveyor Motor",
+        conveyorMotor.getDeviceTemp().getValue().in(Fahrenheit));
+    Logger.recordOutput(
+        "Motor Temps/Pivot Motor", pivotMotor.getDeviceTemp().getValue().in(Fahrenheit));
+
     // Intake Rollers
     Logger.recordOutput("Intake/Rollers/Motor Output", intakeMotor.get());
     Logger.recordOutput(
         "Intake/Rollers/Motor Voltage (Volts)", intakeMotor.getMotorVoltage().getValue().in(Volts));
+    Logger.recordOutput(
+        "Intake/Rollers/Motor Torque Current", intakeMotor.getTorqueCurrent().getValueAsDouble());
 
     // Convayor
     Logger.recordOutput("Intake/Conveyor/Motor Output", conveyorMotor.get());
@@ -402,10 +436,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // States
     Logger.recordOutput("Intake/States/Intake State", intakeState.toString());
-
-    Logger.recordOutput("Intake/Intake Has Coral Trigger", intakeHasCoralTrigger());
-    Logger.recordOutput(
-        "Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoralTrigger());
+    Logger.recordOutput("Intake/Intake Has Coral Trigger", intakeHasCoral());
+    Logger.recordOutput("Intake/Intake Has Unaligned Coral Trigger", intakeHasUnalignedCoral());
 
     // Log TOF Sensors
     for (int i : new int[] {kSensor2ID, kSensor3ID, kSensor4ID}) {

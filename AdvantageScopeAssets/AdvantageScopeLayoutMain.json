@@ -215,22 +215,8 @@
                   },
                   {
                     "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Intake Pose",
-                    "logType": "Pose3d",
-                    "visible": true,
-                    "options": {}
-                  },
-                  {
-                    "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Elv 1 Pose",
-                    "logType": "Pose3d",
-                    "visible": true,
-                    "options": {}
-                  },
-                  {
-                    "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses/Elv 2 Pose",
-                    "logType": "Pose3d",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Mech Poses List",
+                    "logType": "Pose3d[]",
                     "visible": true,
                     "options": {}
                   },
@@ -289,13 +275,6 @@
                       "model": "2025 KitBot",
                       "color": "#00ffff"
                     }
-                  },
-                  {
-                    "type": "axes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Low Camera Pose",
-                    "logType": "Pose3d",
-                    "visible": true,
-                    "options": {}
                   }
                 ],
                 "game": "2025 Field (Welded)",
@@ -435,5 +414,5 @@
     }
   ],
   "satellites": [],
-  "version": "4.1.5"
+  "version": "4.1.6"
 }

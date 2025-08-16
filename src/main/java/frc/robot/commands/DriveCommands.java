@@ -19,10 +19,13 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Seconds;
+import static frc.robot.Constants.DrivetrainConstants.LowGearFactor;
 import static frc.robot.Constants.DrivetrainConstants.kPathConstraints;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.therekrab.autopilot.APTarget;
+import com.therekrab.autopilot.Autopilot.APResult;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -40,8 +43,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.ReefAlignConstants;
+import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
 import java.text.DecimalFormat;
@@ -69,6 +74,54 @@ public class DriveCommands {
     return new DeferredCommand(
             () -> AutoBuilder.pathfindToPose(targetPose, kPathConstraints), drive)
         .withName("Go To Pose");
+  }
+
+  public static Command GoToPoseAutopilot(
+      APTarget targetPose, Supplier<Pose2d> robotPose, Drive drive) {
+    PIDController rotController = ReefAlignConstants.kRotationController;
+    return Commands.sequence(
+        Commands.runOnce(
+            () -> {
+              rotController.setSetpoint(targetPose.getReference().getRotation().getDegrees());
+              rotController.setTolerance(ReefAlignConstants.kSetpointRotTolerance.in(Degrees));
+              rotController.enableContinuousInput(-180, 180);
+            }),
+        Commands.run(
+                () -> {
+                  ChassisSpeeds fieldRelativChassisSpeeds = drive.getFieldRelativeVelocity();
+                  Translation2d velocities =
+                      new Translation2d(
+                          fieldRelativChassisSpeeds.vxMetersPerSecond,
+                          fieldRelativChassisSpeeds.vyMetersPerSecond);
+                  Pose2d pose = drive.getPose();
+
+                  APResult output =
+                      Constants.autopilotConstants.kAutopilot.calculate(
+                          pose, velocities, targetPose);
+
+                  /* these speeds are field relative */
+                  LinearVelocity veloX = output.vx();
+                  LinearVelocity veloY = output.vy();
+                  Rotation2d headingReference = output.targetAngle();
+                  rotController.setSetpoint(headingReference.getDegrees());
+                  double rotValue =
+                      rotController.calculate(robotPose.get().getRotation().getDegrees());
+                  ChassisSpeeds speeds =
+                      new ChassisSpeeds(veloX, veloY, DegreesPerSecond.of(rotValue));
+
+                  // Logging
+                  Logger.recordOutput("Drive/Autopilot/Velocity X", veloX);
+                  Logger.recordOutput("Drive/Autopilot/Velocity Y", veloY);
+                  Logger.recordOutput("Drive/Autopilot/Target Rotation", headingReference);
+                  Logger.recordOutput("Drive/Autopilot/Rotation PID output", rotValue);
+                  Logger.recordOutput("Drive/Autopilot/Chasis Speed", speeds);
+
+                  drive.runVelocity(
+                      ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
+                })
+            .until(
+                () -> Constants.autopilotConstants.kAutopilot.atTarget(drive.getPose(), targetPose))
+            .finallyDo(drive::stop));
   }
 
   public static Command GoToPosePID(Pose2d targetPose, Supplier<Pose2d> robotPose, Drive drive) {
@@ -121,7 +174,10 @@ public class DriveCommands {
                       Logger.recordOutput(
                           "Auto Align/PID/Rot At Setpoint", rotController.atSetpoint());
 
-                      ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rotValue);
+                      ChassisSpeeds speeds =
+                          Robot.isReal()
+                              ? new ChassisSpeeds(xSpeed, ySpeed, rotValue)
+                              : new ChassisSpeeds(xSpeed, ySpeed, -rotValue);
 
                       // Convert to field Relative Speeds
                       drive.runVelocity(
@@ -142,23 +198,28 @@ public class DriveCommands {
       boolean isRightScore, String cameraName, Drive drive, Vision vision) {
     return new DeferredCommand(
             () -> {
-              Pose2d TagPose =
-                  vision
-                      .convertLLPose(LimelightHelpers.getTargetPose3d_RobotSpace(cameraName))
-                      .toPose2d();
-              Pose2d tagPoseRotated =
-                  TagPose.rotateAround(
-                      new Translation2d(), drive.getPose().getRotation().unaryMinus());
-              Pose2d tagPoseFieldRelative =
-                  new Pose2d(
-                      tagPoseRotated.getMeasureX().plus(drive.getPose().getMeasureX()),
-                      tagPoseRotated.getMeasureY().times(-1).plus(drive.getPose().getMeasureY()),
-                      new Rotation2d(
-                          vision
-                              .getTagPose((int) LimelightHelpers.getFiducialID(cameraName))
-                              .getRotation()
-                              .getMeasureZ()));
-              Logger.recordOutput("Auto Align/Tag Pose (RR)", TagPose);
+              Pose2d tagPoseFieldRelative;
+              if (Robot.isReal()) {
+                Pose2d TagPose =
+                    vision
+                        .convertLLPose(LimelightHelpers.getTargetPose3d_RobotSpace(cameraName))
+                        .toPose2d();
+                Pose2d tagPoseRotated =
+                    TagPose.rotateAround(
+                        new Translation2d(), drive.getPose().getRotation().unaryMinus());
+                tagPoseFieldRelative =
+                    new Pose2d(
+                        tagPoseRotated.getMeasureX().plus(drive.getPose().getMeasureX()),
+                        tagPoseRotated.getMeasureY().times(-1).plus(drive.getPose().getMeasureY()),
+                        new Rotation2d(
+                            vision
+                                .getTagPose((int) LimelightHelpers.getFiducialID(cameraName))
+                                .getRotation()
+                                .getMeasureZ()));
+                Logger.recordOutput("Auto Align/Tag Pose (RR)", TagPose);
+              } else {
+                tagPoseFieldRelative = vision.getTagPose(vision.getClosestTagID(0)).toPose2d();
+              }
               Logger.recordOutput("Auto Align/Tag Pose (FF)", tagPoseFieldRelative);
 
               Pose2d TargetOffset =
@@ -178,7 +239,7 @@ public class DriveCommands {
                               .getMeasure()
                               .plus(TargetOffset.getRotation().getMeasure())));
               Logger.recordOutput("Auto Align/Target Pose (FF)", targetPose);
-              return GoToPosePID(targetPose, () -> drive.getPose(), drive);
+              return GoToPoseAutopilot(new APTarget(targetPose), () -> drive.getPose(), drive);
             },
             Set.of(drive))
         .withName("Align To Reef");
@@ -204,15 +265,18 @@ public class DriveCommands {
       Supplier<Double> xSupplier,
       Supplier<Double> ySupplier,
       Supplier<Double> omegaSupplier,
-      Trigger interuptButton) {
+      Trigger interuptButton,
+      Supplier<Boolean> isLowGear) {
     return Commands.run(
             () -> {
               // Get linear velocity
+              double lowGearTransform = (isLowGear.get() ? LowGearFactor : 1);
               Translation2d linearVelocity =
-                  getLinearVelocityFromJoysticks(xSupplier.get(), ySupplier.get());
+                  getLinearVelocityFromJoysticks(
+                      xSupplier.get() * lowGearTransform, ySupplier.get() * lowGearTransform);
 
               // Apply rotation deadband
-              double omega = omegaSupplier.get();
+              double omega = omegaSupplier.get() * lowGearTransform;
 
               // Convert to field relative speeds & send command
               ChassisSpeeds speeds =

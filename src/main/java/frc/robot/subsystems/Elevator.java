@@ -35,7 +35,10 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -67,7 +70,7 @@ public class Elevator extends SubsystemBase {
 
   private CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs();
   private MotorOutputConfigs invertMotor =
-      new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
+      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
   private static Mechanism2d mech = new Mechanism2d(2, 2);
   private DigitalInput elvLimitSwitch;
   private MechanismLigament2d elevatorMech;
@@ -110,6 +113,7 @@ public class Elevator extends SubsystemBase {
     elevatorConfig2 = new TalonFXConfiguration();
     elevatorConfig2.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     elevatorConfig2.CurrentLimits = currentLimit;
+    elevatorConfig2.MotorOutput = invertMotor;
 
     elevatorMotor1.getConfigurator().apply(elevatorConfig1);
     elevatorMotor2.getConfigurator().apply(elevatorConfig2);
@@ -161,11 +165,20 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Elevator/Elv/Setpoint (Rotations)", 0.0);
   }
 
+  private void motorStateLog(String state) {
+    Logger.recordOutput("state", state);
+    new WaitCommand(0.04)
+        .andThen(new InstantCommand(() -> Logger.recordOutput("state", "blank"), new Subsystem[0]))
+        .schedule();
+  }
+
   public void setElvCurrentFOC(double amps) {
+    motorStateLog("Current FOC was set");
     elevatorMotor1.setControl(new TorqueCurrentFOC(amps));
   }
 
   public void setElvVoltage(Voltage voltage) {
+    motorStateLog("Voltage was set");
     elevatorMotor1.setControl(new VoltageOut(voltage));
   }
 
@@ -202,14 +215,14 @@ public class Elevator extends SubsystemBase {
     return Meters.of(elevatorMech.getLength());
   }
 
-  public Trigger elevatorAtSetpoint(Distance setpoint) {
+  public Trigger elevatorAtSetpointTrigger(Distance setpoint) {
     return new Trigger(() -> getElevatorHeight().isNear(setpoint, kSetpointTolerance))
-        .debounce(0.5);
+        .debounce(0.25);
   }
 
-  public Trigger elevatorAtCurrentSetpoint() {
+  public Trigger elevatorAtCurrentSetpointTrigger() {
     return new Trigger(() -> getElevatorHeight().isNear(currentSetpoint, kSetpointTolerance))
-        .debounce(0.5);
+        .debounce(0.25);
   }
 
   private void disableSoftLimits() {
@@ -244,17 +257,23 @@ public class Elevator extends SubsystemBase {
   public Command elevatorUpOrDown(Supplier<Double> upPower) {
     return runEnd(
         () -> {
+          motorStateLog("Percent was set");
           elevatorMotor1.set(upPower.get() * kElvRawOutput);
         },
-        () -> elevatorMotor1.set(0));
+        () -> {
+          motorStateLog("Percent was set");
+          elevatorMotor1.set(0);
+        });
   }
 
   public Command setElvPercent(double percentPower) {
     return runEnd(
         () -> {
+          motorStateLog("Percent was set");
           elevatorMotor1.set(percentPower);
         },
         () -> {
+          motorStateLog("Percent was set");
           elevatorMotor1.set(0);
         });
   }
@@ -275,6 +294,7 @@ public class Elevator extends SubsystemBase {
         () -> {
           // elevatorMotor1.setPosition(ChineseRemander());
           elevatorMotor1.setPosition(0);
+          motorStateLog("Position Set");
         });
   }
 
@@ -291,12 +311,17 @@ public class Elevator extends SubsystemBase {
         () -> {
           Angle adjustedSetpoint = heightToRotations(heightLevel);
           MotionMagicVoltage control = new MotionMagicVoltage(adjustedSetpoint);
-          control.EnableFOC = true;
+          // control.EnableFOC = true;
           elevatorMotor1.setControl(control);
           currentSetpoint = heightLevel;
+          motorStateLog("Motion Magic Voltage was set");
           Logger.recordOutput("Elevator/Elv/Setpoint (Inches)", heightLevel.in(Inches));
           Logger.recordOutput("Elevator/Elv/Setpoint (Rotations)", adjustedSetpoint.in(Rotations));
         });
+  }
+
+  public Trigger elevatorUpTrigger() {
+    return elevatorAtSetpointTrigger(getL0Setpoint()).negate().debounce(0.2);
   }
 
   public Command L0() {
@@ -329,6 +354,11 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Logger.recordOutput(
+        "Motor Temps/Elevator 1", elevatorMotor1.getDeviceTemp().getValue().in(Fahrenheit));
+    Logger.recordOutput(
+        "Motor Temps/Elevator 2", elevatorMotor2.getDeviceTemp().getValue().in(Fahrenheit));
+
     Logger.recordOutput("Elevator/Motor1/Percent Out", elevatorMotor1.get());
     Logger.recordOutput(
         "Elevator/Motor1/Voltage (Volts)", elevatorMotor1.getMotorVoltage().getValue().in(Volts));
@@ -339,9 +369,6 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput(
         "Elevator/Motor1/Stator Current (Amps)",
         elevatorMotor1.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput(
-        "Elevator/Motor1/Temp (Fahrenheit)",
-        elevatorMotor1.getDeviceTemp().getValue().in(Fahrenheit));
 
     Logger.recordOutput("Elevator/Motor2/Percent Out", elevatorMotor2.get());
     Logger.recordOutput(
@@ -359,9 +386,6 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput(
         "Elevator/Motor1/Stall Current (Amps)",
         elevatorMotor2.getMotorStallCurrent().getValueAsDouble());
-    Logger.recordOutput(
-        "Elevator/Motor2/Temp (Fahrenheit)",
-        elevatorMotor2.getDeviceTemp().getValue().in(Fahrenheit));
 
     Logger.recordOutput("Elevator/Elv/Height (Inches)", getElevatorHeight().in(Inches));
     Logger.recordOutput(

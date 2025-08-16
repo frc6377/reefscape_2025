@@ -23,7 +23,7 @@ public class TunerConstants {
   private static final Slot0Configs steerGains =
       new Slot0Configs()
           .withKP(40.20925)
-          .withKD(3.593975)
+          .withKD(0)
           .withKS(0.131719)
           .withKV(2.73735)
           .withKA(0.25078)
@@ -87,7 +87,7 @@ public class TunerConstants {
 
   private static final double kDriveGearRatio = 6.122448979591837;
   private static final double kSteerGearRatio = 21.428571428571427;
-  private static final Distance kWheelRadius = Inches.of(1.880006);
+  private static final Distance kWheelRadius = Inches.of(1.918450);
 
   private static final boolean kInvertLeftSide = false;
   private static final boolean kInvertRightSide = true;

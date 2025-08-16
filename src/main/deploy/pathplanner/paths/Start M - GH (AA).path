@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.998154821642303,
-        "y": 0.6584370810728194
+        "x": 7.1463035549783065,
+        "y": 4.219
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.388495748565016,
-        "y": 1.4403332790125378
+        "x": 6.893847238376485,
+        "y": 4.21946290429032
       },
       "isLocked": false,
-      "linkedName": "Start Right"
+      "linkedName": "Start Middle"
     },
     {
       "anchor": {
-        "x": 5.302171536275998,
-        "y": 3.014711304231577
+        "x": 6.115116856461864,
+        "y": 4.2123150324417376
       },
       "prevControl": {
-        "x": 5.875548421410098,
-        "y": 2.260686590947174
+        "x": 6.365114813834464,
+        "y": 4.211304433843101
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef F"
+      "linkedName": "Reef GH (AA)"
     }
   ],
   "rotationTargets": [],
@@ -33,22 +33,22 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 1.0,
+    "maxAcceleration": 1.0,
     "maxAngularVelocity": 300.0,
-    "maxAngularAcceleration": 1200.0,
+    "maxAngularAcceleration": 2979.381,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -150.0
+    "rotation": -90.0
   },
   "reversed": false,
   "folder": "Start - Score",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -135.0
+    "rotation": -90.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

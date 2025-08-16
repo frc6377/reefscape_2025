@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.998301339989034,
-        "y": 7.393040109411476
+        "x": 8.0,
+        "y": 6.35
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.119967285718838,
-        "y": 5.429380594704612
+        "x": 7.264549180327867,
+        "y": 6.320645491803279
       },
       "isLocked": false,
-      "linkedName": "Start Left"
+      "linkedName": "5m Test Start"
     },
     {
       "anchor": {
-        "x": 4.9693200361876535,
-        "y": 5.259177603534518
+        "x": 6.0,
+        "y": 6.35
       },
       "prevControl": {
-        "x": 6.6283773444457665,
-        "y": 7.011059743974065
+        "x": 7.000819672131148,
+        "y": 6.308657786885245
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef J"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -29.999999999999996
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Start - Score",
+  "folder": "Testing",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -45.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

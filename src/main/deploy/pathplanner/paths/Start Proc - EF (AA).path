@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.998301339989034,
-        "y": 7.393040109411476
+        "x": 7.75,
+        "y": 1.901126230910006
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.5889541512205305,
-        "y": 6.489145493542426
+        "x": 7.0097690088332785,
+        "y": 2.1671076097741455
       },
       "isLocked": false,
-      "linkedName": "Start Left"
+      "linkedName": "Start Mid Right"
     },
     {
       "anchor": {
-        "x": 5.117265206113934,
-        "y": 5.137871412388509
+        "x": 5.505933933954262,
+        "y": 2.709393400665265
       },
       "prevControl": {
-        "x": 5.703673982184605,
-        "y": 5.839035897561523
+        "x": 5.94009502015516,
+        "y": 2.5533692756610185
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef IJ (L1)"
+      "linkedName": "Reef EF (AA)"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": -150.0
   },
   "reversed": false,
   "folder": "Start - Score",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -45.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

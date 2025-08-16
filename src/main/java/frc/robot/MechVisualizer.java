@@ -45,13 +45,14 @@ public class MechVisualizer {
         newRotation = new Rotation3d(value, oldRotation.getMeasureY(), oldRotation.getMeasureZ());
         break;
       case Y:
-        newRotation = new Rotation3d(Degrees.zero(), value, Degrees.zero());
+        newRotation = new Rotation3d(oldRotation.getMeasureX(), value, oldRotation.getMeasureZ());
         break;
       case Z:
         newRotation = new Rotation3d(oldRotation.getMeasureX(), oldRotation.getMeasureY(), value);
         break;
       default:
         newRotation = oldRotation;
+        break;
     }
 
     mechPoses[index] = new Pose3d(mechPoses[index].getTranslation(), newRotation);
@@ -77,6 +78,7 @@ public class MechVisualizer {
         break;
       default:
         newTranslation = oldPose.getTranslation();
+        break;
     }
 
     mechPoses[index] = new Pose3d(newTranslation, oldPose.getRotation());

@@ -69,12 +69,11 @@ public class OI extends OI_Utils {
     public static final Control DPAD_LEFT = new Control(270, "", controller);
 
     // Control Curves
-    private static final ControlCurve xTranslationCurve = new ControlCurve(1, 0, 0.8, 0.1, true);
-    private static final ControlCurve yTranslationCurve = new ControlCurve(1, 0, 0.8, 0.1, true);
-    public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 1, 0.1);
-    public static final ControlCurve rotationCurve = new ControlCurve(1, 0, 0.8, 0.15, true);
-    public static final ControlCurve elevatorCurve = new ControlCurve(1, 0, 0, 0.1, true);
-    public static final ControlCurve scorerCurve = new ControlCurve(1, 0, 0, 0.1, true);
+    private static final ControlCurve xTranslationCurve = new ControlCurve(0.75, 1, 0.1, true);
+    private static final ControlCurve yTranslationCurve = new ControlCurve(0.75, 1, 0.1, true);
+    public static final ControlCurve rotationCurve = new ControlCurve(0.75, 2, 0.15, true);
+    public static final ControlCurve elevatorCurve = new ControlCurve(1, 0, 0.1, true);
+    public static final ControlCurve scorerCurve = new ControlCurve(1, 0, 0.1, true);
 
     // Joystick Axes
     public static final Control LeftX =
@@ -107,7 +106,7 @@ public class OI extends OI_Utils {
     public static final Control Y = new Control(XboxController.Button.kY, null, controller);
 
     // Trigger Cruve
-    public static final ControlCurve TriggerCurve = new ControlCurve(1, 0, 0, 0.1);
+    public static final ControlCurve TriggerCurve = new ControlCurve(1, 0, 0.1);
 
     // Bumpers & Triggers
     public static final Control LTrigger =
@@ -141,10 +140,10 @@ public class OI extends OI_Utils {
     public static final Control DPAD_LEFT = new Control(270, "", controller);
 
     // Control Curves
-    private static final ControlCurve xTranslationCurve = new ControlCurve(0.75, 0, 0.5, 0.0);
-    private static final ControlCurve yTranslationCurve = new ControlCurve(0.75, 0, 0.5, 0.0);
-    public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 1, 0.0);
-    public static final ControlCurve rotationCurve = new ControlCurve(0.8, 0, 0.5, 0.0, true);
+    private static final ControlCurve xTranslationCurve = new ControlCurve(0.75, 0, 1);
+    private static final ControlCurve yTranslationCurve = new ControlCurve(0.75, 0, 1);
+    public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 2);
+    public static final ControlCurve rotationCurve = new ControlCurve(0.8, 1, 0.0, true);
 
     // Joystick Axes
     public static final Control LeftX =
@@ -166,9 +165,9 @@ public class OI extends OI_Utils {
     private static final XboxController keyboard2 = new XboxController(1);
     private static final XboxController keyboard3 = new XboxController(2);
 
-    private static final ControlCurve defualtCurve = new ControlCurve(-1, 0, 0, 0);
-    private static final ControlCurve TranslationCurveX = new ControlCurve(-1, 0, 0, 0);
-    private static final ControlCurve TranslationCurveY = new ControlCurve(-1, 0, 0, 0);
+    private static final ControlCurve defualtCurve = new ControlCurve(-1, 0, 0);
+    private static final ControlCurve TranslationCurveX = new ControlCurve(-1, 0, 0);
+    private static final ControlCurve TranslationCurveY = new ControlCurve(-1, 0, 0);
 
     public static final Control Z = new Control(1, null, null, keyboard1, ControlType.BUTTON);
     public static final Control X = new Control(2, null, null, keyboard1, ControlType.BUTTON);
@@ -199,7 +198,7 @@ public class OI extends OI_Utils {
     public static final XboxController streamDeck1 = new XboxController(2);
     public static final XboxController streamDeck2 = new XboxController(3);
 
-    public static final ControlCurve nobCurve = new ControlCurve(1, 0, 0, 0);
+    public static final ControlCurve nobCurve = new ControlCurve(1, 0, 0);
 
     public static final Control Nob1 =
         new Control(XboxController.Axis.kLeftX, null, streamDeck1, nobCurve);
