@@ -581,8 +581,10 @@ public class RobotContainer {
 
     // // Update Elevator
     Distance elevatorHeight = elevator.getElevatorHeight();
-    mechVisualizer.updateIndexTranslation(1, Axis.Z, DrivetrainConstants.kMechPoses[1].getMeasureZ().plus(elevatorHeight.div(2)));
-    mechVisualizer.updateIndexTranslation(2, Axis.Z, DrivetrainConstants.kMechPoses[1].getMeasureZ().plus(elevatorHeight));
+    mechVisualizer.updateIndexTranslation(
+        1, Axis.Z, DrivetrainConstants.kMechPoses[1].getMeasureZ().plus(elevatorHeight.div(2)));
+    mechVisualizer.updateIndexTranslation(
+        2, Axis.Z, DrivetrainConstants.kMechPoses[1].getMeasureZ().plus(elevatorHeight));
 
     // // Update Climber
     mechVisualizer.updateIndexRotation(3, Axis.Y, climber.getFrontArmAngle());
