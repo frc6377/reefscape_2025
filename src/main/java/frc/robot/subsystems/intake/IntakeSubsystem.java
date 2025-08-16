@@ -300,7 +300,24 @@ public class IntakeSubsystem extends SubsystemBase {
                   break;
               }
 
-              if (Robot.isSimulation()) intakeSim.startIntake();
+              if (Robot.isSimulation()) {
+                intakeSim.startIntake();
+              } else {
+                switch (sensors.getSensorState()) {
+                  case CORAL_TOO_CLOSE:
+                    setIntakeMotor(kIntakeHandoffSpeed);
+                    setConveyerMotor(kConveyorSpeed);
+                    break;
+                  case CORAL_TOO_FAR:
+                    setIntakeMotor(kIntakeHandoffSpeed);
+                    setConveyerMotor(-kConveyorSpeed);
+                    break;
+                  default:
+                    setIntakeMotor(kIntakeSpeed);
+                    setConveyerMotor(0);
+                    break;
+                }
+              }
             },
             () -> {
               goToPivotPosition(kPivotRetractAngle);
@@ -317,6 +334,12 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command humanPlayerIntake() {
+    if (Robot.isSimulation()) {
+      return run(() -> {
+            intakeSim.startIntake();
+          })
+          .until(intakeHasCoralTrigger());
+    }
     return startEnd(
             () -> {
               goToPivotPosition(kPivotCoralStationAngle);
