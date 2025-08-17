@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
@@ -251,59 +250,6 @@ public final class Constants {
     public static final Distance kIntakeWidth = Meters.of(0.470);
     public static final Distance kIntakeExtension = Meters.of(0.191);
     public static final int kIntakeCapacity = 1;
-  }
-
-  // Elevator Constants
-  public static class ElevatorConstants {
-    public static final Distance kL0Height = Inches.of(0.5);
-    public static final Distance kL2Height = Inches.of(18);
-    public static final Distance kL3Height = Inches.of(30.9);
-    public static final Distance kL4Height = Inches.of(54);
-
-    public static final HowdyPID kElevatorPID = new HowdyPID();
-
-    static {
-      kElevatorPID.setKP(2);
-      kElevatorPID.setKI(0.08);
-      kElevatorPID.setKD(0.02);
-      kElevatorPID.setKS(0.5);
-      kElevatorPID.setStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
-    }
-
-    public static final HowdyMM kElevatorMM =
-        new HowdyMM(RotationsPerSecond.of(200), RotationsPerSecondPerSecond.of(250));
-
-    public static final Distance kSetpointTolerance = Inches.of(1.25);
-
-    // Mech Constants
-    public static final Distance kElevatorDrumRadius = Inches.of(0.375);
-    public static final Distance kElevatorDrumCircumference =
-        kElevatorDrumRadius.times(2 * Math.PI);
-    public static final double kElvRawOutput = .10;
-    public static final double kElevatorGearing = 3;
-    public static final int kGearToothing1 = 3;
-    public static final int kGearToothing2 = 11;
-
-    public static final Distance kBottomLimit = Inches.of(0);
-    public static final Distance kTopLimit = Inches.of(75);
-
-    // Gear for CRT offsets
-    // TODO: get actual offset values
-    public static final double kGearOffset1 = 0.0;
-    public static final double kGearOffset2 = 0.0;
-
-    // CRTA - Chinese Remainder Theorem Array
-    public static int[][] CRTA = {
-      {0, 12, 24, 3, 15, 27, 6, 18, 30, 9, 21},
-      {22, 1, 13, 25, 4, 16, 28, 7, 19, 31, 10},
-      {11, 23, 2, 14, 26, 5, 17, 29, 8, 20, 32}
-    };
-
-    // Simulation Constants
-    public static final DCMotor kElevatorGearbox = DCMotor.getKrakenX60(2);
-    public static final Mass kCarriageMass = Pounds.of(4.75);
-    public static final Distance kMinElevatorHeight = Inches.zero();
-    public static final Distance kMaxElevatorHeight = Inches.of(72);
   }
 
   // Algea Remover Constants

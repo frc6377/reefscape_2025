@@ -41,7 +41,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FeildConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.CoralEnum;
@@ -51,7 +50,6 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralScorer;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MapleSimArenaSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -60,6 +58,8 @@ import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
 import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.LocateCoral;
 import frc.robot.subsystems.signaling.Signaling;
@@ -360,7 +360,7 @@ public class RobotContainer {
             OI.getButton(OI.Driver.RSB),
             () ->
                 elevator.getElevatorHeight().in(Inches)
-                    > Constants.ElevatorConstants.kL2Height.in(Inches) + 5));
+                    > ElevatorConstants.kL2Height.in(Inches) + 5));
     OI.getButton(OI.Driver.Back)
         .onTrue(
             Robot.isReal()
