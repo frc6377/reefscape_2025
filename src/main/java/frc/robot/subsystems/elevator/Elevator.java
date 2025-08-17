@@ -110,12 +110,8 @@ public class Elevator extends SubsystemBase {
     // Simulation
     if (Robot.isSimulation()) {
       // testing
-      var test1 =
-          new ElevatorIOTalonFXReal(
-              100, 101, Constants.RIOName);
-      var test2 =
-          new ElevatorIOTalonFXSim(
-            100, 101, Constants.RIOName);
+      var test1 = new ElevatorIOTalonFXReal(100, 101, Constants.RIOName);
+      var test2 = new ElevatorIOTalonFXSim(100, 101, Constants.RIOName);
 
       simElvMotor1 = elevatorMotor1.getSimState();
       simElvMotor1.Orientation = ChassisReference.CounterClockwise_Positive;
