@@ -55,7 +55,7 @@ public class AlgeaRemover extends SubsystemBase {
   private static final SparkMaxConfig algaeMotorConfig = new SparkMaxConfig();
 
   public AlgeaRemover() {
-    algeaMotor = new SparkMax(Constants.CANIDs.kAlgeaMotor, MotorType.kBrushless);
+    algeaMotor = new SparkMax(Constants.CANIDs.kAlgaeMotor, MotorType.kBrushless);
     algaeMotorConfig.smartCurrentLimit(20);
     algaeMotorConfig.apply(algeaCfg);
     algaeMotorConfig.inverted(true);
@@ -63,7 +63,7 @@ public class AlgeaRemover extends SubsystemBase {
         algaeMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     algeaEncoder =
         new DutyCycleEncoder(
-            DIOConstants.kAlgeaEncoderID, 1, AlgeaRemoverConstants.kEncoderOffset.in(Rotations));
+            DIOConstants.kAlgaeEncoderID, 1, AlgeaRemoverConstants.kEncoderOffset.in(Rotations));
     if (Robot.isSimulation()) {
       simAlgeaMotor = new SparkMaxSim(algeaMotor, AlgeaRemoverConstants.kAlgeaGearbox);
       algeaSim =

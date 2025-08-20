@@ -28,7 +28,9 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.HashMap;
+import java.util.function.Supplier;
 import utilities.HowdyMM;
 import utilities.HowdyPID;
 
@@ -78,14 +80,14 @@ public final class Constants {
     public static final int kScorerMotor = 15;
     public static final int kClimberMotorBack = 16;
     public static final int kClimberMotorFront = 17;
-    public static final int kAlgeaMotor = 18;
+    public static final int kAlgaeMotor = 18;
     public static final int kCANdle = 19;
   }
 
   public static class DIOConstants {
     public static final int elvLimitID = 0;
     public static final int kIntakePivotEncoderID = 1;
-    public static final int kAlgeaEncoderID = 2;
+    public static final int kAlgaeEncoderID = 2;
     public static final int kClimberFrontEncoderID = 3;
     public static final int kClimberBackEncoderID = 4;
     public static final int kGearID1 = 13;
@@ -103,6 +105,54 @@ public final class Constants {
     public static final int kSensor3ID = 3;
     public static final int kSensor4ID = 4;
     public static final int kAlignmentSensorID = 5;
+  }
+
+  public static class Controls {
+    // Drive Base
+    public static final Supplier<Double> kDriveX =
+        Robot.isReal() ? OI.Driver.LeftX.getAxisSupplier() : OI.Keyboard.AD.getAxisSupplier();
+    public static final Supplier<Double> kDriveY =
+        Robot.isReal() ? OI.Driver.LeftY.getAxisSupplier() : OI.Keyboard.WS.getAxisSupplier();
+    public static final Supplier<Double> kDriveRot =
+        Robot.isReal() ? OI.Driver.RightX.getAxisSupplier() : OI.Keyboard.ArrowLR.getAxisSupplier();
+    public static final Trigger kDriveZeroButton = OI.Driver.Back.getButton();
+    public static final Trigger kAARight =
+        Robot.isReal() ? OI.Driver.RBumper.getButton() : OI.Keyboard.M.getButton();
+    public static final Trigger kAALeft = OI.Driver.LBumper.getButton();
+
+    // Elevator
+    public static final Trigger kL0Button =
+        Robot.isReal() ? OI.Driver.POV180.getButton() : OI.Keyboard.Z.getButton();
+    public static final Trigger kL2Button =
+        Robot.isReal() ? OI.Driver.POV90.getButton() : OI.Keyboard.X.getButton();
+    public static final Trigger kL3Button =
+        Robot.isReal() ? OI.Driver.POV270.getButton() : OI.Keyboard.C.getButton();
+    public static final Trigger kL4Button =
+        Robot.isReal() ? OI.Driver.POV0.getButton() : OI.Keyboard.V.getButton();
+    public static final Trigger kElevatorZeroButton = OI.Driver.Start.getButton();
+
+    // Intake
+    public static final Trigger kIntakeButton =
+        Robot.isReal() ? OI.Driver.RTrigger.getButton() : OI.Keyboard.ForwardSlash.getButton();
+    public static final Trigger kOuttakeButton = OI.Driver.X.getButton();
+    public static final Trigger kAlgaeOuttakeButton = OI.Driver.LTrigger.getButton();
+
+    // Scorer
+    public static final Supplier<Double> kScorerTriggerInput =
+        OI.Driver.LScoreTrigger.getAxisSupplier();
+    public static final Trigger kScoreButton =
+        Robot.isReal() ? OI.Driver.LTrigger.getButton() : OI.Keyboard.Period.getButton();
+    public static final Trigger kScorerReverseButton = OI.Driver.B.getButton();
+
+    // Mode Changes
+    public static final Trigger kL1ModeButton = OI.Operator.Y.getButton();
+    public static final Trigger kAlgaeModeButton = OI.Operator.X.getButton();
+    public static final Trigger kCoralStationModeButton = OI.Operator.B.getButton();
+
+    // Climber Buttons
+    public static final Trigger kClimberRetractButton = OI.Operator.DPAD_UP.getButton();
+    public static final Trigger kClimberExtendButton = OI.Operator.DPAD_LEFT.getButton();
+    public static final Trigger kClimberClimbButton = OI.Operator.DPAD_DOWN.getButton();
   }
 
   public static class ClimberConstants {
@@ -370,7 +420,7 @@ public final class Constants {
     public static final Time kAutonTimeOut = Seconds.of(2);
   }
 
-  public final class FeildConstants {
+  public final class FieldConstants {
     public static final Distance kFieldWidth = Inches.of(317);
     public static final Distance kFieldLength = Inches.of(690 + (7 / 8));
   }

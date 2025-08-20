@@ -137,7 +137,6 @@ public class Robot extends LoggedRobot {
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
 
-    // robotContainer.updateMechVisualizer();
     double newTime = Timer.getFPGATimestamp() * 1000;
     Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
     lastTime = newTime;

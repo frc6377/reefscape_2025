@@ -1,18 +1,20 @@
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Fahrenheit;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -32,13 +34,19 @@ public abstract class ElevatorIOTalonFX implements ElevatorIO {
 
   protected final VoltageOut voltageRequest = new VoltageOut(0);
   protected final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0);
+  protected final SoftwareLimitSwitchConfigs elvSoftLimit =
+      new SoftwareLimitSwitchConfigs()
+          .withForwardSoftLimitEnable(true)
+          .withForwardSoftLimitThreshold(heightToRotations(ElevatorConstants.kTopLimit))
+          .withReverseSoftLimitEnable(true)
+          .withReverseSoftLimitThreshold(heightToRotations(ElevatorConstants.kBottomLimit));
 
   // Torque-current control requests
   protected final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(0);
   protected final PositionTorqueCurrentFOC positionTorqueCurrentRequest =
       new PositionTorqueCurrentFOC(0.0);
-  protected final VelocityTorqueCurrentFOC velocityTorqueCurrentRequest =
-      new VelocityTorqueCurrentFOC(0.0);
+  protected final MotionMagicVoltage motionMagicVoltageRequest =
+      new MotionMagicVoltage(heightToRotations(ElevatorConstants.kL0Height));
 
   // Inputs from motor 1
   protected final StatusSignal<Angle> motorPosition1;
@@ -62,6 +70,7 @@ public abstract class ElevatorIOTalonFX implements ElevatorIO {
 
     voltageRequest.EnableFOC = true;
     positionVoltageRequest.EnableFOC = true;
+    motionMagicVoltageRequest.EnableFOC = true;
 
     var currentLimit = new CurrentLimitsConfigs();
     currentLimit.StatorCurrentLimit = 90;
@@ -75,7 +84,7 @@ public abstract class ElevatorIOTalonFX implements ElevatorIO {
     motorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.Slot0 = ElevatorConstants.kElevatorSlot0Configs;
-    motorConfig.SoftwareLimitSwitch = ElevatorConstants.elvSoftLimit;
+    motorConfig.SoftwareLimitSwitch = elvSoftLimit;
     motorConfig.CurrentLimits = currentLimit;
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     motorConfig.MotionMagic = ElevatorConstants.kElevatorMotionMagicConfigs;
@@ -124,6 +133,7 @@ public abstract class ElevatorIOTalonFX implements ElevatorIO {
     inputs.motor1VelocityMetersPerSec = motorVelocity1.getValue();
     inputs.motor1AppliedVolts = motorAppliedVolts1.getValue().in(Volts);
     inputs.motor1CurrentAmps = motorCurren1.getValue().in(Amps);
+    inputs.motor1TemperatureF = motor1.getDeviceTemp().getValue().in(Fahrenheit);
 
     // Update motor 2 inputs
     inputs.motor2Connected = motorConnectedDebounce2.calculate(motorStatus2.isOK());
@@ -131,6 +141,22 @@ public abstract class ElevatorIOTalonFX implements ElevatorIO {
     inputs.motor2VelocityMetersPerSec = motorVelocity2.getValue();
     inputs.motor2AppliedVolts = motorAppliedVolts2.getValue().in(Volts);
     inputs.motor2CurrentAmps = motorCurren2.getValue().in(Amps);
+    inputs.motor2TemperatureF = motor2.getDeviceTemp().getValue().in(Fahrenheit);
+
+    // Update elevator height
+    inputs.elevatorHeight = rotationsToHeight(motorPosition1.getValue());
+    inputs.elevatorHeightSetpoint =
+        rotationsToHeight(motionMagicVoltageRequest.getPositionMeasure());
+  }
+
+  @Override
+  public Distance getElvHeight() {
+    return rotationsToHeight(motorPosition1.getValue());
+  }
+
+  @Override
+  public Distance getElvHeightSetpoint() {
+    return rotationsToHeight(motionMagicVoltageRequest.getPositionMeasure());
   }
 
   @Override
@@ -141,6 +167,28 @@ public abstract class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void goToHeight(Distance heightMeters) {
-    // Implementation for moving to a specific height using the Talon FX motor controller
+    Angle adjustedSetpoint = heightToRotations(heightMeters);
+    motor1.setControl(motionMagicVoltageRequest.withPosition(adjustedSetpoint));
+  }
+
+  @Override
+  public void zeroMotorEncoder() {
+    motor1.setPosition(0);
+  }
+
+  @Override
+  public void disableSoftLimits() {
+    var noElvSoftLimit =
+        new SoftwareLimitSwitchConfigs()
+            .withForwardSoftLimitEnable(false)
+            .withReverseSoftLimitEnable(false);
+    motor1.getConfigurator().apply(noElvSoftLimit);
+    motor2.getConfigurator().apply(noElvSoftLimit);
+  }
+
+  @Override
+  public void enableSoftLimits() {
+    motor1.getConfigurator().apply(elvSoftLimit);
+    motor2.getConfigurator().apply(elvSoftLimit);
   }
 }

@@ -7,7 +7,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Distance;
@@ -49,11 +48,4 @@ public final class ElevatorConstants {
   public static final Mass kCarriageMass = Pounds.of(4.75);
   public static final Distance kMinElevatorHeight = Inches.zero();
   public static final Distance kMaxElevatorHeight = Inches.of(72);
-
-  public static final SoftwareLimitSwitchConfigs elvSoftLimit =
-      new SoftwareLimitSwitchConfigs()
-          .withForwardSoftLimitEnable(true)
-          .withForwardSoftLimitThreshold(ElevatorIO.heightToRotations(kTopLimit))
-          .withReverseSoftLimitEnable(true)
-          .withReverseSoftLimitThreshold(ElevatorIO.heightToRotations(kBottomLimit));
 }
