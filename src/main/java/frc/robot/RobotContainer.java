@@ -577,7 +577,7 @@ public class RobotContainer {
     if (Robot.isSimulation()) {
       return intake
           .humanPlayerIntake()
-          .until(intake.pivotAtSetpoint(IntakeConstants.kPivotCoralStationAngle))
+          //   .until(intake.pivotAtSetpoint(IntakeConstants.kPivotCoralStationAngle))
           //   .andThen(() -> intake.addGamePieceToIntakeSim())
           .asProxy();
     } else {

@@ -248,7 +248,7 @@ public final class Constants {
             SingleJointedArmSim.estimateMOI(kPivotLength.in(Meters), kPivotMass.in(Kilograms)));
 
     // For maplesim Intake
-    public static final Distance kIntakeWidth = Meters.of(0.470);
+    public static final Distance kIntakeWidth = Meters.of(0.940);
     public static final Distance kIntakeExtension = Meters.of(0.191);
     public static final int kIntakeCapacity = 1;
   }
@@ -367,7 +367,10 @@ public final class Constants {
         new Pose3d[] {
           // Intake
           new Pose3d(
-              Meters.of(0.195051), Meters.of(0.091696), Meters.of(0.241039), new Rotation3d()),
+              Meters.of(0.195051),
+              Meters.of(0.091696),
+              Meters.of(0.241039),
+              new Rotation3d(0, 0, 0)),
           // Elevator
           new Pose3d(
               Meters.of(-0.0635), Meters.of(-0.236448), Meters.of(0.117475), new Rotation3d()),
