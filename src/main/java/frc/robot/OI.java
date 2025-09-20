@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import utilities.OI_Utils;
 import utilities.OI_Utils.Control.ControlType;
 
@@ -14,6 +16,8 @@ public class OI extends OI_Utils {
 
   public static final class Driver {
     public static final XboxController controller = new XboxController(driverJoystickPort);
+    public static final Trigger kA = new JoystickButton(controller, XboxController.Button.kA.value);
+
     // A B Y X Buttons
     public static final Control A =
         new Control(XboxController.Button.kA, "The elevator moves L2.", controller);

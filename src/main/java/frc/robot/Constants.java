@@ -49,6 +49,7 @@ import utilities.HowdyPID;
 
 public final class Constants {
   // Robot Mode
+  public static final boolean tuningMode = true;
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = Robot.isReal() ? Mode.REAL : simMode;
 
