@@ -57,10 +57,10 @@ public class OI extends OI_Utils {
         new Control(180, "The robot switches to drive mode.", controller);
     public static final Control POV270 = new Control(270, "The elevator goes down.", controller);
 
-    private static final ControlCurve xTranslationCurve = new ControlCurve(1, 0, 1, 0.01);
-    private static final ControlCurve yTranslationCurve = new ControlCurve(1, 0, 1, 0.01);
-    public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 1, 0.01);
-    public static final ControlCurve rotationCurve = new ControlCurve(1, 0, 1, 0.01, true);
+    private static final ControlCurve xTranslationCurve = new ControlCurve(1, 0, 1, 0.1, true);
+    private static final ControlCurve yTranslationCurve = new ControlCurve(1, 0, 1, 0.1, true);
+    public static final ControlCurve translationMagnitudeCurve = new ControlCurve(1, 0, 1, 0.1);
+    public static final ControlCurve rotationCurve = new ControlCurve(1, 0, 1, 0.1, true);
     // Joystick Axes
     public static final Control LeftX =
         new Control(XboxController.Axis.kLeftX, "", controller, xTranslationCurve);

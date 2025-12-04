@@ -10,16 +10,20 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
   private double MaxSpeed =
@@ -31,11 +35,13 @@ public class RobotContainer {
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
           .withDriveRequestType(
-              DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+              DriveRequestType.Velocity); // Use open-loop control for drive motors
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
+
+  private LoggedDashboardChooser autoChooser;
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final Elevator elevator = new Elevator();
@@ -51,6 +57,27 @@ public class RobotContainer {
   }
 
   public RobotContainer() {
+    autoChooser = new LoggedDashboardChooser<>("Auto Chooser", new SendableChooser<Command>());
+
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)", drivetrain.DriveQuasistaticForward());
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Backward)", drivetrain.DriveQuasistaticBackward());
+    autoChooser.addOption("Drive SysId (Dynamic Forward)", drivetrain.DriveDynamicForward());
+    autoChooser.addOption("Drive SysId (Dynamic Backward)", drivetrain.DriveDynamicBackward());
+
+    autoChooser.addOption(
+        "Turn SysId",
+        new SequentialCommandGroup(
+            drivetrain.TurnSysIdQuasistatic(SysIdRoutine.Direction.kForward).withTimeout(20),
+            Commands.waitSeconds(0.5),
+            drivetrain.TurnSysIdQuasistatic(SysIdRoutine.Direction.kReverse).withTimeout(20),
+            Commands.waitSeconds(0.5),
+            drivetrain.TurnSysIdDynamic(SysIdRoutine.Direction.kForward).withTimeout(20),
+            Commands.waitSeconds(0.5),
+            drivetrain.TurnSysIdDynamic(SysIdRoutine.Direction.kReverse).withTimeout(20),
+            Commands.waitSeconds(0.5)));
+
     configureBindings();
   }
 
@@ -132,5 +159,7 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
+    //     return autoChooser.get();
+
   }
 }

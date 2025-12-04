@@ -188,6 +188,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return m_sysIdRoutineToApply.quasistatic(direction);
   }
 
+  public Command TurnSysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutineSteer.quasistatic(direction);
+  }
+
   /**
    * Runs the SysId Dynamic test in the given direction for the routine specified by {@link
    * #m_sysIdRoutineToApply}.
@@ -197,6 +201,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutineToApply.dynamic(direction);
+  }
+
+  public Command TurnSysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutineSteer.dynamic(direction);
+  }
+
+  public Command DriveQuasistaticForward() {
+    return sysIdQuasistatic(SysIdRoutine.Direction.kForward);
+  }
+
+  public Command DriveQuasistaticBackward() {
+    return sysIdQuasistatic(SysIdRoutine.Direction.kReverse);
+  }
+
+  public Command DriveDynamicForward() {
+    return sysIdQuasistatic(SysIdRoutine.Direction.kForward);
+  }
+
+  public Command DriveDynamicBackward() {
+    return sysIdQuasistatic(SysIdRoutine.Direction.kReverse);
   }
 
   @Override

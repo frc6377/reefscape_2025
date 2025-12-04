@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Seconds;
 
+import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -67,6 +68,9 @@ public class Robot extends LoggedRobot {
 
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
     // be added.
+
+    SignalLogger.setPath("media/sda1/SysID_Logs/");
+    SignalLogger.start();
     m_robotContainer = new RobotContainer();
   }
 
