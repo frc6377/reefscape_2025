@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
@@ -53,7 +54,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
               Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
               null, // Use default timeout (10 s)
               // Log state with SignalLogger class
-              state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
+              (state) -> {
+                SignalLogger.writeString("SysIdTranslation_State", state.toString());
+                Logger.recordOutput("Odometry/SysId Mode/Turn SysId", state.toString());
+              }),
           new SysIdRoutine.Mechanism(
               output -> setControl(m_translationCharacterization.withVolts(output)), null, this));
 
@@ -62,7 +66,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       new SysIdRoutine(
           new SysIdRoutine.Config(
               null, // Use default ramp rate (1 V/s)
-              Volts.of(7), // Use dynamic voltage of 7 V
+              null, // Use dynamic voltage of 7 V
               null, // Use default timeout (10 s)
               // Log state with SignalLogger class
               state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
@@ -232,6 +236,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * Otherwise, only check and apply the operator perspective if the DS is disabled.
      * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
      */
+
+    Logger.recordOutput("Swerve/ModuleStates", this.getState().ModuleStates);
+    Logger.recordOutput("Swerve/TargetModuleStates", this.getState().ModuleTargets);
+
     if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
       DriverStation.getAlliance()
           .ifPresent(
