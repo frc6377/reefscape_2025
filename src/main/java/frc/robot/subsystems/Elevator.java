@@ -18,6 +18,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.revrobotics.spark.config.SmartMotionConfig;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -45,6 +47,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.CANIDs;
 import frc.robot.Constants.DIOConstants;
 import frc.robot.Constants.ElevatorConstants;
+import yams.motorcontrollers.SmartMotorControllerConfig;
 import frc.robot.Robot;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -54,7 +57,7 @@ public class Elevator extends SubsystemBase {
   private TalonFXSimState simElvMotor1;
   private TalonFX elevatorMotor2;
 
-  private TalonFXConfiguration elevatorConfig1;
+  private SmartMotorControllerConfig elevatorConfig1;
   private TalonFXConfiguration elevatorConfig2;
 
   private DutyCycleEncoder gear3;
@@ -94,17 +97,24 @@ public class Elevator extends SubsystemBase {
     elevatorMotor1 = new TalonFX(CANIDs.kElevatorMotor1, Constants.RIOName);
     elevatorMotor2 = new TalonFX(CANIDs.kElevatorMotor2, Constants.RIOName);
 
-    currentLimit.StatorCurrentLimit = 90;
-    currentLimit.SupplyCurrentLimit = 70;
+    //currentLimit.StatorCurrentLimit = 90;
+    //currentLimit.SupplyCurrentLimit = 70;
     currentLimit.SupplyCurrentLowerLimit = 40;
     currentLimit.SupplyCurrentLowerTime = 1;
     currentLimit.StatorCurrentLimitEnable = true;
     currentLimit.SupplyCurrentLimitEnable = true;
 
-    elevatorConfig1 = new TalonFXConfiguration();
-    elevatorConfig1.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
-    elevatorConfig1.Slot0 = ElevatorConstants.kElevatorPID.getSlot0Configs();
-    ElevatorConstants.kElevatorPID.createTunableNumbers("Elevator PID", this);
+    elevatorConfig1 = new SmartMotorControllerConfig(this)
+        .withStatorCurrentLimit(Amps.of(90))
+        .withClosedLoopRampRate(Seconds.of(0.02))
+        .withClosedLoopController(ElevatorConstants.kElevatorPID.getSlot0Configs().kP,ElevatorConstants.kElevatorPID.getSlot0Configs().kI,ElevatorConstants.kElevatorPID.getSlot0Configs().kD)
+        .withSupplyCurrentLimit(Amps.of(70))
+        
+
+
+    //elevatorConfig1.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+    //elevatorConfig1.Slot0 = ElevatorConstants.kElevatorPID.getSlot0Configs();
+    //ElevatorConstants.kElevatorPID.createTunableNumbers("Elevator PID", this);
     elevatorConfig1.SoftwareLimitSwitch = elvSoftLimit;
     elevatorConfig1.CurrentLimits = currentLimit;
     elevatorConfig1.MotorOutput = invertMotor;
