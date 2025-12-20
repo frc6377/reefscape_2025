@@ -54,8 +54,6 @@ public class Robot extends LoggedRobot {
   private RobotContainer robotContainer;
   private HowdyTempWarning howdyTempWarning;
 
-  private double lastTime = Timer.getFPGATimestamp() * 1000;
-
   public Robot() {
     // For TOF Sensor
     CanBridge.runTCP();
@@ -74,7 +72,7 @@ public class Robot extends LoggedRobot {
         Logger.recordMetadata("GitDirty", "All changes committed");
         break;
       case 1:
-        Logger.recordMetadata("GitDirty", "Uncomitted changes");
+        Logger.recordMetadata("GitDirty", "Uncommitted changes");
         break;
       default:
         Logger.recordMetadata("GitDirty", "Unknown");
@@ -122,6 +120,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
+    double start = Timer.getFPGATimestamp() * 1000;
     // Switch thread to high priority to improve loop timing
     Threads.setCurrentThreadPriority(true, 99);
 
@@ -138,9 +137,8 @@ public class Robot extends LoggedRobot {
     Threads.setCurrentThreadPriority(false, 10);
 
     // robotContainer.updateMechVisualizer();
-    double newTime = Timer.getFPGATimestamp() * 1000;
-    Logger.recordOutput("Loop Time (ms)", newTime - lastTime);
-    lastTime = newTime;
+    double end = Timer.getFPGATimestamp() * 1000;
+    Logger.recordOutput("Loop Time (ms)", end - start);
 
     // CommandScheduler.getInstance().printWatchdogEpochs();
   }
