@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -161,8 +162,15 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
-    //     return autoChooser.get();
-
+    // return Commands.print("No autonomous command configured");
+    return new SequentialCommandGroup(
+        drivetrain.TurnSysIdQuasistatic(SysIdRoutine.Direction.kForward).withTimeout(20),
+        Commands.waitSeconds(0.5),
+        drivetrain.TurnSysIdQuasistatic(SysIdRoutine.Direction.kReverse).withTimeout(20),
+        Commands.waitSeconds(0.5),
+        drivetrain.TurnSysIdDynamic(SysIdRoutine.Direction.kForward).withTimeout(20),
+        Commands.waitSeconds(0.5),
+        drivetrain.TurnSysIdDynamic(SysIdRoutine.Direction.kReverse).withTimeout(20),
+        Commands.runOnce(() -> SignalLogger.stop()));
   }
 }
