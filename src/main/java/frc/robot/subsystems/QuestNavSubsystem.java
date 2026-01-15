@@ -8,12 +8,14 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.generated.TunerConstants;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
 import org.littletonrobotics.junction.Logger;
 
 public class QuestNavSubsystem extends SubsystemBase {
   private final QuestNav questNav;
+  private final CommandSwerveDrivetrain drive;
   private Pose3d robotPose;
   private Pose3d questPose;
   private static final Transform3d ROBOT_TO_QUEST =
@@ -21,8 +23,8 @@ public class QuestNavSubsystem extends SubsystemBase {
   private static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0.02, 0.02, 0.035);
 
   public QuestNavSubsystem() {
-    ;
     questNav = new QuestNav();
+    drive = TunerConstants.createDrivetrain();
     robotPose = new Pose3d();
     questPose = robotPose.transformBy(ROBOT_TO_QUEST);
     questNav.setPose(questPose);
@@ -34,11 +36,15 @@ public class QuestNavSubsystem extends SubsystemBase {
     PoseFrame[] questFrames = questNav.getAllUnreadPoseFrames();
     for (PoseFrame questFrame : questFrames) {
       if (questFrame.isTracking()) {
-        Pose3d questPose = questFrame.questPose3d();
+        questPose = questFrame.questPose3d();
         double timestamp = questFrame.dataTimestamp();
         Pose3d robotPose = questPose.transformBy(ROBOT_TO_QUEST.inverse());
+
+        drive.addVisionMeasurement(robotPose.toPose2d(), timestamp, QUESTNAV_STD_DEVS);
       }
     }
+
+    Logger.recordOutput("Vision/online", questNav.isConnected());
     Logger.recordOutput("Vision/QuestNav", questPose);
   }
 
