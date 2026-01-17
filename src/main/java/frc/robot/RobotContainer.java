@@ -24,11 +24,12 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralScorer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.QuestNavSubsystem;
+// import frc.robot.subsystems.QuestNavSubsystem;
+import frc.robot.subsystems.RebuiltIntake;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
-  private QuestNavSubsystem questNavSubsystem = new QuestNavSubsystem();
+//   private QuestNavSubsystem questNavSubsystem = new QuestNavSubsystem();
 
   private double MaxSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * .9; // kSpeedAt12Volts desired top speed
@@ -48,10 +49,11 @@ public class RobotContainer {
   private LoggedDashboardChooser autoChooser;
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  private final Elevator elevator = new Elevator();
+//   private final Elevator elevator = new Elevator();
 
-  private final IntakeSubsystem intake = new IntakeSubsystem();
-  private final CoralScorer coralScorer = new CoralScorer();
+//   private final IntakeSubsystem intake = new IntakeSubsystem();
+    private final RebuiltIntake rebuiltIntake = new RebuiltIntake();
+//   private final CoralScorer coralScorer = new CoralScorer();
 
   private boolean precisionMode = false;
   public static double drivePrecisionSpeed = 0.2;
@@ -86,15 +88,18 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    OI.getButton(OI.Driver.X).onTrue(elevator.L0());
-    OI.getButton(OI.Driver.Start).onTrue(elevator.L1());
-    OI.getButton(OI.Driver.A).onTrue(elevator.L2());
-    OI.getButton(OI.Driver.B).onTrue(elevator.L3());
-    OI.getButton(OI.Driver.Y).onTrue(elevator.L4());
-    OI.getPOVButton(OI.Driver.POV90).whileTrue(elevator.goUp());
-    OI.getPOVButton(OI.Driver.POV270).whileTrue(elevator.goDown());
+    // OI.getButton(OI.Driver.X).onTrue(elevator.L0());
+    // OI.getButton(OI.Driver.Start).onTrue(elevator.L1());
+    // OI.getButton(OI.Driver.A).onTrue(elevator.L2());
+    // OI.getButton(OI.Driver.B).onTrue(elevator.L3());
+    // OI.getButton(OI.Driver.Y).onTrue(elevator.L4());
+    // OI.getPOVButton(OI.Driver.POV90).whileTrue(elevator.goUp());
+    // OI.getPOVButton(OI.Driver.POV270).whileTrue(elevator.goDown());
 
-    OI.getButton(OI.Driver.Start).onTrue(elevator.zeroMotorEncoder());
+    // OI.getButton(OI.Driver.Start).onTrue(elevator.zeroMotorEncoder());
+
+    OI.getButton(OI.Driver.A).onTrue((rebuiltIntake.intakeCommand()));
+
     OI.getButton(OI.Driver.RSB)
         .onTrue(
             new InstantCommand(
@@ -146,10 +151,10 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
 
     // Set the intake rollers to the left and right triggers
-    OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.IntakeCommand());
-    OI.getButton(OI.Driver.RBumper).whileTrue(intake.OuttakeCommand());
-    OI.getTrigger(OI.Driver.LTrigger).whileTrue(coralScorer.scoreClockWise());
-    OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.scoreCounterClockWise());
+    // OI.getTrigger(OI.Driver.RTrigger).whileTrue(intake.IntakeCommand());
+    // OI.getButton(OI.Driver.RBumper).whileTrue(intake.OuttakeCommand());
+    // OI.getTrigger(OI.Driver.LTrigger).whileTrue(coralScorer.scoreClockWise());
+    // OI.getButton(OI.Driver.LBumper).whileTrue(coralScorer.scoreCounterClockWise());
 
     /**
      * TODO Controls: OI.getButton(OI.Driver.LeftStick).whileTrue(autoAlign.AutoAlign());

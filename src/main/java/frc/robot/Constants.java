@@ -60,4 +60,9 @@ public final class Constants {
     public static final Distance kElevatorDrumCircumference =
         kElevatorDrumRadius.times(2 * Math.PI);
   }
+
+
+  public static class RebuiltIntakeConstants {
+    public static final int motorID = 5;
+  }
 }
